@@ -303,11 +303,10 @@ h1:focus,h2:focus{outline:none;}
    ========================================================================== */
 .mega-stage{position:relative;width:100%;max-width:780px;margin:0 auto;aspect-ratio:1;}
 .mega-stage svg{display:block;width:100%;height:auto;overflow:visible;}
-.mega-stage [data-plx]{will-change:transform;}
 .mg-glow{opacity:.38;filter:blur(16px);pointer-events:none;}
 .mg-text text{
   fill:#fff;font-family:"Obvia Expanded","Michroma","Orbitron","Manrope",sans-serif;font-weight:700;
-  paint-order:stroke;stroke:rgba(0,0,0,.4);stroke-width:2;
+  paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round;
 }
 /* gentle independent drift per planet — applied to an inner group so it
    never fights the positional transform on the body itself */
@@ -1153,6 +1152,27 @@ input[type="range"]::-moz-range-thumb{
 .intro-skip:hover{color:var(--ink);border-color:var(--ink);}
 /* the page itself warps up from behind the overlay */
 main{transform-origin:50% 18vh;}
+/* hero manifests — ring sweeps in, planets pop, words and copy rise —
+   triggered only when the boot sequence completes naturally */
+#hero.manifest #mgRing{animation:mfRing 1s var(--ease-out) .08s backwards;transform-origin:499.7px 502.9px;transform-box:view-box;}
+#hero.manifest .mg-flow,#hero.manifest .mg-flow2{animation:mgFlow 7s linear infinite,mfFade .9s ease 1.05s backwards;}
+#hero.manifest .mg-pop{animation:mfPop .55s var(--ease-out) backwards;animation-delay:var(--mfd,.6s);}
+#hero.manifest .mg-text text{animation:mfIn .7s var(--ease-out) backwards;}
+#hero.manifest .mg-text text:nth-of-type(1){animation-delay:.55s;}
+#hero.manifest .mg-text text:nth-of-type(2){animation-delay:.68s;}
+#hero.manifest .mg-text text:nth-of-type(3){animation-delay:.81s;}
+#hero.manifest .mg-text text:nth-of-type(4){animation-delay:.94s;}
+#hero.manifest .star-field{animation:mfFade 1.6s ease .25s backwards;}
+#hero.manifest .hero-right>*{animation:mfIn .65s var(--ease-out) backwards;}
+#hero.manifest .hero-right>*:nth-child(1){animation-delay:1.05s;}
+#hero.manifest .hero-right>*:nth-child(2){animation-delay:1.18s;}
+#hero.manifest .hero-right>*:nth-child(3){animation-delay:1.31s;}
+@keyframes mfIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes mfPop{0%{opacity:0;transform:scale(0);}70%{opacity:1;transform:scale(1.14);}100%{opacity:1;transform:scale(1);}}
+@keyframes mfRing{from{opacity:0;transform:scale(.9) rotate(-5deg);}to{opacity:1;transform:none;}}
+@keyframes mfFade{from{opacity:0;}to{opacity:1;}}
+@media (prefers-reduced-motion:reduce){#hero.manifest #mgRing,#hero.manifest .mg-pop,#hero.manifest .mg-text text,#hero.manifest .star-field,#hero.manifest .hero-right>*{animation-duration:0s!important;animation-delay:0s!important;}}
+
 html.intro-lock{overflow:hidden;}
 html.intro-lock main{transform:scale(.955);opacity:.5;}
 html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s var(--ease-out);}
@@ -1161,26 +1181,20 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   .intro-core{transition:none;}
 }
 
-/* Mega-logo planets ride ONLY the visible tape: they fade in small at one
-   taper tail, swell through the thick mid-section (nearer the viewer, like
-   the tape itself), shrink again and vanish at the far tail. */
-.mg-orb{offset-rotate:0deg;animation:mgOrbit 52s linear infinite;will-change:transform;}
+/* Mega-logo planets ride ONLY the visible tape at constant size — they fade
+   in at one taper tail, cross the arc, and fade out at the other. */
+.mg-orb{offset-rotate:0deg;animation:mgOrbit 30s linear infinite;will-change:transform;}
 @keyframes mgOrbit{
-  0%  {offset-distance:0%;   transform:scale(.4);  opacity:0;}
-  7%  {                      transform:scale(.64); opacity:1;}
-  25% {                      transform:scale(.98);}
-  50% {                      transform:scale(1.14);}
-  75% {                      transform:scale(.98);}
-  93% {                      transform:scale(.64); opacity:1;}
-  100%{offset-distance:100%; transform:scale(.4);  opacity:0;}
+  0%  {offset-distance:0%;   opacity:0;}
+  6%  {opacity:1;}
+  94% {opacity:1;}
+  100%{offset-distance:100%; opacity:0;}
 }
 
-/* faint white current flowing inside the ring */
-.mg-flow{
-  fill:none;stroke:rgba(255,255,255,.45);stroke-width:4;stroke-linecap:round;
-  stroke-dasharray:6 44;pointer-events:none;
-  animation:mgFlow 6s linear infinite;
-}
+/* smooth white current flowing inside the ring — soft halo + bright core */
+.mg-flow,.mg-flow2{fill:none;stroke-linecap:round;pointer-events:none;animation:mgFlow 7s linear infinite;}
+.mg-flow{stroke:rgba(255,255,255,.26);stroke-width:7;stroke-dasharray:16 84;filter:blur(4px);}
+.mg-flow2{stroke:rgba(255,255,255,.6);stroke-width:2.4;stroke-dasharray:11 89;filter:blur(.6px);}
 @keyframes mgFlow{from{stroke-dashoffset:100;}to{stroke-dashoffset:0;}}
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
@@ -1348,7 +1362,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     </div>
     <div class="wrap hero-inner">
-      <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group — interactive logo. Hover a planet; click it to fly to its chapter."></div>
+      <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
         <h1 class="reveal d1">£42k to £1.2M in 24 months.<br><span class="grad-text">Next stop: £72m.</span></h1>
         <p class="lede reveal d2" id="heroBlurb"></p>
@@ -2252,15 +2266,18 @@ function renderMegaLogo() {
   const trackD = `M ${ta.x.toFixed(1)} ${ta.y.toFixed(1)} A ${E.rx} ${E.ry} 39.23 1 1 ${tb.x.toFixed(1)} ${tb.y.toFixed(1)}`;
   const MOVE = !REDUCED && typeof CSS !== "undefined" && CSS.supports
     && CSS.supports("offset-path", 'path("M 0 0")');
-  const MG_ORBIT = 52; // seconds per pass — keep in sync with the mgOrbit CSS
+  const MG_ORBIT = 30; // seconds per pass — keep in sync with the mgOrbit CSS
 
-  // ---- bodies at their exact logo stations on the ring -------------------
+  // ---- bodies at their logo stations; radii MEASURED from GroupLogo.png
+  // (all coordinates in this function are the source pixels x1000/1875)
   const MG = {
-    form:  { t: 253.0, r: 40, bob: "mg-b1" },   // green · top right
-    storm: { t: 190.4, r: 19, bob: "mg-b3" },   // ember · upper left
-    fly:   { t: 67.7,  r: 32, bob: "mg-b2" }    // blue  · lower left
+    form:  { t: 253.0, r: 40 },   // green · top right
+    storm: { t: 190.4, r: 17 },   // ember · upper left
+    fly:   { t: 67.7,  r: 31 }    // blue  · lower left
   };
-  const globeT = 337.5, globeR = 75, gPos = pt(globeT);
+  // the globe sits at its measured position — in the real mark the ring
+  // skims its right edge rather than passing through its centre
+  const globeR = 55, G = { x: 701.6, y: 502.7 };
 
   const planetDefs = SYSTEM.planets.map(p => `
     <radialGradient id="mgp-${p.key}" cx="0.36" cy="0.30" r="0.75">
@@ -2268,50 +2285,34 @@ function renderMegaLogo() {
       <stop offset="0.55" stop-color="${p.grad[1]}"/>
       <stop offset="1" stop-color="${p.grad[2]}"/>
     </radialGradient>`).join("");
-  const auraDefs = [SYSTEM.core, ...SYSTEM.planets].map(d => `
-    <radialGradient id="mga-${d.key}">
-      <stop offset="0" stop-color="${d.cHex}" stop-opacity=".55"/>
-      <stop offset="0.55" stop-color="${d.cHex}" stop-opacity=".22"/>
-      <stop offset="1" stop-color="${d.cHex}" stop-opacity="0"/>
-    </radialGradient>`).join("");
-
-  const planets = SYSTEM.planets.map(p => {
+  const planets = SYSTEM.planets.map((p, i) => {
     const g = MG[p.key], pos = pt(g.t);
     const place = MOVE
       ? `offset-path:path('${trackD}')`
       : `transform:translate(${pos.x.toFixed(1)}px,${pos.y.toFixed(1)}px)`;
     return `
-    <g class="body ${MOVE ? "mg-orb" : ""}" role="button" tabindex="0" data-key="${p.key}"
-       aria-label="${p.name} — ${p.role}. Opens ${p.gotoLabel}."
-       style="--c:${p.c};${place}">
-      <g class="${g.bob}">
-        <circle class="glow" r="${g.r + 26}" fill="url(#mga-${p.key})"/>
-        <circle class="ring-sel" r="${g.r + 9}"/>
+    <g class="${MOVE ? "mg-orb" : ""}" data-key="${p.key}" style="${place}">
+      <g class="mg-pop" style="--mfd:${(0.5 + i * 0.13).toFixed(2)}s">
         <circle class="sphere" r="${g.r}" fill="url(#mgp-${p.key})"/>
-        <ellipse class="sphere" cx="${(-g.r * 0.28).toFixed(1)}" cy="${(-g.r * 0.34).toFixed(1)}" rx="${(g.r * 0.34).toFixed(1)}" ry="${(g.r * 0.22).toFixed(1)}" fill="#fff" opacity="0.28"/>
-        <circle class="hit" r="${g.r + 14}"/>
+        <ellipse cx="${(-g.r * 0.28).toFixed(1)}" cy="${(-g.r * 0.34).toFixed(1)}" rx="${(g.r * 0.34).toFixed(1)}" ry="${(g.r * 0.22).toFixed(1)}" fill="#fff" opacity="0.28"/>
       </g>
     </g>`;
   }).join("");
 
   const gk = SYSTEM.core;
   const globe = `
-    <g class="body" role="button" tabindex="0" data-key="${gk.key}"
-       aria-label="${gk.name} — ${gk.role}. Opens ${gk.gotoLabel}."
-       style="--c:${gk.c};transform:translate(${gPos.x.toFixed(1)}px,${gPos.y.toFixed(1)}px)">
-      <circle class="glow" r="${globeR + 30}" fill="url(#mga-${gk.key})"/>
-      <circle class="ring-sel" r="${globeR + 9}"/>
-      ${globeSrc
-        ? `<clipPath id="mgGlobeClip"><circle cx="0" cy="0" r="${globeR}"/></clipPath>
-           <image class="sphere" href="${globeSrc}" x="${-globeR}" y="${-globeR}" width="${globeR * 2}" height="${globeR * 2}" clip-path="url(#mgGlobeClip)"/>
-           <circle class="sphere" cx="0" cy="0" r="${globeR}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>`
-        : `<circle class="sphere" cx="0" cy="0" r="${globeR}" fill="${gk.cHex}"/>`}
-      <circle class="hit" r="${globeR + 8}"/>
+    <g style="transform:translate(${G.x}px,${G.y}px)">
+      <g class="mg-pop" style="--mfd:.32s">
+        ${globeSrc
+          ? `<clipPath id="mgGlobeClip"><circle cx="0" cy="0" r="${globeR}"/></clipPath>
+             <image href="${globeSrc}" x="${-globeR}" y="${-globeR}" width="${globeR * 2}" height="${globeR * 2}" clip-path="url(#mgGlobeClip)"/>
+             <circle cx="0" cy="0" r="${globeR}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>`
+          : `<circle cx="0" cy="0" r="${globeR}" fill="${gk.cHex}"/>`}
+      </g>
     </g>`;
 
   stage.innerHTML = `
-    <svg viewBox="0 0 1000 1000" role="group"
-         aria-label="The Freedom Group logo — hover a planet, click to open its chapter">
+    <svg viewBox="0 0 1000 1000" role="img" aria-label="The Freedom Group logo">
       <defs>
         <linearGradient id="megaPink" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#ff74b8"/>
@@ -2319,28 +2320,27 @@ function renderMegaLogo() {
           <stop offset="1" stop-color="#c60f6e"/>
         </linearGradient>
         ${planetDefs}
-        ${auraDefs}
       </defs>
       <path id="mgTrack" d="${trackD}" fill="none" opacity="0" pointer-events="none"/>
-      <g id="mgRing" data-plx="6">
+      <g id="mgRing">
         <path class="mg-glow" d="${tape}" fill="url(#megaPink)"/>
         <path d="${tape}" fill="url(#megaPink)"/>
         <path class="mg-flow" d="${trackD}" pathLength="100"/>
+        <path class="mg-flow2" d="${trackD}" pathLength="100"/>
       </g>
-      <g id="mgText" class="mg-text" data-plx="3">
-        <text id="mgThe" x="170" y="434" font-size="40" letter-spacing="16">THE</text>
-        <text id="mgFreed" x="${(gPos.x - globeR - 12).toFixed(0)}" y="549" text-anchor="end" font-size="130" letter-spacing="8">FREED</text>
-        <text id="mgM" x="${(gPos.x + globeR + 12).toFixed(0)}" y="549" font-size="130" letter-spacing="8">M</text>
-        <text id="mgGroup" x="880" y="622" text-anchor="end" font-size="40" letter-spacing="24">GROUP</text>
+      <g id="mgText" class="mg-text">
+        <text id="mgThe" x="113" y="420" font-size="40">THE</text>
+        <text id="mgFreed" x="113" y="539" font-size="95">FREED</text>
+        <text id="mgM" x="774" y="539" font-size="95">M</text>
+        <text id="mgGroup" x="685" y="616" font-size="40">GROUP</text>
       </g>
-      <g id="mgBodies" data-plx="6">
+      <g id="mgBodies">
         ${planets}
         ${globe}
       </g>
     </svg>`;
 
-  // phase each orbiting planet so it starts at its exact logo station,
-  // and give hover the same seamless time-dilation as the system section
+  // phase each orbiting planet so it starts at its exact logo station
   if (MOVE) {
     const track = $("#mgTrack", stage);
     const L = track.getTotalLength();
@@ -2358,98 +2358,35 @@ function renderMegaLogo() {
       b.style.animationDelay = (-phaseOf(pt(MG[b.dataset.key].t)) * MG_ORBIT).toFixed(2) + "s";
     });
   }
-  function setMegaRate(rate) {
-    $$(".mg-orb", stage).forEach(g =>
-      g.getAnimations().forEach(a => {
-        try {
-          if (!document.hidden && a.updatePlaybackRate) a.updatePlaybackRate(rate);
-          else a.playbackRate = rate;
-        } catch (e) { a.playbackRate = rate; }
-      })
-    );
-    stage.dataset.orbit = rate < 1 ? "slowed" : "normal";
-  }
-
-  // Align THE with the F and GROUP with the M using real font metrics —
-  // re-run once Orbitron finishes loading so the lockup is exact.
+  // Layout measured off the real GroupLogo.png (coords x1000/1875): each word
+  // is sized to the mark's cap height, then stretched to its exact span with
+  // textLength — so the lockup matches the logo in ANY font (Michroma today,
+  // Obvia Expanded when installed). Re-runs when fonts finish loading.
+  const TGT = {
+    mgThe:   { x: 113.1, len: 106.1, base: 419.7, cap: 28.8 },
+    mgFreed: { x: 113.1, len: 514.1, base: 538.7, cap: 68.8 },
+    mgM:     { x: 774.4, len: 112.0, base: 538.7, cap: 68.8 },
+    mgGroup: { x: 684.8, len: 201.6, base: 616.0, cap: 28.8 }
+  };
+  const mctx = document.createElement("canvas").getContext("2d");
   const align = () => {
     try {
-      const freed = $("#mgFreed", stage), em = $("#mgM", stage);
-      // auto-fit: whatever font renders (Michroma now, Obvia when installed),
-      // shrink until FREED clears the left edge and M stays inside the box
-      let fs = 130;
-      freed.setAttribute("font-size", fs); em.setAttribute("font-size", fs);
-      let fb = freed.getBBox(), mb = em.getBBox();
-      while ((fb.x < 12 || mb.x + mb.width > 985) && fs > 92) {
-        fs -= 4;
-        freed.setAttribute("font-size", fs);
-        em.setAttribute("font-size", fs);
-        fb = freed.getBBox(); mb = em.getBBox();
-      }
-      $("#mgThe", stage).setAttribute("x", (fb.x + 3).toFixed(1));
-      $("#mgGroup", stage).setAttribute("x", (mb.x + mb.width).toFixed(1));
+      Object.keys(TGT).forEach(id => {
+        const el = $("#" + id, stage), t = TGT[id];
+        // ink cap height via canvas metrics — SVG getBBox() on <text> returns
+        // the em box (ascent+descent), which would size the caps ~30% small
+        mctx.font = "700 100px " + getComputedStyle(el).fontFamily;
+        const capH = mctx.measureText(el.textContent).actualBoundingBoxAscent || 72;
+        el.setAttribute("font-size", (100 * t.cap / capH).toFixed(2));
+        el.setAttribute("x", t.x);
+        el.setAttribute("y", t.base);
+        el.setAttribute("textLength", t.len);
+        el.setAttribute("lengthAdjust", "spacingAndGlyphs");
+      });
     } catch (e) { /* not rendered yet */ }
   };
   align();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(align);
-
-  // ---- interactivity: aura, tooltip, nav peek, fly-to-chapter -------------
-  const tip = makeTip(stage);
-  const navBtnFor = sec => $(`.nav-btn[data-goto="${sec}"]`);
-  $$(".body", stage).forEach(b => {
-    const key = b.dataset.key, d = SYSTEM_ALL[key];
-    b.addEventListener("pointerenter", e => {
-      if (e.pointerType !== "mouse") return;
-      b.classList.add("hot");
-      setMegaRate(0.12);
-      const nb = navBtnFor(d.goto);
-      if (nb) nb.classList.add("peek");
-    });
-    b.addEventListener("pointermove", e => {
-      if (e.pointerType !== "mouse") return;
-      tip.show(e.clientX, e.clientY,
-        `<b>${d.name}</b><div class="trow"><span>${d.gotoLabel}</span><b>${d.stat}</b></div><div style="opacity:.7">Click to view in the proposal ↓</div>`);
-    });
-    b.addEventListener("pointerleave", e => {
-      if (e.pointerType !== "mouse") return;
-      b.classList.remove("hot");
-      setMegaRate(1);
-      tip.hide();
-      const nb = navBtnFor(d.goto);
-      if (nb) nb.classList.remove("peek");
-    });
-    b.addEventListener("focus", () => { b.classList.add("hot"); setMegaRate(0.12); });
-    b.addEventListener("blur", () => { b.classList.remove("hot"); setMegaRate(1); tip.hide(); });
-    b.addEventListener("click", () => flyToChapter(key));
-    b.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flyToChapter(key); }
-    });
-  });
-
-  // ---- pointer parallax: ring, wordmark and planets drift at different depths
-  if (!REDUCED && window.matchMedia && matchMedia("(pointer:fine)").matches) {
-    const layers = $$("[data-plx]", stage);
-    const hero = $("#hero");
-    let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
-    const drift = () => {
-      cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
-      layers.forEach(l => {
-        const k = +l.dataset.plx;
-        l.style.transform = `translate(${(cx * k).toFixed(2)}px, ${(cy * k).toFixed(2)}px)`;
-      });
-      raf = (Math.abs(tx - cx) > 0.04 || Math.abs(ty - cy) > 0.04) ? requestAnimationFrame(drift) : null;
-    };
-    hero.addEventListener("mousemove", e => {
-      const r = hero.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
-      if (!raf) raf = requestAnimationFrame(drift);
-    });
-    hero.addEventListener("mouseleave", () => {
-      tx = 0; ty = 0;
-      if (!raf) raf = requestAnimationFrame(drift);
-    });
-  }
 }
 
 function renderSystem() {
@@ -3909,10 +3846,14 @@ function runIntro() {
     ["> STATUS: WEBSITE OPERATIONAL — engaging warp", ""]
   ];
 
-  function finish() {
+  function finish(manifest) {
     if (done) return;
     done = true;
     timers.forEach(clearTimeout);
+    if (manifest === true && !REDUCED) {
+      const hero = $("#hero");
+      if (hero) hero.classList.add("manifest"); // hero constructs as the warp reveals it
+    }
     intro.classList.add("warp");
     document.documentElement.classList.remove("intro-lock"); // page zooms up
     const kill = () => { intro.classList.add("gone"); intro.remove(); };
@@ -3921,7 +3862,7 @@ function runIntro() {
     window.__ffIntroDone = true;
   }
   window.__ffSkipIntro = finish;
-  $("#introSkip").addEventListener("click", finish);
+  $("#introSkip").addEventListener("click", () => finish());
   document.addEventListener("keydown", function onKey(e) {
     if (e.key === "Escape" || e.key === "Enter") { finish(); document.removeEventListener("keydown", onKey); }
   });
@@ -3943,7 +3884,7 @@ function runIntro() {
   const buildAt = 220 + LINES.length * STEP + 120;
   t(buildAt, () => { intro.classList.add("build"); bar.style.width = "92%"; });
   t(buildAt + 1500, () => { bar.style.width = "100%"; });
-  t(buildAt + 1800, finish);
+  t(buildAt + 1800, () => finish(true));
 }
 
 /* =========================================================================

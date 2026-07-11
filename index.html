@@ -117,8 +117,13 @@ p{margin:0 0 1em;}
   @media (prefers-reduced-motion:no-preference){
     .sec-head .kicker::before{animation:kickerGrow both;animation-timeline:view();animation-range:entry 10% entry 50%;}
     .blobs{animation:blobsRecede both;animation-timeline:scroll();animation-range:0 70vh;}
+    /* photography drifts up into place as it scrolls into view */
+    #jlist figure.photo,.ov-innov-fig,.photo.team-hero{
+      animation:figRise both;animation-timeline:view();animation-range:entry 0% entry 65%;
+    }
   }
 }
+@keyframes figRise{from{opacity:.3;transform:translateY(22px) scale(.985);}to{opacity:1;transform:none;}}
 @keyframes kickerGrow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
 @keyframes blobsRecede{to{opacity:.25;}}
 /* landing flash when the planetary system flies you to a section */
@@ -363,9 +368,22 @@ section.tint{background:var(--bg-soft);}
 }
 .brand-card:hover{border-color:var(--line-strong);transform:translateY(-3px);}
 .brand-card .b-ico{
-  width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;
-  border:1.5px solid var(--line-strong);color:var(--accent,var(--blue));
-  background:var(--bg-soft);
+  width:52px;height:52px;flex:none;border-radius:16px;display:grid;place-items:center;
+  border:1px solid var(--line-strong);color:var(--accent,var(--blue));
+  background:
+    radial-gradient(130% 130% at 28% 18%, color-mix(in srgb, var(--accent,var(--blue)) 16%, transparent), transparent 72%),
+    var(--bg-soft);
+  transition:var(--t);
+}
+/* neon aura on hover, drawn from the card's own accent variable */
+.brand-card:hover .b-ico{
+  transform:rotate(-4deg) scale(1.06);
+  border-color:color-mix(in srgb, var(--accent,var(--blue)) 55%, transparent);
+  box-shadow:0 0 24px color-mix(in srgb, var(--accent,var(--blue)) 32%, transparent);
+}
+@supports not (color: color-mix(in srgb, #fff, #fff)){
+  .brand-card .b-ico{background:var(--bg-soft);}
+  .brand-card:hover .b-ico{box-shadow:none;}
 }
 .brand-card h3{font-size:1rem;margin:0 0 2px;}
 .brand-card p{color:var(--ink-dim);font-size:.85rem;margin:0;}
@@ -871,7 +889,7 @@ input[type="range"]::-moz-range-thumb{
    the close button unfocusable until the first frame paints. */
 .drawer-backdrop{
   position:fixed;inset:0;z-index:98;background:rgba(13,18,32,.42);
-  backdrop-filter:blur(2px);
+  backdrop-filter:blur(10px);
   opacity:0;transition:opacity .35s var(--ease);
 }
 .drawer-backdrop.open{opacity:1;}
@@ -962,7 +980,7 @@ input[type="range"]::-moz-range-thumb{
 }
 .body.sel .ring-sel{opacity:.9;}
 .body .glow{opacity:.0;transition:opacity .3s var(--ease);}
-.body:hover .glow,.body.sel .glow,.body.hot .glow{opacity:.55;}
+.body:hover .glow,.body.sel .glow,.body.hot .glow{opacity:.9;}
 /* planets glide along the ring — offset-path is GPU-composited, and the
    track is the very path the ring is drawn with, so they can never drift */
 .body.orbiting{offset-rotate:0deg;animation:orbitGlide 44s linear infinite;will-change:transform;}
@@ -1731,18 +1749,25 @@ function initCounters(root = document) {
   });
 }
 
-/* Shared tooltip per chart figure */
+/* Shared tooltip per chart figure. Content + measurements are cached so a
+   mousemove with unchanged HTML never rewrites the DOM or forces a reflow. */
 function makeTip(fig) {
   const tip = document.createElement("div");
   tip.className = "tip";
   tip.setAttribute("aria-hidden", "true");
   fig.appendChild(tip);
+  let last = "", tw = 0, th = 0;
   return {
     show(clientX, clientY, html) {
       const r = fig.getBoundingClientRect();
-      tip.innerHTML = html;
-      tip.classList.add("show");
-      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      if (html !== last) {
+        tip.innerHTML = html;
+        last = html;
+        tip.classList.add("show");
+        tw = tip.offsetWidth; th = tip.offsetHeight;   // measured once per content
+      } else {
+        tip.classList.add("show");
+      }
       let x = clientX - r.left + 14, y = clientY - r.top - th - 12;
       if (x + tw > r.width - 4) x = clientX - r.left - tw - 14;
       if (y < 4) y = clientY - r.top + 16;
@@ -1750,6 +1775,19 @@ function makeTip(fig) {
       tip.style.top = y + "px";
     },
     hide() { tip.classList.remove("show"); }
+  };
+}
+
+/* rAF-coalesced scroll handler: one layout pass per frame, immediate when the
+   tab is hidden (frozen rAF would otherwise starve the handler). */
+function rafScroll(fn) {
+  let queued = false;
+  return () => {
+    if (document.hidden) { fn(); return; }
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(() => { fn(); queued = false; });
+    }
   };
 }
 
@@ -1808,12 +1846,12 @@ function drawDonut(svg, segments, opts = {}) {
 function initChrome() {
   const bar = $("#scrollProgress");
   const navEl = $(".nav");
-  const onScroll = () => {
+  const onScroll = rafScroll(() => {
     const h = document.documentElement;
     const max = h.scrollHeight - h.clientHeight;
     bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
     if (navEl) navEl.classList.toggle("scrolled", h.scrollTop > 8);
-  };
+  });
   document.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
@@ -1904,11 +1942,17 @@ function renderHero() {
 /* =========================================================================
    BRANDS
    ========================================================================= */
+/* Premium duotone icon set — crisp 1.7px strokes with soft currentColor
+   fills, so each glyph carries its brand accent with real depth. */
 const ICONS = {
-  flame: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c2.5 4-3.5 6-1 10 1-1.8 3.5-2.5 3.5-2.5-.8 3.5 3 4.5 2 8-.8 2.8-4.5 3.5-4.5 3.5S5 21 5 15.5C5 10 10 8.5 12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
-  drone: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="5" r="2.4" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="5" r="2.4" stroke="currentColor" stroke-width="1.6"/><circle cx="5" cy="19" r="2.4" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="19" r="2.4" stroke="currentColor" stroke-width="1.6"/><rect x="9" y="9" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M7 7l2 2m6 0l2-2M7 17l2-2m6 0l2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-  cube: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l8 4.5v10l-8 4.5L4 17V7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7l8 4.5L20 7M12 11.5v10" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
-  storm: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L5 13h5l-2 9 9-12h-5l3-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'
+  // Freedom Fire & Safety — flame with a glowing inner ember + spark
+  flame: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3c2.5 4-3.5 6-1 10 1-1.8 3.5-2.5 3.5-2.5-.8 3.5 3 4.5 2 8-.8 2.8-4.5 3.5-4.5 3.5S5 21 5 15.5C5 10 10 8.5 12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M11.4 13.4c.5 1.3 1.8 1.9 1.5 3.6-.2 1.1-1.3 1.8-2.3 1.5-1-.3-1.6-1.3-1.3-2.4.3-1.2 1.5-1.6 2.1-2.7z" fill="currentColor" opacity=".28"/><circle cx="16.6" cy="6.2" r=".9" fill="currentColor" opacity=".3"/></svg>',
+  // Fly — quadcopter with spinning-prop arcs, hubs and a camera gimbal
+  drone: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 5.6A2.4 2.4 0 1 1 7.3 3.9M20.8 5.6A2.4 2.4 0 1 1 20.1 3.9M8 18.4A2.4 2.4 0 1 1 7.3 16.7M20.8 18.4A2.4 2.4 0 1 1 20.1 16.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="5.6" cy="5.6" r=".8" fill="currentColor" opacity=".35"/><circle cx="18.4" cy="5.6" r=".8" fill="currentColor" opacity=".35"/><circle cx="5.6" cy="18.4" r=".8" fill="currentColor" opacity=".35"/><circle cx="18.4" cy="18.4" r=".8" fill="currentColor" opacity=".35"/><path d="M9.5 9.5 7.4 7.4M14.5 9.5l2.1-2.1M9.5 14.5l-2.1 2.1M14.5 14.5l2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="9.4" y="9.4" width="5.2" height="5.2" rx="1.6" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.2" fill="currentColor" opacity=".35"/></svg>',
+  // Freedom Facilities — isometric crate with a lit top face
+  cube: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3.2 19 7.2v9.6l-7 4-7-4V7.2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M5 7.2l7 4 7-4M12 11.2v9.6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 3.2 19 7.2l-7 4-7-4z" fill="currentColor" opacity=".18"/></svg>',
+  // Firestorm — charged bolt wrapped in the group's orbit arcs
+  storm: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M13.4 2.4 6.2 13.2h4.4L8.8 21.6l7.6-11.2h-4.4z" fill="currentColor" opacity=".2"/><path d="M13.4 2.4 6.2 13.2h4.4L8.8 21.6l7.6-11.2h-4.4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 7.8A9.4 9.4 0 0 1 9.9 2.9M20 16.2a9.4 9.4 0 0 1-5.9 4.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
 };
 function renderBrands() {
   $("#brandStack").innerHTML = FG_DATA.brands.map((b, i) => `
@@ -1985,9 +2029,19 @@ function renderSystem() {
       <stop offset="1" stop-color="${p.grad[2]}"/>
     </radialGradient>`).join("");
 
+  /* Neon auras as radial gradients rather than an feGaussianBlur filter —
+     identical brand colours, but composited on the GPU with zero filter
+     repaints while the planets are in motion. */
+  const auras = [SYSTEM.core, ...SYSTEM.planets].map(d => `
+    <radialGradient id="aura-${d.key}">
+      <stop offset="0" stop-color="${d.cHex}" stop-opacity=".55"/>
+      <stop offset="0.55" stop-color="${d.cHex}" stop-opacity=".22"/>
+      <stop offset="1" stop-color="${d.cHex}" stop-opacity="0"/>
+    </radialGradient>`).join("");
+
   // planet artwork centred on (0,0) so it can ride offset-path (or a static translate)
   const planetInner = p => `
-      <circle class="glow" r="${p.r + 16}" fill="${p.cHex}" filter="url(#sysGlow)"/>
+      <circle class="glow" r="${p.r + 26}" fill="url(#aura-${p.key})"/>
       <circle class="ring-sel" r="${p.r + 8}"/>
       <circle class="sphere" r="${p.r}" fill="url(#g-${p.key})"/>
       <ellipse class="sphere" cx="${f(-p.r * 0.28)}" cy="${f(-p.r * 0.34)}" rx="${f(p.r * 0.34)}" ry="${f(p.r * 0.22)}" fill="#fff" opacity="0.28"/>
@@ -2012,7 +2066,7 @@ function renderSystem() {
     <g class="body b-core" role="button" tabindex="0" data-key="${gk.key}"
        aria-label="${gk.name} — ${gk.role}. Opens ${gk.gotoLabel}."
        style="--c:${gk.c};transform:translate(${cx}px,${cy}px)">
-      <circle class="glow" r="${globeR + 20}" fill="${gk.cHex}" filter="url(#sysGlow)"/>
+      <circle class="glow" r="${globeR + 30}" fill="url(#aura-${gk.key})"/>
       <circle class="ring-sel" r="${globeR + 8}"/>
       ${globeSrc
         ? `<clipPath id="sysGlobeClip"><circle cx="0" cy="0" r="${globeR}"/></clipPath>
@@ -2030,10 +2084,8 @@ function renderSystem() {
           <stop offset="0.5" stop-color="#ff3d9a"/>
           <stop offset="1" stop-color="#c60f6e"/>
         </linearGradient>
-        <filter id="sysGlow" x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="10"/>
-        </filter>
         ${grads}
+        ${auras}
       </defs>
       <path class="orbit-ring" d="${ringD}" stroke-width="9"/>
       ${bodies}
@@ -2128,7 +2180,10 @@ function renderSystem() {
       </div>`;
     $$(".body", stage).forEach(b => b.classList.remove("sel"));
     $$(".sys-chip", panel).forEach(chip =>
-      chip.addEventListener("click", () => showCompany(chip.dataset.key)));
+      chip.addEventListener("click", () => {
+        showCompany(chip.dataset.key);
+        scrollToSec(chip.dataset.key);
+      }));
   }
 
   // ---- click → glide the page to that chapter ----------------------------
@@ -2223,15 +2278,14 @@ function renderJourney() {
   });
 
   function layoutDots() {
+    // batched: all reads first, then all writes — no interleaved reflow
     const railTop = rail.getBoundingClientRect().top + window.scrollY;
-    $$(".jcard", list).forEach((card, i) => {
-      const r = card.getBoundingClientRect();
-      const y = r.top + window.scrollY + 34 - railTop;
-      dots[i].style.top = y + "px";
-    });
+    const tops = $$(".jcard", list).map(card =>
+      card.getBoundingClientRect().top + window.scrollY + 34 - railTop);
+    tops.forEach((t, i) => { dots[i].style.top = t + "px"; });
   }
 
-  function onScroll() {
+  const onScroll = rafScroll(() => {
     const r = rail.getBoundingClientRect();
     const focus = window.innerHeight * 0.55;
     const progress = Math.max(0, Math.min(1, (focus - r.top) / r.height));
@@ -2241,7 +2295,7 @@ function renderJourney() {
       const dy = parseFloat(d.style.top || "0");
       d.classList.toggle("lit", railTop + dy <= focus);
     });
-  }
+  });
 
   window.addEventListener("resize", layoutDots);
   document.addEventListener("scroll", onScroll, { passive: true });
@@ -3204,6 +3258,12 @@ function wireMembers(flat) {
           </span>
         </div>`;
       detail.classList.add("show");
+      // glide the reader down to the bio ("instant" when hidden/reduced —
+      // "auto" would inherit the page's smooth behaviour and freeze in
+      // background tabs)
+      detail.scrollIntoView({ behavior: (REDUCED || document.hidden) ? "instant" : "smooth", block: "center" });
+      const dh = $("h3", detail);
+      if (dh) { dh.setAttribute("tabindex", "-1"); dh.focus({ preventScroll: true }); }
     })
   );
 }
@@ -3249,15 +3309,18 @@ function renderTeam() {
       teamState.view = btn.dataset.view;
       $$("#orgView button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
       const host = $("#orgChart");
-      host.style.transition = "opacity .2s var(--ease)";
+      host.style.transition = "opacity .24s var(--ease-out), transform .24s var(--ease-out)";
       host.style.opacity = "0";
+      host.style.transform = "translateY(10px)";
       const swap = () => {
         renderView();
         $("#personDetail").classList.remove("show");
+        void host.offsetWidth; // commit the hidden state before easing back
         host.style.opacity = "1";
+        host.style.transform = "none";
       };
       if (REDUCED || document.hidden) swap();
-      else setTimeout(swap, 200);
+      else setTimeout(swap, 240);
     })
   );
 

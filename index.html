@@ -271,9 +271,73 @@ h1:focus,h2:focus{outline:none;}
 /* ==========================================================================
    HERO
    ========================================================================== */
+.hero-pin{height:260vh;position:relative;}
 .hero{
-  position:relative;overflow:hidden;
+  position:sticky;top:0;overflow:hidden;
+  min-height:100vh;display:flex;align-items:center;
   padding:84px 0 60px;
+}
+.hero .wrap{flex:1;}
+.hero .mega-stage{max-width:min(780px,80vh);}
+
+/* --bh 0→1 (set from scroll) sucks every hero element into the black hole:
+   each element carries its own pull vector (--sx/--sy, set in JS), a spin
+   (--sr) and a stagger (--d). Quadratic progress = accelerating suction.
+   Fully scroll-driven, so scrolling back up restores everything. */
+#hero [data-suck]{
+  --pe:min(1,max(0,calc((var(--bh,0) - var(--d,0)) / (1 - var(--d,0)))));
+  transform:translate(calc(var(--sx,0)*var(--pe)*var(--pe)*1px),
+                      calc(var(--sy,0)*var(--pe)*var(--pe)*1px))
+            rotate(calc(var(--sr,0)*var(--pe)*1deg))
+            scale(max(.001,calc(1 - var(--pe)*var(--pe))));
+  opacity:min(1,max(0,calc(1 - (var(--pe) - .55)*2.6)));
+  transition:none;
+  will-change:transform,opacity;
+}
+#hero [data-suck].reveal:not(.in){opacity:0!important;}
+#hero .star-field{opacity:calc(1 - var(--bh,0)*.45);}
+
+/* the black hole itself — grows out of nothing, swirls, swallows, then dies */
+.bh{
+  position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;
+  width:44vmin;height:44vmin;margin:-22vmin 0 0 -22vmin;border-radius:50%;
+  transform:scale(min(1,calc(var(--bh,0)*2.4)));
+  opacity:min(1,max(0,min(calc(var(--bh,0)*3.2),calc((1 - var(--bh,0))*2.8))));
+}
+.bh i{position:absolute;inset:0;border-radius:50%;display:block;}
+.bh-swirl{
+  background:conic-gradient(from 0deg,
+    transparent 0 40deg, rgba(255,61,154,.5) 80deg, transparent 130deg,
+    rgba(56,169,255,.35) 190deg, transparent 250deg,
+    rgba(255,61,154,.4) 300deg, transparent 360deg);
+  filter:blur(14px);
+  animation:bhSpin 7s linear infinite;
+}
+.bh-ring{
+  inset:18%;
+  box-shadow:0 0 40px 6px rgba(255,61,154,.55), inset 0 0 30px 4px rgba(255,61,154,.35);
+  background:radial-gradient(circle, transparent 52%, rgba(255,116,184,.25) 60%, transparent 68%);
+  animation:bhSpin 11s linear infinite reverse;
+}
+.bh-core{
+  inset:26%;
+  background:radial-gradient(circle, #000 0 55%, rgba(7,7,13,.9) 68%, transparent 75%);
+}
+@keyframes bhSpin{to{transform:rotate(360deg);}}
+
+@media (max-width:760px){
+  .hero-pin{height:auto;}
+  .hero{position:relative;min-height:0;display:block;}
+  .bh{display:none;}
+  #hero [data-suck]{transform:none;opacity:1;}
+  #hero [data-suck].reveal:not(.in){opacity:0!important;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-pin{height:auto;}
+  .hero{position:relative;min-height:0;display:block;}
+  .bh{display:none;}
+  #hero [data-suck]{transform:none;opacity:1;}
+  #hero [data-suck].reveal:not(.in){opacity:0!important;}
 }
 .blobs{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .blob{
@@ -1155,7 +1219,7 @@ main{transform-origin:50% 18vh;}
 /* hero manifests — ring sweeps in, planets pop, words and copy rise —
    triggered only when the boot sequence completes naturally */
 #hero.manifest #mgRing{animation:mfRing 1s var(--ease-out) .08s backwards;transform-origin:499.7px 502.9px;transform-box:view-box;}
-#hero.manifest .mg-flow,#hero.manifest .mg-flow2{animation:mgFlow 7s linear infinite,mfFade .9s ease 1.05s backwards;}
+#hero.manifest .mg-flow{animation:mgFlow 7s linear infinite,mfFade .9s ease 1.05s backwards;}
 #hero.manifest .mg-pop{animation:mfPop .55s var(--ease-out) backwards;animation-delay:var(--mfd,.6s);}
 #hero.manifest .mg-text text{animation:mfIn .7s var(--ease-out) backwards;}
 #hero.manifest .mg-text text:nth-of-type(1){animation-delay:.55s;}
@@ -1181,20 +1245,28 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   .intro-core{transition:none;}
 }
 
-/* Mega-logo planets ride ONLY the visible tape at constant size — they fade
-   in at one taper tail, cross the arc, and fade out at the other. */
+/* Mega-logo planets ride ONLY the visible tape. Every planet is drawn at the
+   SAME base radius and scaled purely by ring position — small at the thin
+   taper tails, biggest at the thick mid-section (the same law the tape and
+   the logo's own planet sizes follow). */
 .mg-orb{offset-rotate:0deg;animation:mgOrbit 30s linear infinite;will-change:transform;}
 @keyframes mgOrbit{
-  0%  {offset-distance:0%;   opacity:0;}
-  6%  {opacity:1;}
-  94% {opacity:1;}
-  100%{offset-distance:100%; opacity:0;}
+  0%  {offset-distance:0%;   transform:scale(.07); opacity:0;}
+  6%  {transform:scale(.33); opacity:1;}
+  25% {transform:scale(.79);}
+  50% {transform:scale(1);}
+  75% {transform:scale(.79);}
+  94% {transform:scale(.33); opacity:1;}
+  100%{offset-distance:100%; transform:scale(.07); opacity:0;}
 }
 
-/* smooth white current flowing inside the ring — soft halo + bright core */
-.mg-flow,.mg-flow2{fill:none;stroke-linecap:round;pointer-events:none;animation:mgFlow 7s linear infinite;}
-.mg-flow{stroke:rgba(255,255,255,.26);stroke-width:7;stroke-dasharray:16 84;filter:blur(4px);}
-.mg-flow2{stroke:rgba(255,255,255,.6);stroke-width:2.4;stroke-dasharray:11 89;filter:blur(.6px);}
+/* white ESSENCE drifting inside the ring — one wide, heavily blurred breath
+   of light, no visible line */
+.mg-flow{
+  fill:none;stroke:rgba(255,255,255,.32);stroke-width:10;stroke-linecap:round;
+  stroke-dasharray:26 74;filter:blur(9px);pointer-events:none;
+  animation:mgFlow 7s linear infinite;
+}
 @keyframes mgFlow{from{stroke-dashoffset:100;}to{stroke-dashoffset:0;}}
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
@@ -1357,19 +1429,22 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        HERO
        ==================================================================== -->
+  <div class="hero-pin" id="heroPin">
   <div class="hero" id="hero">
     <div class="blobs" id="blobs" aria-hidden="true">
       <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     </div>
+    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-swirl"></i><i class="bh-ring"></i><i class="bh-core"></i></div>
     <div class="wrap hero-inner">
-      <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
+      <div class="mega-stage reveal" id="megaLogo" data-suck aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
-        <h1 class="reveal d1">£42k to £1.2M in 24 months.<br><span class="grad-text">Next stop: £72m.</span></h1>
-        <p class="lede reveal d2" id="heroBlurb"></p>
-        <div class="kpis" id="heroKpis"></div>
+        <h1 class="reveal d1" data-suck>£42k to £1.2M in 24 months.<br><span class="grad-text">Next stop: £72m.</span></h1>
+        <p class="lede reveal d2" id="heroBlurb" data-suck></p>
+        <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
   </div>
+  </div><!-- /hero-pin -->
 
   <!-- ====================================================================
        OVERVIEW / THE GROUP
@@ -2268,16 +2343,20 @@ function renderMegaLogo() {
     && CSS.supports("offset-path", 'path("M 0 0")');
   const MG_ORBIT = 30; // seconds per pass — keep in sync with the mgOrbit CSS
 
-  // ---- bodies at their logo stations; radii MEASURED from GroupLogo.png
-  // (all coordinates in this function are the source pixels x1000/1875)
+  // ---- bodies at their logo stations (r = static-fallback sizes, measured
+  // from GroupLogo.png; all coordinates are the source pixels x1000/1875)
   const MG = {
     form:  { t: 253.0, r: 40 },   // green · top right
     storm: { t: 190.4, r: 17 },   // ember · upper left
     fly:   { t: 67.7,  r: 31 }    // blue  · lower left
   };
-  // the globe sits at its measured position — in the real mark the ring
-  // skims its right edge rather than passing through its centre
-  const globeR = 55, G = { x: 701.6, y: 502.7 };
+  // moving planets share ONE base radius; the mgOrbit keyframes scale it by
+  // ring position (thin tails → small, thick mid → big) — the same law the
+  // logo's own planet sizes follow (≈40/31/17 at the stations)
+  const R0 = 50;
+  // globe centred ON the ring (its centreline runs through the middle of the
+  // O) at the ring point sitting on the wordmark's vertical middle
+  const globeR = 55, G = pt(337.5);
 
   const planetDefs = SYSTEM.planets.map(p => `
     <radialGradient id="mgp-${p.key}" cx="0.36" cy="0.30" r="0.75">
@@ -2287,21 +2366,22 @@ function renderMegaLogo() {
     </radialGradient>`).join("");
   const planets = SYSTEM.planets.map((p, i) => {
     const g = MG[p.key], pos = pt(g.t);
+    const rr = MOVE ? R0 : g.r; // movers share one base radius, keyframes size it
     const place = MOVE
       ? `offset-path:path('${trackD}')`
       : `transform:translate(${pos.x.toFixed(1)}px,${pos.y.toFixed(1)}px)`;
     return `
     <g class="${MOVE ? "mg-orb" : ""}" data-key="${p.key}" style="${place}">
       <g class="mg-pop" style="--mfd:${(0.5 + i * 0.13).toFixed(2)}s">
-        <circle class="sphere" r="${g.r}" fill="url(#mgp-${p.key})"/>
-        <ellipse cx="${(-g.r * 0.28).toFixed(1)}" cy="${(-g.r * 0.34).toFixed(1)}" rx="${(g.r * 0.34).toFixed(1)}" ry="${(g.r * 0.22).toFixed(1)}" fill="#fff" opacity="0.28"/>
+        <circle class="sphere" r="${rr}" fill="url(#mgp-${p.key})"/>
+        <ellipse cx="${(-rr * 0.28).toFixed(1)}" cy="${(-rr * 0.34).toFixed(1)}" rx="${(rr * 0.34).toFixed(1)}" ry="${(rr * 0.22).toFixed(1)}" fill="#fff" opacity="0.28"/>
       </g>
     </g>`;
   }).join("");
 
   const gk = SYSTEM.core;
   const globe = `
-    <g style="transform:translate(${G.x}px,${G.y}px)">
+    <g style="transform:translate(${G.x.toFixed(1)}px,${G.y.toFixed(1)}px)">
       <g class="mg-pop" style="--mfd:.32s">
         ${globeSrc
           ? `<clipPath id="mgGlobeClip"><circle cx="0" cy="0" r="${globeR}"/></clipPath>
@@ -2326,7 +2406,6 @@ function renderMegaLogo() {
         <path class="mg-glow" d="${tape}" fill="url(#megaPink)"/>
         <path d="${tape}" fill="url(#megaPink)"/>
         <path class="mg-flow" d="${trackD}" pathLength="100"/>
-        <path class="mg-flow2" d="${trackD}" pathLength="100"/>
       </g>
       <g id="mgText" class="mg-text">
         <text id="mgThe" x="113" y="420" font-size="40">THE</text>
@@ -2362,11 +2441,14 @@ function renderMegaLogo() {
   // is sized to the mark's cap height, then stretched to its exact span with
   // textLength — so the lockup matches the logo in ANY font (Michroma today,
   // Obvia Expanded when installed). Re-runs when fonts finish loading.
+  // FREED/M/GROUP wrap the on-ring globe with the mark's measured clearances
+  const CL = 19.4, CR = 17.8; // D→globe and globe→M gaps measured off the mark
+  const mX = G.x + globeR + CR;
   const TGT = {
     mgThe:   { x: 113.1, len: 106.1, base: 419.7, cap: 28.8 },
-    mgFreed: { x: 113.1, len: 514.1, base: 538.7, cap: 68.8 },
-    mgM:     { x: 774.4, len: 112.0, base: 538.7, cap: 68.8 },
-    mgGroup: { x: 684.8, len: 201.6, base: 616.0, cap: 28.8 }
+    mgFreed: { x: 113.1, len: (G.x - globeR - CL) - 113.1, base: 538.7, cap: 68.8 },
+    mgM:     { x: mX, len: 112.0, base: 538.7, cap: 68.8 },
+    mgGroup: { x: mX + 112.0 - 201.6, len: 201.6, base: 616.0, cap: 28.8 }
   };
   const mctx = document.createElement("canvas").getContext("2d");
   const align = () => {
@@ -3827,6 +3909,49 @@ function initStars() {
 }
 
 /* =========================================================================
+   BLACK-HOLE SCRUB — scrolling through the 260vh hero pin drives --bh 0→1;
+   every [data-suck] element spirals into the vortex (and back on scroll-up)
+   ========================================================================= */
+function initBlackhole() {
+  const pin = $("#heroPin"), hero = $("#hero");
+  if (!pin || !hero || REDUCED) return;
+  const small = () => innerWidth < 761;
+  const els = $$("#hero [data-suck]");
+
+  // pull vector per element: its centre → the hole (hero centre), measured
+  // with the suck transform neutralised so vectors stay exact
+  const setVectors = () => {
+    if (small()) return;
+    const prev = hero.style.getPropertyValue("--bh");
+    hero.style.setProperty("--bh", "0");
+    const hr = hero.getBoundingClientRect();
+    const cx = hr.left + hr.width / 2, cy = hr.top + hr.height / 2;
+    els.forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--sx", (cx - (r.left + r.width / 2)).toFixed(1));
+      el.style.setProperty("--sy", (cy - (r.top + r.height / 2)).toFixed(1));
+      el.style.setProperty("--sr", String(i % 2 ? 14 + i * 3 : -(12 + i * 3)));
+      el.style.setProperty("--d", (i * 0.055).toFixed(3));
+    });
+    if (prev) hero.style.setProperty("--bh", prev);
+  };
+
+  const onScroll = rafScroll(() => {
+    if (small()) { hero.style.setProperty("--bh", "0"); return; }
+    const max = pin.offsetHeight - innerHeight;
+    const p = Math.min(1, Math.max(0, (window.scrollY - pin.offsetTop) / (max > 0 ? max : 1)));
+    hero.style.setProperty("--bh", p.toFixed(4));
+  });
+
+  setVectors();
+  onScroll();
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", () => { setVectors(); onScroll(); });
+  addEventListener("load", () => { setVectors(); onScroll(); }); // re-measure once fonts/layout settle
+  window.__ffBH = p => hero.style.setProperty("--bh", String(p)); // test hook
+}
+
+/* =========================================================================
    INTRO SEQUENCE — pink boot log → the system assembles → warp to the page
    ========================================================================= */
 function runIntro() {
@@ -3899,6 +4024,7 @@ safeBoot("cursor", initCursor);
 safeBoot("stars", initStars);
 safeBoot("hero", renderHero);
 safeBoot("megaLogo", renderMegaLogo);
+safeBoot("blackhole", initBlackhole); // after hero+logo render — it measures pull vectors
 safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
 safeBoot("journey", renderJourney);

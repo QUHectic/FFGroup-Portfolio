@@ -295,33 +295,88 @@ h1:focus,h2:focus{outline:none;}
   will-change:transform,opacity;
 }
 #hero [data-suck].reveal:not(.in){opacity:0!important;}
-#hero .star-field{opacity:calc(1 - var(--bh,0)*.45);}
+/* Real gravitational pull (engines with CSS trig): each element spirals
+   into the hole on a winding polar path — radius collapses quadratically,
+   angle winds with it — while stretching along its infall direction
+   (spaghettification) and motion-blurring as it accelerates. Everything is
+   a pure function of --bh, so scrolling back up replays it in reverse. */
+@supports (top: calc(cos(0rad) * 1px)){
+  #hero [data-suck]{
+    --pe2:calc(var(--pe)*var(--pe));
+    --thn:calc(var(--ang,0) + var(--spin,-2.2)*var(--pe2));
+    --rr:calc(var(--dist,0)*(1 - var(--pe2)));
+    transform:
+      translate(calc((cos(calc(var(--thn)*1rad))*var(--rr) - var(--x0,0))*1px),
+                calc((sin(calc(var(--thn)*1rad))*var(--rr) - var(--y0,0))*1px))
+      rotate(calc(var(--thn)*1rad))
+      scale(calc((1 - var(--pe2))*(1 + 1.2*var(--pe))),
+            calc((1 - var(--pe2))*(1 - .45*var(--pe))))
+      rotate(calc(var(--thn)*-1rad));
+    opacity:min(1,max(0,calc(1 - (var(--pe) - .6)*3)));
+    filter:blur(calc(max(0,(var(--pe) - .45))*10px));
+  }
+}
 
-/* the black hole itself — grows out of nothing, swirls, swallows, then dies */
+/* the space itself gets dragged: stars dim, contract and twist inward */
+#hero .star-field{
+  opacity:calc(1 - var(--bh,0)*.55);
+  transform:rotate(calc(var(--bh,0)*10deg)) scale(calc(1 - var(--bh,0)*.3));
+}
+
+/* THE BLACK HOLE — gravitational lensing halo, two counter-rotating
+   accretion disks, a crisp photon ring, a pure-black event horizon, and a
+   flash as it finally collapses on itself. Growth, spin-up and death are
+   all functions of --bh so the whole life-cycle scrubs in both directions. */
 .bh{
   position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;
-  width:44vmin;height:44vmin;margin:-22vmin 0 0 -22vmin;border-radius:50%;
-  transform:scale(min(1,calc(var(--bh,0)*2.4)));
-  opacity:min(1,max(0,min(calc(var(--bh,0)*3.2),calc((1 - var(--bh,0))*2.8))));
+  width:54vmin;height:54vmin;margin:-27vmin 0 0 -27vmin;
+  --g:min(1,calc(var(--bh,0)*2.6));
+  --die:min(1,max(0,calc((var(--bh,0) - .88)*8.3)));
+  transform:scale(calc(var(--g)*(1 - var(--die)*.92))) rotate(calc(var(--bh,0)*40deg));
+  opacity:min(1,max(0,calc(var(--bh,0)*3.4 - .12)));
 }
-.bh i{position:absolute;inset:0;border-radius:50%;display:block;}
-.bh-swirl{
+.bh i{position:absolute;border-radius:50%;display:block;}
+.bh-lens{
+  inset:-14%;
+  background:radial-gradient(circle, transparent 34%, rgba(255,61,154,.14) 46%, transparent 58%);
+  filter:blur(10px);
+}
+.bh-disk{
+  inset:6%;
   background:conic-gradient(from 0deg,
-    transparent 0 40deg, rgba(255,61,154,.5) 80deg, transparent 130deg,
-    rgba(56,169,255,.35) 190deg, transparent 250deg,
-    rgba(255,61,154,.4) 300deg, transparent 360deg);
-  filter:blur(14px);
-  animation:bhSpin 7s linear infinite;
+    rgba(255,61,154,0) 0deg, rgba(255,116,184,.85) 40deg, rgba(255,61,154,.15) 90deg,
+    rgba(56,169,255,.5) 140deg, rgba(255,61,154,.05) 190deg,
+    rgba(255,61,154,.75) 250deg, rgba(198,15,110,.2) 300deg, rgba(255,61,154,0) 360deg);
+  -webkit-mask:radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 70%);
+  mask:radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 70%);
+  filter:blur(3px);
+  animation:bhSpin 3.2s linear infinite;
 }
-.bh-ring{
-  inset:18%;
-  box-shadow:0 0 40px 6px rgba(255,61,154,.55), inset 0 0 30px 4px rgba(255,61,154,.35);
-  background:radial-gradient(circle, transparent 52%, rgba(255,116,184,.25) 60%, transparent 68%);
-  animation:bhSpin 11s linear infinite reverse;
+.bh-disk2{
+  inset:-2%;
+  background:conic-gradient(from 180deg,
+    transparent 0 30deg, rgba(56,169,255,.35) 70deg, transparent 120deg,
+    rgba(255,61,154,.45) 220deg, transparent 300deg);
+  -webkit-mask:radial-gradient(circle, transparent 52%, #000 60%, #000 68%, transparent 76%);
+  mask:radial-gradient(circle, transparent 52%, #000 60%, #000 68%, transparent 76%);
+  filter:blur(6px);
+  animation:bhSpin 5.6s linear infinite reverse;
+}
+.bh-photon{
+  inset:31%;
+  box-shadow:0 0 18px 2px rgba(255,190,225,.9), 0 0 46px 10px rgba(255,61,154,.5),
+             inset 0 0 14px 2px rgba(255,255,255,.65);
 }
 .bh-core{
-  inset:26%;
-  background:radial-gradient(circle, #000 0 55%, rgba(7,7,13,.9) 68%, transparent 75%);
+  inset:33%;
+  background:radial-gradient(circle, #000 58%, #05050a 74%, transparent 88%);
+  box-shadow:0 0 26px 8px rgba(0,0,0,.85);
+}
+.bh-flash{
+  inset:20%;
+  background:radial-gradient(circle, rgba(255,255,255,.95), rgba(255,61,154,.4) 55%, transparent 75%);
+  filter:blur(4px);
+  opacity:calc(var(--die)*(1 - var(--die))*4);
 }
 @keyframes bhSpin{to{transform:rotate(360deg);}}
 
@@ -329,15 +384,17 @@ h1:focus,h2:focus{outline:none;}
   .hero-pin{height:auto;}
   .hero{position:relative;min-height:0;display:block;}
   .bh{display:none;}
-  #hero [data-suck]{transform:none;opacity:1;}
+  #hero [data-suck]{transform:none;opacity:1;filter:none;}
   #hero [data-suck].reveal:not(.in){opacity:0!important;}
+  #hero .star-field{transform:none;opacity:1;}
 }
 @media (prefers-reduced-motion:reduce){
   .hero-pin{height:auto;}
   .hero{position:relative;min-height:0;display:block;}
   .bh{display:none;}
-  #hero [data-suck]{transform:none;opacity:1;}
+  #hero [data-suck]{transform:none;opacity:1;filter:none;}
   #hero [data-suck].reveal:not(.in){opacity:0!important;}
+  #hero .star-field{transform:none;opacity:1;}
 }
 .blobs{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .blob{
@@ -1219,13 +1276,13 @@ main{transform-origin:50% 18vh;}
 /* hero manifests — ring sweeps in, planets pop, words and copy rise —
    triggered only when the boot sequence completes naturally */
 #hero.manifest #mgRing{animation:mfRing 1s var(--ease-out) .08s backwards;transform-origin:499.7px 502.9px;transform-box:view-box;}
-#hero.manifest .mg-flow{animation:mgFlow 7s linear infinite,mfFade .9s ease 1.05s backwards;}
+#hero.manifest .mg-ess{animation:mgEss 7.5s linear infinite,mfFade .9s ease 1.05s backwards;}
 #hero.manifest .mg-pop{animation:mfPop .55s var(--ease-out) backwards;animation-delay:var(--mfd,.6s);}
 #hero.manifest .mg-text text{animation:mfIn .7s var(--ease-out) backwards;}
-#hero.manifest .mg-text text:nth-of-type(1){animation-delay:.55s;}
-#hero.manifest .mg-text text:nth-of-type(2){animation-delay:.68s;}
-#hero.manifest .mg-text text:nth-of-type(3){animation-delay:.81s;}
-#hero.manifest .mg-text text:nth-of-type(4){animation-delay:.94s;}
+#hero.manifest .mg-word:nth-of-type(1) text{animation-delay:.55s;}
+#hero.manifest .mg-word:nth-of-type(2) text{animation-delay:.68s;}
+#hero.manifest .mg-word:nth-of-type(3) text{animation-delay:.81s;}
+#hero.manifest .mg-word:nth-of-type(4) text{animation-delay:.94s;}
 #hero.manifest .star-field{animation:mfFade 1.6s ease .25s backwards;}
 #hero.manifest .hero-right>*{animation:mfIn .65s var(--ease-out) backwards;}
 #hero.manifest .hero-right>*:nth-child(1){animation-delay:1.05s;}
@@ -1260,14 +1317,18 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   100%{offset-distance:100%; transform:scale(.07); opacity:0;}
 }
 
-/* white ESSENCE drifting inside the ring — one wide, heavily blurred breath
-   of light, no visible line */
-.mg-flow{
-  fill:none;stroke:rgba(255,255,255,.32);stroke-width:10;stroke-linecap:round;
-  stroke-dasharray:26 74;filter:blur(9px);pointer-events:none;
-  animation:mgFlow 7s linear infinite;
+/* white ESSENCE inside the ring — two soft comet-shaped glows (blurred
+   ellipses aligned to the path tangent) drifting along the tape; no line */
+.mg-ess{offset-rotate:auto;animation:mgEss 7.5s linear infinite;pointer-events:none;will-change:transform;}
+.mg-ess.e2{animation-delay:-3.75s,1.05s;}
+.mg-ess ellipse{fill:rgba(255,255,255,.30);filter:blur(7px);}
+.mg-ess.e2 ellipse{fill:rgba(255,255,255,.20);}
+@keyframes mgEss{
+  0%{offset-distance:0%;opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{offset-distance:100%;opacity:0;}
 }
-@keyframes mgFlow{from{stroke-dashoffset:100;}to{stroke-dashoffset:0;}}
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
 .star-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -1434,12 +1495,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="blobs" id="blobs" aria-hidden="true">
       <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     </div>
-    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-swirl"></i><i class="bh-ring"></i><i class="bh-core"></i></div>
+    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-lens"></i><i class="bh-disk"></i><i class="bh-disk2"></i><i class="bh-photon"></i><i class="bh-core"></i><i class="bh-flash"></i></div>
     <div class="wrap hero-inner">
       <div class="mega-stage reveal" id="megaLogo" data-suck aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
-        <h1 class="reveal d1" data-suck>£42k to £1.2M in 24 months.<br><span class="grad-text">Next stop: £72m.</span></h1>
-        <p class="lede reveal d2" id="heroBlurb" data-suck></p>
+        <h1 class="reveal d1" data-suck>From a rusty fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -2187,7 +2247,6 @@ function initChrome() {
    HERO — KPIs with sparklines
    ========================================================================= */
 function renderHero() {
-  $("#heroBlurb").textContent = FG_DATA.company.heroBlurb;
   $("#parentBlurb").textContent = FG_DATA.company.parentBlurb;
 
   $("#heroKpis").innerHTML = FG_DATA.company.kpis.map((k, i) => {
@@ -2405,13 +2464,14 @@ function renderMegaLogo() {
       <g id="mgRing">
         <path class="mg-glow" d="${tape}" fill="url(#megaPink)"/>
         <path d="${tape}" fill="url(#megaPink)"/>
-        <path class="mg-flow" d="${trackD}" pathLength="100"/>
+        ${MOVE ? `<g class="mg-ess e1" style="offset-path:path('${trackD}')"><ellipse rx="36" ry="5"/></g>
+        <g class="mg-ess e2" style="offset-path:path('${trackD}')"><ellipse rx="26" ry="4"/></g>` : ""}
       </g>
       <g id="mgText" class="mg-text">
-        <text id="mgThe" x="113" y="420" font-size="40">THE</text>
-        <text id="mgFreed" x="113" y="539" font-size="95">FREED</text>
-        <text id="mgM" x="774" y="539" font-size="95">M</text>
-        <text id="mgGroup" x="685" y="616" font-size="40">GROUP</text>
+        <g class="mg-word"><text id="mgThe" font-size="40">THE</text></g>
+        <g class="mg-word"><text id="mgFreed" font-size="95">FREED</text></g>
+        <g class="mg-word"><text id="mgM" font-size="95">M</text></g>
+        <g class="mg-word"><text id="mgGroup" font-size="40">GROUP</text></g>
       </g>
       <g id="mgBodies">
         ${planets}
@@ -2456,14 +2516,20 @@ function renderMegaLogo() {
       Object.keys(TGT).forEach(id => {
         const el = $("#" + id, stage), t = TGT[id];
         // ink cap height via canvas metrics — SVG getBBox() on <text> returns
-        // the em box (ascent+descent), which would size the caps ~30% small
+        // the em box (ascent+descent), which would size the caps ~30% small.
+        // The exact span comes from a geometric scale on the wrapper <g>, NOT
+        // SVG textLength: Chromium's spacingAndGlyphs pass paints phantom
+        // fragments of the last glyph when combined with synthetic bold.
         mctx.font = "700 100px " + getComputedStyle(el).fontFamily;
-        const capH = mctx.measureText(el.textContent).actualBoundingBoxAscent || 72;
-        el.setAttribute("font-size", (100 * t.cap / capH).toFixed(2));
-        el.setAttribute("x", t.x);
-        el.setAttribute("y", t.base);
-        el.setAttribute("textLength", t.len);
-        el.setAttribute("lengthAdjust", "spacingAndGlyphs");
+        const m = mctx.measureText(el.textContent);
+        const capH = m.actualBoundingBoxAscent || 72;
+        const fs = 100 * t.cap / capH;
+        el.setAttribute("font-size", fs.toFixed(2));
+        el.setAttribute("x", 0);
+        el.setAttribute("y", 0);
+        const natural = m.width * fs / 100;
+        el.parentNode.setAttribute("transform",
+          `translate(${t.x} ${t.base}) scale(${(t.len / (natural || 1)).toFixed(4)} 1)`);
       });
     } catch (e) { /* not rendered yet */ }
   };
@@ -3928,10 +3994,17 @@ function initBlackhole() {
     const cx = hr.left + hr.width / 2, cy = hr.top + hr.height / 2;
     els.forEach((el, i) => {
       const r = el.getBoundingClientRect();
-      el.style.setProperty("--sx", (cx - (r.left + r.width / 2)).toFixed(1));
-      el.style.setProperty("--sy", (cy - (r.top + r.height / 2)).toFixed(1));
+      const dx = (r.left + r.width / 2) - cx, dy = (r.top + r.height / 2) - cy;
+      el.style.setProperty("--sx", (-dx).toFixed(1));
+      el.style.setProperty("--sy", (-dy).toFixed(1));
       el.style.setProperty("--sr", String(i % 2 ? 14 + i * 3 : -(12 + i * 3)));
       el.style.setProperty("--d", (i * 0.055).toFixed(3));
+      // polar form for the spiral infall (CSS-trig engines)
+      el.style.setProperty("--dist", Math.hypot(dx, dy).toFixed(1));
+      el.style.setProperty("--ang", Math.atan2(dy, dx).toFixed(4));
+      el.style.setProperty("--x0", dx.toFixed(1));
+      el.style.setProperty("--y0", dy.toFixed(1));
+      el.style.setProperty("--spin", (-(2.0 + i * 0.45)).toFixed(2));
     });
     if (prev) hero.style.setProperty("--bh", prev);
   };

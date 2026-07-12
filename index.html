@@ -277,8 +277,8 @@ h1:focus,h2:focus{outline:none;}
   min-height:100vh;display:flex;align-items:center;
   padding:84px 0 60px;
 }
-.hero .wrap{flex:1;}
-.hero .mega-stage{max-width:min(780px,80vh);}
+.hero .wrap{flex:1;max-width:1320px;}
+.hero .mega-stage{max-width:min(880px,86vh);}
 
 /* --bh 0→1 (set from scroll) sucks every hero element into the black hole:
    each element carries its own pull vector (--sx/--sy, set in JS), a spin
@@ -457,11 +457,11 @@ html.spx section#team{background:var(--bg-soft);}
 }
 @media (prefers-reduced-motion:reduce){.blob{animation:none;}}
 
-.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.16fr .84fr;gap:min(7vw,88px);align-items:center;}
-.hero h1{font-size:clamp(2.3rem,4.6vw,3.6rem);}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.24fr .76fr;gap:min(9vw,128px);align-items:center;}
+.hero h1{font-size:clamp(1.28rem,1.95vw,1.66rem);font-weight:650;white-space:nowrap;letter-spacing:-.01em;}
 .hero .lede{color:var(--ink-dim);font-size:1.08rem;max-width:54ch;}
 .hero-right{display:flex;flex-direction:column;}
-.hero-right h1{font-size:clamp(1.9rem,3vw,2.6rem);}
+.hero-right h1{font-size:clamp(1.28rem,1.95vw,1.66rem);}
 .hero-right .kpis{margin-top:26px;}
 
 /* ==========================================================================
@@ -1571,6 +1571,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
    ========================================================================== */
 @media (max-width:1020px){
   .hero-inner{grid-template-columns:1fr;}
+  .hero h1{white-space:normal;font-size:clamp(1.5rem,6vw,2rem);}
   .group-grid{grid-template-columns:1fr;}
   .proj-grid{grid-template-columns:1fr;}
   .h35-grid{grid-template-columns:1fr;}
@@ -2787,9 +2788,9 @@ function renderMegaLogo() {
   // ---- bodies at their logo stations (r = static-fallback sizes, measured
   // from GroupLogo.png; all coordinates are the source pixels x1000/1875)
   const MG = {
-    form:  { t: 253.0, r: 40 },   // green · top right
-    storm: { t: 190.4, r: 17 },   // ember · upper left
-    fly:   { t: 67.7,  r: 31 }    // blue  · lower left
+    form:  { t: 253.0, r: 40, dur: 46 },   // green · top right
+    storm: { t: 190.4, r: 17, dur: 72 },   // ember · upper left
+    fly:   { t: 67.7,  r: 31, dur: 30 }    // blue  · lower left
   };
   // moving planets share ONE base radius; the mgOrbit keyframes scale it by
   // ring position (thin tails → small, thick mid → big) — the same law the
@@ -2885,7 +2886,9 @@ function renderMegaLogo() {
       return best / NN;
     };
     $$(".mg-orb", stage).forEach(b => {
-      b.style.animationDelay = (-phaseOf(pt(MG[b.dataset.key].t)) * MG_ORBIT).toFixed(2) + "s";
+      const g2 = MG[b.dataset.key];
+      b.style.animationDuration = g2.dur + "s"; // varied lap times keep them spread out
+      b.style.animationDelay = (-phaseOf(pt(g2.t)) * g2.dur).toFixed(2) + "s";
     });
   }
   // Layout measured off the real GroupLogo.png (coords x1000/1875): each word

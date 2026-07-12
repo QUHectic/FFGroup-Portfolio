@@ -290,7 +290,7 @@ h1:focus,h2:focus{outline:none;}
                       calc(var(--sy,0)*var(--pe)*var(--pe)*1px))
             rotate(calc(var(--sr,0)*var(--pe)*1deg))
             scale(max(.001,calc(1 - var(--pe)*var(--pe))));
-  opacity:min(1,max(0,calc(1 - (var(--pe) - .55)*2.6)));
+  opacity:min(1,max(0,calc(1 - (var(--pe) - .72)*3.6)));
   transition:none;
   will-change:transform,opacity;
 }
@@ -312,7 +312,7 @@ h1:focus,h2:focus{outline:none;}
       scale(calc((1 - var(--pe2))*(1 + 1.2*var(--pe))),
             calc((1 - var(--pe2))*(1 - .45*var(--pe))))
       rotate(calc(var(--thn)*-1rad));
-    opacity:min(1,max(0,calc(1 - (var(--pe) - .6)*3)));
+    opacity:min(1,max(0,calc(1 - (var(--pe) - .75)*4)));
     filter:blur(calc(max(0,(var(--pe) - .45))*10px)) saturate(calc(1 + var(--pe)*.6)) brightness(calc(1 + var(--pe)*.35));
   }
 }
@@ -339,79 +339,16 @@ h1:focus,h2:focus{outline:none;}
   opacity:min(1,max(0,calc(1 - (var(--bh,0) - .94)*16)));
 }
 
-/* THE BLACK HOLE — gravitational lensing halo, two counter-rotating
-   accretion disks, a crisp photon ring, a pure-black event horizon, and a
-   flash as it finally collapses on itself. Growth, spin-up and death are
-   all functions of --bh so the whole life-cycle scrubs in both directions. */
-.bh{
-  position:absolute;left:49.97%;top:50.29%;z-index:2;pointer-events:none;
-  width:42%;aspect-ratio:1;
-  --gg:min(1,calc(var(--bh,0)*2.2));
-  --g:calc(var(--gg)*var(--gg)*(3 - 2*var(--gg)));
-  --die:min(1,max(0,calc((var(--bh,0) - .88)*8.3)));
-  transform:translate(-50%,-50%) scale(calc(var(--g)*(1 - var(--die)*.92))) rotate(calc(var(--bh,0)*40deg));
-  opacity:min(1,max(0,calc(var(--bh,0)*3.4 - .12)));
+/* THE RING FEEDS — no separate hole: while consuming, white light
+   circulates the tape at speed and the ring's neon glow surges */
+#hero .mg-glow{opacity:calc(.38 + var(--bh,0)*.55);}
+.mg-feed{
+  fill:none;stroke:rgba(255,255,255,.85);stroke-width:3.4;stroke-linecap:round;
+  stroke-dasharray:7 18;filter:blur(1.2px);
+  opacity:calc(var(--bh,0)*var(--bh,0)*.95);
+  animation:mgFeed 1.6s linear infinite;
 }
-.bh i{position:absolute;border-radius:50%;display:block;}
-.bh-lens{
-  inset:-14%;
-  background:radial-gradient(circle, transparent 34%, rgba(255,61,154,.14) 46%, transparent 58%);
-  filter:blur(10px);
-}
-.bh-disk{
-  inset:6%;
-  background:conic-gradient(from 0deg,
-    rgba(255,61,154,0) 0deg, rgba(255,116,184,.85) 40deg, rgba(255,61,154,.15) 90deg,
-    rgba(56,169,255,.5) 140deg, rgba(255,61,154,.05) 190deg,
-    rgba(255,61,154,.75) 250deg, rgba(198,15,110,.2) 300deg, rgba(255,61,154,0) 360deg);
-  -webkit-mask:radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 70%);
-  mask:radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 70%);
-  filter:blur(3px);
-  animation:bhSpin 3.2s linear infinite;
-}
-.bh-disk2{
-  inset:-2%;
-  background:conic-gradient(from 180deg,
-    transparent 0 30deg, rgba(56,169,255,.35) 70deg, transparent 120deg,
-    rgba(255,61,154,.45) 220deg, transparent 300deg);
-  -webkit-mask:radial-gradient(circle, transparent 52%, #000 60%, #000 68%, transparent 76%);
-  mask:radial-gradient(circle, transparent 52%, #000 60%, #000 68%, transparent 76%);
-  filter:blur(6px);
-  animation:bhSpin 5.6s linear infinite reverse;
-}
-.bh-photon{
-  inset:31%;
-  box-shadow:0 0 18px 2px rgba(255,190,225,.9), 0 0 46px 10px rgba(255,61,154,.5),
-             inset 0 0 14px 2px rgba(255,255,255,.65);
-}
-.bh-core{
-  inset:33%;
-  background:radial-gradient(circle, #000 58%, #05050a 74%, transparent 88%);
-  box-shadow:0 0 26px 8px rgba(0,0,0,.85);
-}
-.bh-flash{
-  inset:20%;
-  background:radial-gradient(circle, rgba(255,255,255,.95), rgba(255,61,154,.4) 55%, transparent 75%);
-  filter:blur(4px);
-  opacity:calc(var(--die)*(1 - var(--die))*4);
-}
-@keyframes bhSpin{to{transform:rotate(360deg);}}
-
-/* matter falling in — glowing motes spiral down the gravity well */
-.bh .mote{
-  position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;
-  border-radius:50%;background:rgba(255,116,184,.95);
-  box-shadow:0 0 6px 1px rgba(255,61,154,.7);
-  opacity:0;
-  animation:moteFall var(--mt,3.4s) linear infinite;
-  animation-delay:var(--md,0s);
-}
-@keyframes moteFall{
-  0%{transform:rotate(var(--ma,0deg)) translateX(30vmin) scale(1);opacity:0;}
-  10%{opacity:.9;}
-  78%{opacity:.85;}
-  100%{transform:rotate(calc(var(--ma,0deg) + 300deg)) translateX(2.5vmin) scale(.3);opacity:0;}
-}
+@keyframes mgFeed{from{stroke-dashoffset:100;}to{stroke-dashoffset:0;}}
 
 /* space vignette — the hero's edges fall into shadow as the hole grows */
 .bh-vig{
@@ -436,7 +373,7 @@ h1:focus,h2:focus{outline:none;}
 @media (max-width:760px){
   .hero-pin{height:auto;}
   .hero{position:relative;min-height:0;display:block;}
-  .bh,.bh-vig{display:none;}
+  .bh-vig{display:none;}
   #hero [data-suck]{transform:none;opacity:1;filter:none;}
   #hero [data-suck].reveal:not(.in){opacity:0!important;}
   #hero .star-field{transform:none;opacity:1;}
@@ -444,7 +381,7 @@ h1:focus,h2:focus{outline:none;}
 @media (prefers-reduced-motion:reduce){
   .hero-pin{height:auto;}
   .hero{position:relative;min-height:0;display:block;}
-  .bh,.bh-vig{display:none;}
+  .bh-vig{display:none;}
   #hero [data-suck]{transform:none;opacity:1;filter:none;}
   #hero [data-suck].reveal:not(.in){opacity:0!important;}
   #hero .star-field{transform:none;opacity:1;}
@@ -456,13 +393,31 @@ h1:focus,h2:focus{outline:none;}
   section[data-sec] > .wrap{
     animation:secRise linear both;
     animation-timeline:view();
-    animation-range:entry 5% entry 60%;
+    animation-range:entry 0% entry 58%;
+    transform-origin:50% 0%;
+  }
+  section[data-sec]:nth-of-type(even) > .wrap{animation-name:secRiseAlt;}
+  section[data-sec] .sec-head{
+    animation:headIn linear both;
+    animation-timeline:view();
+    animation-range:entry 8% entry 46%;
   }
   @media (prefers-reduced-motion:reduce){
-    section[data-sec] > .wrap{animation:none;}
+    section[data-sec] > .wrap,section[data-sec] .sec-head{animation:none;}
   }
 }
-@keyframes secRise{from{opacity:.3;transform:translateY(46px) scale(.986);}to{opacity:1;transform:none;}}
+@keyframes secRise{
+  from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) scale(.965);}
+  to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) scale(1);}
+}
+@keyframes secRiseAlt{
+  from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
+  to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) translateX(0) scale(1);}
+}
+@keyframes headIn{
+  from{opacity:0;transform:translateY(34px);letter-spacing:.03em;}
+  to{opacity:1;transform:none;letter-spacing:normal;}
+}
 .blobs{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .blob{
   position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;
@@ -686,7 +641,8 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 /* future limited aspirations — dashed "ghost company" chips */
 .future-strip{margin-top:46px;}
 .future-strip h3{font-size:1.25rem;margin:8px 0 18px;letter-spacing:-.01em;}
-.fs-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+.fs-row{display:grid;grid-template-columns:1fr;gap:12px;}
+.group-grid .future-strip{margin-top:0;}
 .fs-chip{
   border:1px dashed var(--line);border-radius:16px;padding:14px 15px;
   background:var(--card);display:flex;gap:10px;align-items:flex-start;
@@ -703,14 +659,12 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
   padding-inline:max(24px, calc(50vw - 730px));
 }
 .gp-graph svg{width:100%;max-width:1460px;height:auto;display:block;margin:0 auto;}
-#gmArr path{fill:var(--line);}
-#gmArrP path{fill:var(--pink);}
 .gg-hold rect{fill:var(--bg);stroke:var(--line);stroke-width:1.5;}
 .gg-t1{font-size:17px;font-weight:800;fill:var(--ink);letter-spacing:.04em;}
 .gg-t2{font-size:11px;fill:var(--ink-dim);}
 .gg-minis rect{fill:var(--card);stroke:var(--line);}
 .gg-minis text{font-size:9px;font-weight:700;fill:var(--ink-dim);letter-spacing:.09em;}
-.gg-own{stroke:var(--ink-dim);stroke-width:1.8;fill:none;}
+.gg-own{stroke:var(--ink);stroke-width:2;fill:none;opacity:.8;}
 .gg-vault rect{fill:var(--bg);stroke:var(--line);stroke-width:1.5;}
 .gg-vault .gg-pill rect{fill:var(--card);stroke:var(--line);stroke-width:1;}
 .gg-vt{font-size:13px;font-weight:800;letter-spacing:.13em;fill:var(--ink);}
@@ -718,24 +672,31 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 .gg-pill text{font-size:11.5px;font-weight:700;fill:var(--ink);}
 .gg-more rect{stroke-dasharray:4 4;}
 .gg-more text{fill:var(--ink-dim);font-weight:600;}
-.gg-links path{fill:none;stroke:var(--line);stroke-width:1.8;}
-.gg-dist path{fill:none;stroke:var(--line);stroke-width:1.4;stroke-dasharray:2.5 5;}
-.gg-roy{fill:none;stroke:var(--pink);stroke-width:1.8;stroke-dasharray:6 6;}
+.gg-links path{fill:none;stroke:var(--ink-dim);stroke-width:2.2;opacity:.8;}
+.gg-dist path{fill:none;stroke:var(--ink-dim);stroke-width:1.7;stroke-dasharray:2.5 5;opacity:.6;}
+.gg-roy{fill:none;stroke:var(--pink);stroke-width:2.4;stroke-dasharray:6 6;}
 .gg-roylab{font-size:11px;font-weight:700;fill:var(--pink);}
-.gg-lab{font-size:10.5px;fill:var(--ink-dim);}
+.gg-lab{font-size:11.5px;font-weight:600;fill:var(--ink-dim);}
 .gg-card rect{fill:var(--card);stroke:var(--line);stroke-width:1.5;}
 .gg-cn{font-size:13.5px;font-weight:800;fill:var(--ink);letter-spacing:.03em;}
 .gg-cr{font-size:10.5px;fill:var(--ink-dim);}
 .gg-ta{font-size:10px;font-style:italic;fill:var(--pink);}
 .gg-ch{font-size:9.5px;fill:var(--ink-dim);letter-spacing:.02em;}
+.gg-icobg{fill:var(--card);stroke:var(--line);}
+@supports (fill:color-mix(in srgb,red 5%,blue)){
+  .gg-icobg{fill:color-mix(in srgb, currentColor 10%, var(--card));stroke:color-mix(in srgb, currentColor 32%, var(--line));}
+}
+.gg-ico{color:inherit;}
+.gg-lock rect{fill:var(--ink-dim);}
+.gg-lock path{stroke:var(--ink-dim);stroke-width:1.6;}
 .gg-status rect{fill:var(--bg);stroke:var(--line);}
 .gg-status text{font-size:9px;font-weight:800;letter-spacing:.1em;fill:var(--ink-dim);}
 .gg-live rect{stroke:var(--pink);}
 .gg-live text{fill:var(--pink);}
 .gg-legend path{stroke-width:2;fill:none;}
 .gg-legend .lg1{stroke:var(--ink-dim);}
-.gg-legend .lg2{stroke:var(--line);}
-.gg-legend .lg3{stroke:var(--line);stroke-dasharray:2.5 5;}
+.gg-legend .lg2{stroke:var(--ink-dim);opacity:.8;}
+.gg-legend .lg3{stroke:var(--ink-dim);stroke-dasharray:2.5 5;opacity:.6;}
 .gg-legend .lg4{stroke:var(--pink);stroke-dasharray:6 6;}
 .gg-legend text{font-size:10px;fill:var(--ink-dim);}
 @media (max-width:760px){
@@ -1496,12 +1457,16 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
 .star-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .star-layer{position:absolute;top:0;left:0;width:2px;height:2px;border-radius:50%;background:transparent;}
-.sl1{animation:twinkA 6s ease-in-out infinite alternate;}
-.sl2{animation:twinkB 8.5s ease-in-out infinite alternate;}
-.sl3{animation:twinkC 11s ease-in-out infinite alternate;}
-@keyframes twinkA{from{opacity:.35;transform:translate3d(0,0,0);}to{opacity:.85;transform:translate3d(0,-10px,0);}}
-@keyframes twinkB{from{opacity:.55;transform:translate3d(0,0,0);}to{opacity:1;transform:translate3d(0,-16px,0);}}
-@keyframes twinkC{from{opacity:.4;transform:translate3d(0,0,0);}to{opacity:.95;transform:translate3d(0,-22px,0);}}
+.sl1{--dr:30px;animation:starOrbit 120s linear infinite, twinkA 6s ease-in-out infinite alternate;}
+.sl2{--dr:54px;animation:starOrbit 170s linear infinite reverse, twinkB 8.5s ease-in-out infinite alternate;}
+.sl3{--dr:84px;animation:starOrbit 230s linear infinite, twinkC 11s ease-in-out infinite alternate;}
+@keyframes starOrbit{
+  from{transform:rotate(0turn) translateX(var(--dr,40px)) rotate(0turn);}
+  to{transform:rotate(1turn) translateX(var(--dr,40px)) rotate(-1turn);}
+}
+@keyframes twinkA{from{opacity:.35;}to{opacity:.85;}}
+@keyframes twinkB{from{opacity:.55;}to{opacity:1;}}
+@keyframes twinkC{from{opacity:.4;}to{opacity:.95;}}
 .shoot{
   position:absolute;width:130px;height:2px;border-radius:99px;
   background:linear-gradient(90deg,#fff,rgba(255,255,255,0));
@@ -1662,7 +1627,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap hero-inner">
       <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
-        <h1 class="reveal d1" data-suck>From a rusty fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
+        <h1 class="reveal d1" data-suck>From one rusty fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -1682,8 +1647,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="gp-graph reveal" role="img" aria-label="The Freedom Group structure — Holdings owns the brand and IP vault, licenses it to the three operating companies, and receives royalties back every quarter">
         <svg viewBox="0 0 1160 650">
           <defs>
-            <marker id="gmArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z"/></marker>
-            <marker id="gmArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="gmArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="gmArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
           </defs>
           <g class="gg-legend" transform="translate(24,48)">
             <path class="lg1" d="M0 0 h26"/><text x="34" y="4">ownership</text>
@@ -1720,7 +1685,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <text class="gg-lab" x="769" y="82" text-anchor="middle">holds</text>
           <g class="gg-vault">
             <rect x="830" y="36" width="310" height="230" rx="18"/>
-            <text class="gg-vt" x="985" y="64" text-anchor="middle">BRAND &amp; IP VAULT</text>
+            <g class="gg-lock" transform="translate(886,50)"><path d="M-4 6 v-4 a4 4 0 0 1 8 0 v4" fill="none"/><rect x="-6" y="6" width="12" height="9" rx="2"/></g>
+            <text class="gg-vt" x="994" y="64" text-anchor="middle">BRAND &amp; IP VAULT</text>
             <g class="gg-pill" transform="translate(848,80)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--ember)"/><text x="26" y="22">FireStorm™</text></g>
             <g class="gg-pill" transform="translate(994,80)"><rect width="130" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--blue)"/><text x="26" y="22">Voltz</text></g>
             <g class="gg-pill" transform="translate(848,124)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--mint)"/><text x="26" y="22">Kunegry</text></g>
@@ -1731,28 +1697,37 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           </g>
           <g class="gg-card" transform="translate(20,488)">
             <rect width="350" height="132" rx="18"/>
-            <circle cx="26" cy="30" r="5" fill="var(--pink)"/>
-            <text class="gg-cn" x="42" y="35">FREEDOM GLOBAL LTD</text>
-            <g class="gg-status gg-live" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">FLAGSHIP</text></g>
-            <text class="gg-cr" x="26" y="64">Consumer D2C division — runs the group's online stores</text>
-            <text class="gg-ta" x="26" y="86">currently trading as Freedom Fire &amp; Safety Limited</text>
-            <text class="gg-ch" x="26" y="114">eBay · Amazon · Shopify · Temu · TikTok · OnBuy</text>
+            <g style="color:var(--pink)">
+              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
+              <g class="gg-ico" id="ggIcoGlobal" transform="translate(26,28) scale(1.18)"></g>
+            </g>
+            <text class="gg-cn" x="78" y="38">FREEDOM GLOBAL LTD</text>
+            <g class="gg-status gg-live" transform="translate(252,92)"><rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">FLAGSHIP</text></g>
+            <text class="gg-cr" x="78" y="60">Consumer D2C division — the group's online stores</text>
+            <text class="gg-ta" x="78" y="79">currently trading as Freedom Fire &amp; Safety Limited</text>
+            <text class="gg-ch" x="18" y="114">eBay · Amazon · Shopify · Temu · TikTok</text>
           </g>
           <g class="gg-card" transform="translate(405,488)">
             <rect width="350" height="132" rx="18"/>
-            <circle cx="26" cy="30" r="5" fill="var(--mint)"/>
-            <text class="gg-cn" x="42" y="35">FREEDOM FACILITIES LTD</text>
-            <g class="gg-status" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">IN WORKS</text></g>
-            <text class="gg-cr" x="26" y="64">Facilities-management arm — servicing &amp; maintenance</text>
-            <text class="gg-ch" x="26" y="114">on-site servicing · PPE · drone · PAT · FM</text>
+            <g style="color:var(--mint)">
+              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
+              <g class="gg-ico" id="ggIcoFac" transform="translate(26,28) scale(1.18)"></g>
+            </g>
+            <text class="gg-cn" x="78" y="38">FREEDOM FACILITIES LTD</text>
+            <g class="gg-status" transform="translate(224,92)"><rect width="112" height="24" rx="12"/><text x="56" y="16" text-anchor="middle">IN WORKS · 2027</text></g>
+            <text class="gg-cr" x="78" y="60">Facilities-management arm — servicing &amp; maintenance</text>
+            <text class="gg-ch" x="18" y="114">servicing · PPE · drone · PAT · FM</text>
           </g>
           <g class="gg-card" transform="translate(790,488)">
             <rect width="350" height="132" rx="18"/>
-            <circle cx="26" cy="30" r="5" fill="var(--blue)"/>
-            <text class="gg-cn" x="42" y="35">FREEDOM DISTRIBUTION LTD</text>
-            <g class="gg-status" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">IN WORKS</text></g>
-            <text class="gg-cr" x="26" y="64">B2B trade division — wholesale &amp; retail distribution</text>
-            <text class="gg-ch" x="26" y="114">national retailers · dealer central · trade counters</text>
+            <g style="color:var(--blue)">
+              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
+              <g class="gg-ico" id="ggIcoDist" transform="translate(26,28) scale(1.18)"></g>
+            </g>
+            <text class="gg-cn" x="78" y="38">FREEDOM DISTRIBUTION LTD</text>
+            <g class="gg-status" transform="translate(224,92)"><rect width="112" height="24" rx="12"/><text x="56" y="16" text-anchor="middle">IN WORKS · 2028</text></g>
+            <text class="gg-cr" x="78" y="60">B2B trade division — wholesale &amp; retail distribution</text>
+            <text class="gg-ch" x="18" y="114">retailers · dealer central · trade counters</text>
           </g>
         </svg>
       </div>
@@ -1766,14 +1741,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <p style="margin:22px 0 0;color:var(--ink-dim);" id="groupBlurb"></p>
           <p style="margin:12px 0 0;color:var(--ink-dim);" id="parentBlurb"></p>
         </div>
-        <div class="brand-stack" id="brandStack"></div>
+        <div class="future-strip reveal" aria-label="Future limited aspirations">
+          <span class="kicker">Future limited aspirations</span>
+          <h3>Registered next. Launched when the engine's ready.</h3>
+          <div class="fs-row" id="futureRow"></div>
+        </div>
       </div>
 
-      <div class="future-strip reveal" aria-label="Future limited aspirations">
-        <span class="kicker">Future limited aspirations</span>
-        <h3>Registered next. Launched when the engine's ready.</h3>
-        <div class="fs-row" id="futureRow"></div>
-      </div>
     </div>
   </section>
 
@@ -2537,15 +2511,15 @@ const ICONS = {
   building: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 20.5V8.7l6-3.2v15M10 20.5V10.9l7-2.2v11.8M3 20.5h18" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 10.9l7-2.2v11.8h-7z" fill="currentColor" opacity=".16"/><path d="M6.6 9.9v1.6M6.6 13.1v1.6M13.4 12.4v1.5M13.4 15.5v1.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
 };
 function renderBrands() {
-  $("#brandStack").innerHTML = FG_DATA.brands.map((b, i) => `
-    <div class="brand-card reveal d${i}" style="--accent:${b.accent}">
-      <div class="b-ico">${ICONS[b.icon]}</div>
-      <div><h3>${b.name}</h3>${b.ta ? `<p class="b-ta">${b.ta}</p>` : ""}<p>${b.desc}</p></div>
-      <span class="tag">${b.tag}</span>
-    </div>`).join("");
+  // future aspirations stack — sits where the brand cards used to
   const fr = $("#futureRow");
   if (fr) fr.innerHTML = FUTURE.map(f => `
     <div class="fs-chip" style="--c:${f.c}"><i></i><div><b>${f.n}</b><span>${f.d}</span></div></div>`).join("");
+  // the company icons live inside the group graph now
+  [["ggIcoGlobal", "globe"], ["ggIcoFac", "wrench"], ["ggIcoDist", "cube"]].forEach(([id, ic]) => {
+    const slot = document.getElementById(id);
+    if (slot) slot.innerHTML = ICONS[ic];
+  });
 }
 
 /* =========================================================================
@@ -2804,6 +2778,7 @@ function renderMegaLogo() {
         <path d="${tape}" fill="url(#megaPink)"/>
         ${MOVE ? `<g class="mg-ess e1" style="offset-path:path('${trackD}')"><ellipse rx="36" ry="5"/></g>
         <g class="mg-ess e2" style="offset-path:path('${trackD}')"><ellipse rx="26" ry="4"/></g>` : ""}
+        <path class="mg-feed" d="${trackD}" pathLength="100"/>
       </g>
       <g id="mgText" class="mg-text">
         <g class="mg-word"><text id="mgThe" data-suck font-size="40">THE</text></g>
@@ -2815,8 +2790,7 @@ function renderMegaLogo() {
         ${planets}
         ${globe}
       </g>
-    </svg>
-    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-lens"></i><i class="bh-disk"></i><i class="bh-disk2"></i><i class="bh-photon"></i><i class="bh-core"></i><i class="bh-flash"></i></div>`;
+    </svg>`;
 
   // phase each orbiting planet so it starts at its exact logo station
   if (MOVE) {
@@ -4389,16 +4363,6 @@ function initBlackhole() {
   addEventListener("scroll", onScroll, { passive: true });
   addEventListener("resize", () => { setVectors(); onScroll(); });
   addEventListener("load", () => { setVectors(); onScroll(); }); // re-measure once fonts/layout settle
-  // ambient infall — deterministic mote fleet spiralling into the hole
-  const hole = $("#blackhole");
-  if (hole) for (let i = 0; i < 10; i++) {
-    const mote = document.createElement("i");
-    mote.className = "mote";
-    mote.style.setProperty("--ma", ((i * 137) % 360) + "deg");
-    mote.style.setProperty("--mt", (2.6 + (i % 5) * 0.55).toFixed(2) + "s");
-    mote.style.setProperty("--md", (-(i * 0.73)).toFixed(2) + "s");
-    hole.appendChild(mote);
-  }
   window.__ffBH = p => hero.style.setProperty("--bh", String(p)); // test hook
 }
 

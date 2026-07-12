@@ -544,8 +544,33 @@ html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 html.spx .tr2-clouds{background:#eef1f8;}
+.rw-over{
+  position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);
+  width:min(860px,92%);padding:20px 24px 18px;border-radius:18px;
+  background:rgba(10,11,18,.66);border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(10px);
+  color:#f3f4fb;opacity:0;pointer-events:none;
+}
+.rw-over h3{margin:0;font-size:1.02rem;color:#fff;}
+.rw-sub{font-size:.76rem;color:rgba(243,244,251,.6);margin-top:3px;}
+.rw-track{position:relative;height:6px;border-radius:99px;margin-top:16px;
+  background:linear-gradient(90deg,var(--pink),#7a5cff,var(--blue),var(--mint));}
+.rw-knob{position:absolute;top:50%;left:0;width:18px;height:18px;border-radius:50%;
+  background:#fff;border:3px solid #0a0b12;box-shadow:0 0 0 2px rgba(255,255,255,.8),0 2px 10px rgba(0,0,0,.6);
+  transform:translate(-50%,-50%);}
+.rw-years{display:flex;justify-content:space-between;margin-top:8px;font-size:.7rem;font-weight:700;color:rgba(243,244,251,.55);font-variant-numeric:tabular-nums;}
+.rw-ros{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.rw-ro{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 13px;background:rgba(15,17,25,.55);}
+.rw-ro span{display:block;font-size:.68rem;color:rgba(243,244,251,.6);}
+.rw-ro span i{font-style:normal;opacity:.75;}
+.rw-ro b{font-size:1.06rem;color:#fff;font-variant-numeric:tabular-nums;}
+.rw-sharetrack{height:5px;border-radius:99px;background:rgba(255,255,255,.14);margin-top:7px;overflow:hidden;}
+.rw-sharefill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--mint));width:0%;}
 html.spx .tr2-planet{background:#0f1018;}
 html.spx section#system{background:#07070d;}
+section#system{padding-top:16px;} /* the map emerges from the blast — no dead band */
+html.spx #runwayPanel{display:none;} /* desktop: the runway rides the planet set-piece instead */
+#system .wrap{margin-top:34px;}
 section#system{overflow-x:clip;}
 html.spx section#journey{background:var(--bg);}
 html.spx section#team{background:var(--bg-soft);}
@@ -1821,11 +1846,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        ==================================================================== -->
 
   <section data-sec="system" id="system" aria-label="The Freedom System — the group as a hierarchical space system">
+    <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The Freedom System</span>
         <h2>One Group. Three Companies.<br><span class="grad-text">One Orbit Around Holdings.</span></h2>
-        <p class="section-sub">The Freedom Group Holdings Ltd sits at the centre of the system, holding every brand, trademark and piece of intellectual property within the group. Each operating company orbits it — licensed to take the group's brands to market, with royalties remitted to Holdings each quarter. Hover over a planet to highlight its role; select it to open the relevant chapter.</p>
+        <p class="section-sub">The Freedom Group Holdings Ltd sits at the centre of the system, holding every brand, trademark and piece of intellectual property within the group. Each operating company orbits it — licensed to take the group's brands to market, with royalties remitted to Holdings each quarter. Hover over a planet to preview its panel; click to pin it in place.</p>
         <div class="sys-stats reveal d1" role="list">
           <div class="sys-stat" role="listitem" style="--c:var(--pink)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3.4 2.5 3.4 15.5 0 18M12 3c-3.4 2.5-3.4 15.5 0 18"/></svg>
@@ -1846,7 +1872,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </div>
       </div>
     </div>
-    <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
   </section>
 
   <!-- ====================================================================
@@ -1979,7 +2004,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </div>
       </div>
 
-      <div class="panel reveal" style="margin-top:22px;">
+      <div class="panel reveal" id="runwayPanel" style="margin-top:22px;">
         <h3>The market runway</h3>
         <div class="psub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — drag the timeline</div>
         <div class="runway">
@@ -2004,7 +2029,21 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        TEAM
        ==================================================================== -->
-  <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
+  <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
+    <div class="rw-over" id="rwOver">
+      <h3>The market runway</h3>
+      <div class="rw-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — the timeline rides your scroll</div>
+      <div class="rw-track"><div class="rw-knob" id="rwKnob"></div></div>
+      <div class="rw-years" id="rwYears"></div>
+      <div class="rw-ros">
+        <div class="rw-ro"><span>Freedom revenue <i id="rwKind">(target)</i></span><b id="rwRev">£1M</b></div>
+        <div class="rw-ro"><span>UK market size (est.)</span><b id="rwMkt">£6bn</b></div>
+        <div class="rw-ro"><span>Our share of the market</span><b id="rwShare">0.02%</b>
+          <div class="rw-sharetrack"><div class="rw-sharefill" id="rwShareFill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
 
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
     <div class="wrap">
@@ -3044,7 +3083,7 @@ function renderSystem() {
     }
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
-         aria-label="${p.name} — ${p.role}. Hover or tap to open its panel; activate again to fly to its chapter."
+         aria-label="${p.name} — ${p.role}. Hover to preview its panel; click to pin it."
          transform="translate(${f(pp.x)} ${f(pp.y)})">
         <g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
           <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
@@ -3142,20 +3181,22 @@ function renderSystem() {
       if (c) c.classList.remove("hot");
     }, 300);
   };
+  const pinnedKeys = new Set();
   $$(".sm-planet", map).forEach(b => {
     const key = b.dataset.key;
     b.addEventListener("pointerenter", () => show(key));
-    b.addEventListener("pointerleave", () => hideSoon(key));
+    b.addEventListener("pointerleave", () => { if (!pinnedKeys.has(key)) hideSoon(key); });
     b.addEventListener("focus", () => show(key));
-    b.addEventListener("blur", () => hideSoon(key));
-    b.addEventListener("click", () => {
-      const c = cardFor(key);
-      // first tap opens the panel; a second activation flies to the chapter
-      if (c && !c.classList.contains("hot")) show(key);
-      else flyToChapter(key);
-    });
+    b.addEventListener("blur", () => { if (!pinnedKeys.has(key)) hideSoon(key); });
+    const activate = () => {
+      if (key === "fire") { flyToChapter(key); return; }   // the sun still opens the journey
+      // clicking a company pins its panel on the page; click again to release
+      if (pinnedKeys.has(key)) { pinnedKeys.delete(key); hideSoon(key); }
+      else { pinnedKeys.add(key); show(key); }
+    };
+    b.addEventListener("click", activate);
     b.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flyToChapter(key); }
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
     });
   });
   cards.forEach(c => {
@@ -4830,19 +4871,24 @@ function initSetpieces() {
     // out of the blast, the system's sun is born — the section rises out of
     // this remnant, so it stays lit right through the handoff
     if (born > .01) {
+      // the newborn sun drifts to centre as it settles — the system's globe
+      // rises out of the section to meet it
+      const drift = sm(ph2(p, .68, .98));
+      const bx = cx + (w * .5 - cx) * drift;
+      const by = cy + (h * .54 - cy) * drift;
       ctx.globalCompositeOperation = "lighter";
       const NS2 = m * (.55 + .35 * detE);
-      ctx.save(); ctx.translate(cx, cy); ctx.rotate(.35 + detE * .25);
+      ctx.save(); ctx.translate(bx, by); ctx.rotate(.35 + detE * .25);
       ctx.globalAlpha = born * .16;
       ctx.drawImage(NVneb1, -NS2 / 2, -NS2 / 2, NS2, NS2);
       ctx.restore(); ctx.globalAlpha = 1;
-      const bg3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, m * .42);
+      const bg3 = ctx.createRadialGradient(bx, by, 0, bx, by, m * .42);
       bg3.addColorStop(0, `rgba(255,120,190,${.5 * born})`);
       bg3.addColorStop(.35, `rgba(255,61,154,${.26 * born})`);
       bg3.addColorStop(1, "rgba(255,61,154,0)");
-      ctx.fillStyle = bg3; ctx.beginPath(); ctx.arc(cx, cy, m * .42, 0, TAU); ctx.fill();
+      ctx.fillStyle = bg3; ctx.beginPath(); ctx.arc(bx, by, m * .42, 0, TAU); ctx.fill();
       ctx.fillStyle = `rgba(255,235,246,${.85 * born})`;
-      ctx.beginPath(); ctx.arc(cx, cy, m * (.006 + .012 * born), 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(bx, by, m * (.006 + .012 * born), 0, TAU); ctx.fill();
     }
     ctx.globalCompositeOperation = "source-over";
     if (fl > .01) { ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
@@ -5113,6 +5159,44 @@ function initSetpieces() {
     if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
   }
 
+  /* ---------- MARKET RUNWAY overlay: rides the planet set-piece scrub.
+     Values reuse the deck's exact interpolation; visibility fades in and out
+     inside the scrub so the set-piece endpoints stay pixel-exact. */
+  let RWels = null;
+  function updateRunway(p) {
+    if (!RWels) {
+      const o = document.getElementById("rwOver");
+      if (!o) return;
+      RWels = {
+        o,
+        knob: document.getElementById("rwKnob"),
+        years: document.getElementById("rwYears"),
+        kind: document.getElementById("rwKind"),
+        rev: document.getElementById("rwRev"),
+        mkt: document.getElementById("rwMkt"),
+        share: document.getElementById("rwShare"),
+        fill: document.getElementById("rwShareFill"),
+      };
+      RWels.years.innerHTML = FG_DATA.trajectory.map(d => `<span>${d.year}</span>`).join("");
+    }
+    const traj = FG_DATA.trajectory, M = FG_DATA.market;
+    const vis = sm(ph2(p, .07, .16)) * (1 - sm(ph2(p, .84, .95)));
+    RWels.o.style.opacity = vis.toFixed(3);
+    if (vis <= 0) return;
+    const t = cl(ph2(p, .1, .82), 0, 1);
+    const fi = t * (traj.length - 1);
+    const d = traj[Math.min(traj.length - 1, Math.round(fi))];
+    RWels.knob.style.left = ((fi / (traj.length - 1)) * 100).toFixed(2) + "%";
+    const mkt = d.year <= M.nowYear ? M.now : d.year >= 2030 ? M.y2030
+      : M.now + (M.y2030 - M.now) * ((d.year - M.nowYear) / (2030 - M.nowYear));
+    const share = d.value / mkt * 100;
+    RWels.kind.textContent = d.kind === "actual" ? "(actual)" : "(target)";
+    RWels.rev.textContent = fmtCompact(d.value) + (d.year === 2025 ? "+" : "");
+    RWels.mkt.textContent = fmtCompact(mkt) + (d.year >= 2030 ? " (2030 est.)" : "");
+    RWels.share.textContent = (share < 0.1 ? share.toFixed(3) : share.toFixed(2)) + "%";
+    RWels.fill.style.width = Math.min(100, (share / 1.2) * 100) + "%";
+  }
+
   /* ---------- controller -------------------------------------------------- */
   const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-clouds": drawClouds };
   const items = [];
@@ -5152,6 +5236,7 @@ function initSetpieces() {
       if (!force && Math.abs(p - it.last) < .0004) return;
       it.last = p;
       it.draw(it.ctx, p, it.w, it.h);
+      if (it.draw === drawPlanet) updateRunway(p);
     });
   };
   const onScroll = rafScroll(() => paint(false));
@@ -5159,7 +5244,7 @@ function initSetpieces() {
   addEventListener("resize", () => { gate(); items.forEach(it => { it.w = 0; }); paint(true); });
   gate();
   paint(true);
-  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); it.last = p; return { w: it.w, h: it.h }; };
+  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); it.last = p; return { w: it.w, h: it.h }; };
 }
 
 /* =========================================================================

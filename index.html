@@ -1791,14 +1791,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="sec-head reveal">
         <span class="kicker">The Freedom System</span>
         <h2>One group. Three companies.<br><span class="grad-text">One orbit around Holdings.</span></h2>
-        <p class="section-sub">The Freedom Group Holdings Ltd sits at the centre of the system and owns every brand, trademark and piece of IP. Each operating Ltd orbits it — licensing the brands, taking them to market, and returning royalties every quarter. Hover a planet to light its story; click it to fly to that chapter.</p>
+        <p class="section-sub">The Freedom Group Holdings Ltd sits at the centre of the system, holding every brand, trademark and piece of intellectual property within the group. Each operating company orbits it — licensed to take the group's brands to market, with royalties remitted to Holdings each quarter. Hover over a planet to highlight its role; select it to open the relevant chapter.</p>
         <div class="sys-chips reveal d1">
           <span class="sys-chip"><b>1</b> holding company</span>
-          <span class="sys-chip"><b>3</b> operating Ltds</span>
-          <span class="sys-chip"><b>5+</b> brands in the vault</span>
-          <span class="sys-chip"><b>2</b> future orbits</span>
+          <span class="sys-chip"><b>3</b> operating companies</span>
+          <span class="sys-chip"><b>5+</b> registered brands</span>
+          <span class="sys-chip"><b>2</b> future companies</span>
         </div>
-        <p class="sys-lede">Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — a strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.</p>
       </div>
     </div>
     <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
@@ -2933,29 +2932,29 @@ function renderSystem() {
 
   const PLANETS = [
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      orbit: "o2", t: 138, r: 42, status: "IN WORKS · 2027",
-      role: "Facilities-management arm — servicing & maintenance",
-      ch: "on-site servicing · PPE · drone · PAT · FM",
+      orbit: "o2", t: 138, r: 42, status: "IN DEVELOPMENT · 2027",
+      role: "Facilities-management division delivering servicing and maintenance contracts",
+      ch: "On-site servicing · PPE supply · drone inspection · PAT testing",
       card: { left: 12, top: 49 } },
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
       orbit: "o1", t: 90, r: 48, status: "FLAGSHIP",
-      role: "Consumer D2C division — the group's online stores",
-      ta: "currently trading as Freedom Fire & Safety Limited",
-      ch: "eBay · Amazon · Shopify · Temu · TikTok",
+      role: "Direct-to-consumer retail division operating the group's online storefronts",
+      ta: "Presently trading as Freedom Fire & Safety Limited",
+      ch: "Sales channels: eBay · Amazon · Shopify · Temu · TikTok",
       card: { left: 41, top: 52 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      orbit: "o3", t: 42, r: 36, status: "IN WORKS · 2028",
-      role: "B2B trade division — wholesale & retail distribution",
-      ch: "national retailers · dealer central · trade counters",
+      orbit: "o3", t: 42, r: 36, status: "IN DEVELOPMENT · 2028",
+      role: "Business-to-business division supplying wholesale and retail trade",
+      ch: "National retailers · dealer network · trade counters",
       card: { left: 70, top: 49 } },
   ];
   const VAULT = [
     ["FireStorm™", "var(--ember)", 158], ["Voltz", "var(--blue)", 132], ["Kunegry", "var(--mint)", 106],
-    ["T3", "var(--pink)", 74], ["Crystal Solutions", "var(--blue)", 48], ["+ more", "", 22],
+    ["T3", "var(--pink)", 74], ["Crystal Solutions", "var(--blue)", 48], ["+ further brands", "", 22],
   ];
   const GHOSTS = [
-    { t: 110, r: 26, name: "Freedom Form Ltd", sub: "property & management · MD brings 10 yrs in architecture", c: "#ff6a3d" },
-    { t: 70, r: 22, name: "Freedom Fly Ltd", sub: "drone visual — already in use on site", c: "#38a9ff" },
+    { t: 110, r: 26, name: "Freedom Form Ltd", sub: "Property & asset management — led by a director with ten years' architectural experience", c: "#ff6a3d" },
+    { t: 70, r: 22, name: "Freedom Fly Ltd", sub: "Aerial inspection & drone imaging — technology already deployed on site", c: "#38a9ff" },
   ];
 
   let seed = 20260712 >>> 0;
@@ -2978,10 +2977,9 @@ function renderSystem() {
     const L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
     const s0 = { x: cx + ux * (sunR + 14), y: cy + uy * (sunR + 14) };
     const e0 = { x: pp.x - ux * (p.r + 16), y: pp.y - uy * (p.r + 16) };
-    const m1 = { x: (s0.x + e0.x) / 2 - uy * 60, y: (s0.y + e0.y) / 2 + ux * 60 };
-    const m2 = { x: (s0.x + e0.x) / 2 + uy * 88, y: (s0.y + e0.y) / 2 - ux * 88 };
-    flows += `<path class="sm-flow" stroke="${p.cHex}" marker-end="url(#smArr)" d="M ${f(s0.x)} ${f(s0.y)} Q ${f(m1.x)} ${f(m1.y)} ${f(e0.x)} ${f(e0.y)}"/>`;
-    roys += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(pp.x - ux * (p.r + 26))} ${f(pp.y - uy * (p.r + 26))} Q ${f(m2.x)} ${f(m2.y)} ${f(cx + ux * (sunR + 26))} ${f(cy + uy * (sunR + 26))}"/>`;
+    const lx = -uy * 9, ly = ux * 9;   // the two lanes sit side by side
+    flows += `<path class="sm-flow" stroke="${p.cHex}" marker-end="url(#smArr)" d="M ${f(s0.x + lx)} ${f(s0.y + ly)} L ${f(e0.x + lx)} ${f(e0.y + ly)}"/>`;
+    roys += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(e0.x - lx)} ${f(e0.y - ly)} L ${f(s0.x - lx)} ${f(s0.y - ly)}"/>`;
     leads += `<line class="sm-lead" x1="${f(pp.x)}" y1="${f(pp.y + p.r + 10)}" x2="${f(pp.x)}" y2="${f(H * (p.card.top / 100) - 8)}"/>`;
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
@@ -3032,9 +3030,9 @@ function renderSystem() {
       </defs>
       ${stars}
       <g class="sm-legend" transform="translate(40,60)">
-        <line x1="0" y1="0" x2="28" y2="0" stroke="rgba(243,244,251,.8)"/><text x="38" y="4">ownership</text>
-        <line x1="0" y1="26" x2="22" y2="26" stroke="#38a9ff" marker-end="url(#smArr)"/><text x="38" y="30">brand &amp; IP licence</text>
-        <line x1="0" y1="52" x2="28" y2="52" stroke="var(--pink)" stroke-dasharray="5 6"/><text x="38" y="56">royalties · every quarter</text>
+        <line x1="0" y1="0" x2="28" y2="0" stroke="rgba(243,244,251,.8)"/><text x="38" y="4">Ownership</text>
+        <line x1="0" y1="26" x2="22" y2="26" stroke="#38a9ff" marker-end="url(#smArr)"/><text x="38" y="30">Brand &amp; IP licence</text>
+        <line x1="0" y1="52" x2="28" y2="52" stroke="var(--pink)" stroke-dasharray="5 6"/><text x="38" y="56">Royalties · remitted quarterly</text>
       </g>
       ${shell(ORB.vault[0], ORB.vault[1], "sm-vaultorbit")}
       ${shell(ORB.o1[0], ORB.o1[1], "sm-orbit o1")}
@@ -3053,15 +3051,15 @@ function renderSystem() {
         <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
       </g>
       <text class="sm-suntitle" x="${cx}" y="76" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
-      <text class="sm-sunsub" x="${cx}" y="102" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
+      <text class="sm-sunsub" x="${cx}" y="102" text-anchor="middle">Registered holding company — proprietor of the group's brands, trademarks and intellectual property</text>
       <g class="sm-mini" transform="translate(${cx - 152} 118)">
         <rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">BRANDS</text>
         <rect x="94" width="118" height="24" rx="12"/><text x="153" y="16" text-anchor="middle">TRADEMARKS</text>
         <rect x="222" width="52" height="24" rx="12"/><text x="248" y="16" text-anchor="middle">IP</text>
       </g>
-      <text class="sm-lab b" x="${cx}" y="${f(cy + 106)}" text-anchor="middle">BRAND &amp; IP VAULT — held by Holdings · licensed to the Ltds under formal agreements</text>
+      <text class="sm-lab b" x="${cx}" y="${f(cy + 106)}" text-anchor="middle">BRAND &amp; IP PORTFOLIO — held by Holdings and licensed to each operating company under formal agreement</text>
       ${vault}
-      <text class="sm-lab" x="${cx}" y="${f(cy + 348)}" text-anchor="middle" style="paint-order:stroke;stroke:#07070d;stroke-width:10px">brand &amp; IP licence agreements flow down · royalties return every quarter</text>
+      <text class="sm-lab" x="${cx}" y="${f(cy + 348)}" text-anchor="middle" style="paint-order:stroke;stroke:#07070d;stroke-width:10px">Licence agreements extend the group's brands to each company · royalties are remitted to Holdings quarterly</text>
       ${ghosts}
       ${planets}
     </svg>
@@ -3073,7 +3071,7 @@ function renderSystem() {
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="ch">${p.ch}</p>
       </div>`).join("")}
-    <div class="sm-note" style="left:50%;top:82%;transform:translateX(-50%);text-align:center">Both future companies are already mapped into the group's expansion plan — the moment each goes live, it licenses the group's brands and plugs straight into the shared systems, with royalties flowing back to Holdings.</div>
+    <div class="sm-note" style="left:50%;top:82%;transform:translateX(-50%);text-align:center">Both future companies are incorporated within the group's expansion plan. Upon launch, each will licence the group's brands, integrate with the group's shared infrastructure and remit royalties to Holdings.</div>
   `;
 
   const cards = $$(".sm-card", map);
@@ -4528,7 +4526,7 @@ function initSetpieces() {
   const NVdeb = Array.from({ length: 380 }, () => { const a2 = nvR() * TAU; return { a: a2, v: .22 + Math.pow(nvR(), 1.5) * .95, z: .3 + nvR() * .7, hue: nvR(), bend: (nvR() - .5) * .5 }; });
   const NVfil = Array.from({ length: 26 }, () => ({ a: nvR() * TAU, bend: (nvR() - .5) * 1.4, len: .35 + nvR() * .6, z: .4 + nvR() * .6 }));
   const NVspark = Array.from({ length: 60 }, () => ({ a: nvR() * TAU, v: .3 + nvR() * .85, tw: nvR() }));
-  let NVsun = null, NVneb1 = null, NVneb2 = null, NVring = null;
+  let NVsun = null, NVneb1 = null, NVneb2 = null, NVring = null, NVheroEl;
   function makeNovaSprites() {
     const blobField = (c, n, seed, colf) => {
       const r2 = rng(seed);
@@ -4591,16 +4589,27 @@ function initSetpieces() {
   }
   function drawNova(ctx, p, w, h) {
     if (!NVsun) makeNovaSprites();
-    const cx = w / 2, cy = h * .5, m = Math.min(w, h);
-    const burn = sm(ph2(p, .06, .44));
-    const collapse = sm(ph2(p, .44, .51));
-    const det = ph2(p, .51, .9);
+    // anchored to the warp's mouth: the collapsed ring reignites and blows
+    // exactly where the hero's black hole swallowed everything
+    let cx = w / 2, cy = h * .5;
+    if (NVheroEl === undefined) NVheroEl = document.querySelector(".hero") || null;
+    if (NVheroEl) {
+      const hx = parseFloat(NVheroEl.style.getPropertyValue("--hx"));
+      const hy = parseFloat(NVheroEl.style.getPropertyValue("--hy"));
+      if (!isNaN(hx)) cx = w * hx / 100;
+      if (!isNaN(hy)) cy = h * hy / 100;
+    }
+    const m = Math.min(w, h);
+    const ignite = sm(ph2(p, .03, .15));
+    const burn = ignite * sm(ph2(p, .08, .3));
+    const collapse = sm(ph2(p, .3, .375));
+    const det = ph2(p, .385, .86);
     const detE = sm(det);
-    const born = sm(ph2(p, .76, .92)) * (1 - sm(ph2(p, .9, .99)));
-    const fl = Math.pow(bump(p, .535, .09), 1.6);
+    const born = sm(ph2(p, .6, .78)) * (1 - sm(ph2(p, .86, .99)) * .55);
+    const fl = Math.pow(bump(p, .405, .09), 1.6);
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#07070d"; ctx.fillRect(0, 0, w, h);
-    const starA = (1 - fl * .8) * .9 * (1 - sm(ph2(p, .96, 1)) * .9);
+    const starA = sm(ph2(p, .02, .12)) * (1 - fl * .8) * .9 * (1 - sm(ph2(p, .78, .92)) * .95);
     for (const st of NVstars) {
       const tw = .35 + .65 * Math.abs(Math.sin(st.c * 37 + p * 18));
       ctx.fillStyle = `rgba(255,255,255,${starA * tw * (.2 + .5 * st.z)})`;
@@ -4609,8 +4618,8 @@ function initSetpieces() {
     ctx.globalCompositeOperation = "lighter";
     const preFade = cl(1 - det * 3.2, 0, 1);
     if (preFade > .01) {
-      const rc = m * (.03 + .062 * burn) * (1 + .04 * Math.sin(burn * 21) + .02 * Math.sin(burn * 43 + 2)) * (1 - .6 * collapse);
-      const heat = (.45 + .55 * burn + .9 * collapse) * preFade;
+      const rc = m * (.012 + .02 * ignite + .05 * burn) * (1 + .04 * Math.sin(burn * 21) + .02 * Math.sin(burn * 43 + 2)) * (1 - .6 * collapse);
+      const heat = (.45 * ignite + .55 * burn + .9 * collapse) * preFade;
       const og = ctx.createRadialGradient(cx, cy, 0, cx, cy, rc * 5.2);
       og.addColorStop(0, `rgba(255,61,154,${cl(.16 * heat, 0, 1)})`);
       og.addColorStop(1, "rgba(255,61,154,0)");
@@ -4936,7 +4945,7 @@ function initSetpieces() {
       ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
     }
     // the moon — rises with the climb, slips away as we clear the deck
-    const moonA = sm(ph2(p, .08, .24)) * (1 - sm(ph2(p, .45, .7)));
+    const moonA = sm(ph2(p, .08, .22)) * (1 - sm(ph2(p, .3, .42)));
     const mx = w * .72, my = h * (.2 - .05 * sm(ph2(p, .5, .9)));
     if (moonA > .01) {
       const mh = ctx.createRadialGradient(mx, my, 0, mx, my, h * .2);
@@ -4992,18 +5001,6 @@ function initSetpieces() {
         ctx.drawImage(CLs[i % 4].light, sx2, h * (.86 + ((i * 31) % 8) / 100) , sw2, sh2);
       }
       ctx.globalAlpha = 1;
-    }
-    // sun shafts through the breaking deck
-    const shaft = Math.sin(sm(ph2(p, .38, .72)) * Math.PI) * .2 * gFade;
-    if (shaft > .01) {
-      ctx.save();
-      ctx.translate(w * .5, -h * .2); ctx.rotate(.32);
-      const sgd = ctx.createLinearGradient(0, 0, 0, h * 1.5);
-      sgd.addColorStop(0, `rgba(255,255,255,${shaft})`); sgd.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sgd;
-      ctx.fillRect(-w * .06, 0, w * .12, h * 1.5);
-      ctx.rotate(-.55); ctx.fillRect(-w * .04, 0, w * .08, h * 1.5);
-      ctx.restore();
     }
     // brief haze at the brightest point
     ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .45, .62)) * (1 - sm(ph2(p, .64, .85))) * .26})`;

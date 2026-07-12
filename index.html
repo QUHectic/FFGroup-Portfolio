@@ -85,6 +85,7 @@ section#team{overflow-x:clip;}
 .sm-planet{cursor:pointer;outline:none;}
 .sm-planet .halo{opacity:0;transition:opacity .3s;}
 .sm-planet:hover .halo,.sm-planet.hot .halo,.sm-planet:focus-visible .halo{opacity:.85;}
+.mf,.sm-planet{transform-box:fill-box;transform-origin:center;}
 .sm-bob{animation:smBob 7s ease-in-out infinite;}
 @keyframes smBob{50%{transform:translateY(-8px);}}
 @media (prefers-reduced-motion:reduce){.sm-bob{animation:none;}}
@@ -544,6 +545,7 @@ html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 html.spx .tr2-clouds{background:#eef1f8;}
+html.spx .tr2-planet{height:330vh;} /* long runway scrub — relaxed, year by year */
 .rw-over{
   position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);
   width:min(860px,92%);padding:20px 24px 18px;border-radius:18px;
@@ -566,8 +568,16 @@ html.spx .tr2-clouds{background:#eef1f8;}
 .rw-ro b{font-size:1.06rem;color:#fff;font-variant-numeric:tabular-nums;}
 .rw-sharetrack{height:5px;border-radius:99px;background:rgba(255,255,255,.14);margin-top:7px;overflow:hidden;}
 .rw-sharefill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--mint));width:0%;}
+.rw-track{pointer-events:auto;cursor:pointer;}
+.rw-track::before{content:"";position:absolute;inset:-12px 0;} /* fat hit zone */
+.rw-knob{pointer-events:none;}
+.rw-years span{pointer-events:auto;cursor:pointer;}
+.rw-years span:hover{color:#fff;}
 html.spx .tr2-planet{background:#0f1018;}
 html.spx section#system{background:#07070d;}
+html.spx .sys-build{height:300vh;}
+html.spx .sys-build-stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:flex-start;}
+html.spx .sys-build-stage .sysmap{width:100%;margin-top:0;}
 section#system{padding-top:16px;} /* the map emerges from the blast — no dead band */
 html.spx #runwayPanel{display:none;} /* desktop: the runway rides the planet set-piece instead */
 #system .wrap{margin-top:34px;}
@@ -1846,7 +1856,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        ==================================================================== -->
 
   <section data-sec="system" id="system" aria-label="The Freedom System — the group as a hierarchical space system">
-    <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
+    <div class="sys-build"><div class="sys-build-stage">
+      <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
+    </div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The Freedom System</span>
@@ -2032,7 +2044,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
     <div class="rw-over" id="rwOver">
       <h3>The market runway</h3>
-      <div class="rw-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — the timeline rides your scroll</div>
+      <div class="rw-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — scroll, drag the track or tap a year</div>
       <div class="rw-track"><div class="rw-knob" id="rwKnob"></div></div>
       <div class="rw-years" id="rwYears"></div>
       <div class="rw-ros">
@@ -3085,12 +3097,12 @@ function renderSystem() {
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
          aria-label="${p.name} — ${p.role}. Hover to preview its panel; click to pin it."
          transform="translate(${f(pp.x)} ${f(pp.y)})">
-        <g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
+        <g class="mf"><g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
           <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
           <circle r="${p.r}" fill="url(#smp-${p.key})"/>
           <ellipse cx="${f(-p.r * .28)}" cy="${f(-p.r * .34)}" rx="${f(p.r * .34)}" ry="${f(p.r * .22)}" fill="#fff" opacity=".28"/>
           <circle r="${p.r + 14}" fill="transparent"/>
-        </g>
+        </g></g>
       </g>`;
   });
 
@@ -3207,6 +3219,84 @@ function renderSystem() {
 
   // the courier patrols the whole system, inside the frame
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
+
+  /* ---- SCROLL-MANIFEST: the system assembles itself out of the newborn
+     star. Globe first, then the header, the rings drawing on, the lanes,
+     the planets in rank order, labels, brand vault, future row, courier.
+     Pure function of pinned progress — fully reversible — and every inline
+     style clears at 100% so hover/pin behaviour is completely native. */
+  const _cl = (v, a, b) => Math.min(b, Math.max(a, v));
+  const _win = (p2, a, b) => { const t = _cl((p2 - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const svgEl = map.querySelector("svg");
+  const REG = [];
+  const reg = (el, a, b, fx) => { if (el) REG.push({ el, a, b, fx }); };
+  reg(svgEl.querySelector('circle[fill^="url(#smSunGlow"]'), 0, .04, "fade");
+  reg(svgEl.querySelector('.sm-planet[data-key="fire"]'), .02, .13, "bloom");
+  reg(svgEl.querySelector(".sm-kick"), .10, .16, "rise");
+  reg(svgEl.querySelector(".sm-suntitle"), .11, .18, "rise");
+  reg(svgEl.querySelector(".sm-sunsub"), .13, .20, "rise");
+  reg(svgEl.querySelector(".sm-mini"), .15, .22, "fade");
+  reg(svgEl.querySelector(".sm-legend"), .16, .24, "fade");
+  [...svgEl.querySelectorAll("path.sm-orbit")].forEach((pth, idx) => {
+    const ring = Math.floor(idx / 2);
+    const a = .14 + ring * .07, b = a + .12;
+    if (pth.classList.contains("future")) { reg(pth, a, b, "fade"); return; }
+    pth.setAttribute("pathLength", "1"); pth.style.strokeDasharray = "1";
+    reg(pth, a, b, "draw");
+  });
+  [...svgEl.querySelectorAll(".sm-flow")].forEach((pth, i2) => {
+    pth.setAttribute("pathLength", "1"); pth.style.strokeDasharray = "1";
+    reg(pth, .42 + i2 * .04, .50 + i2 * .04, "draw");
+  });
+  [...svgEl.querySelectorAll(".sm-roy")].forEach((pth, i2) => reg(pth, .56 + i2 * .02, .64 + i2 * .02, "fade"));
+  [...svgEl.querySelectorAll(".sm-roylab")].forEach(t2 => reg(t2, .62, .68, "fade"));
+  const mfOf = key => { const b2 = planetFor(key); return b2 && b2.querySelector(".mf"); };
+  reg(mfOf("fly"), .44, .54, "bloom");
+  reg(mfOf("form"), .50, .60, "bloom");
+  reg(mfOf("storm"), .54, .64, "bloom");
+  reg(map.querySelector(".sm-vaultbox"), .66, .76, "rise");
+  reg(map.querySelector(".sm-futwrap"), .74, .86, "riseC");
+  [...map.querySelectorAll(":scope > svg")].slice(1).forEach(el => reg(el, .86, .94, "fade"));
+  const rkp = map.querySelector(".rk-panel");
+  if (rkp) reg(rkp, .86, .94, "fade");
+
+  let lastMp = -1;
+  const applyManifest = mp => {
+    mp = _cl(mp, 0, 1);
+    if (mp === lastMp) return;
+    lastMp = mp;
+    for (const r2 of REG) {
+      const t = _win(mp, r2.a, r2.b);
+      const st = r2.el.style;
+      if (r2.fx === "fade") st.opacity = t >= 1 ? "" : String(t.toFixed(3));
+      else if (r2.fx === "rise") {
+        st.opacity = t >= 1 ? "" : String(t.toFixed(3));
+        st.transform = t >= 1 ? "" : `translateY(${((1 - t) * 20).toFixed(1)}px)`;
+      } else if (r2.fx === "riseC") {
+        st.opacity = t >= 1 ? "" : String(t.toFixed(3));
+        st.transform = t >= 1 ? "" : `translateX(-50%) translateY(${((1 - t) * 26).toFixed(1)}px)`;
+      } else if (r2.fx === "bloom") {
+        st.opacity = t >= 1 ? "" : String(Math.min(1, t * 1.7).toFixed(3));
+        st.transform = t >= 1 ? "" : `scale(${(.06 + .94 * t).toFixed(4)})`;
+      } else {
+        st.strokeDashoffset = t >= 1 ? "" : String((1 - t).toFixed(4));
+        st.opacity = t <= 0 ? "0" : (t >= 1 ? "" : "1");
+      }
+    }
+  };
+  window.__ffMf = applyManifest;
+  const build = map.closest(".sys-build");
+  if (build) {
+    const onMf = rafScroll(() => {
+      if (!document.documentElement.classList.contains("spx")) { applyManifest(1); return; }
+      const r2 = build.getBoundingClientRect();
+      const span = r2.height - innerHeight;
+      applyManifest(span > 0 ? -r2.top / span : 1);
+    });
+    addEventListener("scroll", onMf, { passive: true });
+    addEventListener("resize", onMf);
+    onMf();
+  } else applyManifest(1);
 }
 
 /* =========================================================================
@@ -4875,7 +4965,7 @@ function initSetpieces() {
       // rises out of the section to meet it
       const drift = sm(ph2(p, .68, .98));
       const bx = cx + (w * .5 - cx) * drift;
-      const by = cy + (h * .54 - cy) * drift;
+      const by = cy + (h * .29 - cy) * drift;
       ctx.globalCompositeOperation = "lighter";
       const NS2 = m * (.55 + .35 * detE);
       ctx.save(); ctx.translate(bx, by); ctx.rotate(.35 + detE * .25);
@@ -5178,12 +5268,32 @@ function initSetpieces() {
         fill: document.getElementById("rwShareFill"),
       };
       RWels.years.innerHTML = FG_DATA.trajectory.map(d => `<span>${d.year}</span>`).join("");
+      // the scale is a real control: dragging the track (or tapping a year)
+      // scrubs the page itself, so slider and scroll stay in lockstep
+      const wrapEl = document.querySelector(".tr2-planet");
+      const track = RWels.knob.parentElement;
+      const seekTo = fx2 => {
+        const t2 = Math.min(1, Math.max(0, fx2));
+        const span = wrapEl.offsetHeight - innerHeight;
+        window.scrollTo({ top: wrapEl.offsetTop + (.08 + t2 * .82) * span, behavior: "instant" });
+      };
+      const fxOf = e => { const r2 = track.getBoundingClientRect(); return (e.clientX - r2.left) / r2.width; };
+      let drag = false;
+      track.addEventListener("pointerdown", e => { drag = true; try { track.setPointerCapture(e.pointerId); } catch {} seekTo(fxOf(e)); e.preventDefault(); });
+      track.addEventListener("pointermove", e => { if (drag) seekTo(fxOf(e)); });
+      track.addEventListener("pointerup", () => { drag = false; });
+      track.addEventListener("pointercancel", () => { drag = false; });
+      RWels.years.addEventListener("click", e => {
+        const sp2 = e.target.closest("span");
+        if (!sp2) return;
+        seekTo([...RWels.years.children].indexOf(sp2) / (FG_DATA.trajectory.length - 1));
+      });
     }
     const traj = FG_DATA.trajectory, M = FG_DATA.market;
-    const vis = sm(ph2(p, .07, .16)) * (1 - sm(ph2(p, .84, .95)));
+    const vis = sm(ph2(p, .05, .12)) * (1 - sm(ph2(p, .9, .97)));
     RWels.o.style.opacity = vis.toFixed(3);
     if (vis <= 0) return;
-    const t = cl(ph2(p, .1, .82), 0, 1);
+    const t = cl(ph2(p, .08, .9), 0, 1);
     const fi = t * (traj.length - 1);
     const d = traj[Math.min(traj.length - 1, Math.round(fi))];
     RWels.knob.style.left = ((fi / (traj.length - 1)) * 100).toFixed(2) + "%";

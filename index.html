@@ -338,6 +338,11 @@ h1:focus,h2:focus{outline:none;}
   transform-origin:499.7px 502.9px;transform-box:view-box;
   opacity:min(1,max(0,calc(1 - (var(--bh,0) - .94)*16)));
 }
+/* the wordmark falls INTO the ring: every word scales to nothing about the
+   ring's own centre (origin set per word in align()), swirling as it goes */
+#hero .mg-text text[data-suck]{
+  transform:rotate(calc(var(--spin,-2.2)*var(--pe)*26deg)) scale(max(.001,calc(1 - var(--pe)*var(--pe))));
+}
 
 /* THE RING FEEDS — no separate hole: while consuming, white light
    circulates the tape at speed and the ring's neon glow surges */
@@ -349,6 +354,9 @@ h1:focus,h2:focus{outline:none;}
   animation:mgFeed 1.6s linear infinite;
 }
 @keyframes mgFeed{from{stroke-dashoffset:100;}to{stroke-dashoffset:0;}}
+/* absorption field — the ring's interior deepens to a dark energy well with
+   a hot pink rim as matter is pulled through */
+.mg-void{fill:url(#mgVoid);opacity:min(1,calc(var(--bh,0)*1.3));pointer-events:none;}
 
 /* space vignette — the hero's edges fall into shadow as the hole grows */
 .bh-vig{
@@ -664,7 +672,7 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 .gg-t2{font-size:11px;fill:var(--ink-dim);}
 .gg-minis rect{fill:var(--card);stroke:var(--line);}
 .gg-minis text{font-size:9px;font-weight:700;fill:var(--ink-dim);letter-spacing:.09em;}
-.gg-own{stroke:var(--ink);stroke-width:2;fill:none;opacity:.8;}
+.gg-own{stroke:var(--ink);stroke-width:3.5;stroke-linecap:square;fill:none;opacity:.85;}
 .gg-vault rect{fill:var(--bg);stroke:var(--line);stroke-width:1.5;}
 .gg-vault .gg-pill rect{fill:var(--card);stroke:var(--line);stroke-width:1;}
 .gg-vt{font-size:13px;font-weight:800;letter-spacing:.13em;fill:var(--ink);}
@@ -694,7 +702,7 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 .gg-live rect{stroke:var(--pink);}
 .gg-live text{fill:var(--pink);}
 .gg-legend path{stroke-width:2;fill:none;}
-.gg-legend .lg1{stroke:var(--ink-dim);}
+.gg-legend .lg1{stroke:var(--ink);stroke-width:3.5;opacity:.85;}
 .gg-legend .lg2{stroke:var(--ink-dim);opacity:.8;}
 .gg-legend .lg3{stroke:var(--ink-dim);stroke-dasharray:2.5 5;opacity:.6;}
 .gg-legend .lg4{stroke:var(--pink);stroke-dasharray:6 6;}
@@ -1652,7 +1660,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           </defs>
           <g class="gg-legend" transform="translate(24,48)">
             <path class="lg1" d="M0 0 h26"/><text x="34" y="4">ownership</text>
-            <path class="lg2" d="M0 24 h26"/><text x="34" y="28">licence agreement</text>
+            <path class="lg2" d="M0 24 h20" marker-end="url(#gmArr)"/><text x="34" y="28">licence agreement</text>
             <path class="lg3" d="M0 48 h26"/><text x="34" y="52">brands to market</text>
             <path class="lg4" d="M0 72 h26"/><text x="34" y="76">royalties</text>
           </g>
@@ -2487,11 +2495,8 @@ function renderHero() {
 /* Future LTD aspirations — from the group-structure notes; shared by the
    overview strip and the hero rocket's manifest */
 const FUTURE = [
-  { n: "Freedom Form LTD", d: "Property &amp; leaseholds — the group's premises arm", c: "var(--ember)" },
-  { n: "Freedom Fly LTD", d: "Drone operations — surveys &amp; high-level cleaning", c: "var(--blue)" },
-  { n: "Freedom Food LTD", d: "Food services under the Freedom name", c: "var(--mint)" },
-  { n: "Freedom 2 Read LTD", d: "Children's books &amp; early learning", c: "var(--pink)" },
-  { n: "Novera Group LTD", d: "Knives &amp; apparel", c: "var(--ink-dim)" }
+  { n: "Freedom Form LTD", d: "Property &amp; management — will operate from the group's next warehouse. Its managing director brings 10 years in architecture.", c: "var(--ember)" },
+  { n: "Freedom Fly LTD", d: "Drone visual — live drone footage paired with interconnected alarms, already in use on site.", c: "var(--blue)" }
 ];
 
 const ICONS = {
@@ -2534,30 +2539,30 @@ function renderBrands() {
    ========================================================================= */
 const SYSTEM = {
   // one entry per clickable body; `goto` maps it to a section of the proposal
-  core: { key: "fire", name: "Freedom Fire & Safety", short: "Freedom Fire", role: "The core — flagship subsidiary",
+  core: { key: "fire", name: "The Freedom Group Holdings LTD", short: "Group Holdings", role: "The parent — owns every brand & all IP",
     c: "var(--pink)", cHex: "#ff3d9a",
-    goto: "growth", gotoLabel: "The growth curve", stat: "£42k → £1.22m in 24 months",
-    body: "The flagship, and the engine the whole group grew from: fire & safety e-commerce, refurbishment, trade distribution and nationwide on-site servicing.",
-    facts: ["Flagship", "eBay · Amazon · Temu", "On-site servicing"] },
+    goto: "overview", gotoLabel: "The group structure", stat: "100% of brands & IP",
+    body: "The registered holding company above it all — owns every brand, trademark and piece of IP, licenses them to the operating LTDs, and collects royalties back every quarter.",
+    facts: ["Holding company", "Owns all IP & brands", "Royalties · quarterly"] },
   planets: [
-    { key: "form", name: "Freedom Facilities", short: "Freedom Facilities", role: "Product design & distribution",
+    { key: "form", name: "Freedom Facilities LTD", short: "Facilities", role: "Facilities management & servicing",
       cls: "b-green", c: "var(--mint)", cHex: "#2fe0a0", t: -90, r: 42,
       grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      goto: "projections", gotoLabel: "Multi-channel map · 2026 – 2031", stat: "£26m by 2031",
-      body: "Product design and trade-facing distribution — owns the supply chain factory-to-door, the arm that turned the JinDun partnership into a trademarked product line.",
-      facts: ["Product design", "Trade distribution", "Owns the supply chain"] },
-    { key: "fly", name: "Fly", short: "Fly", role: "Aerial & site visibility",
+      goto: "projections", gotoLabel: "Multi-channel map · 2026 – 2031", stat: "In works · 2027",
+      body: "The facilities-management arm — on-site fire & safety servicing plus PPE, drone, PAT and FM services for commercial clients. Launching 2027.",
+      facts: ["On-site servicing", "PPE · PAT · FM", "In works · 2027"] },
+    { key: "fly", name: "Freedom Global LTD", short: "Global", role: "Consumer D2C e-commerce hub",
       cls: "b-blue", c: "var(--blue)", cHex: "#38a9ff", t: 90, r: 36,
       grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      goto: "horizon", gotoLabel: "The 2036 horizon", stat: "£71.85m target",
-      body: "Interconnected alarm systems combined with live drone footage — real-time site safety and progress visibility for construction clients. Something no other fire-safety firm offered.",
-      facts: ["Drones", "Alarm systems", "Live site visibility"] },
-    { key: "storm", name: "Firestorm™", short: "Firestorm™", role: "The trademarked brand",
+      goto: "growth", gotoLabel: "The growth curve", stat: "£42k → £1.22m in 24 months",
+      body: "The flagship consumer division — a multi-brand D2C e-commerce hub running the group's online stores and licensed brands. Currently trading as Freedom Fire & Safety Limited.",
+      facts: ["Flagship", "eBay · Amazon · Temu", "t/a Freedom Fire & Safety"] },
+    { key: "storm", name: "Freedom Distribution LTD", short: "Distribution", role: "B2B trade division",
       cls: "b-ember", c: "var(--ember)", cHex: "#ff6a3d", t: 205, r: 24,
       grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      goto: "journey", gotoLabel: "The journey — born at the NEC", stat: "6,982 units · Dec 24th",
-      body: "The trademarked product brand, built to disrupt the fire & safety sector from the ground up — direct from JinDun, the world's third-largest extinguisher manufacturer.",
-      facts: ["Trademarked", "Direct-from-factory", "Market-leading"] }
+      goto: "horizon", gotoLabel: "The 2036 horizon", stat: "In works · 2028",
+      body: "The B2B trade division — wholesale and retail distribution through national retailers, dealer channels and marketplaces. Launching 2028.",
+      facts: ["B2B & trade", "National retailers", "In works · 2028"] }
   ]
 };
 
@@ -2771,9 +2776,17 @@ function renderMegaLogo() {
           <stop offset="1" stop-color="#c60f6e"/>
         </linearGradient>
         ${planetDefs}
+        <radialGradient id="mgVoid" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#000000" stop-opacity=".88"/>
+          <stop offset=".45" stop-color="#1a0512" stop-opacity=".55"/>
+          <stop offset=".78" stop-color="#ff3d9a" stop-opacity=".16"/>
+          <stop offset=".95" stop-color="#ff74b8" stop-opacity=".38"/>
+          <stop offset="1" stop-color="#ff3d9a" stop-opacity="0"/>
+        </radialGradient>
       </defs>
       <path id="mgTrack" d="${trackD}" fill="none" opacity="0" pointer-events="none"/>
       <g id="mgRing">
+        <ellipse class="mg-void" cx="499.7" cy="502.9" rx="206" ry="413" transform="rotate(39.23 499.7 502.9)"/>
         <path class="mg-glow" d="${tape}" fill="url(#megaPink)"/>
         <path d="${tape}" fill="url(#megaPink)"/>
         ${MOVE ? `<g class="mg-ess e1" style="offset-path:path('${trackD}')"><ellipse rx="36" ry="5"/></g>
@@ -2856,6 +2869,10 @@ function renderMegaLogo() {
         el.style.setProperty("--sy", (-ly).toFixed(1));
         el.style.setProperty("--spin", (-(2.1 + wi * 0.3)).toFixed(2));
         el.style.setProperty("--d", (wi * 0.045).toFixed(3));
+        // scale about the RING's centre: shrinking geometrically drags the
+        // word into the mouth, however near or far it starts
+        el.style.transformOrigin = ((499.7 - t.x) / sxW).toFixed(1) + "px " + ((502.9 - t.base) + t.cap).toFixed(1) + "px";
+        el.style.transformBox = "fill-box";
       });
     } catch (e) { /* not rendered yet */ }
   };
@@ -4382,7 +4399,7 @@ function runIntro() {
     ["> mounting revenue channels [8/8] ", "OK"],
     ["> loading journey · 2020 → 2036 ", "OK"],
     ["> calibrating trajectory £42k → £71.85m ", "OK"],
-    ["> waking planets · FACILITIES · FLY · FIRESTORM ", "OK"],
+    ["> waking planets · GLOBAL · FACILITIES · DISTRIBUTION ", "OK"],
     ["> STATUS: WEBSITE OPERATIONAL — engaging warp", ""]
   ];
 

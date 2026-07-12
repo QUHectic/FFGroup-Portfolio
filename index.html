@@ -96,11 +96,13 @@ section#team{overflow-x:clip;}
 .sm-legend line{stroke-width:2.4;}
 .sm-legend text{font-size:11.5px;fill:rgba(243,244,251,.6);}
 .sm-card{
-  position:absolute;width:min(300px,25vw);background:rgba(15,17,25,.92);
+  position:absolute;z-index:5;width:min(300px,25vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px;
-  backdrop-filter:blur(6px);transition:border-color .3s, transform .3s var(--ease-out);
+  backdrop-filter:blur(6px);
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity .28s var(--ease-out), transform .28s var(--ease-out), border-color .3s;
 }
-.sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
+.sm-card.hot{opacity:1;transform:translateY(0);pointer-events:auto;border-color:var(--c,#fff);}
 .sm-card h3{margin:0;font-size:1rem;display:flex;align-items:center;gap:8px;color:#fff;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
 .sm-card .role{color:rgba(243,244,251,.72);font-size:.83rem;margin:6px 0 0;}
@@ -114,7 +116,7 @@ section#team{overflow-x:clip;}
 @media (max-width:760px){
   .sysmap{padding-inline:0;}
   .sysmap.reveal,.sysmap.reveal.in{transform:none;}
-  .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;}
+  .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;opacity:1;pointer-events:auto;}
   .sm-futrow{grid-template-columns:1fr;}
 }
 
@@ -2961,41 +2963,48 @@ function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
   const globeSrc = ($(".nav-mark .globe") || {}).src || "";
-  const W = 1900, H = 1400, cx = 950, cy = 560, sunR = 84;
+  const W = 1900, H = 1400, cx = 950, cy = 350, sunR = 84;
   const f = n => n.toFixed(1);
-  // concentric shells around Holdings — the whole system orbits one centre,
-  // upper (far) halves dimmer so the tilted plane reads in 3D
+  // Holdings sits HIGH; the concentric shells are centred on it, so their
+  // far halves run right behind the globe while the companies hang on the
+  // near arcs below — hierarchy reads top-down
   const SHELLS = [
-    [300, 126, "sm-orbit o1"],
-    [480, 202, "sm-orbit"],
-    [660, 277, "sm-orbit"],
-    [840, 353, "sm-orbit future"],
+    [340, 143, "sm-orbit"],
+    [560, 235, "sm-orbit o1"],
+    [780, 328, "sm-orbit"],
+    [980, 412, "sm-orbit future"],
   ];
   const shell = ([rx, ry, cls]) => `
-    <path class="${cls}" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cy}"/>
-    <path class="${cls} far" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cy}"/>`;
+    <path class="${cls} far" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cy}"/>
+    <path class="${cls}" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cy}"/>`;
 
+  const pos = (rx, ry, tDeg) => {
+    const t = tDeg * Math.PI / 180;
+    return { x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) };
+  };
+  // tier 2 = the flagship, directly beneath Holdings on the bright ring;
+  // tier 3 = the in-development companies, wider and lower on the next shell
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      x: 470, y: 560, r: 48, status: "FLAGSHIP",
+      shell: [560, 235], t: 90, r: 48, status: "FLAGSHIP",
       role: "Direct-to-consumer retail division operating the group's online storefronts",
       ta: "Presently trading as Freedom Fire & Safety Limited",
       ch: "Sales channels: eBay · Amazon · Shopify · Temu · TikTok",
-      card: { left: 13, top: 46 }, roylab: 1 },
+      card: { left: 38, top: 47 } },
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      x: 1430, y: 560, r: 42, status: "IN DEVELOPMENT · 2027",
+      shell: [780, 328], t: 127, r: 42, status: "IN DEVELOPMENT · 2027",
       role: "Facilities-management division delivering servicing and maintenance contracts",
       ch: "On-site servicing · PPE supply · drone inspection · PAT testing",
-      card: { left: 63, top: 46 }, roylab: 1 },
+      card: { left: 13, top: 48 }, roylab: 1 },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      x: 950, y: 762, r: 36, status: "IN DEVELOPMENT · 2028",
+      shell: [780, 328], t: 53, r: 36, status: "IN DEVELOPMENT · 2028",
       role: "Business-to-business division supplying wholesale and retail trade",
       ch: "National retailers · dealer network · trade counters",
-      card: { left: 38, top: 60 } },
+      card: { left: 63, top: 48 }, roylab: 1 },
   ];
   const BRANDS = [
     ["FireStorm™", "var(--ember)"], ["Voltz", "var(--blue)"], ["Kunegry", "var(--mint)"],
-    ["T3", "var(--pink)"], ["Crystal Solutions", "var(--blue)"], ["+ further brands", ""],
+    ["T3", "var(--pink)"], ["Crystal Solutions", "var(--blue)"], ["+ future brands", ""],
   ];
   const ROCKET_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>`;
   const FUTURE = [
@@ -3016,23 +3025,27 @@ function renderSystem() {
       <stop offset="0" stop-color="${p.grad[0]}"/><stop offset="0.55" stop-color="${p.grad[1]}"/><stop offset="1" stop-color="${p.grad[2]}"/>
     </radialGradient>`).join("");
 
-  let flows = "", roys = "", leads = "", roylabs = "", planets = "";
+  let flows = "", roys = "", roylabs = "", planets = "";
   PLANETS.forEach((p, i) => {
-    const dx = p.x - cx, dy = p.y - cy;
+    const pp = pos(p.shell[0], p.shell[1], p.t);
+    p.px = pp.x; p.py = pp.y;
+    const dx = pp.x - cx, dy = pp.y - cy;
     const L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
     const s0 = { x: cx + ux * (sunR + 14), y: cy + uy * (sunR + 14) };
-    const e0 = { x: p.x - ux * (p.r + 16), y: p.y - uy * (p.r + 16) };
+    const e0 = { x: pp.x - ux * (p.r + 16), y: pp.y - uy * (p.r + 16) };
     const lx = -uy * 9, ly = ux * 9;   // licence + royalty lanes side by side
     flows += `<path class="sm-flow" stroke="${p.cHex}" marker-end="url(#smArr)" d="M ${f(s0.x + lx)} ${f(s0.y + ly)} L ${f(e0.x + lx)} ${f(e0.y + ly)}"/>`;
     roys += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(e0.x - lx)} ${f(e0.y - ly)} L ${f(s0.x - lx)} ${f(s0.y - ly)}"/>`;
-    leads += `<line class="sm-lead" x1="${f(p.x)}" y1="${f(p.y + p.r + 10)}" x2="${f(p.x)}" y2="${f(H * (p.card.top / 100) - 8)}"/>`;
     if (p.roylab) {
-      roylabs += `<text class="sm-roylab" x="${f((s0.x + e0.x) / 2)}" y="${f(cy - 24)}" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+      const mx = (s0.x + e0.x) / 2 - uy * 30, my = (s0.y + e0.y) / 2 + ux * 30;
+      let ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (ang > 90 || ang < -90) ang += 180;
+      roylabs += `<text class="sm-roylab" x="${f(mx)}" y="${f(my)}" text-anchor="middle" transform="rotate(${f(ang)} ${f(mx)} ${f(my)})">ROYALTIES · REMITTED QUARTERLY</text>`;
     }
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
-         aria-label="${p.name} — ${p.role}. Click to open its chapter."
-         transform="translate(${f(p.x)} ${f(p.y)})">
+         aria-label="${p.name} — ${p.role}. Hover or tap to open its panel; activate again to fly to its chapter."
+         transform="translate(${f(pp.x)} ${f(pp.y)})">
         <g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
           <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
           <circle r="${p.r}" fill="url(#smp-${p.key})"/>
@@ -3043,7 +3056,7 @@ function renderSystem() {
   });
 
   map.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the centre of concentric orbits, the operating companies stationed around it">
+    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the top of the system, its orbits sweeping behind it, the operating companies tiered on the orbits below">
       <defs>
         ${planetDefs}
         <radialGradient id="smSunGlow">
@@ -3062,7 +3075,6 @@ function renderSystem() {
       ${SHELLS.map(shell).join("")}
       ${flows}
       ${roys}
-      ${leads}
       ${roylabs}
       <circle cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
@@ -3072,10 +3084,10 @@ function renderSystem() {
           : `<circle cx="${cx}" cy="${cy}" r="${sunR}" fill="#ff3d9a"/>`}
         <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
       </g>
-      <text class="sm-kick" x="${cx}" y="330" text-anchor="middle">GROUP STRUCTURE</text>
-      <text class="sm-suntitle" x="${cx}" y="368" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
-      <text class="sm-sunsub" x="${cx}" y="396" text-anchor="middle">Registered holding company — proprietor of the group's brands, trademarks and intellectual property</text>
-      <g class="sm-mini" transform="translate(${cx - 152} 414)">
+      <text class="sm-kick" x="${cx}" y="120" text-anchor="middle">GROUP STRUCTURE</text>
+      <text class="sm-suntitle" x="${cx}" y="158" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
+      <text class="sm-sunsub" x="${cx}" y="186" text-anchor="middle">Registered holding company — proprietor of the group's brands, trademarks and intellectual property</text>
+      <g class="sm-mini" transform="translate(${cx - 152} 204)">
         <rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">BRANDS</text>
         <rect x="94" width="118" height="24" rx="12"/><text x="153" y="16" text-anchor="middle">TRADEMARKS</text>
         <rect x="222" width="52" height="24" rx="12"/><text x="248" y="16" text-anchor="middle">IP</text>
@@ -3110,30 +3122,50 @@ function renderSystem() {
     </div>
   `;
 
+  // popup wiring: panels appear on hover/focus/tap, with a grace delay so
+  // the pointer can travel from planet to panel without it vanishing
   const cards = $$(".sm-card", map);
   const cardFor = key => cards.find(c => c.dataset.key === key);
+  const planetFor = key => $$(".sm-planet", map).find(b => b.dataset.key === key);
+  const hideTimers = {};
+  const show = key => {
+    clearTimeout(hideTimers[key]);
+    const b = planetFor(key), c = cardFor(key);
+    if (b) b.classList.add("hot");
+    if (c) c.classList.add("hot");
+  };
+  const hideSoon = key => {
+    clearTimeout(hideTimers[key]);
+    hideTimers[key] = setTimeout(() => {
+      const b = planetFor(key), c = cardFor(key);
+      if (b) b.classList.remove("hot");
+      if (c) c.classList.remove("hot");
+    }, 300);
+  };
   $$(".sm-planet", map).forEach(b => {
     const key = b.dataset.key;
-    const on = () => { b.classList.add("hot"); const c = cardFor(key); if (c) c.classList.add("hot"); };
-    const off = () => { b.classList.remove("hot"); const c = cardFor(key); if (c) c.classList.remove("hot"); };
-    b.addEventListener("pointerenter", on);
-    b.addEventListener("pointerleave", off);
-    b.addEventListener("focus", on);
-    b.addEventListener("blur", off);
-    b.addEventListener("click", () => flyToChapter(key));
+    b.addEventListener("pointerenter", () => show(key));
+    b.addEventListener("pointerleave", () => hideSoon(key));
+    b.addEventListener("focus", () => show(key));
+    b.addEventListener("blur", () => hideSoon(key));
+    b.addEventListener("click", () => {
+      const c = cardFor(key);
+      // first tap opens the panel; a second activation flies to the chapter
+      if (c && !c.classList.contains("hot")) show(key);
+      else flyToChapter(key);
+    });
     b.addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flyToChapter(key); }
     });
   });
   cards.forEach(c => {
     const key = c.dataset.key;
-    const planet = $$(".sm-planet", map).find(b => b.dataset.key === key);
-    c.addEventListener("pointerenter", () => { c.classList.add("hot"); if (planet) planet.classList.add("hot"); });
-    c.addEventListener("pointerleave", () => { c.classList.remove("hot"); if (planet) planet.classList.remove("hot"); });
+    c.addEventListener("pointerenter", () => show(key));
+    c.addEventListener("pointerleave", () => hideSoon(key));
   });
 
   // the courier patrols the whole system, inside the frame
-  mountRocket(map, { cx: 950, cy: 560, rx: 880, ry: 400, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
+  mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
 }
 
 /* =========================================================================
@@ -4661,16 +4693,16 @@ function initSetpieces() {
       if (!isNaN(hy)) cy = h * hy / 100;
     }
     const m = Math.min(w, h);
-    const ignite = sm(ph2(p, .03, .15));
-    const burn = ignite * sm(ph2(p, .08, .3));
-    const collapse = sm(ph2(p, .3, .375));
-    const det = ph2(p, .385, .86);
+    const ignite = sm(ph2(p, .03, .14));
+    const burn = ignite * sm(ph2(p, .07, .28));
+    const collapse = sm(ph2(p, .28, .35));
+    const det = ph2(p, .36, .97);
     const detE = sm(det);
-    const born = sm(ph2(p, .6, .78)) * (1 - sm(ph2(p, .86, .99)) * .55);
-    const fl = Math.pow(bump(p, .405, .09), 1.6);
+    const born = sm(ph2(p, .5, .7));
+    const fl = Math.pow(bump(p, .38, .09), 1.6);
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#07070d"; ctx.fillRect(0, 0, w, h);
-    const starA = sm(ph2(p, .02, .12)) * (1 - fl * .8) * .9 * (1 - sm(ph2(p, .78, .92)) * .95);
+    const starA = sm(ph2(p, .02, .12)) * (1 - fl * .8) * .9 * (1 - sm(ph2(p, .85, .99)) * .55);
     for (const st of NVstars) {
       const tw = .35 + .65 * Math.abs(Math.sin(st.c * 37 + p * 18));
       ctx.fillStyle = `rgba(255,255,255,${starA * tw * (.2 + .5 * st.z)})`;
@@ -4795,14 +4827,20 @@ function initSetpieces() {
         ctx.beginPath(); ctx.arc(cx + i * m * .1, cy + i * m * .035, m * .012 * i, 0, TAU); ctx.stroke();
       }
     }
-    // out of the blast, the system's sun is born — then hands over to the map
+    // out of the blast, the system's sun is born — the section rises out of
+    // this remnant, so it stays lit right through the handoff
     if (born > .01) {
       ctx.globalCompositeOperation = "lighter";
-      const bg3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, m * .34);
+      const NS2 = m * (.55 + .35 * detE);
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(.35 + detE * .25);
+      ctx.globalAlpha = born * .16;
+      ctx.drawImage(NVneb1, -NS2 / 2, -NS2 / 2, NS2, NS2);
+      ctx.restore(); ctx.globalAlpha = 1;
+      const bg3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, m * .42);
       bg3.addColorStop(0, `rgba(255,120,190,${.5 * born})`);
-      bg3.addColorStop(.35, `rgba(255,61,154,${.28 * born})`);
+      bg3.addColorStop(.35, `rgba(255,61,154,${.26 * born})`);
       bg3.addColorStop(1, "rgba(255,61,154,0)");
-      ctx.fillStyle = bg3; ctx.beginPath(); ctx.arc(cx, cy, m * .34, 0, TAU); ctx.fill();
+      ctx.fillStyle = bg3; ctx.beginPath(); ctx.arc(cx, cy, m * .42, 0, TAU); ctx.fill();
       ctx.fillStyle = `rgba(255,235,246,${.85 * born})`;
       ctx.beginPath(); ctx.arc(cx, cy, m * (.006 + .012 * born), 0, TAU); ctx.fill();
     }

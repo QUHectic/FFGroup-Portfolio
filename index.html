@@ -420,162 +420,20 @@ h1:focus,h2:focus{outline:none;}
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) scale(.965);}
   to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) scale(1);}
 }
-/* ============ FULL-PAGE SCROLL-SCRUBBED SET-PIECES ============
-   Each light↔dark boundary is a pinned, full-viewport sequence: the page
-   holds still while scrolling drives every layer 1:1 (and in reverse).
-   HYPERDRIVE (overview→system) · SUPERNOVA (system→journey) ·
-   PLANET TURN (horizon→team) */
+/* ============ CANVAS SET-PIECES — HYPERDRIVE · SUPERNOVA · PLANET ============
+   Full-viewport pinned canvases; each frame is drawn from scroll progress
+   alone (deterministic + reversible). html.spx is set by JS only on capable
+   desktop setups — so nothing ever renders as an empty divider band. */
 .tr2{display:none;}
-@supports (animation-timeline: view()){
-@media (min-width:761px) and (prefers-reduced-motion: no-preference){
-  .tr2{display:block;position:relative;height:190vh;view-timeline:--tr2 block;pointer-events:none;}
-  .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;background:#07070d;}
-  .tr2-stage i{position:absolute;inset:0;display:block;animation-range:cover 0% cover 100%;}
-  section#system{background:#07070d;}
-  section#journey{background:var(--bg);}
-  section#team{background:var(--bg-soft);}
-
-  /* —— HYPERDRIVE: the white page jumps to lightspeed —— */
-  .tr2-hyper .hy-light{background:#ffffff;animation:hyLight linear both;animation-timeline:--tr2;}
-  .tr2-hyper .hy-streaks{
-    background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.95) 0deg .14deg, transparent .34deg 2.2deg);
-    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 7%, #000 24% 60%, transparent 76%);
-    mask:radial-gradient(circle at 50% 50%, transparent 0 7%, #000 24% 60%, transparent 76%);
-    animation:hyStreaks linear both;animation-timeline:--tr2;
-  }
-  .tr2-hyper .hy-streaks2{
-    background:repeating-conic-gradient(from .9deg at 50% 50%, rgba(56,169,255,.85) 0deg .1deg, transparent .3deg 3.1deg);
-    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 10%, #000 30% 64%, transparent 80%);
-    mask:radial-gradient(circle at 50% 50%, transparent 0 10%, #000 30% 64%, transparent 80%);
-    animation:hyStreaks2 linear both;animation-timeline:--tr2;
-  }
-  .tr2-hyper .hy-flash{background:radial-gradient(circle at 50% 50%, #fff, rgba(255,255,255,.6) 30%, transparent 70%);animation:hyFlash linear both;animation-timeline:--tr2;}
-  .tr2-hyper .hy-space{
-    background:
-      radial-gradient(1.6px 1.6px at 15% 25%, rgba(255,255,255,.9), transparent 60%),
-      radial-gradient(1.3px 1.3px at 42% 68%, rgba(255,255,255,.7), transparent 60%),
-      radial-gradient(1.8px 1.8px at 64% 18%, rgba(255,255,255,.85), transparent 60%),
-      radial-gradient(1.2px 1.2px at 81% 52%, rgba(255,255,255,.65), transparent 60%),
-      radial-gradient(1.5px 1.5px at 28% 84%, rgba(255,255,255,.75), transparent 60%),
-      radial-gradient(1.4px 1.4px at 90% 80%, rgba(255,255,255,.6), transparent 60%),
-      #07070d;
-    animation:hySpace linear both;animation-timeline:--tr2;
-  }
-
-  /* —— SUPERNOVA: a star goes critical; the next chapter pours out of it —— */
-  .tr2-nova .sn-space{
-    background:
-      radial-gradient(1.5px 1.5px at 18% 32%, rgba(255,255,255,.8), transparent 60%),
-      radial-gradient(1.2px 1.2px at 48% 74%, rgba(255,255,255,.6), transparent 60%),
-      radial-gradient(1.7px 1.7px at 71% 21%, rgba(255,255,255,.8), transparent 60%),
-      radial-gradient(1.2px 1.2px at 86% 61%, rgba(255,255,255,.55), transparent 60%),
-      #07070d;
-  }
-  .tr2-nova .sn-core{
-    background:radial-gradient(circle at 50% 50%, #fff 0 2%, rgba(255,230,240,.95) 4.5%, rgba(255,61,154,.55) 8.5%, transparent 13%);
-    animation:snCore linear both;animation-timeline:--tr2;
-  }
-  .tr2-nova .sn-shock{
-    background:radial-gradient(circle at 50% 50%, transparent 30%, rgba(255,116,184,.9) 34%, rgba(255,61,154,.35) 38%, transparent 44%);
-    animation:snShock linear both;animation-timeline:--tr2;
-  }
-  .tr2-nova .sn-rays{
-    background:repeating-conic-gradient(from 4deg at 50% 50%, rgba(255,255,255,.9) 0deg .5deg, transparent 2.4deg 30deg);
-    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 4%, #000 12% 55%, transparent 72%);
-    mask:radial-gradient(circle at 50% 50%, transparent 0 4%, #000 12% 55%, transparent 72%);
-    animation:snRays linear both;animation-timeline:--tr2;
-  }
-  .tr2-nova .sn-flash{background:#fff;animation:snFlash linear both;animation-timeline:--tr2;}
-  .tr2-nova .sn-remnant{
-    background:radial-gradient(circle at 50% 50%, rgba(255,61,154,.3), rgba(56,169,255,.18) 34%, transparent 62%);
-    filter:blur(8px);
-    animation:snRemnant linear both;animation-timeline:--tr2;
-  }
-  .tr2-nova .sn-light{background:#eef1f8;animation:snLight linear both;animation-timeline:--tr2;}
-
-  /* —— PLANET TURN: a world rotates from day into night —— */
-  .tr2-planet .tr2-stage{background:#ffffff;}
-  .tr2-planet .pl-day{background:#ffffff;animation:plDay linear both;animation-timeline:--tr2;}
-  .tr2-planet .pl-stars{
-    background:
-      radial-gradient(1.5px 1.5px at 22% 28%, rgba(255,255,255,.85), transparent 60%),
-      radial-gradient(1.2px 1.2px at 52% 70%, rgba(255,255,255,.6), transparent 60%),
-      radial-gradient(1.7px 1.7px at 74% 24%, rgba(255,255,255,.8), transparent 60%),
-      radial-gradient(1.3px 1.3px at 88% 66%, rgba(255,255,255,.55), transparent 60%),
-      radial-gradient(1.4px 1.4px at 12% 78%, rgba(255,255,255,.65), transparent 60%),
-      #0f1018;
-    animation:plStars linear both;animation-timeline:--tr2;
-  }
-  .tr2-planet .pl-globe{
-    inset:auto;left:50%;top:50%;width:64vmin;height:64vmin;margin:-32vmin 0 0 -32vmin;border-radius:50%;
-    background:
-      radial-gradient(circle at 34% 30%, rgba(255,255,255,.28), transparent 46%),
-      linear-gradient(23deg, rgba(10,143,95,.55) 0 22%, transparent 22% 34%, rgba(11,90,168,.5) 34% 55%, transparent 55% 70%, rgba(10,143,95,.45) 70% 100%),
-      radial-gradient(circle at 50% 50%, #123e63 0 62%, #0b2a44 100%);
-    background-size:100% 100%, 300% 100%, 100% 100%;
-    box-shadow:inset -8vmin -4vmin 12vmin rgba(0,0,0,.55);
-    animation:plSpin linear both;animation-timeline:--tr2;
-  }
-  .tr2-planet .pl-term{
-    inset:auto;left:50%;top:50%;width:64vmin;height:64vmin;margin:-32vmin 0 0 -32vmin;border-radius:50%;
-    background:linear-gradient(90deg, transparent 0 44%, rgba(2,4,10,.94) 60% 100%);
-    animation:plTerm linear both;animation-timeline:--tr2;
-  }
-  .tr2-planet .pl-glow{
-    inset:auto;left:50%;top:50%;width:64.6vmin;height:64.6vmin;margin:-32.3vmin 0 0 -32.3vmin;border-radius:50%;
-    animation:plGlow linear both;animation-timeline:--tr2;
-  }
-}
-}
-@keyframes hyLight{0%,14%{opacity:1;}32%{opacity:0;}100%{opacity:0;}}
-@keyframes hyStreaks{
-  0%,16%{opacity:0;transform:scale(.22) rotate(0deg);}
-  26%{opacity:.9;}
-  50%{opacity:1;transform:scale(1.5) rotate(7deg);}
-  68%{opacity:0;transform:scale(2.9) rotate(12deg);}
-  100%{opacity:0;transform:scale(2.9) rotate(12deg);}
-}
-@keyframes hyStreaks2{
-  0%,20%{opacity:0;transform:scale(.28) rotate(0deg);}
-  32%{opacity:.8;}
-  54%{opacity:.95;transform:scale(1.8) rotate(-9deg);}
-  72%{opacity:0;transform:scale(3.2) rotate(-14deg);}
-  100%{opacity:0;transform:scale(3.2) rotate(-14deg);}
-}
-@keyframes hyFlash{0%,44%{opacity:0;}56%{opacity:1;}66%{opacity:0;}100%{opacity:0;}}
-@keyframes hySpace{0%,52%{opacity:0;}68%{opacity:1;}100%{opacity:1;}}
-@keyframes snCore{
-  0%{opacity:0;transform:scale(.5);}
-  12%{opacity:1;transform:scale(.85);}
-  22%{transform:scale(.7);}
-  34%{transform:scale(1.15);}
-  42%{transform:scale(.55);}
-  50%{opacity:1;transform:scale(2.6);}
-  62%{opacity:0;transform:scale(4);}
-  100%{opacity:0;transform:scale(4);}
-}
-@keyframes snShock{0%,46%{opacity:0;transform:scale(.12);}52%{opacity:1;}86%{opacity:0;transform:scale(3.4);}100%{opacity:0;transform:scale(3.4);}}
-@keyframes snRays{0%,44%{opacity:0;transform:scale(.2) rotate(0deg);}52%{opacity:.95;}78%{opacity:0;transform:scale(2.6) rotate(16deg);}100%{opacity:0;transform:scale(2.6) rotate(16deg);}}
-@keyframes snFlash{0%,47%{opacity:0;}53%{opacity:1;}64%{opacity:0;}100%{opacity:0;}}
-@keyframes snRemnant{0%,52%{opacity:0;transform:scale(.4);}68%{opacity:.85;}92%{opacity:0;transform:scale(2.2);}100%{opacity:0;transform:scale(2.2);}}
-@keyframes snLight{0%,55%{opacity:0;}72%{opacity:1;}100%{opacity:1;}}
-@keyframes plDay{0%,34%{opacity:1;}62%{opacity:0;}100%{opacity:0;}}
-@keyframes plStars{0%,40%{opacity:0;}68%{opacity:1;}100%{opacity:1;}}
-@keyframes plSpin{
-  0%{background-position:0 0, 0% 0, 0 0;transform:scale(.94);}
-  70%{background-position:0 0, -160% 0, 0 0;transform:scale(1);}
-  100%{background-position:0 0, -200% 0, 0 0;transform:scale(1.02) translateY(6vmin);}
-}
-@keyframes plTerm{
-  0%{opacity:0;transform:rotate(-150deg);}
-  26%{opacity:1;transform:rotate(-118deg);}
-  75%{transform:rotate(-12deg);}
-  100%{opacity:1;transform:rotate(0deg);}
-}
-@keyframes plGlow{
-  0%{box-shadow:0 0 60px 14px rgba(56,169,255,.4);}
-  100%{box-shadow:0 0 72px 16px rgba(255,61,154,.35);}
-}
+html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
+html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
+html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+html.spx .tr2-hyper{background:#07070d;}
+html.spx .tr2-nova{background:#eef1f8;}
+html.spx .tr2-planet{background:#0f1018;}
+html.spx section#system{background:#07070d;}
+html.spx section#journey{background:var(--bg);}
+html.spx section#team{background:var(--bg-soft);}
 
 @keyframes secRiseAlt{
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
@@ -1963,7 +1821,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        THE SYSTEM — interactive logo
        ==================================================================== -->
   <section data-sec="system" id="system" aria-label="The Freedom Group system">
-    <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><i class="hy-light"></i><i class="hy-streaks"></i><i class="hy-streaks2"></i><i class="hy-flash"></i><i class="hy-space"></i></div></div>
+    <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The group as a system</span>
@@ -1981,7 +1839,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        JOURNEY
        ==================================================================== -->
   <section data-sec="journey" id="journey" class="sec-light alt" aria-label="The journey">
-    <div class="tr2 tr2-nova" aria-hidden="true"><div class="tr2-stage"><i class="sn-space"></i><i class="sn-remnant"></i><i class="sn-rays"></i><i class="sn-shock"></i><i class="sn-core"></i><i class="sn-flash"></i><i class="sn-light"></i></div></div>
+    <div class="tr2 tr2-nova" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The journey</span>
@@ -2132,7 +1990,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        TEAM
        ==================================================================== -->
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
-    <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><i class="pl-day"></i><i class="pl-stars"></i><i class="pl-glow"></i><i class="pl-globe"></i><i class="pl-term"></i></div></div>
+    <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">Culture, team structure &amp; talent pipeline</span>
@@ -4618,6 +4476,319 @@ function initBlackhole() {
 }
 
 /* =========================================================================
+   SET-PIECES — canvas-rendered, scroll-scrubbed boundary cinematics:
+   HYPERDRIVE · SUPERNOVA · PLANET TURN. Every frame is a pure function of
+   scroll progress; all randomness is seeded, so scrubbing is stable in
+   both directions.
+   ========================================================================= */
+function initSetpieces() {
+  const els = $$(".tr2");
+  if (!els.length) return;
+  const cl = (v, a, b) => Math.min(b, Math.max(a, v));
+  const ph2 = (p, a, b) => cl((p - a) / (b - a), 0, 1);
+  const sm = t => t * t * (3 - 2 * t);
+  const lp = (a, b, t) => a + (b - a) * t;
+  const bump = (p, c, w2) => Math.max(0, 1 - Math.abs(p - c) / w2);
+  const rng = seed => { let t = seed >>> 0; return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ t >>> 15, 1 | t); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; }; };
+  const TAU = Math.PI * 2;
+
+  /* ---------- HYPERDRIVE: 460 stars stretch into chromatic light-lines --- */
+  const hyR = rng(97);
+  const HY = Array.from({ length: 460 }, () => ({ a: hyR() * TAU, d: .05 + hyR() * .95, z: .25 + hyR() * .75, c: hyR() }));
+  function drawHyper(ctx, p, w, h) {
+    const cx = w / 2, cy = h / 2, R = Math.hypot(w, h) * .58;
+    const dark = sm(ph2(p, .08, .3));
+    ctx.globalCompositeOperation = "source-over";
+    const g = Math.round(255 - 248 * dark);
+    ctx.fillStyle = `rgb(${g},${g},${Math.round(g + 5 * dark)})`;
+    ctx.fillRect(0, 0, w, h);
+    const t = ph2(p, .18, .7), settle = sm(ph2(p, .7, .92));
+    const boost = Math.pow(t, 2.3) * 30;
+    ctx.globalCompositeOperation = "lighter";
+    ctx.lineCap = "round";
+    for (const st of HY) {
+      const base = .02 + st.d * .42;
+      const spd = boost * (.2 + st.d * .8) * st.z;
+      const r1 = (base + spd * .014) * R;
+      const len = spd * .052 * R * (1 - settle) + 1.2;
+      const r2 = r1 + len;
+      const al = dark * cl(t * 9, 0, 1) * (.3 + .7 * st.z) * (1 - .25 * settle);
+      if (al <= .012) continue;
+      const ca = Math.cos(st.a), sa = Math.sin(st.a);
+      const x1 = cx + ca * r1, y1 = cy + sa * r1, x2 = cx + ca * r2, y2 = cy + sa * r2;
+      const wgt = (0.7 + 1.9 * st.z) * (1 + t * 1.1);
+      ctx.strokeStyle = st.c > .82 ? `rgba(255,120,190,${al * .5})` : `rgba(110,180,255,${al * .55})`;
+      ctx.lineWidth = wgt * 2.4;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.strokeStyle = `rgba(255,255,255,${al})`;
+      ctx.lineWidth = wgt;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    const coreA = dark * t * (1 - settle * .8);
+    if (coreA > .01) {
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * .2);
+      cg.addColorStop(0, `rgba(255,255,255,${.9 * coreA})`);
+      cg.addColorStop(.4, `rgba(150,200,255,${.35 * coreA})`);
+      cg.addColorStop(1, "rgba(150,200,255,0)");
+      ctx.fillStyle = cg; ctx.fillRect(cx - R * .2, cy - R * .2, R * .4, R * .4);
+    }
+    const fl = sm(bump(p, .68, .09));
+    if (fl > .01) { ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
+    const rest = sm(ph2(p, .74, .94));
+    if (rest > .01) {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = `rgba(7,7,13,${rest})`; ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = 0; i < HY.length; i += 2) {
+        const st = HY[i];
+        const rr = (.03 + st.d * .48) * R;
+        const tw = .4 + .6 * Math.abs(Math.sin(st.c * 43 + p * 26));
+        ctx.fillStyle = `rgba(255,255,255,${rest * tw * (.25 + .55 * st.z)})`;
+        ctx.fillRect(cx + Math.cos(st.a) * rr, cy + Math.sin(st.a) * rr, 1.2 + st.z, 1.2 + st.z);
+      }
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  /* ---------- SUPERNOVA: a boiling star detonates into debris & nebula --- */
+  const nvR = rng(553);
+  const NVstars = Array.from({ length: 220 }, () => ({ x: nvR(), y: nvR(), z: .3 + nvR() * .7, c: nvR() }));
+  const NVdeb = Array.from({ length: 340 }, () => { const a2 = nvR() * TAU; return { a: a2, v: .25 + Math.pow(nvR(), 1.6) * .95, z: .3 + nvR() * .7, hue: nvR() }; });
+  const NVray = Array.from({ length: 16 }, (_, i) => ({ a: (i / 16) * TAU + nvR() * .2, l: .7 + nvR() * .9, w: .06 + nvR() * .09 }));
+  const NVboil = Array.from({ length: 9 }, () => ({ ph: nvR() * TAU, rr: .3 + nvR() * .5, sz: .18 + nvR() * .3 }));
+  function drawNova(ctx, p, w, h) {
+    const cx = w / 2, cy = h * .5, m = Math.min(w, h);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#07070d"; ctx.fillRect(0, 0, w, h);
+    const flood = sm(ph2(p, .74, .97));
+    const starA = (1 - flood) * .9;
+    for (const st of NVstars) {
+      const tw = .35 + .65 * Math.abs(Math.sin(st.c * 37 + p * 18));
+      ctx.fillStyle = `rgba(255,255,255,${starA * tw * (.2 + .5 * st.z)})`;
+      ctx.fillRect(st.x * w, st.y * h, st.z * 1.6, st.z * 1.6);
+    }
+    ctx.globalCompositeOperation = "lighter";
+    const grow = ph2(p, .04, .42);
+    const collapse = sm(ph2(p, .42, .5));
+    const det = ph2(p, .5, .9);
+    if (p < .55) {
+      const pulse = 1 + .1 * Math.sin(grow * 19) * (1 - grow * .6);
+      const rc = m * (.03 + .075 * sm(grow)) * pulse * (1 - .6 * collapse);
+      const heat = .55 + .45 * grow + collapse * .6;
+      for (const ry of NVray) {
+        const ang = ry.a + p * .9;
+        const L = rc * (2 + ry.l * (1.3 + .35 * Math.sin(grow * 23 + ry.a * 9)));
+        ctx.fillStyle = `rgba(255,140,190,${.10 * heat})`;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ang - ry.w) * rc * .8, cy + Math.sin(ang - ry.w) * rc * .8);
+        ctx.lineTo(cx + Math.cos(ang) * L, cy + Math.sin(ang) * L);
+        ctx.lineTo(cx + Math.cos(ang + ry.w) * rc * .8, cy + Math.sin(ang + ry.w) * rc * .8);
+        ctx.closePath(); ctx.fill();
+      }
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rc * 2.4);
+      cg.addColorStop(0, `rgba(255,255,255,${cl(.95 * heat, 0, 1)})`);
+      cg.addColorStop(.28, `rgba(255,214,236,${cl(.8 * heat, 0, 1)})`);
+      cg.addColorStop(.55, `rgba(255,61,154,${cl(.5 * heat, 0, 1)})`);
+      cg.addColorStop(1, "rgba(255,61,154,0)");
+      ctx.fillStyle = cg;
+      ctx.beginPath(); ctx.arc(cx, cy, rc * 2.4, 0, TAU); ctx.fill();
+      for (const b2 of NVboil) {
+        const ang = b2.ph + grow * 5 + p * 2;
+        const bx = cx + Math.cos(ang) * rc * b2.rr, by = cy + Math.sin(ang) * rc * b2.rr;
+        const br = Math.max(1, rc * b2.sz);
+        const bg2 = ctx.createRadialGradient(bx, by, 0, bx, by, br);
+        bg2.addColorStop(0, `rgba(255,255,255,${cl(.5 * heat, 0, 1)})`); bg2.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = bg2; ctx.beginPath(); ctx.arc(bx, by, br, 0, TAU); ctx.fill();
+      }
+    }
+    if (det > 0) {
+      const rs = m * (.06 + Math.pow(det, .82) * 1.15);
+      ctx.strokeStyle = `rgba(255,170,210,${(1 - det) * .95})`; ctx.lineWidth = Math.max(1, m * .012 * (1 - det * .6));
+      ctx.beginPath(); ctx.arc(cx, cy, rs, 0, TAU); ctx.stroke();
+      ctx.strokeStyle = `rgba(255,61,154,${(1 - det) * .4})`; ctx.lineWidth = Math.max(1, m * .05 * (1 - det * .5));
+      ctx.beginPath(); ctx.arc(cx, cy, rs * .93, 0, TAU); ctx.stroke();
+      for (const d2 of NVdeb) {
+        const dist = Math.pow(det, .85) * d2.v * m * 1.1;
+        const x = cx + Math.cos(d2.a) * dist, y = cy + Math.sin(d2.a) * dist;
+        const tail = m * .02 * d2.v * (1 - det * .5);
+        const al = (1 - det) * (.25 + .6 * d2.z);
+        ctx.strokeStyle = d2.hue > .75 ? `rgba(255,106,61,${al})` : d2.hue > .4 ? `rgba(255,116,184,${al})` : `rgba(255,255,255,${al})`;
+        ctx.lineWidth = .8 + d2.z * 1.6;
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(d2.a) * tail, y - Math.sin(d2.a) * tail); ctx.lineTo(x, y); ctx.stroke();
+      }
+      const neb = Math.sin(cl(det, 0, 1) * Math.PI);
+      if (neb > .01) for (let i = 0; i < 5; i++) {
+        const ang = i * 1.3 + .5, rr = m * .16 * (1 + i * .22) * (.6 + det);
+        const nx = cx + Math.cos(ang) * rr * .4, ny = cy + Math.sin(ang) * rr * .4;
+        const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, rr);
+        const col = i % 2 ? "56,169,255" : "255,61,154";
+        ng.addColorStop(0, `rgba(${col},${.16 * neb})`); ng.addColorStop(1, `rgba(${col},0)`);
+        ctx.fillStyle = ng; ctx.beginPath(); ctx.arc(nx, ny, rr, 0, TAU); ctx.fill();
+      }
+    }
+    ctx.globalCompositeOperation = "source-over";
+    const fl = sm(bump(p, .53, .06));
+    if (fl > .01) { ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
+    if (flood > .01) { ctx.fillStyle = `rgba(238,241,248,${flood})`; ctx.fillRect(0, 0, w, h); }
+  }
+
+  /* ---------- PLANET TURN: textured world rolls from day into night ------ */
+  const plR = rng(777);
+  const PLstars = Array.from({ length: 170 }, () => ({ x: plR(), y: plR(), z: .3 + plR() * .7, c: plR() }));
+  let PLtex = null, PLcloud = null, PLlights = null;
+  function makePlanetTex() {
+    const TW = 1024, TH = 512;
+    PLtex = document.createElement("canvas"); PLtex.width = TW; PLtex.height = TH;
+    const c = PLtex.getContext("2d");
+    const og = c.createLinearGradient(0, 0, 0, TH);
+    og.addColorStop(0, "#0e3350"); og.addColorStop(.5, "#155084"); og.addColorStop(1, "#0e3350");
+    c.fillStyle = og; c.fillRect(0, 0, TW, TH);
+    PLlights = document.createElement("canvas"); PLlights.width = TW; PLlights.height = TH;
+    const lc = PLlights.getContext("2d");
+    const r2 = rng(31337);
+    for (let k = 0; k < 7; k++) {
+      const cx0 = r2() * TW, cy0 = TH * (.18 + r2() * .64), rad = TW * (.05 + r2() * .075);
+      const build = off => {
+        c.beginPath();
+        let rr = rad;
+        const pts = 26;
+        for (let i = 0; i <= pts; i++) {
+          rr = cl(rr + (r2() - .5) * rad * .5, rad * .5, rad * 1.45);
+          const ang = (i / pts) * TAU;
+          const px = cx0 + off + Math.cos(ang) * rr * 1.5, py = cy0 + Math.sin(ang) * rr * .8;
+          i ? c.lineTo(px, py) : c.moveTo(px, py);
+        }
+        c.closePath();
+        c.fillStyle = k % 2 ? "#177a55" : "#1d8a5f";
+        c.fill();
+        c.strokeStyle = "rgba(6,40,30,.5)"; c.lineWidth = 3; c.stroke();
+      };
+      build(0); build(-TW); build(TW);
+      for (let j = 0; j < 46; j++) {
+        const lx = ((cx0 + (r2() - .5) * rad * 2.2) % TW + TW) % TW;
+        const ly = cy0 + (r2() - .5) * rad * 1.3;
+        lc.fillStyle = `rgba(255,214,150,${.35 + r2() * .6})`;
+        lc.fillRect(lx, ly, 1.6 + r2() * 1.8, 1.4 + r2() * 1.4);
+      }
+    }
+    c.fillStyle = "rgba(240,248,255,.85)";
+    c.fillRect(0, 0, TW, TH * .055); c.fillRect(0, TH * .945, TW, TH * .055);
+    c.fillStyle = "rgba(240,248,255,.35)";
+    c.fillRect(0, TH * .055, TW, TH * .03); c.fillRect(0, TH * .915, TW, TH * .03);
+    PLcloud = document.createElement("canvas"); PLcloud.width = TW; PLcloud.height = TH;
+    const cc = PLcloud.getContext("2d");
+    for (let i = 0; i < 90; i++) {
+      const x = r2() * TW, y = r2() * TH, rw = 30 + r2() * 130, rh = 6 + r2() * 16, al = .05 + r2() * .13;
+      cc.fillStyle = `rgba(255,255,255,${al})`;
+      [x, x - TW, x + TW].forEach(xx => { cc.beginPath(); cc.ellipse(xx, y, rw, rh, 0, 0, TAU); cc.fill(); });
+    }
+  }
+  function drawPlanet(ctx, p, w, h) {
+    if (!PLtex) makePlanetTex();
+    const night = sm(ph2(p, .3, .68));
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = `rgb(${Math.round(lp(255, 15, night))},${Math.round(lp(255, 16, night))},${Math.round(lp(255, 24, night))})`;
+    ctx.fillRect(0, 0, w, h);
+    if (night > .02) for (const st of PLstars) {
+      const tw = .35 + .65 * Math.abs(Math.sin(st.c * 31 + p * 15));
+      ctx.fillStyle = `rgba(255,255,255,${night * tw * (.25 + .5 * st.z)})`;
+      ctx.fillRect(st.x * w, st.y * .96 * h, 1 + st.z, 1 + st.z);
+    }
+    const R = Math.min(w, h) * .36 * (1 + .05 * ph2(p, .78, 1));
+    const cx = w / 2, cy = h * .54 + h * .07 * sm(ph2(p, .82, 1));
+    const mixc = `${Math.round(lp(156, 255, night))},${Math.round(lp(200, 61, night))},${Math.round(lp(255, 154, night))}`;
+    const halo = ctx.createRadialGradient(cx, cy, R * .92, cx, cy, R * 1.28);
+    halo.addColorStop(0, `rgba(${mixc},.34)`); halo.addColorStop(1, `rgba(${mixc},0)`);
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, R * 1.28, 0, TAU); ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.clip();
+    const MW = R * 4;
+    const off = ((p * 1.4) % 1) * MW;
+    ctx.drawImage(PLtex, cx - R - off, cy - R, MW, R * 2);
+    ctx.drawImage(PLtex, cx - R - off + MW, cy - R, MW, R * 2);
+    ctx.globalAlpha = .85;
+    const offc = ((p * 1.85) % 1) * MW;
+    ctx.drawImage(PLcloud, cx - R - offc, cy - R, MW, R * 2);
+    ctx.drawImage(PLcloud, cx - R - offc + MW, cy - R, MW, R * 2);
+    ctx.globalAlpha = 1;
+    if (night > .05) {
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = night * .9;
+      ctx.drawImage(PLlights, cx - R - off, cy - R, MW, R * 2);
+      ctx.drawImage(PLlights, cx - R - off + MW, cy - R, MW, R * 2);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+    }
+    const sweep = sm(ph2(p, .22, .78));
+    const edge = lp(R * 1.25, -R * 1.35, sweep);
+    const sg = ctx.createLinearGradient(cx + edge - R * .5, 0, cx + edge + R * .55, 0);
+    sg.addColorStop(0, "rgba(3,5,12,0)"); sg.addColorStop(1, "rgba(3,5,12,.96)");
+    ctx.fillStyle = sg; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+    const limb = ctx.createRadialGradient(cx - R * .25, cy - R * .2, R * .3, cx, cy, R);
+    limb.addColorStop(0, "rgba(0,0,0,0)"); limb.addColorStop(.85, "rgba(0,0,8,.05)"); limb.addColorStop(1, "rgba(0,0,10,.42)");
+    ctx.fillStyle = limb; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+    const dayA = (1 - night) * .5;
+    if (dayA > .02) {
+      const sp = ctx.createRadialGradient(cx - R * .45, cy - R * .4, 0, cx - R * .45, cy - R * .4, R * .8);
+      sp.addColorStop(0, `rgba(255,255,255,${dayA})`); sp.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sp; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+    }
+    ctx.restore();
+    ctx.strokeStyle = `rgba(${mixc},.55)`;
+    ctx.lineWidth = Math.max(1.2, R * .012);
+    ctx.beginPath(); ctx.arc(cx, cy, R * .998, 0, TAU); ctx.stroke();
+  }
+
+  /* ---------- controller -------------------------------------------------- */
+  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet };
+  const items = [];
+  els.forEach(el => {
+    const key = Object.keys(TYPES).find(k => el.classList.contains(k));
+    const cv = el.querySelector("canvas");
+    if (!key || !cv) return;
+    items.push({ el, cv, ctx: cv.getContext("2d"), draw: TYPES[key], last: -9, w: 0, h: 0 });
+  });
+  if (!items.length) return;
+  const eligible = () => innerWidth >= 761 && !REDUCED;
+  const gate = () => document.documentElement.classList.toggle("spx", eligible());
+  const size = it => {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const r = it.el.querySelector(".tr2-stage").getBoundingClientRect();
+    const W = Math.max(2, Math.round(r.width)), H = Math.max(2, Math.round(r.height));
+    if (it.w === W && it.h === H) return;
+    it.w = W; it.h = H;
+    it.cv.width = Math.round(W * dpr); it.cv.height = Math.round(H * dpr);
+    it.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    it.last = -9;
+  };
+  const progress = it => {
+    const r = it.el.getBoundingClientRect();
+    const span = r.height - innerHeight;
+    return cl(span > 0 ? -r.top / span : 0, 0, 1);
+  };
+  const paint = force => {
+    // self-heal the gate: some environments miss resize events
+    if (eligible() !== document.documentElement.classList.contains("spx")) gate();
+    if (!eligible()) return;
+    items.forEach(it => {
+      const r = it.el.getBoundingClientRect();
+      if (!force && (r.bottom < -80 || r.top > innerHeight + 80)) return;
+      size(it);
+      const p = progress(it);
+      if (!force && Math.abs(p - it.last) < .0004) return;
+      it.last = p;
+      it.draw(it.ctx, p, it.w, it.h);
+    });
+  };
+  const onScroll = rafScroll(() => paint(false));
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", () => { gate(); items.forEach(it => { it.w = 0; }); paint(true); });
+  gate();
+  paint(true);
+  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); it.last = p; return { w: it.w, h: it.h }; };
+}
+
+/* =========================================================================
    INTRO SEQUENCE — pink boot log → the system assembles → warp to the page
    ========================================================================= */
 function runIntro() {
@@ -4700,6 +4871,7 @@ safeBoot("stars", initStars);
 safeBoot("hero", renderHero);
 safeBoot("megaLogo", renderMegaLogo);
 safeBoot("blackhole", initBlackhole); // after hero+logo render — it measures pull vectors
+safeBoot("setpieces", initSetpieces);
 safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
 safeBoot("journey", renderJourney);

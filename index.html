@@ -277,7 +277,7 @@ h1:focus,h2:focus{outline:none;}
   min-height:100vh;display:flex;align-items:center;
   padding:84px 0 60px;
 }
-.hero .wrap{flex:1;max-width:1320px;}
+.hero .wrap{flex:1;max-width:1380px;}
 .hero .mega-stage{max-width:min(880px,86vh);}
 
 /* --bh 0→1 (set from scroll) sucks every hero element into the black hole:
@@ -428,6 +428,8 @@ h1:focus,h2:focus{outline:none;}
 html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+html.spx .tr2-clouds{background:#ffffff;}
+html.spx section#overview{background:var(--bg);}
 html.spx .tr2-hyper{background:#07070d;}
 html.spx .tr2-nova{background:#eef1f8;}
 html.spx .tr2-planet{background:#0f1018;}
@@ -457,12 +459,13 @@ html.spx section#team{background:var(--bg-soft);}
 }
 @media (prefers-reduced-motion:reduce){.blob{animation:none;}}
 
-.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.24fr .76fr;gap:min(9vw,128px);align-items:center;}
-.hero h1{font-size:clamp(1.28rem,1.95vw,1.66rem);font-weight:650;white-space:nowrap;letter-spacing:-.01em;}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.16fr .84fr;gap:min(10vw,150px);align-items:center;}
+.hero h1{font-size:clamp(1.45rem,2.15vw,1.98rem);font-weight:650;white-space:nowrap;letter-spacing:-.02em;}
 .hero .lede{color:var(--ink-dim);font-size:1.08rem;max-width:54ch;}
 .hero-right{display:flex;flex-direction:column;}
-.hero-right h1{font-size:clamp(1.28rem,1.95vw,1.66rem);}
-.hero-right .kpis{margin-top:26px;}
+.hero-right h1{font-size:clamp(1.45rem,2.15vw,1.98rem);}
+.hero-right .kpis{margin-top:30px;}
+#heroKpis{grid-template-columns:repeat(3,1fr);gap:12px;}
 
 /* ==========================================================================
    MEGA LOGO — hero-scale interactive recreation of the corporate mark.
@@ -1585,6 +1588,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   .nav-inner{padding:6px 18px;}
   section[data-sec]{padding:64px 0;}
   .kpis{grid-template-columns:1fr 1fr;}
+  #heroKpis{grid-template-columns:1fr 1fr;}
   .stat-row{grid-template-columns:1fr;}
   .journey{grid-template-columns:34px 1fr;}
   .donut-wrap{grid-template-columns:1fr;justify-items:center;}
@@ -1703,6 +1707,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        OVERVIEW / THE GROUP
        ==================================================================== -->
+  <div class="tr2 tr2-clouds" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
   <section data-sec="overview" id="overview" class="sec-light" aria-label="The group">
     <div class="wrap">
       <div class="sec-head reveal">
@@ -2073,8 +2078,7 @@ const FG_DATA = {
     kpis: [
       { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "revenue in year one", spark: [32, 444, 1000] },
       { value: 250000, fmt: "int", prefix: "~", label: "orders processed in year one", spark: [8, 60, 250] },
-      { value: 25000, fmt: "int", suffix: "+", label: "units refurbished in a single year", spark: [4, 12, 25] },
-      { value: 6982, fmt: "int", label: "Firestorm units in one container", spark: [1, 2, 7] }
+      { value: 25000, fmt: "int", suffix: "+", label: "units refurbished in a single year", spark: [4, 12, 25] }
     ]
   },
 
@@ -4904,8 +4908,149 @@ function initSetpieces() {
     ctx.beginPath(); ctx.arc(cx, cy, R * 1.015, 0, TAU); ctx.stroke();
   }
 
+  /* ---------- CLOUD FLIGHT: climb out of the dark, through a living cloud
+     deck, into the daylight of the next chapter. Sprite-based volumetric
+     look: pre-built puff sprites in dark & light grades, streamed past the
+     camera on a wrapping depth field (pure function of p → scrubbable). */
+  const clR = rng(8181);
+  function mkCloudSprite(seed) {
+    const W2 = 512, H2 = 256;
+    const cv = document.createElement("canvas"); cv.width = W2; cv.height = H2;
+    const c = cv.getContext("2d");
+    const r2 = rng(seed);
+    const puffs = [];
+    for (let i = 0; i < 44; i++) {
+      puffs.push({
+        x: 48 + r2() * (W2 - 96),
+        y: 172 - Math.pow(r2(), 1.7) * 92,
+        r: 16 + r2() * 46,
+      });
+    }
+    // under-shade → body → top-light: reads as self-shadowed cumulus
+    for (const p2 of puffs) {
+      const g2 = c.createRadialGradient(p2.x, p2.y + 9, 0, p2.x, p2.y + 9, p2.r * 1.15);
+      g2.addColorStop(0, "rgba(126,132,158,.20)"); g2.addColorStop(1, "rgba(126,132,158,0)");
+      c.fillStyle = g2; c.beginPath(); c.arc(p2.x, p2.y + 9, p2.r * 1.15, 0, TAU); c.fill();
+    }
+    for (const p2 of puffs) {
+      const g2 = c.createRadialGradient(p2.x, p2.y, 0, p2.x, p2.y, p2.r);
+      g2.addColorStop(0, "rgba(244,246,252,.34)"); g2.addColorStop(.7, "rgba(238,241,250,.20)"); g2.addColorStop(1, "rgba(238,241,250,0)");
+      c.fillStyle = g2; c.beginPath(); c.arc(p2.x, p2.y, p2.r, 0, TAU); c.fill();
+    }
+    for (const p2 of puffs) {
+      const g2 = c.createRadialGradient(p2.x, p2.y - p2.r * .34, 0, p2.x, p2.y - p2.r * .34, p2.r * .62);
+      g2.addColorStop(0, "rgba(255,255,255,.30)"); g2.addColorStop(1, "rgba(255,255,255,0)");
+      c.fillStyle = g2; c.beginPath(); c.arc(p2.x, p2.y - p2.r * .34, p2.r * .62, 0, TAU); c.fill();
+    }
+    // soften the underside so decks sit flat
+    c.globalCompositeOperation = "destination-out";
+    const fade = c.createLinearGradient(0, 176, 0, H2);
+    fade.addColorStop(0, "rgba(0,0,0,0)"); fade.addColorStop(1, "rgba(0,0,0,.85)");
+    c.fillStyle = fade; c.fillRect(0, 176, W2, H2 - 176);
+    c.globalCompositeOperation = "source-over";
+    return cv;
+  }
+  function tintSprite(src, fill, glow) {
+    const cv = document.createElement("canvas"); cv.width = src.width; cv.height = src.height;
+    const c = cv.getContext("2d");
+    c.drawImage(src, 0, 0);
+    c.globalCompositeOperation = "source-atop";
+    c.fillStyle = fill; c.fillRect(0, 0, cv.width, cv.height);
+    if (glow) {
+      const g2 = c.createLinearGradient(0, cv.height, 0, cv.height * .3);
+      g2.addColorStop(0, glow); g2.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = g2; c.fillRect(0, 0, cv.width, cv.height);
+    }
+    c.globalCompositeOperation = "source-over";
+    return cv;
+  }
+  let CLs = null;
+  function makeClouds() {
+    const bases = [mkCloudSprite(11), mkCloudSprite(22), mkCloudSprite(33)];
+    CLs = bases.map(b2 => ({
+      dark: tintSprite(b2, "rgba(34,28,52,.92)", "rgba(255,61,154,.30)"),
+      light: tintSprite(b2, "rgba(255,255,255,.16)", "rgba(255,255,255,.12)"),
+    }));
+  }
+  const CLinst = Array.from({ length: 34 }, (_, i) => ({
+    z: (i / 34 + clR() * .02) % 1,
+    x: clR() * 2 - 1,
+    y: clR() * .8 - .18,
+    s: Math.floor(clR() * 3),
+    sc: .8 + clR() * 1.6,
+    j: clR(),
+  }));
+  function drawClouds(ctx, p, w, h) {
+    if (!CLs) makeClouds();
+    const day = sm(ph2(p, .22, .78));
+    // sky gradient: deep space night → soft daylight white
+    const top = [lp(7, 255, day), lp(7, 255, day), lp(13, 255, day)];
+    const bot = [lp(12, 244, day), lp(10, 246, day), lp(20, 250, day)];
+    const bg2 = ctx.createLinearGradient(0, 0, 0, h);
+    bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
+    bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
+    ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
+    // fading stars at the top of the climb
+    const starA = (1 - sm(ph2(p, .05, .4))) * .9;
+    if (starA > .02) for (let i = 0; i < 70; i++) {
+      const sx = ((i * 137.5) % 359) / 359, sy = ((i * 73.1) % 211) / 211 * .5;
+      ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
+      ctx.fillRect(sx * w, sy * h, 1.4, 1.4);
+    }
+    // the ring's pink afterglow below, cooling as we climb
+    const after = (1 - sm(ph2(p, 0, .38))) * .5;
+    if (after > .01) {
+      const ag = ctx.createRadialGradient(w * .5, h * 1.05, 0, w * .5, h * 1.05, h * .8);
+      ag.addColorStop(0, `rgba(255,61,154,${after})`); ag.addColorStop(1, "rgba(255,61,154,0)");
+      ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
+    }
+    // stream the deck past the camera, far → near
+    const lightMix = sm(ph2(p, .25, .72));
+    const flight = p * 1.9;
+    const order = CLinst.map((c2, i) => {
+      const zf = ((c2.z - flight) % 1 + 1) % 1;
+      return { c2, zf, i };
+    }).sort((a2, b2) => b2.zf - a2.zf);
+    for (const { c2, zf } of order) {
+      const k = Math.pow(1 - zf, 2.5);
+      const scale = .1 + k * 5.4;
+      const spr = CLs[c2.s];
+      const sw = 512 * c2.sc * scale, sh = 256 * c2.sc * scale;
+      const x = w * .5 + c2.x * (0.25 + k * 1.5) * w * .62 - sw / 2;
+      const y = h * .58 + c2.y * h * (0.12 + k * 1.1) - sh * .5 - k * h * .06;
+      let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
+      al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;   // dissolve as it passes the lens
+      if (al <= .015) continue;
+      ctx.globalAlpha = al * (1 - lightMix);
+      ctx.drawImage(spr.dark, x, y, sw, sh);
+      ctx.globalAlpha = al * lightMix;
+      ctx.drawImage(spr.light, x, y, sw, sh);
+    }
+    ctx.globalAlpha = 1;
+    // sun shafts as the deck breaks
+    const shaft = Math.sin(sm(ph2(p, .45, .9)) * Math.PI) * .22;
+    if (shaft > .01) {
+      ctx.save();
+      ctx.translate(w * .5, -h * .2); ctx.rotate(.32);
+      const sgd = ctx.createLinearGradient(0, 0, 0, h * 1.5);
+      sgd.addColorStop(0, `rgba(255,255,255,${shaft})`); sgd.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sgd;
+      ctx.fillRect(-w * .06, 0, w * .12, h * 1.5);
+      ctx.rotate(-.55); ctx.fillRect(-w * .04, 0, w * .08, h * 1.5);
+      ctx.restore();
+    }
+    // haze + final break into clean daylight
+    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .55, .8)) * .3})`;
+    ctx.fillRect(0, 0, w, h);
+    const out = sm(ph2(p, .84, .985));
+    if (out > .01) { ctx.fillStyle = `rgba(255,255,255,${out})`; ctx.fillRect(0, 0, w, h); }
+    // ingress: emerge from the hero's exact black so the seam is invisible
+    const inDark = 1 - sm(ph2(p, .015, .16));
+    if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
+  }
+
   /* ---------- controller -------------------------------------------------- */
-  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet };
+  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-clouds": drawClouds };
   const items = [];
   els.forEach(el => {
     const key = Object.keys(TYPES).find(k => el.classList.contains(k));

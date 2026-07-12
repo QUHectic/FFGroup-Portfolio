@@ -420,63 +420,162 @@ h1:focus,h2:focus{outline:none;}
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) scale(.965);}
   to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) scale(1);}
 }
-/* ============ SCROLL-SCRUBBED BOUNDARY TRANSITIONS ============
-   each light↔dark boundary is a scrubbed set-piece: an eclipse, a dawn,
-   and a diagonal nightfall — progress is bound 1:1 to the scroll */
-.tr{display:none;}
+/* ============ FULL-PAGE SCROLL-SCRUBBED SET-PIECES ============
+   Each light↔dark boundary is a pinned, full-viewport sequence: the page
+   holds still while scrolling drives every layer 1:1 (and in reverse).
+   HYPERDRIVE (overview→system) · SUPERNOVA (system→journey) ·
+   PLANET TURN (horizon→team) */
+.tr2{display:none;}
 @supports (animation-timeline: view()){
 @media (min-width:761px) and (prefers-reduced-motion: no-preference){
-  .tr{display:block;position:relative;height:44vh;pointer-events:none;overflow:hidden;view-timeline:--tr block;}
+  .tr2{display:block;position:relative;height:190vh;view-timeline:--tr2 block;pointer-events:none;}
+  .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;background:#07070d;}
+  .tr2-stage i{position:absolute;inset:0;display:block;animation-range:cover 0% cover 100%;}
   section#system{background:#07070d;}
   section#journey{background:var(--bg);}
   section#team{background:var(--bg-soft);}
-  .tr::before,.tr::after{content:"";position:absolute;inset:0;}
-  /* ECLIPSE — a black iris swallows the light (overview → system) */
-  .tr-iris{background:#ffffff;}
-  .tr-iris::before{
-    background:#07070d;
-    clip-path:circle(0% at 50% 38%);
-    animation:trIris linear both;animation-timeline:--tr;animation-range:cover 0% cover 92%;
+
+  /* —— HYPERDRIVE: the white page jumps to lightspeed —— */
+  .tr2-hyper .hy-light{background:#ffffff;animation:hyLight linear both;animation-timeline:--tr2;}
+  .tr2-hyper .hy-streaks{
+    background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.95) 0deg .14deg, transparent .34deg 2.2deg);
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 7%, #000 24% 60%, transparent 76%);
+    mask:radial-gradient(circle at 50% 50%, transparent 0 7%, #000 24% 60%, transparent 76%);
+    animation:hyStreaks linear both;animation-timeline:--tr2;
   }
-  .tr-iris::after{
-    background:radial-gradient(circle at 50% 38%, rgba(255,61,154,.5), transparent 42%);
-    opacity:0;
-    animation:trIrisGlow linear both;animation-timeline:--tr;animation-range:cover 0% cover 92%;
+  .tr2-hyper .hy-streaks2{
+    background:repeating-conic-gradient(from .9deg at 50% 50%, rgba(56,169,255,.85) 0deg .1deg, transparent .3deg 3.1deg);
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 10%, #000 30% 64%, transparent 80%);
+    mask:radial-gradient(circle at 50% 50%, transparent 0 10%, #000 30% 64%, transparent 80%);
+    animation:hyStreaks2 linear both;animation-timeline:--tr2;
   }
-  /* DAWN — light rises with a glowing horizon line (system → journey) */
-  .tr-dawn{background:#07070d;}
-  .tr-dawn::before{
-    background:#eef1f8;
-    clip-path:inset(100% 0 0 0);
-    animation:trDawn linear both;animation-timeline:--tr;animation-range:cover 0% cover 92%;
-  }
-  .tr-dawn::after{
-    inset:auto 0 -70px 0;height:70px;
-    background:linear-gradient(180deg, transparent, rgba(56,169,255,.4) 35%, rgba(255,255,255,.95) 65%, transparent);
-    filter:blur(7px);
-    animation:trDawnEdge linear both;animation-timeline:--tr;animation-range:cover 0% cover 92%;
-  }
-  /* NIGHTFALL — darkness sweeps in diagonally, carrying stars (horizon → team) */
-  .tr-night{background:#ffffff;}
-  .tr-night::before{
+  .tr2-hyper .hy-flash{background:radial-gradient(circle at 50% 50%, #fff, rgba(255,255,255,.6) 30%, transparent 70%);animation:hyFlash linear both;animation-timeline:--tr2;}
+  .tr2-hyper .hy-space{
     background:
-      radial-gradient(1.6px 1.6px at 12% 30%, rgba(255,255,255,.9), transparent 60%),
-      radial-gradient(1.4px 1.4px at 34% 64%, rgba(255,255,255,.7), transparent 60%),
-      radial-gradient(1.8px 1.8px at 56% 22%, rgba(255,255,255,.85), transparent 60%),
-      radial-gradient(1.2px 1.2px at 72% 58%, rgba(255,255,255,.65), transparent 60%),
-      radial-gradient(1.6px 1.6px at 88% 34%, rgba(255,255,255,.8), transparent 60%),
-      radial-gradient(1.3px 1.3px at 22% 82%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1.6px 1.6px at 15% 25%, rgba(255,255,255,.9), transparent 60%),
+      radial-gradient(1.3px 1.3px at 42% 68%, rgba(255,255,255,.7), transparent 60%),
+      radial-gradient(1.8px 1.8px at 64% 18%, rgba(255,255,255,.85), transparent 60%),
+      radial-gradient(1.2px 1.2px at 81% 52%, rgba(255,255,255,.65), transparent 60%),
+      radial-gradient(1.5px 1.5px at 28% 84%, rgba(255,255,255,.75), transparent 60%),
+      radial-gradient(1.4px 1.4px at 90% 80%, rgba(255,255,255,.6), transparent 60%),
+      #07070d;
+    animation:hySpace linear both;animation-timeline:--tr2;
+  }
+
+  /* —— SUPERNOVA: a star goes critical; the next chapter pours out of it —— */
+  .tr2-nova .sn-space{
+    background:
+      radial-gradient(1.5px 1.5px at 18% 32%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(1.2px 1.2px at 48% 74%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1.7px 1.7px at 71% 21%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(1.2px 1.2px at 86% 61%, rgba(255,255,255,.55), transparent 60%),
+      #07070d;
+  }
+  .tr2-nova .sn-core{
+    background:radial-gradient(circle at 50% 50%, #fff 0 2%, rgba(255,230,240,.95) 4.5%, rgba(255,61,154,.55) 8.5%, transparent 13%);
+    animation:snCore linear both;animation-timeline:--tr2;
+  }
+  .tr2-nova .sn-shock{
+    background:radial-gradient(circle at 50% 50%, transparent 30%, rgba(255,116,184,.9) 34%, rgba(255,61,154,.35) 38%, transparent 44%);
+    animation:snShock linear both;animation-timeline:--tr2;
+  }
+  .tr2-nova .sn-rays{
+    background:repeating-conic-gradient(from 4deg at 50% 50%, rgba(255,255,255,.9) 0deg .5deg, transparent 2.4deg 30deg);
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 4%, #000 12% 55%, transparent 72%);
+    mask:radial-gradient(circle at 50% 50%, transparent 0 4%, #000 12% 55%, transparent 72%);
+    animation:snRays linear both;animation-timeline:--tr2;
+  }
+  .tr2-nova .sn-flash{background:#fff;animation:snFlash linear both;animation-timeline:--tr2;}
+  .tr2-nova .sn-remnant{
+    background:radial-gradient(circle at 50% 50%, rgba(255,61,154,.3), rgba(56,169,255,.18) 34%, transparent 62%);
+    filter:blur(8px);
+    animation:snRemnant linear both;animation-timeline:--tr2;
+  }
+  .tr2-nova .sn-light{background:#eef1f8;animation:snLight linear both;animation-timeline:--tr2;}
+
+  /* —— PLANET TURN: a world rotates from day into night —— */
+  .tr2-planet .tr2-stage{background:#ffffff;}
+  .tr2-planet .pl-day{background:#ffffff;animation:plDay linear both;animation-timeline:--tr2;}
+  .tr2-planet .pl-stars{
+    background:
+      radial-gradient(1.5px 1.5px at 22% 28%, rgba(255,255,255,.85), transparent 60%),
+      radial-gradient(1.2px 1.2px at 52% 70%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1.7px 1.7px at 74% 24%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(1.3px 1.3px at 88% 66%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1.4px 1.4px at 12% 78%, rgba(255,255,255,.65), transparent 60%),
       #0f1018;
-    clip-path:polygon(-40% 0, 0% 0, -30% 100%, -70% 100%);
-    animation:trNight linear both;animation-timeline:--tr;animation-range:cover 0% cover 92%;
+    animation:plStars linear both;animation-timeline:--tr2;
+  }
+  .tr2-planet .pl-globe{
+    inset:auto;left:50%;top:50%;width:64vmin;height:64vmin;margin:-32vmin 0 0 -32vmin;border-radius:50%;
+    background:
+      radial-gradient(circle at 34% 30%, rgba(255,255,255,.28), transparent 46%),
+      linear-gradient(23deg, rgba(10,143,95,.55) 0 22%, transparent 22% 34%, rgba(11,90,168,.5) 34% 55%, transparent 55% 70%, rgba(10,143,95,.45) 70% 100%),
+      radial-gradient(circle at 50% 50%, #123e63 0 62%, #0b2a44 100%);
+    background-size:100% 100%, 300% 100%, 100% 100%;
+    box-shadow:inset -8vmin -4vmin 12vmin rgba(0,0,0,.55);
+    animation:plSpin linear both;animation-timeline:--tr2;
+  }
+  .tr2-planet .pl-term{
+    inset:auto;left:50%;top:50%;width:64vmin;height:64vmin;margin:-32vmin 0 0 -32vmin;border-radius:50%;
+    background:linear-gradient(90deg, transparent 0 44%, rgba(2,4,10,.94) 60% 100%);
+    animation:plTerm linear both;animation-timeline:--tr2;
+  }
+  .tr2-planet .pl-glow{
+    inset:auto;left:50%;top:50%;width:64.6vmin;height:64.6vmin;margin:-32.3vmin 0 0 -32.3vmin;border-radius:50%;
+    animation:plGlow linear both;animation-timeline:--tr2;
   }
 }
 }
-@keyframes trIris{to{clip-path:circle(130% at 50% 38%);}}
-@keyframes trIrisGlow{0%{opacity:0;transform:scale(.4);}45%{opacity:.85;}100%{opacity:0;transform:scale(2.6);}}
-@keyframes trDawn{to{clip-path:inset(0 0 0 0);}}
-@keyframes trDawnEdge{from{transform:translateY(0);}to{transform:translateY(calc(-44vh - 70px));}}
-@keyframes trNight{to{clip-path:polygon(0% 0, 170% 0, 140% 100%, -10% 100%);}}
+@keyframes hyLight{0%,14%{opacity:1;}32%{opacity:0;}100%{opacity:0;}}
+@keyframes hyStreaks{
+  0%,16%{opacity:0;transform:scale(.22) rotate(0deg);}
+  26%{opacity:.9;}
+  50%{opacity:1;transform:scale(1.5) rotate(7deg);}
+  68%{opacity:0;transform:scale(2.9) rotate(12deg);}
+  100%{opacity:0;transform:scale(2.9) rotate(12deg);}
+}
+@keyframes hyStreaks2{
+  0%,20%{opacity:0;transform:scale(.28) rotate(0deg);}
+  32%{opacity:.8;}
+  54%{opacity:.95;transform:scale(1.8) rotate(-9deg);}
+  72%{opacity:0;transform:scale(3.2) rotate(-14deg);}
+  100%{opacity:0;transform:scale(3.2) rotate(-14deg);}
+}
+@keyframes hyFlash{0%,44%{opacity:0;}56%{opacity:1;}66%{opacity:0;}100%{opacity:0;}}
+@keyframes hySpace{0%,52%{opacity:0;}68%{opacity:1;}100%{opacity:1;}}
+@keyframes snCore{
+  0%{opacity:0;transform:scale(.5);}
+  12%{opacity:1;transform:scale(.85);}
+  22%{transform:scale(.7);}
+  34%{transform:scale(1.15);}
+  42%{transform:scale(.55);}
+  50%{opacity:1;transform:scale(2.6);}
+  62%{opacity:0;transform:scale(4);}
+  100%{opacity:0;transform:scale(4);}
+}
+@keyframes snShock{0%,46%{opacity:0;transform:scale(.12);}52%{opacity:1;}86%{opacity:0;transform:scale(3.4);}100%{opacity:0;transform:scale(3.4);}}
+@keyframes snRays{0%,44%{opacity:0;transform:scale(.2) rotate(0deg);}52%{opacity:.95;}78%{opacity:0;transform:scale(2.6) rotate(16deg);}100%{opacity:0;transform:scale(2.6) rotate(16deg);}}
+@keyframes snFlash{0%,47%{opacity:0;}53%{opacity:1;}64%{opacity:0;}100%{opacity:0;}}
+@keyframes snRemnant{0%,52%{opacity:0;transform:scale(.4);}68%{opacity:.85;}92%{opacity:0;transform:scale(2.2);}100%{opacity:0;transform:scale(2.2);}}
+@keyframes snLight{0%,55%{opacity:0;}72%{opacity:1;}100%{opacity:1;}}
+@keyframes plDay{0%,34%{opacity:1;}62%{opacity:0;}100%{opacity:0;}}
+@keyframes plStars{0%,40%{opacity:0;}68%{opacity:1;}100%{opacity:1;}}
+@keyframes plSpin{
+  0%{background-position:0 0, 0% 0, 0 0;transform:scale(.94);}
+  70%{background-position:0 0, -160% 0, 0 0;transform:scale(1);}
+  100%{background-position:0 0, -200% 0, 0 0;transform:scale(1.02) translateY(6vmin);}
+}
+@keyframes plTerm{
+  0%{opacity:0;transform:rotate(-150deg);}
+  26%{opacity:1;transform:rotate(-118deg);}
+  75%{transform:rotate(-12deg);}
+  100%{opacity:1;transform:rotate(0deg);}
+}
+@keyframes plGlow{
+  0%{box-shadow:0 0 60px 14px rgba(56,169,255,.4);}
+  100%{box-shadow:0 0 72px 16px rgba(255,61,154,.35);}
+}
 
 @keyframes secRiseAlt{
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
@@ -752,6 +851,9 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 .gg-links path:nth-of-type(1){stroke:var(--blue);}
 .gg-links path:nth-of-type(2){stroke:var(--mint);}
 .gg-links path:nth-of-type(3){stroke:var(--ember);}
+.gg-dist path{fill:none;stroke:var(--ink-dim);stroke-width:1.7;stroke-dasharray:2.5 5;opacity:.65;}
+.gg-node circle{fill:var(--ink-dim);opacity:.65;}
+.gg-legend .lg3{stroke:var(--ink-dim);stroke-dasharray:2.5 5;opacity:.65;}
 .gg-roy{fill:none;stroke:var(--pink);stroke-width:2.4;stroke-dasharray:6 6;}
 .gg-roylab{font-size:11px;font-weight:700;fill:var(--pink);}
 .gg-lab{font-size:11.5px;font-weight:600;fill:var(--ink-dim);}
@@ -1408,17 +1510,18 @@ input[type="range"]::-moz-range-thumb{
 }
 .intro.build .intro-word{opacity:1;transform:none;}
 .intro-term{
-  margin:0;width:100%;max-width:520px;min-height:176px;
+  margin:0;width:100%;max-width:400px;min-height:150px;
   font:600 12.5px/1.75 ui-monospace,"Cascadia Mono",Consolas,monospace;
-  color:var(--pink);text-align:left;white-space:pre-wrap;
+  color:#DC94BC;text-align:left;white-space:pre-wrap;
 }
 .intro-term .ok{color:var(--mint);}
+.intro-term .auth{color:var(--mint);font-weight:800;letter-spacing:.06em;}
 .intro-term .caret{
-  display:inline-block;width:8px;height:13px;background:var(--pink);
+  display:inline-block;width:8px;height:13px;background:#DC94BC;
   vertical-align:-2px;animation:caretBlink .7s steps(1) infinite;
 }
 @keyframes caretBlink{50%{opacity:0;}}
-.intro-bar{width:100%;max-width:520px;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
+.intro-bar{width:100%;max-width:300px;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
 .intro-bar i{
   display:block;height:100%;width:0;border-radius:99px;
   background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));
@@ -1563,7 +1666,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 }
 
 /* HYPERREAL METEOR — white-hot head, layered flame tail, smoke, embers */
-.meteor{position:absolute;width:360px;height:16px;pointer-events:none;opacity:0;transform:rotate(-25deg);z-index:0;}
+.meteor{position:absolute;width:360px;height:16px;pointer-events:none;opacity:0;transform:rotate(var(--mr,-25deg)) scale(var(--ms,1));z-index:0;}
 .meteor i{position:absolute;display:block;}
 .mt-smoke{left:26px;top:5px;width:330px;height:7px;border-radius:99px;
   background:linear-gradient(90deg, rgba(150,150,170,0), rgba(150,150,170,.14) 40%, rgba(150,150,170,.04));
@@ -1574,9 +1677,19 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .mt-tail2{left:16px;top:6px;width:210px;height:4px;border-radius:99px;
   background:linear-gradient(90deg, #fff, rgba(255,200,120,.65) 40%, transparent);
   filter:blur(1px);transform-origin:left center;animation:mtFlick .11s ease-in-out infinite alternate-reverse;}
-.mt-head{left:0;top:1px;width:15px;height:14px;border-radius:50%;
-  background:radial-gradient(circle at 38% 40%, #fff, #ffe9c9 35%, #ff9a4d 62%, rgba(255,80,30,.55) 82%, transparent);
-  box-shadow:0 0 16px 5px rgba(255,150,60,.85), 0 0 55px 22px rgba(255,90,40,.32);}
+.mt-rock{position:absolute;left:-7px;top:-7px;width:30px;height:29px;
+  animation:mrkTumble 1.9s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(255,120,40,.9)) drop-shadow(0 0 26px rgba(255,90,40,.35));}
+.mrk-core{fill:#33281f;stroke:#140d08;stroke-width:1;}
+.mrk-f1{fill:#4d3b2b;}
+.mrk-f2{fill:#5a4433;}
+.mrk-f3{fill:#241a12;}
+.mrk-crack{fill:none;stroke:#ffb066;stroke-width:1.5;stroke-linecap:round;}
+.mrk-crack.c2{stroke:#ff8a3d;stroke-width:1.2;}
+@keyframes mrkTumble{to{transform:rotate(360deg);}}
+.mt-bow{left:-13px;top:-6px;width:27px;height:27px;border-radius:50%;
+  background:radial-gradient(circle at 30% 50%, rgba(255,255,255,.95), rgba(255,190,110,.55) 40%, rgba(255,110,40,.25) 65%, transparent 78%);
+  filter:blur(2px);animation:mtFlick .2s ease-in-out infinite alternate;}
 .mt-ember{top:6px;width:3px;height:3px;border-radius:50%;background:#ffcf9a;
   box-shadow:0 0 6px 2px rgba(255,140,50,.8);animation:mtEmber .7s linear infinite;}
 .mt-ember.e2{animation-duration:.9s;animation-delay:.25s;top:10px;}
@@ -1585,10 +1698,10 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 @keyframes mtEmber{0%{left:14px;opacity:1;transform:scale(1);}100%{left:160px;opacity:0;transform:scale(.3);}}
 .meteor.zip{animation:meteorZip 2.5s cubic-bezier(.25,.05,.75,.6) forwards;}
 @keyframes meteorZip{
-  0%{opacity:0;transform:rotate(-25deg) translateX(6vw);}
+  0%{opacity:0;transform:rotate(var(--mr,-25deg)) scale(var(--ms,1)) translateX(6vw);}
   6%{opacity:1;}
   86%{opacity:1;}
-  100%{opacity:0;transform:rotate(-25deg) translateX(-118vw);}
+  100%{opacity:0;transform:rotate(var(--mr,-25deg)) scale(var(--ms,1)) translateX(-118vw);}
 }
 
 /* footer */
@@ -1647,20 +1760,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      ====================================================================== -->
 <div class="intro" id="intro" aria-label="Loading The Freedom Group">
   <div class="intro-core" id="introCore">
-    <svg class="intro-sys" viewBox="0 0 1000 1000" aria-hidden="true">
-      <defs>
-        <linearGradient id="inPink" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ff74b8"/><stop offset=".45" stop-color="#ff3d9a"/><stop offset="1" stop-color="#c60f6e"/>
-        </linearGradient>
-      </defs>
-      <ellipse class="in-ring" cx="499.7" cy="502.9" rx="217.1" ry="424.7" transform="rotate(39.23 499.7 502.9)"
-               fill="none" stroke="url(#inPink)" stroke-width="14" stroke-linecap="round" pathLength="100"/>
-      <circle class="in-body b1" cx="707" cy="149" r="40" fill="#2fe0a0"/>
-      <circle class="in-body b3" cx="382" cy="307" r="19" fill="#ff6a3d"/>
-      <circle class="in-body b2" cx="315" cy="859" r="32" fill="#38a9ff"/>
-      <circle class="in-body b0" cx="758" cy="504" r="75" fill="#ff3d9a"/>
-    </svg>
-    <div class="intro-word">THE&nbsp;FREEDOM&nbsp;GROUP</div>
     <pre class="intro-term" id="introTerm"></pre>
     <div class="intro-bar"><i id="introBar"></i></div>
   </div>
@@ -1761,7 +1860,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <g class="gg-legend" transform="translate(24,48)">
             <path class="lg1" d="M0 0 h26"/><text x="34" y="4">ownership</text>
             <path class="lg2" d="M0 24 h20" marker-end="url(#gmArr)"/><text x="34" y="28">licence agreement</text>
-            <path class="lg4" d="M0 48 h26"/><text x="34" y="52">royalties</text>
+            <path class="lg3" d="M0 48 h26"/><text x="34" y="52">brands to market</text>
+            <path class="lg4" d="M0 72 h26"/><text x="34" y="76">royalties</text>
           </g>
           <g class="gg-links">
             <path marker-end="url(#gmArr)" d="M470 150 C 430 260, 240 350, 198 482"/>
@@ -1769,6 +1869,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <path marker-end="url(#gmArr)" d="M610 150 C 650 260, 910 350, 962 482"/>
           </g>
           <text class="gg-lab" x="292" y="316">brand &amp; IP licence agreements</text>
+          <g class="gg-dist">
+            <path d="M985 266 L985 344 Q985 352 977 352 L232 352 Q224 352 224 360 L224 478" marker-end="url(#gmArr)"/>
+            <path d="M610 352 L610 478" marker-end="url(#gmArr)"/>
+            <path d="M1000 352 L1000 478" marker-end="url(#gmArr)"/>
+          </g>
+          <g class="gg-node"><circle cx="610" cy="352" r="3"/><circle cx="1000" cy="352" r="3"/></g>
+          <text class="gg-lab" x="700" y="340">brands to market</text>
           <path class="gg-roy" marker-end="url(#gmArrP)" d="M62 482 C 22 300, 116 140, 322 92"/>
           <text class="gg-roylab" x="46" y="268">£ royalties</text>
           <text class="gg-roylab" x="46" y="282">every quarter</text>
@@ -1856,7 +1963,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        THE SYSTEM — interactive logo
        ==================================================================== -->
   <section data-sec="system" id="system" aria-label="The Freedom Group system">
-    <div class="tr tr-iris" aria-hidden="true"></div>
+    <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><i class="hy-light"></i><i class="hy-streaks"></i><i class="hy-streaks2"></i><i class="hy-flash"></i><i class="hy-space"></i></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The group as a system</span>
@@ -1874,7 +1981,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        JOURNEY
        ==================================================================== -->
   <section data-sec="journey" id="journey" class="sec-light alt" aria-label="The journey">
-    <div class="tr tr-dawn" aria-hidden="true"></div>
+    <div class="tr2 tr2-nova" aria-hidden="true"><div class="tr2-stage"><i class="sn-space"></i><i class="sn-remnant"></i><i class="sn-rays"></i><i class="sn-shock"></i><i class="sn-core"></i><i class="sn-flash"></i><i class="sn-light"></i></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The journey</span>
@@ -2025,7 +2132,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        TEAM
        ==================================================================== -->
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
-    <div class="tr tr-night" aria-hidden="true"></div>
+    <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><i class="pl-day"></i><i class="pl-stars"></i><i class="pl-glow"></i><i class="pl-globe"></i><i class="pl-term"></i></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">Culture, team structure &amp; talent pipeline</span>
@@ -2616,7 +2723,7 @@ function renderBrands() {
   const fr = $("#futureRow");
   if (fr) fr.innerHTML = FUTURE.map(f => `
     <div class="fs-chip" style="--c:${f.c}"><i></i><div><b>${f.n}</b><span>${f.d}</span></div></div>`).join("")
-    + `<div class="fs-note">Every future Ltd launches inside the group system — brands licensed from the vault, systems and payroll ready from day one, royalties flowing back to Holdings each quarter.</div>`;
+    + `<div class="fs-note">Both companies are already mapped into the group's expansion plan. The moment each goes live, it licenses the group's brands and plugs straight into the shared systems — with royalties flowing back to Holdings.</div>`;
   // the company icons live inside the group graph now
   [["ggIcoGlobal", "globe"], ["ggIcoFac", "wrench"], ["ggIcoDist", "cube"]].forEach(([id, ic]) => {
     const slot = document.getElementById(id);
@@ -4419,12 +4526,27 @@ function initStars() {
   // the meteor — a rarer, heavier fall
   const meteor = document.createElement("div");
   meteor.className = "meteor";
-  meteor.innerHTML = '<i class="mt-smoke"></i><i class="mt-tail"></i><i class="mt-tail2"></i><i class="mt-head"></i><i class="mt-ember e1"></i><i class="mt-ember e2"></i><i class="mt-ember e3"></i>';
+  meteor.innerHTML = '<i class="mt-smoke"></i><i class="mt-tail"></i><i class="mt-tail2"></i>'
+    + '<svg class="mt-rock" viewBox="0 0 34 32">'
+    + '<path class="mrk-core" d="M9 5 L18 2 L27 6 L32 14 L28 24 L18 30 L8 27 L2 16 Z"/>'
+    + '<path class="mrk-f1" d="M9 5 L18 2 L16 13 Z"/>'
+    + '<path class="mrk-f2" d="M27 6 L32 14 L20 15 Z"/>'
+    + '<path class="mrk-f3" d="M8 27 L18 30 L17 19 Z"/>'
+    + '<path class="mrk-crack" d="M7 17 L15 13 L20 20 L27 17"/>'
+    + '<path class="mrk-crack c2" d="M12 24 L16 17"/>'
+    + '</svg>'
+    + '<i class="mt-bow"></i><i class="mt-ember e1"></i><i class="mt-ember e2"></i><i class="mt-ember e3"></i>';
   field.appendChild(meteor);
   const blaze = () => {
     if (REDUCED || document.hidden) return;
-    meteor.style.left = rnd(58, 96).toFixed(1) + "%";
-    meteor.style.top = rnd(-4, 22).toFixed(1) + "%";
+    // random trajectory: sometimes down-left, sometimes down-right,
+    // varying steepness, size and entry point
+    const leftFall = Math.random() < 0.55;
+    const ang = leftFall ? -(18 + Math.random() * 38) : -(112 + Math.random() * 40);
+    meteor.style.setProperty("--mr", ang.toFixed(1) + "deg");
+    meteor.style.setProperty("--ms", (0.7 + Math.random() * 0.45).toFixed(2));
+    meteor.style.left = (leftFall ? rnd(55, 96) : rnd(4, 45)).toFixed(1) + "%";
+    meteor.style.top = rnd(-4, 24).toFixed(1) + "%";
     meteor.classList.remove("zip");
     void meteor.offsetWidth;
     meteor.classList.add("zip");
@@ -4506,13 +4628,12 @@ function runIntro() {
   let done = false;
 
   const LINES = [
-    ["> FREEDOM GROUP // BOOT SEQUENCE v8 ", ""],
-    ["> initialising orbital engine ", "OK"],
-    ["> mounting revenue channels [8/8] ", "OK"],
-    ["> loading journey · 2020 → 2036 ", "OK"],
-    ["> calibrating trajectory £42k → £71.85m ", "OK"],
-    ["> waking planets · GLOBAL · FACILITIES · DISTRIBUTION ", "OK"],
-    ["> STATUS: WEBSITE OPERATIONAL — engaging warp", ""]
+    ["> FREEDOM GROUP // BOOT ", ""],
+    ["> orbital engine ", "OK"],
+    ["> revenue channels [8/8] ", "OK"],
+    ["> journey 2020 → 2036 ", "OK"],
+    ["> planets · GLOBAL · FACILITIES · DISTRIBUTION ", "OK"],
+    ["> STATUS: OPERATIONAL — engaging warp", ""]
   ];
 
   function finish(manifest) {
@@ -4545,15 +4666,25 @@ function runIntro() {
   LINES.forEach((_, i) => {
     t(220 + i * STEP, () => {
       term.innerHTML = LINES.slice(0, i + 1).map(([l, o]) =>
-        l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 44 - l.length))} ${o}</span>` : "")
+        l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
       ).join("\n") + '<span class="caret"></span>';
-      bar.style.width = Math.round(((i + 1) / LINES.length) * 78) + "%";
+      bar.style.width = Math.round(((i + 1) / LINES.length) * 55) + "%";
     });
   });
-  const buildAt = 220 + LINES.length * STEP + 120;
-  t(buildAt, () => { intro.classList.add("build"); bar.style.width = "92%"; });
-  t(buildAt + 1500, () => { bar.style.width = "100%"; });
-  t(buildAt + 1800, () => finish(true));
+  // green AUTHORISATION counter replaces the old logo build-up
+  const authAt = 220 + LINES.length * STEP + 140;
+  const SEG = 12;
+  const renderAuth = pct => {
+    term.innerHTML = LINES.map(([l, o]) =>
+      l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
+    ).join("\n") + `\n<span class="auth">AUTHORISATION: ${pct}%</span><span class="caret"></span>`;
+    bar.style.width = (55 + pct * 0.45) + "%";
+  };
+  for (let k = 0; k <= SEG; k++) {
+    const pct = Math.round(k * 100 / SEG);
+    t(authAt + k * 75, () => renderAuth(pct));
+  }
+  t(authAt + SEG * 75 + 380, () => finish(true));
 }
 
 /* =========================================================================

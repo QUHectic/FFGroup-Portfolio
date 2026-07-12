@@ -7,6 +7,69 @@
 <meta name="description" content="The Freedom Group Holdings — an interactive, data-driven portfolio: the journey, the analytics, the £100m horizon and the team behind it.">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <style>
+/* slim, translucent scrollbar — no dark gutter block on light sections */
+html{scrollbar-color:rgba(130,136,160,.45) transparent;scrollbar-width:thin;}
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(130,136,160,.45);border-radius:99px;border:3px solid transparent;background-clip:content-box;}
+::-webkit-scrollbar-thumb:hover{background:rgba(130,136,160,.72);border:3px solid transparent;background-clip:content-box;}
+
+/* ================= THE FREEDOM SYSTEM — hierarchical space map ========== */
+.sys-chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 4px;}
+.sys-chip{border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-size:.82rem;color:var(--ink-dim);background:var(--card);}
+.sys-chip b{color:var(--ink);margin-right:4px;}
+.sys-lede{color:var(--ink-dim);max-width:76ch;margin:14px 0 0;}
+.sysmap{position:relative;margin:30px auto 0;max-width:1780px;padding-inline:max(10px, calc(50vw - 890px));}
+.sysmap svg{width:100%;height:auto;display:block;overflow:visible;}
+.sm-orbit{fill:none;stroke:rgba(255,61,154,.26);stroke-width:1.6;}
+.sm-orbit.o1{stroke:rgba(255,61,154,.4);}
+.sm-orbit.future{stroke:rgba(255,255,255,.16);stroke-dasharray:5 9;}
+.sm-vaultorbit{fill:none;stroke:rgba(255,255,255,.13);stroke-dasharray:2 6;}
+.sm-flow{fill:none;stroke-width:2.2;opacity:.7;}
+.sm-roy{fill:none;stroke:var(--pink);stroke-width:1.6;stroke-dasharray:5 6;opacity:.75;}
+.sm-lab{font-size:12px;fill:rgba(243,244,251,.55);letter-spacing:.05em;}
+.sm-lab.b{font-weight:700;fill:rgba(243,244,251,.85);}
+.sm-suntitle{font-size:22px;font-weight:800;fill:#fff;letter-spacing:.06em;}
+.sm-sunsub{font-size:12.5px;fill:rgba(243,244,251,.62);}
+.sm-mini rect{fill:rgba(255,255,255,.05);stroke:rgba(255,255,255,.22);}
+.sm-mini text{font-size:10px;font-weight:800;fill:rgba(255,170,210,.95);letter-spacing:.12em;}
+.sm-vault rect{fill:rgba(20,21,31,.94);stroke:rgba(255,255,255,.2);}
+.sm-vault text{font-size:12.5px;font-weight:700;fill:#fff;}
+.sm-vault.more rect{stroke-dasharray:4 4;}
+.sm-vault.more text{fill:rgba(243,244,251,.55);font-weight:600;}
+.sm-planet{cursor:pointer;outline:none;}
+.sm-planet .halo{opacity:0;transition:opacity .3s;}
+.sm-planet:hover .halo,.sm-planet.hot .halo,.sm-planet:focus-visible .halo{opacity:.85;}
+.sm-bob{animation:smBob 7s ease-in-out infinite;}
+@keyframes smBob{50%{transform:translateY(-8px);}}
+@media (prefers-reduced-motion:reduce){.sm-bob{animation:none;}}
+.sm-ghost circle.body2{fill:rgba(255,255,255,.04);stroke-width:1.6;stroke-dasharray:5 6;}
+.sm-ghostlab{font-size:13px;font-weight:800;fill:rgba(243,244,251,.85);}
+.sm-ghostsub{font-size:11px;fill:rgba(243,244,251,.55);}
+.sm-star2{fill:#fff;}
+.sm-legend line{stroke-width:2.4;}
+.sm-legend text{font-size:11.5px;fill:rgba(243,244,251,.6);}
+.sm-card{
+  position:absolute;width:min(300px,25vw);background:rgba(15,17,25,.92);
+  border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px;
+  backdrop-filter:blur(6px);transition:border-color .3s, transform .3s var(--ease-out);
+}
+.sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
+.sm-card h3{margin:0;font-size:1rem;display:flex;align-items:center;gap:8px;color:#fff;}
+.sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
+.sm-card .role{color:rgba(243,244,251,.72);font-size:.83rem;margin:6px 0 0;}
+.sm-card .ta{color:var(--pink);font-size:.76rem;font-style:italic;margin:5px 0 0;}
+.sm-card .ch{color:rgba(243,244,251,.5);font-size:.74rem;margin:9px 0 0;letter-spacing:.02em;}
+.sm-card .status{float:right;font-size:.62rem;font-weight:800;letter-spacing:.1em;color:var(--c);border:1px solid var(--c);padding:3px 9px;border-radius:99px;margin-left:8px;}
+.sm-note{
+  position:absolute;max-width:340px;border:1px dashed rgba(255,255,255,.25);
+  border-radius:14px;padding:12px 15px;color:rgba(243,244,251,.6);font-size:.78rem;line-height:1.55;
+}
+@media (max-width:760px){
+  .sysmap{padding-inline:0;}
+  .sm-card,.sm-note{position:static;width:auto;margin:12px 18px;}
+}
+
 /* ==========================================================================
    THE FREEDOM GROUP — DARK DESIGN SYSTEM
    Deep space canvas. Accents brightened from the corporate logo:
@@ -428,9 +491,7 @@ h1:focus,h2:focus{outline:none;}
 html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
-html.spx .tr2-clouds{background:#ffffff;}
-html.spx section#overview{background:var(--bg);}
-html.spx .tr2-hyper{background:#07070d;}
+html.spx .tr2-clouds{background:#07070d;}
 html.spx .tr2-nova{background:#eef1f8;}
 html.spx .tr2-planet{background:#0f1018;}
 html.spx section#system{background:#07070d;}
@@ -535,8 +596,6 @@ section.tint{background:var(--bg-soft);}
 
   /* dark ↔ light boundaries dissolve on an eased smootherstep curve —
      no visible band edges, the page reads as one continuous surface */
-  #overview{background:linear-gradient(180deg,#07070d 0,#09090f 34px,#15151b 68px,#2f2f34 102px,#56565a 136px,#838386 170px,#b0b0b2 204px,#d7d7d8 238px,#f1f1f1 272px,#fdfdfd 306px,var(--bg) 340px);}
-  #system{background:linear-gradient(180deg,#ffffff 0,#fdfdfd 34px,#f1f1f1 68px,#d7d7d8 102px,#b0b0b2 136px,#838386 170px,#56565a 204px,#2f2f34 238px,#15151b 272px,#09090f 306px,#07070d 340px);}
   #journey{background:linear-gradient(180deg,#07070d 0,#09090f 34px,#14151b 68px,#2d2d33 102px,#505158 136px,#7a7c82 170px,#a5a7ad 204px,#c8cbd2 238px,#e1e3ea 272px,#eceff6 306px,var(--bg) 340px);}
   #growth{background:linear-gradient(180deg,#eef1f8 0,#eef1f8 34px,#eff2f8 68px,#f1f3f9 102px,#f3f5fa 136px,#f6f8fc 170px,#fafbfd 204px,#fcfdfe 238px,#fefeff 272px,#ffffff 306px,var(--bg) 340px);}
   #projections{background:linear-gradient(180deg,#ffffff 0,#ffffff 34px,#fefeff 68px,#fcfdfe 102px,#fafbfd 136px,#f6f8fc 170px,#f3f5fa 204px,#f1f3f9 238px,#eff2f8 272px,#eef1f8 306px,var(--bg) 340px);}
@@ -1672,7 +1731,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <span class="word">THE FREEDOM <span>GROUP</span></span>
     </button>
     <nav class="nav-links" aria-label="Sections">
-      <button class="nav-btn" data-goto="overview">Overview</button>
       <button class="nav-btn" data-goto="system">The System</button>
       <button class="nav-btn" data-goto="journey">Journey</button>
       <button class="nav-btn" data-goto="growth">Growth</button>
@@ -1704,142 +1762,28 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   </div>
   </div><!-- /hero-pin -->
 
-  <!-- ====================================================================
-       OVERVIEW / THE GROUP
-       ==================================================================== -->
-  <div class="tr2 tr2-clouds" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
-  <section data-sec="overview" id="overview" class="sec-light" aria-label="The group">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="kicker">Freedom Group Holdings</span>
-        <h2>One parent company.<br><span class="grad-text">A portfolio built to conquer markets.</span></h2>
-      </div>
-
-      <div class="gp-graph reveal" role="img" aria-label="The Freedom Group structure — Holdings owns the brand and IP vault, licenses it to the three operating companies, and receives royalties back every quarter">
-        <svg viewBox="0 0 1160 650">
-          <defs>
-            <marker id="gmArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
-            <marker id="gmArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
-          </defs>
-          <g class="gg-legend" transform="translate(24,48)">
-            <path class="lg1" d="M0 0 h26"/><text x="34" y="4">ownership</text>
-            <path class="lg2" d="M0 24 h20" marker-end="url(#gmArr)"/><text x="34" y="28">licence agreement</text>
-            <path class="lg3" d="M0 48 h26"/><text x="34" y="52">brands to market</text>
-            <path class="lg4" d="M0 72 h26"/><text x="34" y="76">royalties</text>
-          </g>
-          <g class="gg-links">
-            <path marker-end="url(#gmArr)" d="M470 150 C 430 260, 240 350, 198 482"/>
-            <path marker-end="url(#gmArr)" d="M540 150 C 540 270, 578 380, 580 482"/>
-            <path marker-end="url(#gmArr)" d="M610 150 C 650 260, 910 350, 962 482"/>
-          </g>
-          <text class="gg-lab" x="292" y="316">brand &amp; IP licence agreements</text>
-          <g class="gg-dist">
-            <path d="M985 266 L985 344 Q985 352 977 352 L232 352 Q224 352 224 360 L224 478" marker-end="url(#gmArr)"/>
-            <path d="M610 352 L610 478" marker-end="url(#gmArr)"/>
-            <path d="M1000 352 L1000 478" marker-end="url(#gmArr)"/>
-          </g>
-          <g class="gg-node"><circle cx="610" cy="352" r="3"/><circle cx="1000" cy="352" r="3"/></g>
-          <text class="gg-lab" x="700" y="340">brands to market</text>
-          <path class="gg-roy" marker-end="url(#gmArrP)" d="M62 482 C 22 300, 116 140, 322 92"/>
-          <text class="gg-roylab" x="46" y="268">£ royalties</text>
-          <text class="gg-roylab" x="46" y="282">every quarter</text>
-          <g class="gg-hold">
-            <rect x="330" y="36" width="380" height="114" rx="18"/>
-            <text class="gg-t1" x="520" y="68" text-anchor="middle">The Freedom Group Holdings Ltd</text>
-            <text class="gg-t2" x="520" y="87" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
-            <g class="gg-minis">
-              <g transform="translate(384,100)"><rect width="74" height="22" rx="11"/><text x="37" y="15" text-anchor="middle">BRANDS</text></g>
-              <g transform="translate(468,100)"><rect width="104" height="22" rx="11"/><text x="52" y="15" text-anchor="middle">TRADEMARKS</text></g>
-              <g transform="translate(582,100)"><rect width="46" height="22" rx="11"/><text x="23" y="15" text-anchor="middle">IP</text></g>
-            </g>
-          </g>
-          <path class="gg-own" d="M710 92 H 828"/>
-          <text class="gg-lab" x="769" y="82" text-anchor="middle">holds</text>
-          <g class="gg-vault">
-            <rect x="830" y="36" width="310" height="230" rx="18"/>
-            <g class="gg-lock" transform="translate(886,50)"><path d="M-4 6 v-4 a4 4 0 0 1 8 0 v4" fill="none"/><rect x="-6" y="6" width="12" height="9" rx="2"/></g>
-            <text class="gg-vt" x="994" y="64" text-anchor="middle">BRAND &amp; IP VAULT</text>
-            <g class="gg-pill" style="color:var(--ember)" transform="translate(848,80)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--ember)"/><text x="26" y="22">FireStorm™</text></g>
-            <g class="gg-pill" style="color:var(--blue)" transform="translate(994,80)"><rect width="130" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--blue)"/><text x="26" y="22">Voltz</text></g>
-            <g class="gg-pill" style="color:var(--mint)" transform="translate(848,124)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--mint)"/><text x="26" y="22">Kunegry</text></g>
-            <g class="gg-pill" style="color:var(--pink)" transform="translate(994,124)"><rect width="130" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--pink)"/><text x="26" y="22">T3</text></g>
-            <g class="gg-pill" style="color:var(--blue)" transform="translate(848,168)"><rect width="160" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--blue)"/><text x="26" y="22">Crystal Solutions</text></g>
-            <g class="gg-pill gg-more" transform="translate(1020,168)"><rect width="104" height="34" rx="10"/><text x="52" y="22" text-anchor="middle">+ more</text></g>
-            <text class="gg-vsub" x="985" y="240" text-anchor="middle">licensed to the Ltd companies — they take the brands to market</text>
-          </g>
-          <g class="gg-card" transform="translate(20,488)">
-            <rect width="350" height="132" rx="18"/>
-            <g style="color:var(--blue)">
-              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
-              <g class="gg-ico" id="ggIcoGlobal" transform="translate(26,28) scale(1.18)"></g>
-            </g>
-            <text class="gg-cn" x="78" y="38">Freedom Global Ltd</text>
-            <g class="gg-status gg-live" transform="translate(252,92)"><rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">FLAGSHIP</text></g>
-            <text class="gg-cr" x="78" y="60">Consumer D2C division — the group's online stores</text>
-            <text class="gg-ta" x="78" y="79">currently trading as Freedom Fire &amp; Safety Limited</text>
-            <text class="gg-ch" x="18" y="114">eBay · Amazon · Shopify · Temu · TikTok</text>
-          </g>
-          <g class="gg-card" transform="translate(405,488)">
-            <rect width="350" height="132" rx="18"/>
-            <g style="color:var(--mint)">
-              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
-              <g class="gg-ico" id="ggIcoFac" transform="translate(26,28) scale(1.18)"></g>
-            </g>
-            <text class="gg-cn" x="78" y="38">Freedom Facilities Ltd</text>
-            <g class="gg-status" transform="translate(224,92)"><rect width="112" height="24" rx="12"/><text x="56" y="16" text-anchor="middle">IN WORKS · 2027</text></g>
-            <text class="gg-cr" x="78" y="60">Facilities-management arm — servicing &amp; maintenance</text>
-            <text class="gg-ch" x="18" y="114">servicing · PPE · drone · PAT · FM</text>
-          </g>
-          <g class="gg-card" transform="translate(790,488)">
-            <rect width="350" height="132" rx="18"/>
-            <g style="color:var(--ember)">
-              <rect class="gg-icobg" x="18" y="20" width="46" height="46" rx="13"/>
-              <g class="gg-ico" id="ggIcoDist" transform="translate(26,28) scale(1.18)"></g>
-            </g>
-            <text class="gg-cn" x="78" y="38">Freedom Distribution Ltd</text>
-            <g class="gg-status" transform="translate(224,92)"><rect width="112" height="24" rx="12"/><text x="56" y="16" text-anchor="middle">IN WORKS · 2028</text></g>
-            <text class="gg-cr" x="78" y="60">B2B trade division — wholesale &amp; retail distribution</text>
-            <text class="gg-ch" x="18" y="114">retailers · dealer central · trade counters</text>
-          </g>
-        </svg>
-      </div>
-      <div class="group-grid">
-        <div class="parent-card reveal">
-          <div class="inner">
-            <div class="big grad-text">1 group · 3 companies</div>
-            <h3>One owner. Every brand, licensed.</h3>
-            <p>The Freedom Group Holdings Ltd sits above the operating companies and owns every brand, trademark and piece of IP. Each Ltd licenses them under formal agreements — and pays royalties back to the group every quarter.</p>
-          </div>
-          <p style="margin:22px 0 0;color:var(--ink-dim);" id="groupBlurb"></p>
-          <p style="margin:12px 0 0;color:var(--ink-dim);" id="parentBlurb"></p>
-        </div>
-        <div class="future-strip reveal" aria-label="Future limited aspirations">
-          <span class="kicker">Future limited aspirations</span>
-          <h3>Registered next. Launched when the engine's ready.</h3>
-          <div class="fs-row" id="futureRow"></div>
-        </div>
-      </div>
-
-    </div>
-  </section>
 
   <!-- ====================================================================
        THE SYSTEM — interactive logo
        ==================================================================== -->
-  <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
 
-  <section data-sec="system" id="system" aria-label="The Freedom Group system">
+  <div class="tr2 tr2-clouds" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
+  <section data-sec="system" id="system" aria-label="The Freedom System — the group as a hierarchical space system">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">The group as a system</span>
-        <h2>Four companies. <span class="grad-text">One orbit.</span></h2>
-        <p class="section-sub">Our logo is a map of the group — a core with its brands in constant orbit. Hover a planet to slow time and surface its story; click it to fly to that chapter of the proposal.</p>
-      </div>
-      <div class="system-wrap">
-        <div class="system-stage reveal" id="systemStage"></div>
-        <div class="system-panel reveal d1" id="systemPanel" aria-live="polite"></div>
+        <span class="kicker">The Freedom System</span>
+        <h2>One group. Three companies.<br><span class="grad-text">One orbit around Holdings.</span></h2>
+        <p class="section-sub">The Freedom Group Holdings Ltd sits at the centre of the system and owns every brand, trademark and piece of IP. Each operating Ltd orbits it — licensing the brands, taking them to market, and returning royalties every quarter. Hover a planet to light its story; click it to fly to that chapter.</p>
+        <div class="sys-chips reveal d1">
+          <span class="sys-chip"><b>1</b> holding company</span>
+          <span class="sys-chip"><b>3</b> operating Ltds</span>
+          <span class="sys-chip"><b>5+</b> brands in the vault</span>
+          <span class="sys-chip"><b>2</b> future orbits</span>
+        </div>
+        <p class="sys-lede">Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — a strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.</p>
       </div>
     </div>
+    <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
   </section>
 
   <!-- ====================================================================
@@ -2533,7 +2477,8 @@ function initChrome() {
    HERO — KPIs with sparklines
    ========================================================================= */
 function renderHero() {
-  $("#parentBlurb").textContent = FG_DATA.company.parentBlurb;
+  const pb = $("#parentBlurb");
+  if (pb) pb.textContent = FG_DATA.company.parentBlurb;
   const gb = $("#groupBlurb");
   if (gb) gb.textContent = FG_DATA.company.heroBlurb;
 
@@ -2611,7 +2556,7 @@ const SYSTEM = {
   // one entry per clickable body; `goto` maps it to a section of the proposal
   core: { key: "fire", name: "The Freedom Group Holdings Ltd", short: "Group Holdings", role: "The parent — owns every brand & all IP",
     c: "var(--pink)", cHex: "#ff3d9a",
-    goto: "overview", gotoLabel: "The group structure", stat: "100% of brands & IP",
+    goto: "journey", gotoLabel: "The journey — where it started", stat: "100% of brands & IP",
     body: "The registered holding company above it all — owns every brand, trademark and piece of IP, licenses them to the operating Ltds, and collects royalties back every quarter.",
     facts: ["Holding company", "Owns all IP & brands", "Royalties · quarterly"] },
   planets: [
@@ -2954,235 +2899,209 @@ function renderMegaLogo() {
 }
 
 function renderSystem() {
-  const stage = $("#systemStage");
-  const panel = $("#systemPanel");
-  if (!stage || !panel) return;
-  const cx = 300, cy = 300, rx = 150, ry = 250, rot = 30 * Math.PI / 180;
-  const onRing = tDeg => {
-    const t = tDeg * Math.PI / 180, ex = rx * Math.cos(t), ey = ry * Math.sin(t);
-    return { x: cx + ex * Math.cos(rot) - ey * Math.sin(rot), y: cy + ex * Math.sin(rot) + ey * Math.cos(rot) };
-  };
+  const map = $("#sysMap");
+  if (!map) return;
   const globeSrc = ($(".nav-mark .globe") || {}).src || "";
-  const ORBITS = !REDUCED && typeof CSS !== "undefined" && CSS.supports
-    && CSS.supports("offset-path", 'path("M 0 0")');
+  const W = 1900, H = 1250, cx = 950, cy = 470, ROT = -14;
+  const rot = ROT * Math.PI / 180, cosR = Math.cos(rot), sinR = Math.sin(rot);
+  const pos = (rx, ry, tDeg) => {
+    const t = tDeg * Math.PI / 180, ex = rx * Math.cos(t), ey = ry * Math.sin(t);
+    return { x: cx + ex * cosR - ey * sinR, y: cy + ex * sinR + ey * cosR };
+  };
+  const f = n => n.toFixed(1);
 
-  // the ring as a two-arc closed path — doubles as the planets' motion track
-  const f = n => +n.toFixed(2);
-  const pA = onRing(-90), pB = onRing(90);
-  const ringD = `M ${f(pA.x)} ${f(pA.y)} A ${rx} ${ry} 30 0 1 ${f(pB.x)} ${f(pB.y)} A ${rx} ${ry} 30 0 1 ${f(pA.x)} ${f(pA.y)}`;
+  // orbital shells of the hierarchy
+  const ORB = {
+    vault: [215, 86],
+    o1: [400, 168],
+    o2: [565, 238],
+    o3: [720, 302],
+    f1: [830, 352],
+    f2: [905, 388],
+  };
+  const PLANETS = [
+    { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
+      orbit: "o1", t: 22, r: 46, status: "FLAGSHIP",
+      role: "Consumer D2C division — the group's online stores",
+      ta: "currently trading as Freedom Fire & Safety Limited",
+      ch: "eBay · Amazon · Shopify · Temu · TikTok",
+      card: { left: 72.5, top: 29 } },
+    { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
+      orbit: "o2", t: 195, r: 40, status: "IN WORKS · 2027",
+      role: "Facilities-management arm — servicing & maintenance",
+      ch: "on-site servicing · PPE · drone · PAT · FM",
+      card: { left: 2.5, top: 49 } },
+    { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
+      orbit: "o3", t: 55, r: 34, status: "IN WORKS · 2028",
+      role: "B2B trade division — wholesale & retail distribution",
+      ch: "national retailers · dealer central · trade counters",
+      card: { left: 63, top: 58 } },
+  ];
+  const VAULT = [
+    ["FireStorm™", "var(--ember)", 10], ["Voltz", "var(--blue)", 70], ["Kunegry", "var(--mint)", 130],
+    ["T3", "var(--pink)", 190], ["Crystal Solutions", "var(--blue)", 250], ["+ more", "", 310],
+  ];
+  const GHOSTS = [
+    { orbit: "f1", t: 155, r: 26, name: "Freedom Form Ltd", sub: "property & management · MD brings 10 yrs in architecture", c: "#ff6a3d" },
+    { orbit: "f2", t: 355, r: 22, name: "Freedom Fly Ltd", sub: "drone visual — already in use on site", c: "#38a9ff" },
+  ];
 
-  const grads = SYSTEM.planets.map(p => `
-    <radialGradient id="g-${p.key}" cx="0.36" cy="0.30" r="0.75">
-      <stop offset="0" stop-color="${p.grad[0]}"/>
-      <stop offset="0.55" stop-color="${p.grad[1]}"/>
-      <stop offset="1" stop-color="${p.grad[2]}"/>
+  // seeded stars
+  let seed = 20260712 >>> 0;
+  const rnd = () => { seed += 0x6D2B79F5; let r = Math.imul(seed ^ seed >>> 15, 1 | seed); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; };
+  let stars = "";
+  for (let i = 0; i < 60; i++) {
+    stars += `<rect class="sm-star2" x="${f(rnd() * W)}" y="${f(rnd() * H)}" width="${f(1 + rnd() * 1.6)}" height="${f(1 + rnd() * 1.6)}" opacity="${f(.15 + rnd() * .5)}"/>`;
+  }
+
+  const ellipse = (rx, ry, cls) =>
+    `<ellipse class="${cls}" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" transform="rotate(${ROT} ${cx} ${cy})"/>`;
+
+  const planetDefs = PLANETS.map(p => `
+    <radialGradient id="smp-${p.key}" cx="0.36" cy="0.30" r="0.75">
+      <stop offset="0" stop-color="${p.grad[0]}"/><stop offset="0.55" stop-color="${p.grad[1]}"/><stop offset="1" stop-color="${p.grad[2]}"/>
     </radialGradient>`).join("");
 
-  /* Neon auras as radial gradients rather than an feGaussianBlur filter —
-     identical brand colours, but composited on the GPU with zero filter
-     repaints while the planets are in motion. */
-  const auras = [SYSTEM.core, ...SYSTEM.planets].map(d => `
-    <radialGradient id="aura-${d.key}">
-      <stop offset="0" stop-color="${d.cHex}" stop-opacity=".55"/>
-      <stop offset="0.55" stop-color="${d.cHex}" stop-opacity=".22"/>
-      <stop offset="1" stop-color="${d.cHex}" stop-opacity="0"/>
-    </radialGradient>`).join("");
-
-  // planet artwork centred on (0,0) so it can ride offset-path (or a static translate)
-  const planetInner = p => `
-      <circle class="glow" r="${p.r + 26}" fill="url(#aura-${p.key})"/>
-      <circle class="ring-sel" r="${p.r + 8}"/>
-      <circle class="sphere" r="${p.r}" fill="url(#g-${p.key})"/>
-      <ellipse class="sphere" cx="${f(-p.r * 0.28)}" cy="${f(-p.r * 0.34)}" rx="${f(p.r * 0.34)}" ry="${f(p.r * 0.22)}" fill="#fff" opacity="0.28"/>
-      <circle class="hit" r="${p.r + 12}"/>`;
-
-  const bodies = SYSTEM.planets.map(p => {
-    const pt = onRing(p.t);
-    const place = ORBITS
-      ? `offset-path:path('${ringD}')`
-      : `transform:translate(${f(pt.x)}px,${f(pt.y)}px)`;
-    return `
-    <g class="body ${ORBITS ? "orbiting" : ""} ${p.cls}" role="button" tabindex="0" data-key="${p.key}"
-       aria-label="${p.name} — ${p.role}. Opens ${p.gotoLabel}." style="--c:${p.c};${place}">
-      ${planetInner(p)}
-    </g>`;
-  }).join("");
-
-  // globe hub, artwork centred on (0,0) so hover-scale pivots correctly
-  const gk = SYSTEM.core;
-  const globeR = 58;
-  const globe = `
-    <g class="body b-core" role="button" tabindex="0" data-key="${gk.key}"
-       aria-label="${gk.name} — ${gk.role}. Opens ${gk.gotoLabel}."
-       style="--c:${gk.c};transform:translate(${cx}px,${cy}px)">
-      <circle class="glow" r="${globeR + 30}" fill="url(#aura-${gk.key})"/>
-      <circle class="ring-sel" r="${globeR + 8}"/>
-      ${globeSrc
-        ? `<clipPath id="sysGlobeClip"><circle cx="0" cy="0" r="${globeR}"/></clipPath>
-           <image class="sphere" href="${globeSrc}" x="${-globeR}" y="${-globeR}" width="${globeR * 2}" height="${globeR * 2}" clip-path="url(#sysGlobeClip)"/>
-           <circle class="sphere" cx="0" cy="0" r="${globeR}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>`
-        : `<circle class="sphere" cx="0" cy="0" r="${globeR}" fill="${gk.cHex}"/>`}
-      <circle class="hit" r="${globeR + 6}"/>
-    </g>`;
-
-  stage.innerHTML = `
-    <svg class="system-svg" viewBox="0 0 600 600" role="group" aria-label="Interactive Freedom Group logo — hover a planet to slow the orbit, click to jump to its chapter">
-      <defs>
-        <linearGradient id="sysOrbit" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stop-color="#ff74b8"/>
-          <stop offset="0.5" stop-color="#ff3d9a"/>
-          <stop offset="1" stop-color="#c60f6e"/>
-        </linearGradient>
-        ${grads}
-        ${auras}
-      </defs>
-      <path class="orbit-ring" d="${ringD}" stroke-width="9"/>
-      ${bodies}
-      ${globe}
-    </svg>`;
-
-  // phase each planet so it starts exactly at its logo position on the track
-  if (ORBITS) {
-    const track = $(".orbit-ring", stage);
-    const L = track.getTotalLength();
-    const N = 1200;
-    const samples = Array.from({ length: N + 1 }, (_, i) => track.getPointAtLength(L * i / N));
-    const phaseOf = pt => {
-      let best = 0, bd = Infinity;
-      samples.forEach((sp, i) => {
-        const d = (sp.x - pt.x) ** 2 + (sp.y - pt.y) ** 2;
-        if (d < bd) { bd = d; best = i; }
-      });
-      return best / N;
-    };
-    $$(".body.orbiting", stage).forEach(b => {
-      const p = SYSTEM.planets.find(x => x.key === b.dataset.key);
-      b.style.animationDelay = (-phaseOf(onRing(p.t)) * ORBIT_DUR).toFixed(2) + "s";
-    });
-  }
-
-  /* time dilation: ease the whole orbit down/up without a visible jump.
-     updatePlaybackRate transitions seamlessly; in a hidden tab (frozen clock)
-     it never commits, so fall back to the direct setter there. */
-  function setOrbitRate(rate) {
-    $$(".body.orbiting", stage).forEach(b =>
-      b.getAnimations().forEach(a => {
-        try {
-          if (!document.hidden && a.updatePlaybackRate) a.updatePlaybackRate(rate);
-          else a.playbackRate = rate;
-        } catch (e) { a.playbackRate = rate; }
-      })
-    );
-    stage.dataset.orbit = rate < 1 ? "slowed" : "normal";
-  }
-
-  // ---- panel -------------------------------------------------------------
-  const all = SYSTEM_ALL;
-  let selected = null;
-
-  function companyHTML(d) {
-    return `
-      <div class="sp-swap">
-        <span class="sp-eyebrow"><span class="dot"></span>${d.short}</span>
-        <h3>${d.name}</h3>
-        <div class="sp-role">${d.role}</div>
-        <p class="sp-body">${d.body}</p>
-        <div class="sp-facts">
-          <span class="sp-fact sp-stat">${d.stat}</span>
-          ${d.facts.map(x => `<span class="sp-fact">${x}</span>`).join("")}
-        </div>
-        <button class="sp-jump" data-jump="${d.key}">
-          View in the proposal · ${d.gotoLabel}
-          <svg class="arrow" width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>`;
-  }
-  function paintCompany(key) {
-    const d = all[key];
-    if (!d) return;
-    panel.style.setProperty("--c", d.c);
-    panel.innerHTML = companyHTML(d);
-    $(".sp-jump", panel).addEventListener("click", () => scrollToSec(key));
-    $$(".body", stage).forEach(b => b.classList.toggle("sel", b.dataset.key === key));
-  }
-  function showCompany(key) { selected = key; paintCompany(key); }
-  function previewCompany(key) { paintCompany(key); }
-  function restorePanel() { if (selected) paintCompany(selected); else showIntro(); }
-
-  function showIntro() {
-    selected = null;
-    panel.style.setProperty("--c", "var(--pink)");
-    panel.innerHTML = `
-      <div class="sp-swap">
-        <span class="sp-eyebrow"><span class="dot"></span>The Freedom Group</span>
-        <h3>A core, and its brands in orbit</h3>
-        <div class="sp-role">Freedom Group Holdings</div>
-        <p class="sp-body">One parent company overseeing a portfolio across e-commerce, trade distribution and product design. The globe is the flagship at the centre; each planet is a subsidiary orbiting it.</p>
-        <div class="sys-chips" role="group" aria-label="Choose a company">
-          ${[gk, ...SYSTEM.planets].map(d => `
-            <button class="sys-chip" data-key="${d.key}" style="--c:${d.c}" aria-pressed="false">
-              <span class="cdot"></span>${d.short}
-            </button>`).join("")}
-        </div>
-        <div class="sys-hint"><span class="pulse"></span>Hover a planet to slow the orbit · click it to fly to its chapter</div>
-      </div>`;
-    $$(".body", stage).forEach(b => b.classList.remove("sel"));
-    $$(".sys-chip", panel).forEach(chip =>
-      chip.addEventListener("click", () => {
-        showCompany(chip.dataset.key);
-        scrollToSec(chip.dataset.key);
-      }));
-  }
-
-  // ---- click → glide the page to that chapter (shared implementation) ----
-  const scrollToSec = flyToChapter;
-
-  // ---- wiring -------------------------------------------------------------
-  const tip = makeTip(stage);
-  const COARSE = window.matchMedia && matchMedia("(pointer:coarse)").matches;
-  const navBtnFor = sec => $(`.nav-btn[data-goto="${sec}"]`);
-
-  $$(".body", stage).forEach(b => {
-    const key = b.dataset.key, d = all[key];
-    const hoverOn = () => {
-      setOrbitRate(0.12);
-      b.classList.add("hot");
-      previewCompany(key);
-      const nb = navBtnFor(d.goto);
-      if (nb) nb.classList.add("peek");
-    };
-    const hoverOff = () => {
-      setOrbitRate(1);
-      b.classList.remove("hot");
-      restorePanel();
-      tip.hide();
-      const nb = navBtnFor(d.goto);
-      if (nb) nb.classList.remove("peek");
-    };
-    b.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") hoverOn(); });
-    b.addEventListener("pointermove", e => {
-      if (e.pointerType !== "mouse") return;
-      tip.show(e.clientX, e.clientY,
-        `<b>${d.name}</b><div class="trow"><span>${d.gotoLabel}</span><b>${d.stat}</b></div><div style="opacity:.7">Click to view in the proposal ↓</div>`);
-    });
-    b.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hoverOff(); });
-    b.addEventListener("focus", () => { setOrbitRate(0.12); b.classList.add("hot"); previewCompany(key); });
-    b.addEventListener("blur", () => { setOrbitRate(1); b.classList.remove("hot"); restorePanel(); });
-    b.addEventListener("click", () => {
-      // touch has no hover: first tap reads the company, second tap flies there
-      if (COARSE && selected !== key) { showCompany(key); return; }
-      showCompany(key);
-      scrollToSec(key);
-    });
-    b.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showCompany(key); scrollToSec(key); }
-    });
+  // flows: licence out (coloured) + royalties back (dashed pink)
+  const sunR = 96;
+  let flows = "", planets = "";
+  PLANETS.forEach((p, i) => {
+    const [rx, ry] = ORB[p.orbit];
+    const pp = pos(rx, ry, p.t);
+    const dx = pp.x - cx, dy = pp.y - cy;
+    const L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const s0 = { x: cx + ux * (sunR + 12), y: cy + uy * (sunR + 12) };
+    const e0 = { x: pp.x - ux * (p.r + 16), y: pp.y - uy * (p.r + 16) };
+    const bend = 60 + i * 14;
+    const m1 = { x: (s0.x + e0.x) / 2 - uy * bend, y: (s0.y + e0.y) / 2 + ux * bend };
+    const m2 = { x: (s0.x + e0.x) / 2 + uy * (bend + 26), y: (s0.y + e0.y) / 2 - ux * (bend + 26) };
+    flows += `<path class="sm-flow" stroke="${p.cHex}" marker-end="url(#smArr)" d="M ${f(s0.x)} ${f(s0.y)} Q ${f(m1.x)} ${f(m1.y)} ${f(e0.x)} ${f(e0.y)}"/>`;
+    flows += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(pp.x - ux * (p.r + 26))} ${f(pp.y - uy * (p.r + 26))} Q ${f(m2.x)} ${f(m2.y)} ${f(cx + ux * (sunR + 26))} ${f(cy + uy * (sunR + 26))}"/>`;
+    planets += `
+      <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
+         aria-label="${p.name} — ${p.role}. Click to open its chapter."
+         transform="translate(${f(pp.x)} ${f(pp.y)})">
+        <g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
+          <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
+          <circle r="${p.r}" fill="url(#smp-${p.key})"/>
+          <ellipse cx="${f(-p.r * .28)}" cy="${f(-p.r * .34)}" rx="${f(p.r * .34)}" ry="${f(p.r * .22)}" fill="#fff" opacity=".28"/>
+          <circle r="${p.r + 14}" fill="transparent"/>
+        </g>
+      </g>`;
   });
 
-  // the courier patrols this system too, carrying the future-Ltd manifest
-  mountRocket(stage, { cx, cy, rx, ry, rotDeg: 30, out: 1.22, dur: 22, art: 0.62, tStatic: 300 });
+  // vault chips around the inner orbit
+  let vault = "";
+  VAULT.forEach(([label, color, t]) => {
+    const [rx, ry] = ORB.vault;
+    const vp = pos(rx, ry, t);
+    const w2 = 26 + label.length * 8.2;
+    vault += `
+      <g class="sm-vault${color ? "" : " more"}" transform="translate(${f(vp.x - w2 / 2)} ${f(vp.y - 17)})">
+        <rect width="${f(w2)}" height="34" rx="10"/>
+        ${color ? `<circle cx="15" cy="17" r="3.4" fill="${color}"/>` : ""}
+        <text x="${color ? 26 : w2 / 2}" y="22"${color ? "" : ' text-anchor="middle"'}>${label}</text>
+      </g>`;
+  });
 
-  showIntro();
+  // future ghost orbits
+  let ghosts = "";
+  GHOSTS.forEach(g => {
+    const [rx, ry] = ORB[g.orbit];
+    const gp = pos(rx, ry, g.t);
+    const anchor = gp.x > cx ? "end" : "start";
+    const tx = gp.x > cx ? gp.x - g.r - 14 : gp.x + g.r + 14;
+    ghosts += `
+      <g class="sm-ghost">
+        <circle class="body2" cx="${f(gp.x)}" cy="${f(gp.y)}" r="${g.r}" stroke="${g.c}"/>
+        <text class="sm-ghostlab" x="${f(tx)}" y="${f(gp.y - 2)}" text-anchor="${anchor}">${g.name}</text>
+        <text class="sm-ghostsub" x="${f(tx)}" y="${f(gp.y + 16)}" text-anchor="${anchor}">${g.sub}</text>
+      </g>`;
+  });
+
+  map.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map">
+      <defs>
+        ${planetDefs}
+        <radialGradient id="smSunGlow">
+          <stop offset="0" stop-color="rgba(255,61,154,.5)"/><stop offset=".6" stop-color="rgba(255,61,154,.16)"/><stop offset="1" stop-color="rgba(255,61,154,0)"/>
+        </radialGradient>
+        <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <clipPath id="smSunClip"><circle cx="${cx}" cy="${cy}" r="${sunR}"/></clipPath>
+      </defs>
+      ${stars}
+      <g class="sm-legend" transform="translate(40,60)">
+        <line x1="0" y1="0" x2="28" y2="0" stroke="rgba(243,244,251,.8)"/><text x="38" y="4">ownership</text>
+        <line x1="0" y1="26" x2="22" y2="26" stroke="#38a9ff" marker-end="url(#smArr)"/><text x="38" y="30">brand &amp; IP licence</text>
+        <line x1="0" y1="52" x2="28" y2="52" stroke="var(--pink)" stroke-dasharray="5 6"/><text x="38" y="56">royalties · every quarter</text>
+      </g>
+      ${ellipse(ORB.vault[0], ORB.vault[1], "sm-vaultorbit")}
+      ${ellipse(ORB.o1[0], ORB.o1[1], "sm-orbit o1")}
+      ${ellipse(ORB.o2[0], ORB.o2[1], "sm-orbit")}
+      ${ellipse(ORB.o3[0], ORB.o3[1], "sm-orbit")}
+      ${ellipse(ORB.f1[0], ORB.f1[1], "sm-orbit future")}
+      ${ellipse(ORB.f2[0], ORB.f2[1], "sm-orbit future")}
+      ${flows}
+      <circle cx="${cx}" cy="${cy}" r="${sunR * 2.4}" fill="url(#smSunGlow)"/>
+      <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
+        <circle class="halo" cx="${cx}" cy="${cy}" r="${sunR + 22}" fill="#ff3d9a" opacity="0" style="filter:blur(16px)"/>
+        ${globeSrc
+          ? `<image href="${globeSrc}" x="${cx - sunR}" y="${cy - sunR}" width="${sunR * 2}" height="${sunR * 2}" clip-path="url(#smSunClip)"/>`
+          : `<circle cx="${cx}" cy="${cy}" r="${sunR}" fill="#ff3d9a"/>`}
+        <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+      </g>
+      <text class="sm-suntitle" x="${cx}" y="${cy - sunR - 74}" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
+      <text class="sm-sunsub" x="${cx}" y="${cy - sunR - 50}" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
+      <g class="sm-mini" transform="translate(${cx - 152} ${cy - sunR - 38})">
+        <rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">BRANDS</text>
+        <rect x="94" width="118" height="24" rx="12"/><text x="153" y="16" text-anchor="middle">TRADEMARKS</text>
+        <rect x="222" width="52" height="24" rx="12"/><text x="248" y="16" text-anchor="middle">IP</text>
+      </g>
+      <text class="sm-lab b" x="${cx}" y="${cy + ORB.vault[1] + 66}" text-anchor="middle">BRAND &amp; IP VAULT — licensed to the Ltds under formal agreements</text>
+      ${vault}
+      <text class="sm-lab" x="${f(cx - 430)}" y="${f(cy + 262)}">brand &amp; IP licence agreements</text>
+      <text class="sm-lab" x="${f(cx + 210)}" y="${f(cy - 235)}">royalties return to Holdings</text>
+      <text class="sm-lab" x="${f(cx - 700)}" y="${f(cy + 470)}">future orbits — registered next, launched when the engine's ready</text>
+      ${ghosts}
+      ${planets}
+    </svg>
+    ${PLANETS.map(p => `
+      <div class="sm-card" data-key="${p.key}" style="--c:${p.c};left:${p.card.left}%;top:${p.card.top}%">
+        <span class="status">${p.status}</span>
+        <h3><i></i>${p.name}</h3>
+        <p class="role">${p.role}</p>
+        ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
+        <p class="ch">${p.ch}</p>
+      </div>`).join("")}
+    <div class="sm-note" style="left:3%;top:77%">Both future companies are already mapped into the group's expansion plan — the moment each goes live, it licenses the group's brands and plugs straight into the shared systems, with royalties flowing back to Holdings.</div>
+  `;
+
+  // interactions: planet ↔ card highlight, click → chapter
+  const cards = $$(".sm-card", map);
+  const cardFor = key => cards.find(c => c.dataset.key === key);
+  $$(".sm-planet", map).forEach(b => {
+    const key = b.dataset.key;
+    const on = () => { b.classList.add("hot"); const c = cardFor(key); if (c) c.classList.add("hot"); };
+    const off = () => { b.classList.remove("hot"); const c = cardFor(key); if (c) c.classList.remove("hot"); };
+    b.addEventListener("pointerenter", on);
+    b.addEventListener("pointerleave", off);
+    b.addEventListener("focus", on);
+    b.addEventListener("blur", off);
+    b.addEventListener("click", () => flyToChapter(key));
+    b.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flyToChapter(key); }
+    });
+  });
+  cards.forEach(c => {
+    const key = c.dataset.key;
+    const planet = $$(".sm-planet", map).find(b => b.dataset.key === key);
+    c.addEventListener("pointerenter", () => { c.classList.add("hot"); if (planet) planet.classList.add("hot"); });
+    c.addEventListener("pointerleave", () => { c.classList.remove("hot"); if (planet) planet.classList.remove("hot"); });
+  });
+
+  // the courier patrols the whole system, carrying the future manifest
+  mountRocket(map, { cx, cy, rx: ORB.o3[0], ry: ORB.o3[1], rotDeg: ROT, out: 1.16, dur: 34, art: 1.05, tStatic: 300 });
 }
 
 /* =========================================================================
@@ -4982,16 +4901,16 @@ function initSetpieces() {
   }));
   function drawClouds(ctx, p, w, h) {
     if (!CLs) makeClouds();
-    const day = sm(ph2(p, .22, .78));
+    const day = sm(ph2(p, .2, .58)) * (1 - sm(ph2(p, .64, .94))); // brighten, then climb back into night above the deck
     // sky gradient: deep space night → soft daylight white
     const top = [lp(7, 255, day), lp(7, 255, day), lp(13, 255, day)];
-    const bot = [lp(12, 244, day), lp(10, 246, day), lp(20, 250, day)];
+    const bot = [lp(7, 244, day), lp(7, 246, day), lp(13, 250, day)];
     const bg2 = ctx.createLinearGradient(0, 0, 0, h);
     bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
     bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
     ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
     // fading stars at the top of the climb
-    const starA = (1 - sm(ph2(p, .05, .4))) * .9;
+    const starA = Math.max((1 - sm(ph2(p, .05, .4))) * .9, sm(ph2(p, .7, .95)) * .95);
     if (starA > .02) for (let i = 0; i < 70; i++) {
       const sx = ((i * 137.5) % 359) / 359, sy = ((i * 73.1) % 211) / 211 * .5;
       ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
@@ -5017,7 +4936,7 @@ function initSetpieces() {
       const spr = CLs[c2.s];
       const sw = 512 * c2.sc * scale, sh = 256 * c2.sc * scale;
       const x = w * .5 + c2.x * (0.25 + k * 1.5) * w * .62 - sw / 2;
-      const y = h * .58 + c2.y * h * (0.12 + k * 1.1) - sh * .5 - k * h * .06;
+      const y = h * .58 + c2.y * h * (0.12 + k * 1.1) - sh * .5 - k * h * .06 + sm(ph2(p, .68, .97)) * h * (0.45 + k * 0.9);
       let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
       al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;   // dissolve as it passes the lens
       if (al <= .015) continue;
@@ -5028,7 +4947,7 @@ function initSetpieces() {
     }
     ctx.globalAlpha = 1;
     // sun shafts as the deck breaks
-    const shaft = Math.sin(sm(ph2(p, .45, .9)) * Math.PI) * .22;
+    const shaft = Math.sin(sm(ph2(p, .38, .72)) * Math.PI) * .2;
     if (shaft > .01) {
       ctx.save();
       ctx.translate(w * .5, -h * .2); ctx.rotate(.32);
@@ -5039,11 +4958,18 @@ function initSetpieces() {
       ctx.rotate(-.55); ctx.fillRect(-w * .04, 0, w * .08, h * 1.5);
       ctx.restore();
     }
-    // haze + final break into clean daylight
-    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .55, .8)) * .3})`;
+    // brief haze at the brightest point, fading as we clear the deck
+    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .45, .62)) * (1 - sm(ph2(p, .64, .85))) * .28})`;
     ctx.fillRect(0, 0, w, h);
-    const out = sm(ph2(p, .84, .985));
-    if (out > .01) { ctx.fillStyle = `rgba(255,255,255,${out})`; ctx.fillRect(0, 0, w, h); }
+    // thin atmosphere arc below as we reach the edge of space
+    const atm = sm(ph2(p, .74, .92)) * (1 - sm(ph2(p, .965, 1)));
+    if (atm > .01) {
+      const ag2 = ctx.createLinearGradient(0, h * .82, 0, h);
+      ag2.addColorStop(0, "rgba(120,170,255,0)");
+      ag2.addColorStop(.7, `rgba(120,170,255,${.22 * atm})`);
+      ag2.addColorStop(1, `rgba(255,255,255,${.3 * atm})`);
+      ctx.fillStyle = ag2; ctx.fillRect(0, h * .82, w, h * .18);
+    }
     // ingress: emerge from the hero's exact black so the seam is invisible
     const inDark = 1 - sm(ph2(p, .015, .16));
     if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }

@@ -47,6 +47,7 @@ html{scrollbar-color:rgba(130,136,160,.45) transparent;scrollbar-width:thin;}
 .sm-ghostlab{font-size:13px;font-weight:800;fill:rgba(243,244,251,.85);}
 .sm-ghostsub{font-size:11px;fill:rgba(243,244,251,.55);}
 .sm-star2{fill:#fff;}
+.sm-lead{stroke:rgba(255,255,255,.2);stroke-width:1.4;stroke-dasharray:2 6;}
 .sm-legend line{stroke-width:2.4;}
 .sm-legend text{font-size:11.5px;fill:rgba(243,244,251,.6);}
 .sm-card{
@@ -340,8 +341,8 @@ h1:focus,h2:focus{outline:none;}
   min-height:100vh;display:flex;align-items:center;
   padding:84px 0 60px;
 }
-.hero .wrap{flex:1;max-width:1380px;}
-.hero .mega-stage{max-width:min(880px,86vh);}
+.hero .wrap{flex:1;max-width:1460px;}
+.hero .mega-stage{max-width:min(960px,92vh);}
 
 /* --bh 0→1 (set from scroll) sucks every hero element into the black hole:
    each element carries its own pull vector (--sx/--sy, set in JS), a spin
@@ -520,13 +521,13 @@ html.spx section#team{background:var(--bg-soft);}
 }
 @media (prefers-reduced-motion:reduce){.blob{animation:none;}}
 
-.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.16fr .84fr;gap:min(10vw,150px);align-items:center;}
-.hero h1{font-size:clamp(1.45rem,2.15vw,1.98rem);font-weight:650;white-space:nowrap;letter-spacing:-.02em;}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.14fr .86fr;gap:min(8vw,130px);align-items:center;}
+.hero h1{font-size:clamp(1.5rem,2.2vw,2rem);font-weight:650;white-space:nowrap;letter-spacing:-.025em;}
 .hero .lede{color:var(--ink-dim);font-size:1.08rem;max-width:54ch;}
 .hero-right{display:flex;flex-direction:column;}
-.hero-right h1{font-size:clamp(1.45rem,2.15vw,1.98rem);}
+.hero-right h1{font-size:clamp(1.5rem,2.2vw,2rem);}
 .hero-right .kpis{margin-top:30px;}
-#heroKpis{grid-template-columns:repeat(3,1fr);gap:12px;}
+#heroKpis{grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:12px;}
 
 /* ==========================================================================
    MEGA LOGO — hero-scale interactive recreation of the corporate mark.
@@ -1755,7 +1756,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap hero-inner">
       <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
-        <h1 class="reveal d1" data-suck>From one rusty fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
+        <h1 class="reveal d1" data-suck>From one rusty old fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -2020,9 +2021,9 @@ const FG_DATA = {
     heroBlurb: "Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — with the potential to expand into drones, property development and even food services.",
     parentBlurb: "A strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.",
     kpis: [
-      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "revenue in year one", spark: [32, 444, 1000] },
-      { value: 250000, fmt: "int", prefix: "~", label: "orders processed in year one", spark: [8, 60, 250] },
-      { value: 25000, fmt: "int", suffix: "+", label: "units refurbished in a single year", spark: [4, 12, 25] }
+      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Revenue in year one", spark: [32, 444, 1000] },
+      { value: 250000, fmt: "int", prefix: "~", label: "Orders processed in year one", spark: [8, 60, 250] },
+      { value: 25000, fmt: "int", suffix: "+", label: "Units refurbished in a single year", spark: [4, 12, 25] }
     ]
   },
 
@@ -2835,9 +2836,7 @@ function renderMegaLogo() {
       return best / NN;
     };
     $$(".mg-orb", stage).forEach(b => {
-      const g2 = MG[b.dataset.key];
-      b.style.animationDuration = g2.dur + "s"; // varied lap times keep them spread out
-      b.style.animationDelay = (-phaseOf(pt(g2.t)) * g2.dur).toFixed(2) + "s";
+      b.style.animationDelay = (-phaseOf(pt(MG[b.dataset.key].t)) * MG_ORBIT).toFixed(2) + "s";
     });
   }
   // Layout measured off the real GroupLogo.png (coords x1000/1875): each word
@@ -2902,81 +2901,69 @@ function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
   const globeSrc = ($(".nav-mark .globe") || {}).src || "";
-  const W = 1900, H = 1250, cx = 950, cy = 470, ROT = -14;
-  const rot = ROT * Math.PI / 180, cosR = Math.cos(rot), sinR = Math.sin(rot);
-  const pos = (rx, ry, tDeg) => {
-    const t = tDeg * Math.PI / 180, ex = rx * Math.cos(t), ey = ry * Math.sin(t);
-    return { x: cx + ex * cosR - ey * sinR, y: cy + ex * sinR + ey * cosR };
-  };
+  const W = 1900, H = 1300, cx = 950, cy = 235, sunR = 82;
   const f = n => n.toFixed(1);
-
-  // orbital shells of the hierarchy
-  const ORB = {
-    vault: [215, 86],
-    o1: [400, 168],
-    o2: [565, 238],
-    o3: [720, 302],
-    f1: [830, 352],
-    f2: [905, 388],
+  const pos = (rx, ry, tDeg) => {
+    const t = tDeg * Math.PI / 180;
+    return { x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) };
   };
+  // lower-half orbit shells — each tier hangs beneath the one above
+  const ORB = { vault: [330, 122], o1: [430, 430], o2: [660, 560], o3: [880, 660], fut: [1040, 760] };
+  const arc = (rx, ry, cls) =>
+    `<path class="${cls}" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cy}"/>`;
+
   const PLANETS = [
+    { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
+      orbit: "o2", t: 135, r: 40, status: "IN WORKS · 2027",
+      role: "Facilities-management arm — servicing & maintenance",
+      ch: "on-site servicing · PPE · drone · PAT · FM",
+      card: { left: 12, top: 63 } },
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      orbit: "o1", t: 22, r: 46, status: "FLAGSHIP",
+      orbit: "o1", t: 90, r: 46, status: "FLAGSHIP",
       role: "Consumer D2C division — the group's online stores",
       ta: "currently trading as Freedom Fire & Safety Limited",
       ch: "eBay · Amazon · Shopify · Temu · TikTok",
-      card: { left: 72.5, top: 29 } },
-    { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      orbit: "o2", t: 195, r: 40, status: "IN WORKS · 2027",
-      role: "Facilities-management arm — servicing & maintenance",
-      ch: "on-site servicing · PPE · drone · PAT · FM",
-      card: { left: 2.5, top: 49 } },
+      card: { left: 41, top: 65 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      orbit: "o3", t: 55, r: 34, status: "IN WORKS · 2028",
+      orbit: "o3", t: 45, r: 34, status: "IN WORKS · 2028",
       role: "B2B trade division — wholesale & retail distribution",
       ch: "national retailers · dealer central · trade counters",
-      card: { left: 63, top: 58 } },
+      card: { left: 70, top: 63 } },
   ];
   const VAULT = [
-    ["FireStorm™", "var(--ember)", 10], ["Voltz", "var(--blue)", 70], ["Kunegry", "var(--mint)", 130],
-    ["T3", "var(--pink)", 190], ["Crystal Solutions", "var(--blue)", 250], ["+ more", "", 310],
+    ["FireStorm™", "var(--ember)", 160], ["Voltz", "var(--blue)", 132], ["Kunegry", "var(--mint)", 104],
+    ["T3", "var(--pink)", 76], ["Crystal Solutions", "var(--blue)", 48], ["+ more", "", 20],
   ];
   const GHOSTS = [
-    { orbit: "f1", t: 155, r: 26, name: "Freedom Form Ltd", sub: "property & management · MD brings 10 yrs in architecture", c: "#ff6a3d" },
-    { orbit: "f2", t: 355, r: 22, name: "Freedom Fly Ltd", sub: "drone visual — already in use on site", c: "#38a9ff" },
+    { t: 125, r: 26, name: "Freedom Form Ltd", sub: "property & management · MD brings 10 yrs in architecture", c: "#ff6a3d" },
+    { t: 55, r: 22, name: "Freedom Fly Ltd", sub: "drone visual — already in use on site", c: "#38a9ff" },
   ];
 
-  // seeded stars
   let seed = 20260712 >>> 0;
   const rnd = () => { seed += 0x6D2B79F5; let r = Math.imul(seed ^ seed >>> 15, 1 | seed); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; };
   let stars = "";
   for (let i = 0; i < 60; i++) {
-    stars += `<rect class="sm-star2" x="${f(rnd() * W)}" y="${f(rnd() * H)}" width="${f(1 + rnd() * 1.6)}" height="${f(1 + rnd() * 1.6)}" opacity="${f(.15 + rnd() * .5)}"/>`;
+    stars += `<rect class="sm-star2" x="${f(rnd() * W)}" y="${f(rnd() * H)}" width="${f(1 + rnd() * 1.6)}" height="${f(1 + rnd() * 1.6)}" opacity="${f(.14 + rnd() * .5)}"/>`;
   }
-
-  const ellipse = (rx, ry, cls) =>
-    `<ellipse class="${cls}" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" transform="rotate(${ROT} ${cx} ${cy})"/>`;
 
   const planetDefs = PLANETS.map(p => `
     <radialGradient id="smp-${p.key}" cx="0.36" cy="0.30" r="0.75">
       <stop offset="0" stop-color="${p.grad[0]}"/><stop offset="0.55" stop-color="${p.grad[1]}"/><stop offset="1" stop-color="${p.grad[2]}"/>
     </radialGradient>`).join("");
 
-  // flows: licence out (coloured) + royalties back (dashed pink)
-  const sunR = 96;
-  let flows = "", planets = "";
+  let flows = "", roys = "", planets = "", leads = "";
   PLANETS.forEach((p, i) => {
     const [rx, ry] = ORB[p.orbit];
     const pp = pos(rx, ry, p.t);
     const dx = pp.x - cx, dy = pp.y - cy;
     const L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
-    const s0 = { x: cx + ux * (sunR + 12), y: cy + uy * (sunR + 12) };
+    const s0 = { x: cx + ux * (sunR + 14), y: cy + uy * (sunR + 14) };
     const e0 = { x: pp.x - ux * (p.r + 16), y: pp.y - uy * (p.r + 16) };
-    const bend = 60 + i * 14;
-    const m1 = { x: (s0.x + e0.x) / 2 - uy * bend, y: (s0.y + e0.y) / 2 + ux * bend };
-    const m2 = { x: (s0.x + e0.x) / 2 + uy * (bend + 26), y: (s0.y + e0.y) / 2 - ux * (bend + 26) };
+    const m1 = { x: (s0.x + e0.x) / 2 - uy * 64, y: (s0.y + e0.y) / 2 + ux * 64 };
+    const m2 = { x: (s0.x + e0.x) / 2 + uy * 92, y: (s0.y + e0.y) / 2 - ux * 92 };
     flows += `<path class="sm-flow" stroke="${p.cHex}" marker-end="url(#smArr)" d="M ${f(s0.x)} ${f(s0.y)} Q ${f(m1.x)} ${f(m1.y)} ${f(e0.x)} ${f(e0.y)}"/>`;
-    flows += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(pp.x - ux * (p.r + 26))} ${f(pp.y - uy * (p.r + 26))} Q ${f(m2.x)} ${f(m2.y)} ${f(cx + ux * (sunR + 26))} ${f(cy + uy * (sunR + 26))}"/>`;
+    roys += `<path class="sm-roy" marker-end="url(#smArrP)" d="M ${f(pp.x - ux * (p.r + 26))} ${f(pp.y - uy * (p.r + 26))} Q ${f(m2.x)} ${f(m2.y)} ${f(cx + ux * (sunR + 26))} ${f(cy + uy * (sunR + 26))}"/>`;
+    leads += `<line class="sm-lead" x1="${f(pp.x)}" y1="${f(pp.y + p.r + 10)}" x2="${f(pp.x)}" y2="${f(H * (p.card.top / 100) - 8)}"/>`;
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
          aria-label="${p.name} — ${p.role}. Click to open its chapter."
@@ -2990,11 +2977,9 @@ function renderSystem() {
       </g>`;
   });
 
-  // vault chips around the inner orbit
   let vault = "";
   VAULT.forEach(([label, color, t]) => {
-    const [rx, ry] = ORB.vault;
-    const vp = pos(rx, ry, t);
+    const vp = pos(ORB.vault[0], ORB.vault[1], t);
     const w2 = 26 + label.length * 8.2;
     vault += `
       <g class="sm-vault${color ? "" : " more"}" transform="translate(${f(vp.x - w2 / 2)} ${f(vp.y - 17)})">
@@ -3004,11 +2989,9 @@ function renderSystem() {
       </g>`;
   });
 
-  // future ghost orbits
   let ghosts = "";
   GHOSTS.forEach(g => {
-    const [rx, ry] = ORB[g.orbit];
-    const gp = pos(rx, ry, g.t);
+    const gp = pos(ORB.fut[0], ORB.fut[1], g.t);
     const anchor = gp.x > cx ? "end" : "start";
     const tx = gp.x > cx ? gp.x - g.r - 14 : gp.x + g.r + 14;
     ghosts += `
@@ -3020,7 +3003,7 @@ function renderSystem() {
   });
 
   map.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map">
+    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings above, the vault beneath it, the operating companies on their orbits, future orbits at the edge">
       <defs>
         ${planetDefs}
         <radialGradient id="smSunGlow">
@@ -3036,14 +3019,15 @@ function renderSystem() {
         <line x1="0" y1="26" x2="22" y2="26" stroke="#38a9ff" marker-end="url(#smArr)"/><text x="38" y="30">brand &amp; IP licence</text>
         <line x1="0" y1="52" x2="28" y2="52" stroke="var(--pink)" stroke-dasharray="5 6"/><text x="38" y="56">royalties · every quarter</text>
       </g>
-      ${ellipse(ORB.vault[0], ORB.vault[1], "sm-vaultorbit")}
-      ${ellipse(ORB.o1[0], ORB.o1[1], "sm-orbit o1")}
-      ${ellipse(ORB.o2[0], ORB.o2[1], "sm-orbit")}
-      ${ellipse(ORB.o3[0], ORB.o3[1], "sm-orbit")}
-      ${ellipse(ORB.f1[0], ORB.f1[1], "sm-orbit future")}
-      ${ellipse(ORB.f2[0], ORB.f2[1], "sm-orbit future")}
+      ${arc(ORB.vault[0], ORB.vault[1], "sm-vaultorbit")}
+      ${arc(ORB.o1[0], ORB.o1[1], "sm-orbit o1")}
+      ${arc(ORB.o2[0], ORB.o2[1], "sm-orbit")}
+      ${arc(ORB.o3[0], ORB.o3[1], "sm-orbit")}
+      ${arc(ORB.fut[0], ORB.fut[1], "sm-orbit future")}
       ${flows}
-      <circle cx="${cx}" cy="${cy}" r="${sunR * 2.4}" fill="url(#smSunGlow)"/>
+      ${roys}
+      ${leads}
+      <circle cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
         <circle class="halo" cx="${cx}" cy="${cy}" r="${sunR + 22}" fill="#ff3d9a" opacity="0" style="filter:blur(16px)"/>
         ${globeSrc
@@ -3051,19 +3035,18 @@ function renderSystem() {
           : `<circle cx="${cx}" cy="${cy}" r="${sunR}" fill="#ff3d9a"/>`}
         <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
       </g>
-      <text class="sm-suntitle" x="${cx}" y="${cy - sunR - 74}" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
-      <text class="sm-sunsub" x="${cx}" y="${cy - sunR - 50}" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
-      <g class="sm-mini" transform="translate(${cx - 152} ${cy - sunR - 38})">
+      <text class="sm-suntitle" x="${cx}" y="66" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
+      <text class="sm-sunsub" x="${cx}" y="92" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
+      <g class="sm-mini" transform="translate(${cx - 152} 108)">
         <rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">BRANDS</text>
         <rect x="94" width="118" height="24" rx="12"/><text x="153" y="16" text-anchor="middle">TRADEMARKS</text>
         <rect x="222" width="52" height="24" rx="12"/><text x="248" y="16" text-anchor="middle">IP</text>
       </g>
-      <text class="sm-lab b" x="${cx}" y="${cy + ORB.vault[1] + 66}" text-anchor="middle">BRAND &amp; IP VAULT — licensed to the Ltds under formal agreements</text>
+      <text class="sm-lab b" x="${cx}" y="${f(cy + ORB.vault[1] + 52)}" text-anchor="middle">BRAND &amp; IP VAULT — held by Holdings · licensed to the Ltds under formal agreements</text>
       ${vault}
-      <text class="sm-lab" x="${f(cx - 430)}" y="${f(cy + 262)}">brand &amp; IP licence agreements</text>
-      <text class="sm-lab" x="${f(cx + 210)}" y="${f(cy - 235)}">royalties return to Holdings</text>
-      <text class="sm-lab" x="${f(cx - 700)}" y="${f(cy + 470)}">future orbits — registered next, launched when the engine's ready</text>
+      <text class="sm-lab" x="${cx}" y="${f(cy + 285)}" text-anchor="middle">brand &amp; IP licence agreements flow down · royalties return every quarter</text>
       ${ghosts}
+      <text class="sm-lab" x="${cx}" y="${f(cy + ORB.fut[1] + 58)}" text-anchor="middle">future orbits — registered next, launched when the engine's ready</text>
       ${planets}
     </svg>
     ${PLANETS.map(p => `
@@ -3074,10 +3057,9 @@ function renderSystem() {
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="ch">${p.ch}</p>
       </div>`).join("")}
-    <div class="sm-note" style="left:3%;top:77%">Both future companies are already mapped into the group's expansion plan — the moment each goes live, it licenses the group's brands and plugs straight into the shared systems, with royalties flowing back to Holdings.</div>
+    <div class="sm-note" style="left:50%;top:86%;transform:translateX(-50%);text-align:center">Both future companies are already mapped into the group's expansion plan — the moment each goes live, it licenses the group's brands and plugs straight into the shared systems, with royalties flowing back to Holdings.</div>
   `;
 
-  // interactions: planet ↔ card highlight, click → chapter
   const cards = $$(".sm-card", map);
   const cardFor = key => cards.find(c => c.dataset.key === key);
   $$(".sm-planet", map).forEach(b => {
@@ -3100,8 +3082,8 @@ function renderSystem() {
     c.addEventListener("pointerleave", () => { c.classList.remove("hot"); if (planet) planet.classList.remove("hot"); });
   });
 
-  // the courier patrols the whole system, carrying the future manifest
-  mountRocket(map, { cx, cy, rx: ORB.o3[0], ry: ORB.o3[1], rotDeg: ROT, out: 1.16, dur: 34, art: 1.05, tStatic: 300 });
+  // the courier patrols the system on a track that stays inside the frame
+  mountRocket(map, { cx: 950, cy: 590, rx: 900, ry: 430, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
 }
 
 /* =========================================================================
@@ -4827,10 +4809,11 @@ function initSetpieces() {
     ctx.beginPath(); ctx.arc(cx, cy, R * 1.015, 0, TAU); ctx.stroke();
   }
 
-  /* ---------- CLOUD FLIGHT: climb out of the dark, through a living cloud
-     deck, into the daylight of the next chapter. Sprite-based volumetric
-     look: pre-built puff sprites in dark & light grades, streamed past the
-     camera on a wrapping depth field (pure function of p → scrubbable). */
+  /* ---------- CLOUD FLIGHT v2: night climb through a living deck --------
+     Pre-built cumulus sprites in three lighting grades, streamed on a
+     wrapping depth field. A rising moon, in-cloud lightning, fast stratus
+     wisps, a "sea of clouds" as we break the deck, sun shafts — and a
+     guaranteed pitch-black exit (every layer fades before p=1). */
   const clR = rng(8181);
   function mkCloudSprite(seed) {
     const W2 = 512, H2 = 256;
@@ -4838,14 +4821,9 @@ function initSetpieces() {
     const c = cv.getContext("2d");
     const r2 = rng(seed);
     const puffs = [];
-    for (let i = 0; i < 44; i++) {
-      puffs.push({
-        x: 48 + r2() * (W2 - 96),
-        y: 172 - Math.pow(r2(), 1.7) * 92,
-        r: 16 + r2() * 46,
-      });
+    for (let i = 0; i < 46; i++) {
+      puffs.push({ x: 44 + r2() * (W2 - 88), y: 172 - Math.pow(r2(), 1.7) * 94, r: 15 + r2() * 47 });
     }
-    // under-shade → body → top-light: reads as self-shadowed cumulus
     for (const p2 of puffs) {
       const g2 = c.createRadialGradient(p2.x, p2.y + 9, 0, p2.x, p2.y + 9, p2.r * 1.15);
       g2.addColorStop(0, "rgba(126,132,158,.20)"); g2.addColorStop(1, "rgba(126,132,158,0)");
@@ -4861,7 +4839,6 @@ function initSetpieces() {
       g2.addColorStop(0, "rgba(255,255,255,.30)"); g2.addColorStop(1, "rgba(255,255,255,0)");
       c.fillStyle = g2; c.beginPath(); c.arc(p2.x, p2.y - p2.r * .34, p2.r * .62, 0, TAU); c.fill();
     }
-    // soften the underside so decks sit flat
     c.globalCompositeOperation = "destination-out";
     const fade = c.createLinearGradient(0, 176, 0, H2);
     fade.addColorStop(0, "rgba(0,0,0,0)"); fade.addColorStop(1, "rgba(0,0,0,.85)");
@@ -4885,69 +4862,128 @@ function initSetpieces() {
   }
   let CLs = null;
   function makeClouds() {
-    const bases = [mkCloudSprite(11), mkCloudSprite(22), mkCloudSprite(33)];
+    const bases = [mkCloudSprite(11), mkCloudSprite(22), mkCloudSprite(33), mkCloudSprite(44)];
     CLs = bases.map(b2 => ({
-      dark: tintSprite(b2, "rgba(34,28,52,.92)", "rgba(255,61,154,.30)"),
-      light: tintSprite(b2, "rgba(255,255,255,.16)", "rgba(255,255,255,.12)"),
+      dark: tintSprite(b2, "rgba(30,25,48,.94)", "rgba(255,61,154,.28)"),
+      mid: tintSprite(b2, "rgba(96,98,124,.55)", "rgba(200,210,255,.10)"),
+      light: tintSprite(b2, "rgba(255,255,255,.15)", "rgba(255,255,255,.12)"),
     }));
   }
-  const CLinst = Array.from({ length: 34 }, (_, i) => ({
-    z: (i / 34 + clR() * .02) % 1,
+  const CLinst = Array.from({ length: 48 }, (_, i) => ({
+    z: (i / 48 + clR() * .018) % 1,
     x: clR() * 2 - 1,
-    y: clR() * .8 - .18,
-    s: Math.floor(clR() * 3),
-    sc: .8 + clR() * 1.6,
+    y: clR() * .85 - .2,
+    s: Math.floor(clR() * 4),
+    sc: .7 + clR() * 1.7,
     j: clR(),
   }));
+  const CLwisp = Array.from({ length: 7 }, () => ({ z: clR(), x: clR() * 2 - 1, y: clR() * .7 - .1, w: .5 + clR() * .9 }));
+  function cloudScreen(c2, p, w, h) {
+    const zf = ((c2.z - p * 1.9) % 1 + 1) % 1;
+    const k = Math.pow(1 - zf, 2.5);
+    const scale = .1 + k * 5.4;
+    const sw = 512 * c2.sc * scale, sh = 256 * c2.sc * scale;
+    const x = w * .5 + c2.x * (0.25 + k * 1.5) * w * .62 - sw / 2;
+    const y = h * .58 + c2.y * h * (0.12 + k * 1.1) - sh * .5 - k * h * .06
+      + sm(ph2(p, .68, .97)) * h * (0.45 + k * 0.9);
+    return { zf, k, scale, sw, sh, x, y };
+  }
   function drawClouds(ctx, p, w, h) {
     if (!CLs) makeClouds();
-    const day = sm(ph2(p, .2, .58)) * (1 - sm(ph2(p, .64, .94))); // brighten, then climb back into night above the deck
-    // sky gradient: deep space night → soft daylight white
+    const day = sm(ph2(p, .2, .58)) * (1 - sm(ph2(p, .64, .94)));
+    const gFade = 1 - sm(ph2(p, .8, .955));           // every cloud gone before the exit
     const top = [lp(7, 255, day), lp(7, 255, day), lp(13, 255, day)];
     const bot = [lp(7, 244, day), lp(7, 246, day), lp(13, 250, day)];
     const bg2 = ctx.createLinearGradient(0, 0, 0, h);
     bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
     bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
     ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
-    // fading stars at the top of the climb
-    const starA = Math.max((1 - sm(ph2(p, .05, .4))) * .9, sm(ph2(p, .7, .95)) * .95);
+    // stars: fade under the deck, return above it, dim to nothing at the seam
+    const starA = Math.max((1 - sm(ph2(p, .05, .4))) * .9, sm(ph2(p, .7, .95)) * .95)
+      * (1 - sm(ph2(p, .93, 1)) * .92);
     if (starA > .02) for (let i = 0; i < 70; i++) {
       const sx = ((i * 137.5) % 359) / 359, sy = ((i * 73.1) % 211) / 211 * .5;
       ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
       ctx.fillRect(sx * w, sy * h, 1.4, 1.4);
     }
-    // the ring's pink afterglow below, cooling as we climb
     const after = (1 - sm(ph2(p, 0, .38))) * .5;
     if (after > .01) {
       const ag = ctx.createRadialGradient(w * .5, h * 1.05, 0, w * .5, h * 1.05, h * .8);
       ag.addColorStop(0, `rgba(255,61,154,${after})`); ag.addColorStop(1, "rgba(255,61,154,0)");
       ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
     }
-    // stream the deck past the camera, far → near
+    // the moon — rises with the climb, slips away as we clear the deck
+    const moonA = sm(ph2(p, .1, .28)) * (1 - sm(ph2(p, .62, .86)));
+    const mx = w * .72, my = h * (.2 - .05 * sm(ph2(p, .5, .9)));
+    if (moonA > .01) {
+      const mh = ctx.createRadialGradient(mx, my, 0, mx, my, h * .2);
+      mh.addColorStop(0, `rgba(235,240,255,${.4 * moonA})`);
+      mh.addColorStop(1, "rgba(235,240,255,0)");
+      ctx.fillStyle = mh; ctx.beginPath(); ctx.arc(mx, my, h * .2, 0, TAU); ctx.fill();
+      ctx.fillStyle = `rgba(248,250,255,${.95 * moonA})`;
+      ctx.beginPath(); ctx.arc(mx, my, h * .034, 0, TAU); ctx.fill();
+      ctx.fillStyle = `rgba(180,190,215,${.18 * moonA})`;
+      ctx.beginPath(); ctx.arc(mx - h * .009, my + h * .007, h * .008, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(mx + h * .011, my - h * .006, h * .006, 0, TAU); ctx.fill();
+    }
     const lightMix = sm(ph2(p, .25, .72));
-    const flight = p * 1.9;
-    const order = CLinst.map((c2, i) => {
-      const zf = ((c2.z - flight) % 1 + 1) % 1;
-      return { c2, zf, i };
-    }).sort((a2, b2) => b2.zf - a2.zf);
-    for (const { c2, zf } of order) {
-      const k = Math.pow(1 - zf, 2.5);
-      const scale = .1 + k * 5.4;
-      const spr = CLs[c2.s];
-      const sw = 512 * c2.sc * scale, sh = 256 * c2.sc * scale;
-      const x = w * .5 + c2.x * (0.25 + k * 1.5) * w * .62 - sw / 2;
-      const y = h * .58 + c2.y * h * (0.12 + k * 1.1) - sh * .5 - k * h * .06 + sm(ph2(p, .68, .97)) * h * (0.45 + k * 0.9);
+    const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
+    for (const { c2, g } of order) {
+      const { zf, k, scale, sw, sh, x, y } = g;
       let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
-      al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;   // dissolve as it passes the lens
+      al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
+      al *= gFade;
       if (al <= .015) continue;
+      const spr = CLs[c2.s];
       ctx.globalAlpha = al * (1 - lightMix);
       ctx.drawImage(spr.dark, x, y, sw, sh);
+      ctx.globalAlpha = al * .38 * (1 - k) ;
+      ctx.drawImage(spr.mid, x, y, sw, sh);
       ctx.globalAlpha = al * lightMix;
       ctx.drawImage(spr.light, x, y, sw, sh);
     }
     ctx.globalAlpha = 1;
-    // sun shafts as the deck breaks
-    const shaft = Math.sin(sm(ph2(p, .38, .72)) * Math.PI) * .2;
+    // in-cloud lightning — two deterministic pulses deep in the deck
+    for (const [pc, pw2, idx] of [[.34, .022, 17], [.53, .018, 29]]) {
+      const li = Math.pow(bump(p, pc, pw2), 2) * gFade;
+      if (li > .02) {
+        const g = cloudScreen(CLinst[idx], p, w, h);
+        const lx = g.x + g.sw / 2, ly = g.y + g.sh * .55;
+        ctx.globalCompositeOperation = "lighter";
+        const lg = ctx.createRadialGradient(lx, ly, 0, lx, ly, g.sw * .5);
+        lg.addColorStop(0, `rgba(255,250,255,${.75 * li})`);
+        lg.addColorStop(.4, `rgba(210,190,255,${.3 * li})`);
+        lg.addColorStop(1, "rgba(210,190,255,0)");
+        ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(lx, ly, g.sw * .5, 0, TAU); ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = `rgba(240,235,255,${.09 * li})`; ctx.fillRect(0, 0, w, h);
+      }
+    }
+    // fast stratus wisps streaking past the camera
+    for (const wp of CLwisp) {
+      const zf = ((wp.z - p * 3.1) % 1 + 1) % 1;
+      const kw = Math.pow(1 - zf, 1.8);
+      const wa = (.04 + .1 * kw) * gFade * (zf < .9 ? 1 : (1 - zf) / .1);
+      if (wa <= .01) continue;
+      ctx.fillStyle = `rgba(222,226,242,${wa})`;
+      ctx.beginPath();
+      ctx.ellipse(w * .5 + wp.x * (0.3 + kw * 1.3) * w * .6, h * (.3 + wp.y) + kw * h * .1,
+        w * .32 * kw * wp.w + 20, h * .012 + kw * h * .014, -.06, 0, TAU);
+      ctx.fill();
+    }
+    // the sea of clouds below as we break the deck
+    const sea = sm(ph2(p, .64, .84)) * (1 - sm(ph2(p, .9, .985)));
+    if (sea > .01) {
+      ctx.globalAlpha = sea * .55;
+      for (let i = 0; i < 9; i++) {
+        const sx2 = (i / 9) * w * 1.2 - w * .1 + ((i * 53) % 40);
+        const sw2 = w * .3, sh2 = sw2 * .5;
+        ctx.drawImage(CLs[i % 4].light, sx2, h * (.86 + ((i * 31) % 8) / 100) , sw2, sh2);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // sun shafts through the breaking deck
+    const shaft = Math.sin(sm(ph2(p, .38, .72)) * Math.PI) * .2 * gFade;
     if (shaft > .01) {
       ctx.save();
       ctx.translate(w * .5, -h * .2); ctx.rotate(.32);
@@ -4958,19 +4994,19 @@ function initSetpieces() {
       ctx.rotate(-.55); ctx.fillRect(-w * .04, 0, w * .08, h * 1.5);
       ctx.restore();
     }
-    // brief haze at the brightest point, fading as we clear the deck
-    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .45, .62)) * (1 - sm(ph2(p, .64, .85))) * .28})`;
+    // brief haze at the brightest point
+    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .45, .62)) * (1 - sm(ph2(p, .64, .85))) * .26})`;
     ctx.fillRect(0, 0, w, h);
-    // thin atmosphere arc below as we reach the edge of space
-    const atm = sm(ph2(p, .74, .92)) * (1 - sm(ph2(p, .965, 1)));
+    // thin atmosphere arc at the edge of space — then gone
+    const atm = sm(ph2(p, .74, .9)) * (1 - sm(ph2(p, .94, .99)));
     if (atm > .01) {
       const ag2 = ctx.createLinearGradient(0, h * .82, 0, h);
       ag2.addColorStop(0, "rgba(120,170,255,0)");
-      ag2.addColorStop(.7, `rgba(120,170,255,${.22 * atm})`);
-      ag2.addColorStop(1, `rgba(255,255,255,${.3 * atm})`);
+      ag2.addColorStop(.7, `rgba(120,170,255,${.2 * atm})`);
+      ag2.addColorStop(1, `rgba(255,255,255,${.26 * atm})`);
       ctx.fillStyle = ag2; ctx.fillRect(0, h * .82, w, h * .18);
     }
-    // ingress: emerge from the hero's exact black so the seam is invisible
+    // ingress from the hero's exact black
     const inDark = 1 - sm(ph2(p, .015, .16));
     if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
   }

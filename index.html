@@ -323,17 +323,33 @@ h1:focus,h2:focus{outline:none;}
   transform:rotate(calc(var(--bh,0)*10deg)) scale(calc(1 - var(--bh,0)*.3));
 }
 
+/* THE RING IS THE WARP — the mark's own contents fall into its centre:
+   the orbital shell (planets + globe) contracts and swirls in, the essence
+   dissolves, and the ring itself charges with light, then implodes last */
+#hero #mgBodies{
+  transform:rotate(calc(var(--bh,0)*80deg)) scale(calc(1 - var(--bh,0)*var(--bh,0)));
+  transform-origin:499.7px 502.9px;transform-box:view-box;
+  will-change:transform;
+}
+#hero .mg-ess ellipse{opacity:calc(1 - var(--bh,0)*2.5);}
+#hero #mgRing{
+  filter:saturate(calc(1 + var(--bh,0)*1.2)) brightness(calc(1 + var(--bh,0)*.7));
+  transform:rotate(calc(var(--bh,0)*14deg)) scale(max(.001,calc(1 - max(0,(var(--bh,0) - .82))*5.55)));
+  transform-origin:499.7px 502.9px;transform-box:view-box;
+  opacity:min(1,max(0,calc(1 - (var(--bh,0) - .94)*16)));
+}
+
 /* THE BLACK HOLE — gravitational lensing halo, two counter-rotating
    accretion disks, a crisp photon ring, a pure-black event horizon, and a
    flash as it finally collapses on itself. Growth, spin-up and death are
    all functions of --bh so the whole life-cycle scrubs in both directions. */
 .bh{
-  position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;
-  width:54vmin;height:54vmin;margin:-27vmin 0 0 -27vmin;
+  position:absolute;left:49.97%;top:50.29%;z-index:2;pointer-events:none;
+  width:42%;aspect-ratio:1;
   --gg:min(1,calc(var(--bh,0)*2.2));
   --g:calc(var(--gg)*var(--gg)*(3 - 2*var(--gg)));
   --die:min(1,max(0,calc((var(--bh,0) - .88)*8.3)));
-  transform:scale(calc(var(--g)*(1 - var(--die)*.92))) rotate(calc(var(--bh,0)*40deg));
+  transform:translate(-50%,-50%) scale(calc(var(--g)*(1 - var(--die)*.92))) rotate(calc(var(--bh,0)*40deg));
   opacity:min(1,max(0,calc(var(--bh,0)*3.4 - .12)));
 }
 .bh i{position:absolute;border-radius:50%;display:block;}
@@ -400,7 +416,7 @@ h1:focus,h2:focus{outline:none;}
 /* space vignette — the hero's edges fall into shadow as the hole grows */
 .bh-vig{
   position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(circle at 50% 50%, transparent 26%, rgba(0,0,0,.6) 75%);
+  background:radial-gradient(circle at var(--hx,50%) var(--hy,50%), transparent 26%, rgba(0,0,0,.6) 75%);
   opacity:calc(var(--bh,0)*.95);
 }
 
@@ -681,20 +697,51 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 .fs-chip b{display:block;font-size:.9rem;letter-spacing:-.01em;}
 .fs-chip span{color:var(--ink-dim);font-size:.79rem;line-height:1.45;display:block;margin-top:2px;}
 
-/* the holdings structure map inside the parent card */
-.gp-map{width:100%;height:auto;display:block;margin:20px 0 0;}
-.gp-map .gm-links path{fill:none;stroke:var(--line);stroke-width:1.6;}
-.gp-map .gm-arrs path{fill:var(--line);}
-.gm-roy{fill:none;stroke:var(--pink);stroke-width:1.6;stroke-dasharray:5 5;opacity:.85;}
-.gm-royArr{fill:var(--pink);}
-.gm-roylab{font-size:10px;font-weight:700;fill:var(--pink);letter-spacing:.05em;}
-.gm-lab{font-size:10px;fill:var(--ink-dim);letter-spacing:.03em;}
-.gm-box{fill:var(--bg);stroke:var(--line);}
-.gm-t1{font-size:11.5px;font-weight:800;fill:var(--ink);letter-spacing:.05em;}
-.gm-t2{font-size:9.5px;fill:var(--ink-dim);}
-.gm-chip rect{fill:var(--bg);stroke:var(--line);}
-.gm-chip text{font-size:8.4px;font-weight:800;fill:var(--ink);letter-spacing:.05em;}
-.gm-chip .gm-sub{font-size:7.6px;font-weight:600;fill:var(--ink-dim);letter-spacing:.03em;}
+/* THE GROUP GRAPH — the focal, full-bleed structural map of the model */
+.gp-graph{
+  margin:40px calc(50% - 50vw) 54px;
+  padding-inline:max(24px, calc(50vw - 730px));
+}
+.gp-graph svg{width:100%;max-width:1460px;height:auto;display:block;margin:0 auto;}
+#gmArr path{fill:var(--line);}
+#gmArrP path{fill:var(--pink);}
+.gg-hold rect{fill:var(--bg);stroke:var(--line);stroke-width:1.5;}
+.gg-t1{font-size:17px;font-weight:800;fill:var(--ink);letter-spacing:.04em;}
+.gg-t2{font-size:11px;fill:var(--ink-dim);}
+.gg-minis rect{fill:var(--card);stroke:var(--line);}
+.gg-minis text{font-size:9px;font-weight:700;fill:var(--ink-dim);letter-spacing:.09em;}
+.gg-own{stroke:var(--ink-dim);stroke-width:1.8;fill:none;}
+.gg-vault rect{fill:var(--bg);stroke:var(--line);stroke-width:1.5;}
+.gg-vault .gg-pill rect{fill:var(--card);stroke:var(--line);stroke-width:1;}
+.gg-vt{font-size:13px;font-weight:800;letter-spacing:.13em;fill:var(--ink);}
+.gg-vsub{font-size:10px;fill:var(--ink-dim);}
+.gg-pill text{font-size:11.5px;font-weight:700;fill:var(--ink);}
+.gg-more rect{stroke-dasharray:4 4;}
+.gg-more text{fill:var(--ink-dim);font-weight:600;}
+.gg-links path{fill:none;stroke:var(--line);stroke-width:1.8;}
+.gg-dist path{fill:none;stroke:var(--line);stroke-width:1.4;stroke-dasharray:2.5 5;}
+.gg-roy{fill:none;stroke:var(--pink);stroke-width:1.8;stroke-dasharray:6 6;}
+.gg-roylab{font-size:11px;font-weight:700;fill:var(--pink);}
+.gg-lab{font-size:10.5px;fill:var(--ink-dim);}
+.gg-card rect{fill:var(--card);stroke:var(--line);stroke-width:1.5;}
+.gg-cn{font-size:13.5px;font-weight:800;fill:var(--ink);letter-spacing:.03em;}
+.gg-cr{font-size:10.5px;fill:var(--ink-dim);}
+.gg-ta{font-size:10px;font-style:italic;fill:var(--pink);}
+.gg-ch{font-size:9.5px;fill:var(--ink-dim);letter-spacing:.02em;}
+.gg-status rect{fill:var(--bg);stroke:var(--line);}
+.gg-status text{font-size:9px;font-weight:800;letter-spacing:.1em;fill:var(--ink-dim);}
+.gg-live rect{stroke:var(--pink);}
+.gg-live text{fill:var(--pink);}
+.gg-legend path{stroke-width:2;fill:none;}
+.gg-legend .lg1{stroke:var(--ink-dim);}
+.gg-legend .lg2{stroke:var(--line);}
+.gg-legend .lg3{stroke:var(--line);stroke-dasharray:2.5 5;}
+.gg-legend .lg4{stroke:var(--pink);stroke-dasharray:6 6;}
+.gg-legend text{font-size:10px;fill:var(--ink-dim);}
+@media (max-width:760px){
+  .gp-graph{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .gp-graph svg{min-width:940px;}
+}
 
 /* team hero banner */
 .photo.team-hero{max-width:760px;margin:0 auto 30px;background:#0b0c12;}
@@ -1611,10 +1658,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="blobs" id="blobs" aria-hidden="true">
       <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     </div>
-    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-lens"></i><i class="bh-disk"></i><i class="bh-disk2"></i><i class="bh-photon"></i><i class="bh-core"></i><i class="bh-flash"></i></div>
     <div class="bh-vig" aria-hidden="true"></div>
     <div class="wrap hero-inner">
-      <div class="mega-stage reveal" id="megaLogo" data-suck aria-label="The Freedom Group logo"></div>
+      <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
         <h1 class="reveal d1" data-suck>From a rusty fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
         <div class="kpis" id="heroKpis" data-suck></div>
@@ -1632,37 +1678,91 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <span class="kicker">Freedom Group Holdings</span>
         <h2>One parent company.<br><span class="grad-text">A portfolio built to conquer markets.</span></h2>
       </div>
+
+      <div class="gp-graph reveal" role="img" aria-label="The Freedom Group structure — Holdings owns the brand and IP vault, licenses it to the three operating companies, and receives royalties back every quarter">
+        <svg viewBox="0 0 1160 650">
+          <defs>
+            <marker id="gmArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="gmArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z"/></marker>
+          </defs>
+          <g class="gg-legend" transform="translate(24,48)">
+            <path class="lg1" d="M0 0 h26"/><text x="34" y="4">ownership</text>
+            <path class="lg2" d="M0 24 h26"/><text x="34" y="28">licence agreement</text>
+            <path class="lg3" d="M0 48 h26"/><text x="34" y="52">brands to market</text>
+            <path class="lg4" d="M0 72 h26"/><text x="34" y="76">royalties</text>
+          </g>
+          <g class="gg-links">
+            <path marker-end="url(#gmArr)" d="M470 150 C 430 260, 240 350, 198 482"/>
+            <path marker-end="url(#gmArr)" d="M540 150 C 540 270, 578 380, 580 482"/>
+            <path marker-end="url(#gmArr)" d="M610 150 C 650 260, 910 350, 962 482"/>
+          </g>
+          <text class="gg-lab" x="292" y="316">brand &amp; IP licence agreements</text>
+          <g class="gg-dist">
+            <path marker-end="url(#gmArr)" d="M900 266 C 820 340, 360 390, 262 482"/>
+            <path marker-end="url(#gmArr)" d="M950 266 C 930 350, 690 410, 640 482"/>
+            <path marker-end="url(#gmArr)" d="M1000 266 C 1012 350, 1016 410, 1006 482"/>
+          </g>
+          <text class="gg-lab" x="742" y="368">the LTDs take the brands to market</text>
+          <path class="gg-roy" marker-end="url(#gmArrP)" d="M62 482 C 22 300, 116 140, 322 92"/>
+          <text class="gg-roylab" x="46" y="268">£ royalties</text>
+          <text class="gg-roylab" x="46" y="282">every quarter</text>
+          <g class="gg-hold">
+            <rect x="330" y="36" width="380" height="114" rx="18"/>
+            <text class="gg-t1" x="520" y="68" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
+            <text class="gg-t2" x="520" y="87" text-anchor="middle">registered holding company — owns every brand, trademark &amp; all IP</text>
+            <g class="gg-minis">
+              <g transform="translate(384,100)"><rect width="74" height="22" rx="11"/><text x="37" y="15" text-anchor="middle">BRANDS</text></g>
+              <g transform="translate(468,100)"><rect width="104" height="22" rx="11"/><text x="52" y="15" text-anchor="middle">TRADEMARKS</text></g>
+              <g transform="translate(582,100)"><rect width="46" height="22" rx="11"/><text x="23" y="15" text-anchor="middle">IP</text></g>
+            </g>
+          </g>
+          <path class="gg-own" d="M710 92 H 828"/>
+          <text class="gg-lab" x="769" y="82" text-anchor="middle">holds</text>
+          <g class="gg-vault">
+            <rect x="830" y="36" width="310" height="230" rx="18"/>
+            <text class="gg-vt" x="985" y="64" text-anchor="middle">BRAND &amp; IP VAULT</text>
+            <g class="gg-pill" transform="translate(848,80)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--ember)"/><text x="26" y="22">FireStorm™</text></g>
+            <g class="gg-pill" transform="translate(994,80)"><rect width="130" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--blue)"/><text x="26" y="22">Voltz</text></g>
+            <g class="gg-pill" transform="translate(848,124)"><rect width="134" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--mint)"/><text x="26" y="22">Kunegry</text></g>
+            <g class="gg-pill" transform="translate(994,124)"><rect width="130" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--pink)"/><text x="26" y="22">T3</text></g>
+            <g class="gg-pill" transform="translate(848,168)"><rect width="160" height="34" rx="10"/><circle cx="14" cy="17" r="3" fill="var(--blue)"/><text x="26" y="22">Crystal Solutions</text></g>
+            <g class="gg-pill gg-more" transform="translate(1020,168)"><rect width="104" height="34" rx="10"/><text x="52" y="22" text-anchor="middle">+ more</text></g>
+            <text class="gg-vsub" x="985" y="240" text-anchor="middle">licensed to the LTDs under formal agreements</text>
+          </g>
+          <g class="gg-card" transform="translate(20,488)">
+            <rect width="350" height="132" rx="18"/>
+            <circle cx="26" cy="30" r="5" fill="var(--pink)"/>
+            <text class="gg-cn" x="42" y="35">FREEDOM GLOBAL LTD</text>
+            <g class="gg-status gg-live" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">FLAGSHIP</text></g>
+            <text class="gg-cr" x="26" y="64">Consumer D2C division — runs the group's online stores</text>
+            <text class="gg-ta" x="26" y="86">currently trading as Freedom Fire &amp; Safety Limited</text>
+            <text class="gg-ch" x="26" y="114">eBay · Amazon · Shopify · Temu · TikTok · OnBuy</text>
+          </g>
+          <g class="gg-card" transform="translate(405,488)">
+            <rect width="350" height="132" rx="18"/>
+            <circle cx="26" cy="30" r="5" fill="var(--mint)"/>
+            <text class="gg-cn" x="42" y="35">FREEDOM FACILITIES LTD</text>
+            <g class="gg-status" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">IN WORKS</text></g>
+            <text class="gg-cr" x="26" y="64">Facilities-management arm — servicing &amp; maintenance</text>
+            <text class="gg-ch" x="26" y="114">on-site servicing · PPE · drone · PAT · FM</text>
+          </g>
+          <g class="gg-card" transform="translate(790,488)">
+            <rect width="350" height="132" rx="18"/>
+            <circle cx="26" cy="30" r="5" fill="var(--blue)"/>
+            <text class="gg-cn" x="42" y="35">FREEDOM DISTRIBUTION LTD</text>
+            <g class="gg-status" transform="translate(258,16)"><rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">IN WORKS</text></g>
+            <text class="gg-cr" x="26" y="64">B2B trade division — wholesale &amp; retail distribution</text>
+            <text class="gg-ch" x="26" y="114">national retailers · dealer central · trade counters</text>
+          </g>
+        </svg>
+      </div>
       <div class="group-grid">
         <div class="parent-card reveal">
           <div class="inner">
-            <div class="big grad-text">1 group · 4 companies</div>
+            <div class="big grad-text">1 group · 3 companies</div>
             <h3>One owner. Every brand, licensed.</h3>
             <p>The Freedom Group Holdings LTD sits above the operating companies and owns every brand, trademark and piece of IP. Each LTD licenses them under formal agreements — and pays royalties back to the group every quarter.</p>
           </div>
-          <svg class="gp-map" viewBox="0 0 440 226" role="img" aria-label="Group structure — Holdings owns the brands and IP, licenses them to the four operating companies, and receives royalties back every quarter">
-            <g class="gm-links">
-              <path d="M198 62 C 190 106, 66 114, 58 158"/>
-              <path d="M212 62 C 208 108, 168 116, 166 158"/>
-              <path d="M228 62 C 232 108, 272 116, 274 158"/>
-              <path d="M242 62 C 250 106, 374 114, 382 158"/>
-            </g>
-            <g class="gm-arrs">
-              <path d="M54 155 h8 l-4 7 z"/><path d="M162 155 h8 l-4 7 z"/>
-              <path d="M270 155 h8 l-4 7 z"/><path d="M378 155 h8 l-4 7 z"/>
-            </g>
-            <path class="gm-roy" d="M420 162 C 440 116, 428 70, 356 46"/>
-            <path class="gm-royArr" d="M362 52 l-9 -4 8 -5 z"/>
-            <text class="gm-roylab" x="437" y="104" text-anchor="end">royalties</text>
-            <text class="gm-roylab" x="437" y="116" text-anchor="end">every quarter</text>
-            <text class="gm-lab" x="88" y="106">licenses the brands</text>
-            <rect class="gm-box" x="90" y="10" width="260" height="52" rx="14"/>
-            <text class="gm-t1" x="220" y="32" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
-            <text class="gm-t2" x="220" y="48" text-anchor="middle">owns every brand, trademark &amp; all IP</text>
-            <g class="gm-chip" transform="translate(8,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--pink)"/><text x="24" y="22.5">GLOBAL</text><text class="gm-sub" x="14" y="40">LTD · D2C stores</text></g>
-            <g class="gm-chip" transform="translate(116,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--ember)"/><text x="24" y="22.5">FIRE &amp; SAFETY</text><text class="gm-sub" x="14" y="40">LTD · e-commerce</text></g>
-            <g class="gm-chip" transform="translate(224,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--mint)"/><text x="24" y="22.5">FACILITIES</text><text class="gm-sub" x="14" y="40">LTD · FM services</text></g>
-            <g class="gm-chip" transform="translate(332,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--blue)"/><text x="24" y="22.5">DISTRIBUTION</text><text class="gm-sub" x="14" y="40">LTD · B2B trade</text></g>
-          </svg>
           <p style="margin:22px 0 0;color:var(--ink-dim);" id="groupBlurb"></p>
           <p style="margin:12px 0 0;color:var(--ink-dim);" id="parentBlurb"></p>
         </div>
@@ -1935,8 +2035,6 @@ const FG_DATA = {
     { name: "Freedom Global LTD", accent: "var(--pink)", icon: "globe",
       ta: "Currently trading as <b>Freedom Fire &amp; Safety Limited</b>",
       desc: "The consumer division — a multi-brand D2C e-commerce hub running the group's online stores and licensed brands.", tag: "Flagship" },
-    { name: "Freedom Fire &amp; Safety LTD", accent: "var(--ember)", icon: "flame",
-      desc: "The e-commerce company — the group's established fire &amp; safety storefronts, refurbishment and marketplace sales.", tag: "E-commerce" },
     { name: "Freedom Facilities LTD", accent: "var(--mint)", icon: "wrench",
       desc: "The facilities-management arm — on-site servicing plus PPE, drone, PAT and FM services for commercial clients.", tag: "In works" },
     { name: "Freedom Distribution LTD", accent: "var(--blue)", icon: "cube",
@@ -2708,16 +2806,17 @@ function renderMegaLogo() {
         <g class="mg-ess e2" style="offset-path:path('${trackD}')"><ellipse rx="26" ry="4"/></g>` : ""}
       </g>
       <g id="mgText" class="mg-text">
-        <g class="mg-word"><text id="mgThe" font-size="40">THE</text></g>
-        <g class="mg-word"><text id="mgFreed" font-size="95">FREED</text></g>
-        <g class="mg-word"><text id="mgM" font-size="95">M</text></g>
-        <g class="mg-word"><text id="mgGroup" font-size="40">GROUP</text></g>
+        <g class="mg-word"><text id="mgThe" data-suck font-size="40">THE</text></g>
+        <g class="mg-word"><text id="mgFreed" data-suck font-size="95">FREED</text></g>
+        <g class="mg-word"><text id="mgM" data-suck font-size="95">M</text></g>
+        <g class="mg-word"><text id="mgGroup" data-suck font-size="40">GROUP</text></g>
       </g>
       <g id="mgBodies">
         ${planets}
         ${globe}
       </g>
-    </svg>`;
+    </svg>
+    <div class="bh" id="blackhole" aria-hidden="true"><i class="bh-lens"></i><i class="bh-disk"></i><i class="bh-disk2"></i><i class="bh-photon"></i><i class="bh-core"></i><i class="bh-flash"></i></div>`;
 
   // phase each orbiting planet so it starts at its exact logo station
   if (MOVE) {
@@ -2753,7 +2852,7 @@ function renderMegaLogo() {
   const mctx = document.createElement("canvas").getContext("2d");
   const align = () => {
     try {
-      Object.keys(TGT).forEach(id => {
+      Object.keys(TGT).forEach((id, wi) => {
         const el = $("#" + id, stage), t = TGT[id];
         // ink cap height via canvas metrics — SVG getBBox() on <text> returns
         // the em box (ascent+descent), which would size the caps ~30% small.
@@ -2768,16 +2867,27 @@ function renderMegaLogo() {
         el.setAttribute("x", 0);
         el.setAttribute("y", 0);
         const natural = m.width * fs / 100;
+        const sxW = t.len / (natural || 1);
         el.parentNode.setAttribute("transform",
-          `translate(${t.x} ${t.base}) scale(${(t.len / (natural || 1)).toFixed(4)} 1)`);
+          `translate(${t.x} ${t.base}) scale(${sxW.toFixed(4)} 1)`);
+        // in-ring warp vector — the hole is the ring's centre, expressed in
+        // this word's local (scaled) coordinate space
+        const lx = (499.7 - t.x) / sxW - natural / 2;
+        const ly = (502.9 - t.base) + t.cap / 2;
+        el.style.setProperty("--dist", Math.hypot(lx, ly).toFixed(1));
+        el.style.setProperty("--ang", Math.atan2(ly, lx).toFixed(4));
+        el.style.setProperty("--x0", lx.toFixed(1));
+        el.style.setProperty("--y0", ly.toFixed(1));
+        el.style.setProperty("--sx", (-lx).toFixed(1));
+        el.style.setProperty("--sy", (-ly).toFixed(1));
+        el.style.setProperty("--spin", (-(2.1 + wi * 0.3)).toFixed(2));
+        el.style.setProperty("--d", (wi * 0.045).toFixed(3));
       });
     } catch (e) { /* not rendered yet */ }
   };
   align();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(align);
 
-  // the courier craft sweeps the whole mark on a wider orbit
-  mountRocket(stage, { cx: E.cx, cy: E.cy, rx: E.rx, ry: E.ry, rotDeg: 39.23, out: 1.16, dur: 26, art: 1, tStatic: 300 });
 }
 
 function renderSystem() {
@@ -4228,7 +4338,7 @@ function initBlackhole() {
   const pin = $("#heroPin"), hero = $("#hero");
   if (!pin || !hero || REDUCED) return;
   const small = () => innerWidth < 761;
-  const els = $$("#hero [data-suck]");
+  const els = $$("#hero [data-suck]").filter(el => !el.closest("svg"));
 
   // pull vector per element: its centre → the hole (hero centre), measured
   // with the suck transform neutralised so vectors stay exact
@@ -4237,7 +4347,18 @@ function initBlackhole() {
     const prev = hero.style.getPropertyValue("--bh");
     hero.style.setProperty("--bh", "0");
     const hr = hero.getBoundingClientRect();
-    const cx = hr.left + hr.width / 2, cy = hr.top + hr.height / 2;
+    // the warp's mouth is the RING's centre (ellipse centre of the mark)
+    let cx = hr.left + hr.width / 2, cy = hr.top + hr.height / 2;
+    const ms = document.getElementById("megaLogo");
+    if (ms) {
+      const mr = ms.getBoundingClientRect();
+      cx = mr.left + mr.width * 0.4997;
+      cy = mr.top + mr.height * 0.5029;
+    }
+    const sf = hero.querySelector(".star-field");
+    if (sf) sf.style.transformOrigin = (cx - hr.left).toFixed(0) + "px " + (cy - hr.top).toFixed(0) + "px";
+    hero.style.setProperty("--hx", (((cx - hr.left) / hr.width) * 100).toFixed(1) + "%");
+    hero.style.setProperty("--hy", (((cy - hr.top) / hr.height) * 100).toFixed(1) + "%");
     els.forEach((el, i) => {
       const r = el.getBoundingClientRect();
       const dx = (r.left + r.width / 2) - cx, dy = (r.top + r.height / 2) - cy;

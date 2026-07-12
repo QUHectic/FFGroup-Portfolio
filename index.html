@@ -433,6 +433,20 @@ h1:focus,h2:focus{outline:none;}
   #hero [data-suck].reveal:not(.in){opacity:0!important;}
   #hero .star-field{transform:none;opacity:1;}
 }
+
+/* immersive chapter entries — each section rises, sharpens and settles as it
+   enters the viewport, scrubbed 1:1 by scroll (fully reversible) */
+@supports (animation-timeline: view()){
+  section[data-sec] > .wrap{
+    animation:secRise linear both;
+    animation-timeline:view();
+    animation-range:entry 5% entry 60%;
+  }
+  @media (prefers-reduced-motion:reduce){
+    section[data-sec] > .wrap{animation:none;}
+  }
+}
+@keyframes secRise{from{opacity:.3;transform:translateY(46px) scale(.986);}to{opacity:1;transform:none;}}
 .blobs{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .blob{
   position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;
@@ -1391,24 +1405,30 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   100%{offset-distance:100%;opacity:0;}
 }
 
-/* THE COURIER ROCKET — sweeps a wider orbit around the whole mark, noses
-   along the path, and pauses mid-flight when engaged */
+/* THE COURIER — a sleek orbital craft: metallic needle hull, swept delta
+   fins, canopy slit, glowing engine, layered plasma plume, fading light
+   trail and a blinking nav strobe. Noses along its orbit; pauses on hold. */
 .mg-rocket{offset-rotate:auto;cursor:pointer;outline:none;}
 .mg-rocket.orbiting{animation:mgRocket 26s linear infinite;will-change:transform;}
 .mg-rocket.hold{animation-play-state:paused;}
 @keyframes mgRocket{from{offset-distance:0%;}to{offset-distance:100%;}}
 .mg-rocket .rk-art{transition:transform .3s var(--ease-out);}
-.mg-rocket:hover .rk-art,.mg-rocket:focus-visible .rk-art,.mg-rocket.hold .rk-art{transform:scale(1.18);}
-.rk-body{fill:#fff;stroke:rgba(0,0,0,.28);stroke-width:1;}
-.rk-nose{fill:var(--pink);}
-.rk-fin{fill:var(--pink);opacity:.92;}
-.rk-win{fill:var(--blue);}
-.rk-winR{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.4;}
-.rk-flame{fill:url(#megaPink);opacity:.95;transform-box:fill-box;transform-origin:right center;animation:rkFlick .5s ease-in-out infinite alternate;}
-.rk-flame2{fill:#fff;opacity:.85;transform-box:fill-box;transform-origin:right center;animation:rkFlick .34s ease-in-out infinite alternate-reverse;}
-.rk-trail{fill:rgba(255,116,184,.28);filter:blur(6px);}
-@keyframes rkFlick{from{transform:scaleX(1);}to{transform:scaleX(.72);}}
-@media (prefers-reduced-motion:reduce){.rk-flame,.rk-flame2{animation:none;}}
+.mg-rocket:hover .rk-art,.mg-rocket:focus-visible .rk-art,.mg-rocket.hold .rk-art{transform:scale(1.16);}
+.rk-hull{stroke:rgba(10,12,24,.42);stroke-width:.9;}
+.rk-shade{fill:rgba(10,12,24,.15);}
+.rk-canopy{fill:var(--blue);stroke:rgba(255,255,255,.55);stroke-width:.5;}
+.rk-fin{fill:var(--pink);stroke:rgba(10,12,24,.3);stroke-width:.6;}
+.rk-panelline{stroke:rgba(10,12,24,.18);stroke-width:.8;fill:none;}
+.rk-nozzle{fill:#232635;}
+.rk-nozGlow{fill:#fff;opacity:.9;filter:blur(1.6px);animation:rkGlow .5s ease-in-out infinite alternate;}
+.rk-plume{opacity:.92;transform-box:fill-box;transform-origin:right center;animation:rkFlick .46s ease-in-out infinite alternate;}
+.rk-plume2{fill:#fff;opacity:.85;transform-box:fill-box;transform-origin:right center;animation:rkFlick .3s ease-in-out infinite alternate-reverse;}
+.rk-trailline{fill:none;stroke-width:1.6;stroke-linecap:round;opacity:.8;}
+.rk-strobe{fill:#fff;animation:rkStrobe 1.6s steps(2,start) infinite;}
+@keyframes rkFlick{from{transform:scaleX(1);}to{transform:scaleX(.7);}}
+@keyframes rkGlow{from{opacity:.5;}to{opacity:1;}}
+@keyframes rkStrobe{50%{opacity:.12;}}
+@media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe{animation:none;}}
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
@@ -1639,7 +1659,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <text class="gm-t1" x="220" y="32" text-anchor="middle">THE FREEDOM GROUP HOLDINGS LTD</text>
             <text class="gm-t2" x="220" y="48" text-anchor="middle">owns every brand, trademark &amp; all IP</text>
             <g class="gm-chip" transform="translate(8,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--pink)"/><text x="24" y="22.5">GLOBAL</text><text class="gm-sub" x="14" y="40">LTD · D2C stores</text></g>
-            <g class="gm-chip" transform="translate(116,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--ember)"/><text x="24" y="22.5">FIRE &amp; SAFETY</text><text class="gm-sub" x="14" y="40">LTD · field ops</text></g>
+            <g class="gm-chip" transform="translate(116,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--ember)"/><text x="24" y="22.5">FIRE &amp; SAFETY</text><text class="gm-sub" x="14" y="40">LTD · e-commerce</text></g>
             <g class="gm-chip" transform="translate(224,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--mint)"/><text x="24" y="22.5">FACILITIES</text><text class="gm-sub" x="14" y="40">LTD · FM services</text></g>
             <g class="gm-chip" transform="translate(332,162)"><rect width="100" height="52" rx="12"/><circle cx="14" cy="19" r="3.5" fill="var(--blue)"/><text x="24" y="22.5">DISTRIBUTION</text><text class="gm-sub" x="14" y="40">LTD · B2B trade</text></g>
           </svg>
@@ -1916,7 +1936,7 @@ const FG_DATA = {
       ta: "Currently trading as <b>Freedom Fire &amp; Safety Limited</b>",
       desc: "The consumer division — a multi-brand D2C e-commerce hub running the group's online stores and licensed brands.", tag: "Flagship" },
     { name: "Freedom Fire &amp; Safety LTD", accent: "var(--ember)", icon: "flame",
-      desc: "The field-operations company — nationwide servicing, refurbishment and engineering, and home of the group's payroll.", tag: "Operations" },
+      desc: "The e-commerce company — the group's established fire &amp; safety storefronts, refurbishment and marketplace sales.", tag: "E-commerce" },
     { name: "Freedom Facilities LTD", accent: "var(--mint)", icon: "wrench",
       desc: "The facilities-management arm — on-site servicing plus PPE, drone, PAT and FM services for commercial clients.", tag: "In works" },
     { name: "Freedom Distribution LTD", accent: "var(--blue)", icon: "cube",
@@ -2505,6 +2525,88 @@ function flyToChapter(key) {
    leaving the same left-side gap as the real logo. The globe sits ON the
    ring at t = 337.5°, exactly like the mark.
    ========================================================================= */
+/* =========================================================================
+   THE COURIER — a sleek orbital craft carrying the future-LTD manifest.
+   Mountable on any stage: it sweeps an ellipse scaled out from that stage's
+   ring, noses along the path, and pauses mid-flight when engaged.
+   ========================================================================= */
+let RK_UID = 0;
+function mountRocket(stage, g) {
+  const svg = stage && stage.querySelector("svg");
+  if (!svg) return;
+  const uid = "rk" + (++RK_UID);
+  const rot = g.rotDeg * Math.PI / 180, cosR = Math.cos(rot), sinR = Math.sin(rot);
+  const rx = g.rx * g.out, ry = g.ry * g.out;
+  const pt = tDeg => {
+    const t = tDeg * Math.PI / 180, u = rx * Math.cos(t), v = ry * Math.sin(t);
+    return { x: g.cx + u * cosR - v * sinR, y: g.cy + u * sinR + v * cosR };
+  };
+  const MOVE = !REDUCED && typeof CSS !== "undefined" && CSS.supports
+    && CSS.supports("offset-path", 'path("M 0 0")');
+  const f = n => n.toFixed(1);
+  const a = pt(0), b = pt(180), st = pt(g.tStatic || 300);
+  const d = `M ${f(a.x)} ${f(a.y)} A ${f(rx)} ${f(ry)} ${g.rotDeg} 0 1 ${f(b.x)} ${f(b.y)} A ${f(rx)} ${f(ry)} ${g.rotDeg} 0 1 ${f(a.x)} ${f(a.y)}`;
+  svg.insertAdjacentHTML("beforeend", `
+    <g class="mg-rocket${MOVE ? " orbiting" : ""}" id="${uid}" role="button" tabindex="0"
+       aria-label="The courier carries the group's five future LTD aspirations — click to pause it and read them"
+       style="${MOVE ? `offset-path:path('${d}');animation-duration:${g.dur}s` : `transform:translate(${f(st.x)}px,${f(st.y)}px)`}">
+      <g class="rk-size" transform="scale(${g.art || 1})">
+        <g class="rk-art">
+          <defs>
+            <linearGradient id="${uid}-hull" x1="0" y1="-6" x2="0" y2="6" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#e6e9f2"/><stop offset="1" stop-color="#b3bacd"/>
+            </linearGradient>
+            <linearGradient id="${uid}-exh" x1="-62" y1="0" x2="-24" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="rgba(255,61,154,0)"/><stop offset=".55" stop-color="rgba(255,61,154,.55)"/><stop offset="1" stop-color="#ffffff"/>
+            </linearGradient>
+            <linearGradient id="${uid}-trail" x1="-112" y1="0" x2="-26" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="rgba(255,116,184,0)"/><stop offset="1" stop-color="rgba(255,116,184,.5)"/>
+            </linearGradient>
+          </defs>
+          <path class="rk-trailline" d="M-26 0 H-112" stroke="url(#${uid}-trail)"/>
+          <path class="rk-plume" d="M-24 -3.2 Q-46 -5 -60 0 Q-46 5 -24 3.2 Z" fill="url(#${uid}-exh)"/>
+          <path class="rk-plume2" d="M-24 -1.7 Q-38 -2.4 -46 0 Q-38 2.4 -24 1.7 Z"/>
+          <path class="rk-fin" d="M-9 -4.6 L-19.5 -13.5 Q-23.5 -14.6 -22.6 -11 L-16.6 -4.2 Z"/>
+          <path class="rk-fin" d="M-9 4.6 L-19.5 13.5 Q-23.5 14.6 -22.6 11 L-16.6 4.2 Z"/>
+          <path class="rk-hull" d="M31 0 Q25 -3.2 15 -4.5 L-13 -5.6 Q-21 -5.2 -23.5 -2.4 L-23.5 2.4 Q-21 5.2 -13 5.6 L15 4.5 Q25 3.2 31 0 Z" fill="url(#${uid}-hull)"/>
+          <path class="rk-shade" d="M31 0 Q25 3.2 15 4.5 L-13 5.6 Q-21 5.2 -23.5 2.4 Z"/>
+          <path class="rk-canopy" d="M11.5 -3.2 Q17.5 -2.2 21.5 0 Q17.5 2.2 11.5 3.2 Q14.5 0 11.5 -3.2 Z"/>
+          <path class="rk-panelline" d="M2.5 -4.7 L1.5 4.7 M-6.5 -5.2 L-7 5.3"/>
+          <path class="rk-nozzle" d="M-23.5 -2.6 L-27 -1.9 L-27 1.9 L-23.5 2.6 Z"/>
+          <circle class="rk-nozGlow" cx="-25.4" cy="0" r="2.1"/>
+          <circle class="rk-strobe" cx="28.5" cy="-1.2" r="1.05"/>
+          <circle class="rk-hit" r="30" fill="transparent"/>
+        </g>
+      </g>
+    </g>`);
+  const rocket = svg.querySelector("#" + uid);
+  if (getComputedStyle(stage).position === "static") stage.style.position = "relative";
+  const panel = document.createElement("div");
+  panel.className = "rk-panel";
+  panel.innerHTML = "<h4>Future LTD aspirations</h4>" + FUTURE.map(x =>
+    `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
+  stage.appendChild(panel);
+  let pinned = false, closeT = null;
+  const place = () => {
+    const rr = rocket.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
+    panel.style.left = Math.max(8, Math.min(sr.width - 300, x + 26)) + "px";
+    panel.style.top = Math.max(8, Math.min(sr.height - 310, y - 30)) + "px";
+  };
+  const open = () => { clearTimeout(closeT); rocket.classList.add("hold"); place(); panel.classList.add("show"); };
+  const shut = () => { pinned = false; rocket.classList.remove("hold"); panel.classList.remove("show"); };
+  const scheduleShut = () => { if (!pinned) closeT = setTimeout(shut, 260); };
+  rocket.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") open(); });
+  rocket.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") scheduleShut(); });
+  panel.addEventListener("pointerenter", () => clearTimeout(closeT));
+  panel.addEventListener("pointerleave", scheduleShut);
+  rocket.addEventListener("click", () => { if (pinned) shut(); else { pinned = true; open(); } });
+  rocket.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); rocket.dispatchEvent(new Event("click")); }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
+}
+
 function renderMegaLogo() {
   const stage = $("#megaLogo");
   if (!stage) return;
@@ -2539,16 +2641,6 @@ function renderMegaLogo() {
   const MOVE = !REDUCED && typeof CSS !== "undefined" && CSS.supports
     && CSS.supports("offset-path", 'path("M 0 0")');
   const MG_ORBIT = 30; // seconds per pass — keep in sync with the mgOrbit CSS
-
-  // courier-rocket track: the full fitted ellipse scaled out 16%, so the
-  // rocket sweeps AROUND the whole mark (never through the gap logic)
-  const RK = 1.16;
-  const ptR = tDeg => {
-    const t = tDeg * Math.PI / 180, u = E.rx * RK * Math.cos(t), v = E.ry * RK * Math.sin(t);
-    return { x: E.cx + u * cosR - v * sinR, y: E.cy + u * sinR + v * cosR };
-  };
-  const ra = ptR(0), rb = ptR(180), rs = ptR(300);
-  const rocketD = `M ${ra.x.toFixed(1)} ${ra.y.toFixed(1)} A ${(E.rx * RK).toFixed(1)} ${(E.ry * RK).toFixed(1)} 39.23 0 1 ${rb.x.toFixed(1)} ${rb.y.toFixed(1)} A ${(E.rx * RK).toFixed(1)} ${(E.ry * RK).toFixed(1)} 39.23 0 1 ${ra.x.toFixed(1)} ${ra.y.toFixed(1)}`;
 
   // ---- bodies at their logo stations (r = static-fallback sizes, measured
   // from GroupLogo.png; all coordinates are the source pixels x1000/1875)
@@ -2625,22 +2717,6 @@ function renderMegaLogo() {
         ${planets}
         ${globe}
       </g>
-      <g id="mgRocket" class="mg-rocket${MOVE ? " orbiting" : ""}" role="button" tabindex="0"
-         aria-label="The courier rocket carries the group's five future LTD aspirations — click to pause it and read them"
-         style="${MOVE ? `offset-path:path('${rocketD}')` : `transform:translate(${rs.x.toFixed(1)}px,${rs.y.toFixed(1)}px)`}">
-        <g class="rk-art">
-          <ellipse class="rk-trail" cx="-36" cy="0" rx="18" ry="4"/>
-          <path class="rk-flame" d="M-18 0 L-36 -5 Q-44 0 -36 5 Z"/>
-          <path class="rk-flame2" d="M-18 0 L-28 -2.6 Q-33 0 -28 2.6 Z"/>
-          <path class="rk-fin" d="M-8 -6 L-2 -14 Q4 -15 6 -12 L2 -6 Z"/>
-          <path class="rk-fin" d="M-8 6 L-2 14 Q4 15 6 12 L2 6 Z"/>
-          <path class="rk-body" d="M24 0 Q16 -8 -2 -8 L-14 -8 Q-18 -4 -18 0 Q-18 4 -14 8 L-2 8 Q16 8 24 0 Z"/>
-          <path class="rk-nose" d="M24 0 Q19 -5.5 12 -7 L12 7 Q19 5.5 24 0 Z"/>
-          <circle class="rk-winR" cx="1" cy="0" r="4.6"/>
-          <circle class="rk-win" cx="1" cy="0" r="3.1"/>
-          <circle class="rk-hit" r="27" fill="transparent"/>
-        </g>
-      </g>
     </svg>`;
 
   // phase each orbiting planet so it starts at its exact logo station
@@ -2700,34 +2776,8 @@ function renderMegaLogo() {
   align();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(align);
 
-  // ---- the courier rocket: hover/click pauses it and unfolds the manifest
-  const rocket = $("#mgRocket", stage);
-  if (rocket) {
-    const panel = document.createElement("div");
-    panel.className = "rk-panel";
-    panel.innerHTML = "<h4>Future LTD aspirations</h4>" + FUTURE.map(f =>
-      `<div class="rk-row" style="--c:${f.c}"><i></i><div><b>${f.n}</b><span>${f.d}</span></div></div>`).join("");
-    stage.appendChild(panel);
-    let pinned = false, closeT = null;
-    const place = () => {
-      const rr = rocket.getBoundingClientRect(), sr = stage.getBoundingClientRect();
-      const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
-      panel.style.left = Math.max(8, Math.min(sr.width - 300, x + 26)) + "px";
-      panel.style.top = Math.max(8, Math.min(sr.height - 310, y - 30)) + "px";
-    };
-    const open = () => { clearTimeout(closeT); rocket.classList.add("hold"); place(); panel.classList.add("show"); };
-    const shut = () => { pinned = false; rocket.classList.remove("hold"); panel.classList.remove("show"); };
-    const scheduleShut = () => { if (!pinned) closeT = setTimeout(shut, 260); };
-    rocket.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") open(); });
-    rocket.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") scheduleShut(); });
-    panel.addEventListener("pointerenter", () => clearTimeout(closeT));
-    panel.addEventListener("pointerleave", scheduleShut);
-    rocket.addEventListener("click", () => { if (pinned) shut(); else { pinned = true; open(); } });
-    rocket.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); rocket.dispatchEvent(new Event("click")); }
-    });
-    document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
-  }
+  // the courier craft sweeps the whole mark on a wider orbit
+  mountRocket(stage, { cx: E.cx, cy: E.cy, rx: E.rx, ry: E.ry, rotDeg: 39.23, out: 1.16, dur: 26, art: 1, tStatic: 300 });
 }
 
 function renderSystem() {
@@ -2955,6 +3005,9 @@ function renderSystem() {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showCompany(key); scrollToSec(key); }
     });
   });
+
+  // the courier patrols this system too, carrying the future-LTD manifest
+  mountRocket(stage, { cx, cy, rx, ry, rotDeg: 30, out: 1.22, dur: 22, art: 0.62, tStatic: 300 });
 
   showIntro();
 }

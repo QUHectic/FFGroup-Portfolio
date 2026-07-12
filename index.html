@@ -1820,8 +1820,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        THE SYSTEM — interactive logo
        ==================================================================== -->
+  <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
+
   <section data-sec="system" id="system" aria-label="The Freedom Group system">
-    <div class="tr2 tr2-hyper" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The group as a system</span>
@@ -1838,8 +1839,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        JOURNEY
        ==================================================================== -->
+  <div class="tr2 tr2-nova" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
+
   <section data-sec="journey" id="journey" class="sec-light alt" aria-label="The journey">
-    <div class="tr2 tr2-nova" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The journey</span>
@@ -1989,8 +1991,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        TEAM
        ==================================================================== -->
+  <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
+
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
-    <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">Culture, team structure &amp; talent pipeline</span>
@@ -4492,199 +4495,278 @@ function initSetpieces() {
   const rng = seed => { let t = seed >>> 0; return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ t >>> 15, 1 | t); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; }; };
   const TAU = Math.PI * 2;
 
-  /* ---------- HYPERDRIVE: 460 stars stretch into chromatic light-lines --- */
+  /* ---------- HYPERDRIVE: 520 stars stretch into chromatic light-lines --- */
   const hyR = rng(97);
-  const HY = Array.from({ length: 460 }, () => ({ a: hyR() * TAU, d: .05 + hyR() * .95, z: .25 + hyR() * .75, c: hyR() }));
+  const HY = Array.from({ length: 520 }, () => ({ a: hyR() * TAU, d: Math.pow(hyR(), .85), z: .2 + hyR() * .8, c: hyR() }));
   function drawHyper(ctx, p, w, h) {
     const cx = w / 2, cy = h / 2, R = Math.hypot(w, h) * .58;
-    const dark = sm(ph2(p, .08, .3));
+    const dark = sm(ph2(p, .04, .34));
     ctx.globalCompositeOperation = "source-over";
     const g = Math.round(255 - 248 * dark);
     ctx.fillStyle = `rgb(${g},${g},${Math.round(g + 5 * dark)})`;
     ctx.fillRect(0, 0, w, h);
-    const t = ph2(p, .18, .7), settle = sm(ph2(p, .7, .92));
-    const boost = Math.pow(t, 2.3) * 30;
+    const t = sm(ph2(p, .14, .72));
+    const settle = sm(ph2(p, .64, .93));
+    const boost = Math.pow(t, 2) * 26;
     ctx.globalCompositeOperation = "lighter";
     ctx.lineCap = "round";
     for (const st of HY) {
-      const base = .02 + st.d * .42;
+      const base = .02 + st.d * .44;
       const spd = boost * (.2 + st.d * .8) * st.z;
-      const r1 = (base + spd * .014) * R;
-      const len = spd * .052 * R * (1 - settle) + 1.2;
+      const r1 = (base + spd * .013) * R;
+      const len = spd * .05 * R * (1 - settle) + 1.1;
       const r2 = r1 + len;
-      const al = dark * cl(t * 9, 0, 1) * (.3 + .7 * st.z) * (1 - .25 * settle);
+      const al = dark * sm(cl(t * 5.5, 0, 1)) * (.28 + .72 * st.z) * (1 - .3 * settle);
       if (al <= .012) continue;
       const ca = Math.cos(st.a), sa = Math.sin(st.a);
       const x1 = cx + ca * r1, y1 = cy + sa * r1, x2 = cx + ca * r2, y2 = cy + sa * r2;
-      const wgt = (0.7 + 1.9 * st.z) * (1 + t * 1.1);
-      ctx.strokeStyle = st.c > .82 ? `rgba(255,120,190,${al * .5})` : `rgba(110,180,255,${al * .55})`;
+      const wgt = (.6 + 1.8 * st.z) * (1 + t);
+      ctx.strokeStyle = st.c > .84 ? `rgba(255,120,190,${al * .5})` : `rgba(110,180,255,${al * .55})`;
       ctx.lineWidth = wgt * 2.4;
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
       ctx.strokeStyle = `rgba(255,255,255,${al})`;
       ctx.lineWidth = wgt;
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     }
-    const coreA = dark * t * (1 - settle * .8);
+    const coreA = dark * t * (1 - settle * .85);
     if (coreA > .01) {
-      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * .2);
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * .22);
       cg.addColorStop(0, `rgba(255,255,255,${.9 * coreA})`);
       cg.addColorStop(.4, `rgba(150,200,255,${.35 * coreA})`);
       cg.addColorStop(1, "rgba(150,200,255,0)");
-      ctx.fillStyle = cg; ctx.fillRect(cx - R * .2, cy - R * .2, R * .4, R * .4);
+      ctx.fillStyle = cg; ctx.fillRect(cx - R * .22, cy - R * .22, R * .44, R * .44);
     }
-    const fl = sm(bump(p, .68, .09));
-    if (fl > .01) { ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
-    const rest = sm(ph2(p, .74, .94));
+    ctx.globalCompositeOperation = "source-over";
+    const fl = Math.pow(bump(p, .66, .13), 1.7) * .95;
+    if (fl > .01) { ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
+    const rest = sm(ph2(p, .68, .95));
     if (rest > .01) {
-      ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = `rgba(7,7,13,${rest})`; ctx.fillRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
       for (let i = 0; i < HY.length; i += 2) {
         const st = HY[i];
         const rr = (.03 + st.d * .48) * R;
-        const tw = .4 + .6 * Math.abs(Math.sin(st.c * 43 + p * 26));
+        const tw = .4 + .6 * Math.abs(Math.sin(st.c * 43 + p * 24));
         ctx.fillStyle = `rgba(255,255,255,${rest * tw * (.25 + .55 * st.z)})`;
         ctx.fillRect(cx + Math.cos(st.a) * rr, cy + Math.sin(st.a) * rr, 1.2 + st.z, 1.2 + st.z);
       }
+      ctx.globalCompositeOperation = "source-over";
     }
-    ctx.globalCompositeOperation = "source-over";
   }
 
-  /* ---------- SUPERNOVA: a boiling star detonates into debris & nebula --- */
+  /* ---------- SUPERNOVA v2: layered star, detonation, filament ejecta ---- */
   const nvR = rng(553);
-  const NVstars = Array.from({ length: 220 }, () => ({ x: nvR(), y: nvR(), z: .3 + nvR() * .7, c: nvR() }));
-  const NVdeb = Array.from({ length: 340 }, () => { const a2 = nvR() * TAU; return { a: a2, v: .25 + Math.pow(nvR(), 1.6) * .95, z: .3 + nvR() * .7, hue: nvR() }; });
-  const NVray = Array.from({ length: 16 }, (_, i) => ({ a: (i / 16) * TAU + nvR() * .2, l: .7 + nvR() * .9, w: .06 + nvR() * .09 }));
-  const NVboil = Array.from({ length: 9 }, () => ({ ph: nvR() * TAU, rr: .3 + nvR() * .5, sz: .18 + nvR() * .3 }));
+  const NVstars = Array.from({ length: 240 }, () => ({ x: nvR(), y: nvR(), z: .3 + nvR() * .7, c: nvR() }));
+  const NVthin = Array.from({ length: 44 }, () => ({ a: nvR() * TAU, l: .55 + Math.pow(nvR(), 1.2) * 1.6, w: .7 + nvR() * 1.2, tw: nvR() }));
+  const NVsoft = Array.from({ length: 10 }, (_, i) => ({ a: i / 10 * TAU + nvR() * .3, l: .9 + nvR() * .8, w: .09 + nvR() * .10 }));
+  const NVgran = Array.from({ length: 26 }, () => ({ ph: nvR() * TAU, rr: .6 + nvR() * .38, sz: .05 + nvR() * .09, sp: .5 + nvR() }));
+  const NVdeb = Array.from({ length: 380 }, () => { const a2 = nvR() * TAU; return { a: a2, v: .22 + Math.pow(nvR(), 1.5) * .95, z: .3 + nvR() * .7, hue: nvR(), bend: (nvR() - .5) * .5 }; });
+  const NVfil = Array.from({ length: 26 }, () => ({ a: nvR() * TAU, bend: (nvR() - .5) * 1.4, len: .35 + nvR() * .6, z: .4 + nvR() * .6 }));
+  const NVspark = Array.from({ length: 60 }, () => ({ a: nvR() * TAU, v: .3 + nvR() * .85, tw: nvR() }));
   function drawNova(ctx, p, w, h) {
     const cx = w / 2, cy = h * .5, m = Math.min(w, h);
+    const burn = sm(ph2(p, .06, .44));
+    const collapse = sm(ph2(p, .44, .51));
+    const det = ph2(p, .51, .9);
+    const detE = sm(det);
+    const flood = sm(ph2(p, .72, .97));
+    const fl = Math.pow(bump(p, .535, .09), 1.6);
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#07070d"; ctx.fillRect(0, 0, w, h);
-    const flood = sm(ph2(p, .74, .97));
-    const starA = (1 - flood) * .9;
+    const starA = (1 - flood) * (1 - fl * .8) * .9;
     for (const st of NVstars) {
       const tw = .35 + .65 * Math.abs(Math.sin(st.c * 37 + p * 18));
       ctx.fillStyle = `rgba(255,255,255,${starA * tw * (.2 + .5 * st.z)})`;
       ctx.fillRect(st.x * w, st.y * h, st.z * 1.6, st.z * 1.6);
     }
     ctx.globalCompositeOperation = "lighter";
-    const grow = ph2(p, .04, .42);
-    const collapse = sm(ph2(p, .42, .5));
-    const det = ph2(p, .5, .9);
-    if (p < .55) {
-      const pulse = 1 + .1 * Math.sin(grow * 19) * (1 - grow * .6);
-      const rc = m * (.03 + .075 * sm(grow)) * pulse * (1 - .6 * collapse);
-      const heat = .55 + .45 * grow + collapse * .6;
-      for (const ry of NVray) {
-        const ang = ry.a + p * .9;
-        const L = rc * (2 + ry.l * (1.3 + .35 * Math.sin(grow * 23 + ry.a * 9)));
-        ctx.fillStyle = `rgba(255,140,190,${.10 * heat})`;
+    const preFade = cl(1 - det * 3.2, 0, 1);
+    if (preFade > .01) {
+      const rc = m * (.03 + .062 * burn) * (1 + .04 * Math.sin(burn * 21) + .02 * Math.sin(burn * 43 + 2)) * (1 - .6 * collapse);
+      const heat = (.45 + .55 * burn + .9 * collapse) * preFade;
+      const og = ctx.createRadialGradient(cx, cy, 0, cx, cy, rc * 5.2);
+      og.addColorStop(0, `rgba(255,61,154,${cl(.16 * heat, 0, 1)})`);
+      og.addColorStop(1, "rgba(255,61,154,0)");
+      ctx.fillStyle = og; ctx.beginPath(); ctx.arc(cx, cy, rc * 5.2, 0, TAU); ctx.fill();
+      for (const sr of NVsoft) {
+        const ang = sr.a + p * .5, L = rc * (2 + sr.l * 2.2);
+        ctx.fillStyle = `rgba(255,156,203,${cl(.05 * heat, 0, 1)})`;
         ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(ang - ry.w) * rc * .8, cy + Math.sin(ang - ry.w) * rc * .8);
+        ctx.moveTo(cx + Math.cos(ang - sr.w) * rc * .7, cy + Math.sin(ang - sr.w) * rc * .7);
         ctx.lineTo(cx + Math.cos(ang) * L, cy + Math.sin(ang) * L);
-        ctx.lineTo(cx + Math.cos(ang + ry.w) * rc * .8, cy + Math.sin(ang + ry.w) * rc * .8);
+        ctx.lineTo(cx + Math.cos(ang + sr.w) * rc * .7, cy + Math.sin(ang + sr.w) * rc * .7);
         ctx.closePath(); ctx.fill();
       }
-      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rc * 2.4);
-      cg.addColorStop(0, `rgba(255,255,255,${cl(.95 * heat, 0, 1)})`);
-      cg.addColorStop(.28, `rgba(255,214,236,${cl(.8 * heat, 0, 1)})`);
-      cg.addColorStop(.55, `rgba(255,61,154,${cl(.5 * heat, 0, 1)})`);
-      cg.addColorStop(1, "rgba(255,61,154,0)");
-      ctx.fillStyle = cg;
-      ctx.beginPath(); ctx.arc(cx, cy, rc * 2.4, 0, TAU); ctx.fill();
-      for (const b2 of NVboil) {
-        const ang = b2.ph + grow * 5 + p * 2;
-        const bx = cx + Math.cos(ang) * rc * b2.rr, by = cy + Math.sin(ang) * rc * b2.rr;
-        const br = Math.max(1, rc * b2.sz);
-        const bg2 = ctx.createRadialGradient(bx, by, 0, bx, by, br);
-        bg2.addColorStop(0, `rgba(255,255,255,${cl(.5 * heat, 0, 1)})`); bg2.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = bg2; ctx.beginPath(); ctx.arc(bx, by, br, 0, TAU); ctx.fill();
+      ctx.lineCap = "round";
+      for (const r of NVthin) {
+        const ang = r.a - p * .35;
+        const L = rc * (2.2 + r.l * 2.6 * (1 + .22 * Math.sin(r.tw * 29 + burn * 15)));
+        const gx = Math.cos(ang), gy = Math.sin(ang);
+        const gr = ctx.createLinearGradient(cx + gx * rc * .6, cy + gy * rc * .6, cx + gx * L, cy + gy * L);
+        gr.addColorStop(0, `rgba(255,255,255,${cl(.5 * heat, 0, 1)})`);
+        gr.addColorStop(.35, `rgba(255,150,200,${cl(.28 * heat, 0, 1)})`);
+        gr.addColorStop(1, "rgba(255,61,154,0)");
+        ctx.strokeStyle = gr; ctx.lineWidth = r.w;
+        ctx.beginPath(); ctx.moveTo(cx + gx * rc * .6, cy + gy * rc * .6); ctx.lineTo(cx + gx * L, cy + gy * L); ctx.stroke();
       }
+      for (let i = 0; i < 4; i++) {
+        const ang = i * Math.PI / 2 + .26, L = rc * 7 * (.8 + .2 * Math.sin(burn * 9 + i));
+        const gx = Math.cos(ang), gy = Math.sin(ang);
+        const gr = ctx.createLinearGradient(cx, cy, cx + gx * L, cy + gy * L);
+        gr.addColorStop(0, `rgba(255,255,255,${cl(.32 * heat, 0, 1)})`);
+        gr.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = gr; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(cx - gx * L, cy - gy * L); ctx.lineTo(cx + gx * L, cy + gy * L); ctx.stroke();
+      }
+      for (let i = 0; i < 3; i++) {
+        ctx.strokeStyle = `rgba(255,116,184,${cl(.045 * heat, 0, 1)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(cx, cy, rc * (2.3 + i * .9), 0, TAU); ctx.stroke();
+      }
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rc * 2);
+      cg.addColorStop(0, `rgba(255,255,255,${cl(.95 * heat, 0, 1)})`);
+      cg.addColorStop(.3, `rgba(255,217,236,${cl(.75 * heat, 0, 1)})`);
+      cg.addColorStop(.62, `rgba(255,61,154,${cl(.45 * heat, 0, 1)})`);
+      cg.addColorStop(1, "rgba(255,61,154,0)");
+      ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(cx, cy, rc * 2, 0, TAU); ctx.fill();
+      for (const g2 of NVgran) {
+        const ang = g2.ph + burn * 2.2 * g2.sp;
+        const bx = cx + Math.cos(ang) * rc * g2.rr, by = cy + Math.sin(ang) * rc * g2.rr;
+        const br = Math.max(.6, rc * g2.sz);
+        const bg2 = ctx.createRadialGradient(bx, by, 0, bx, by, br * 2.2);
+        bg2.addColorStop(0, `rgba(255,255,255,${cl(.38 * heat, 0, 1)})`);
+        bg2.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = bg2; ctx.beginPath(); ctx.arc(bx, by, br * 2.2, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle = `rgba(255,255,255,${cl(.95 * heat, 0, 1)})`;
+      ctx.beginPath(); ctx.arc(cx, cy, rc * .5, 0, TAU); ctx.fill();
     }
     if (det > 0) {
-      const rs = m * (.06 + Math.pow(det, .82) * 1.15);
-      ctx.strokeStyle = `rgba(255,170,210,${(1 - det) * .95})`; ctx.lineWidth = Math.max(1, m * .012 * (1 - det * .6));
-      ctx.beginPath(); ctx.arc(cx, cy, rs, 0, TAU); ctx.stroke();
-      ctx.strokeStyle = `rgba(255,61,154,${(1 - det) * .4})`; ctx.lineWidth = Math.max(1, m * .05 * (1 - det * .5));
-      ctx.beginPath(); ctx.arc(cx, cy, rs * .93, 0, TAU); ctx.stroke();
+      const rsh = m * (.05 + Math.pow(detE, .8) * 1.18);
+      const ann = ctx.createRadialGradient(cx, cy, Math.max(0, rsh - m * .1), cx, cy, rsh + m * .02);
+      ann.addColorStop(0, "rgba(255,116,184,0)");
+      ann.addColorStop(.55, `rgba(255,116,184,${.4 * (1 - det)})`);
+      ann.addColorStop(.9, `rgba(255,255,255,${.8 * (1 - det)})`);
+      ann.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = ann; ctx.beginPath(); ctx.arc(cx, cy, rsh + m * .02, 0, TAU); ctx.fill();
+      ctx.strokeStyle = `rgba(255,255,255,${.9 * (1 - det)})`;
+      ctx.lineWidth = 3 - 2 * det;
+      ctx.beginPath(); ctx.arc(cx, cy, rsh, 0, TAU); ctx.stroke();
+      ctx.strokeStyle = `rgba(56,169,255,${.38 * (1 - det)})`;
+      ctx.lineWidth = m * .02 * (1 - det) + 1;
+      ctx.beginPath(); ctx.arc(cx, cy, rsh * .66, 0, TAU); ctx.stroke();
       for (const d2 of NVdeb) {
-        const dist = Math.pow(det, .85) * d2.v * m * 1.1;
-        const x = cx + Math.cos(d2.a) * dist, y = cy + Math.sin(d2.a) * dist;
-        const tail = m * .02 * d2.v * (1 - det * .5);
-        const al = (1 - det) * (.25 + .6 * d2.z);
+        const ang = d2.a + d2.bend * detE * .6;
+        const dist = Math.pow(detE, .85) * d2.v * m * 1.15;
+        const x = cx + Math.cos(ang) * dist, y = cy + Math.sin(ang) * dist;
+        const tail = m * .02 * d2.v * (1 - detE * .5);
+        const al = (1 - detE) * (.2 + .6 * d2.z);
         ctx.strokeStyle = d2.hue > .75 ? `rgba(255,106,61,${al})` : d2.hue > .4 ? `rgba(255,116,184,${al})` : `rgba(255,255,255,${al})`;
         ctx.lineWidth = .8 + d2.z * 1.6;
-        ctx.beginPath(); ctx.moveTo(x - Math.cos(d2.a) * tail, y - Math.sin(d2.a) * tail); ctx.lineTo(x, y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(ang) * tail, y - Math.sin(ang) * tail); ctx.lineTo(x, y); ctx.stroke();
+      }
+      for (const f2 of NVfil) {
+        const r0 = rsh * .12, r1 = rsh * (.45 + f2.len * .5);
+        const ax = Math.cos(f2.a), ay = Math.sin(f2.a);
+        const mx = cx + ax * (r0 + r1) / 2 - ay * f2.bend * rsh * .22;
+        const my = cy + ay * (r0 + r1) / 2 + ax * f2.bend * rsh * .22;
+        ctx.strokeStyle = `rgba(255,116,184,${(1 - detE) * .4 * f2.z})`;
+        ctx.lineWidth = 1.4 + f2.z * 1.6;
+        ctx.beginPath();
+        ctx.moveTo(cx + ax * r0, cy + ay * r0);
+        ctx.quadraticCurveTo(mx, my, cx + ax * r1, cy + ay * r1);
+        ctx.stroke();
+      }
+      for (const sp2 of NVspark) {
+        const dist = Math.pow(det, .7) * sp2.v * m;
+        const x = cx + Math.cos(sp2.a) * dist, y = cy + Math.sin(sp2.a) * dist;
+        const al = (1 - det) * (.4 + .6 * Math.abs(Math.sin(sp2.tw * 50 + det * 30)));
+        ctx.strokeStyle = `rgba(255,255,255,${al})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x - 3, y); ctx.lineTo(x + 3, y); ctx.moveTo(x, y - 3); ctx.lineTo(x, y + 3); ctx.stroke();
       }
       const neb = Math.sin(cl(det, 0, 1) * Math.PI);
-      if (neb > .01) for (let i = 0; i < 5; i++) {
-        const ang = i * 1.3 + .5, rr = m * .16 * (1 + i * .22) * (.6 + det);
-        const nx = cx + Math.cos(ang) * rr * .4, ny = cy + Math.sin(ang) * rr * .4;
-        const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, rr);
-        const col = i % 2 ? "56,169,255" : "255,61,154";
-        ng.addColorStop(0, `rgba(${col},${.16 * neb})`); ng.addColorStop(1, `rgba(${col},0)`);
-        ctx.fillStyle = ng; ctx.beginPath(); ctx.arc(nx, ny, rr, 0, TAU); ctx.fill();
+      if (neb > .01) {
+        for (let i = 0; i < 12; i++) {
+          const ang = i * 2.4, rr = m * (.1 + (i % 5) * .05) * (.6 + detE);
+          const nx = cx + Math.cos(ang) * rr * .55, ny = cy + Math.sin(ang) * rr * .55;
+          const col = i % 3 === 0 ? "255,61,154" : i % 3 === 1 ? "56,169,255" : "255,200,225";
+          const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, rr);
+          ng.addColorStop(0, `rgba(${col},${(i < 3 ? .2 : .11) * neb})`);
+          ng.addColorStop(1, `rgba(${col},0)`);
+          ctx.fillStyle = ng; ctx.beginPath(); ctx.arc(nx, ny, rr, 0, TAU); ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+        for (let i = 0; i < 3; i++) {
+          ctx.strokeStyle = `rgba(10,4,12,${.14 * neb})`;
+          ctx.lineWidth = m * .018;
+          ctx.beginPath();
+          ctx.arc(cx, cy, rsh * (.4 + i * .17), i * 2 + detE, i * 2 + detE + 1.6);
+          ctx.stroke();
+        }
+        ctx.globalCompositeOperation = "lighter";
       }
     }
     ctx.globalCompositeOperation = "source-over";
-    const fl = sm(bump(p, .53, .06));
     if (fl > .01) { ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.fillRect(0, 0, w, h); }
     if (flood > .01) { ctx.fillStyle = `rgba(238,241,248,${flood})`; ctx.fillRect(0, 0, w, h); }
   }
 
-  /* ---------- PLANET TURN: textured world rolls from day into night ------ */
+  /* ---------- THE LOGO GLOBE: white Earth continents on the pink sphere -- */
   const plR = rng(777);
   const PLstars = Array.from({ length: 170 }, () => ({ x: plR(), y: plR(), z: .3 + plR() * .7, c: plR() }));
-  let PLtex = null, PLcloud = null, PLlights = null;
-  function makePlanetTex() {
+  const CONT = [
+    [[.02,.16],[.07,.12],[.13,.13],[.19,.16],[.22,.21],[.20,.27],[.17,.31],[.155,.37],[.13,.43],[.105,.44],[.085,.38],[.06,.32],[.035,.26],[.02,.21]],
+    [[.235,.09],[.27,.075],[.29,.10],[.28,.145],[.25,.15],[.232,.12]],
+    [[.155,.50],[.19,.47],[.215,.50],[.225,.57],[.21,.65],[.185,.73],[.165,.78],[.15,.72],[.14,.62],[.143,.55]],
+    [[.455,.32],[.50,.29],[.545,.31],[.575,.36],[.58,.43],[.555,.51],[.53,.59],[.507,.65],[.488,.60],[.468,.52],[.452,.43],[.448,.37]],
+    [[.455,.20],[.50,.15],[.545,.16],[.56,.21],[.53,.26],[.49,.28],[.462,.25]],
+    [[.56,.13],[.65,.095],[.75,.11],[.82,.16],[.85,.22],[.82,.28],[.76,.31],[.72,.36],[.685,.43],[.65,.47],[.625,.41],[.60,.33],[.575,.25],[.558,.18]],
+    [[.79,.61],[.845,.585],[.88,.615],[.875,.675],[.83,.70],[.785,.665]]
+  ];
+  let GLtex = null, GLwisp = null;
+  function makeGlobeTex() {
     const TW = 1024, TH = 512;
-    PLtex = document.createElement("canvas"); PLtex.width = TW; PLtex.height = TH;
-    const c = PLtex.getContext("2d");
+    GLtex = document.createElement("canvas"); GLtex.width = TW; GLtex.height = TH;
+    const c = GLtex.getContext("2d");
     const og = c.createLinearGradient(0, 0, 0, TH);
-    og.addColorStop(0, "#0e3350"); og.addColorStop(.5, "#155084"); og.addColorStop(1, "#0e3350");
+    og.addColorStop(0, "#ff74b8"); og.addColorStop(.45, "#ff3d9a"); og.addColorStop(.78, "#e11884"); og.addColorStop(1, "#c60f6e");
     c.fillStyle = og; c.fillRect(0, 0, TW, TH);
-    PLlights = document.createElement("canvas"); PLlights.width = TW; PLlights.height = TH;
-    const lc = PLlights.getContext("2d");
     const r2 = rng(31337);
-    for (let k = 0; k < 7; k++) {
-      const cx0 = r2() * TW, cy0 = TH * (.18 + r2() * .64), rad = TW * (.05 + r2() * .075);
-      const build = off => {
-        c.beginPath();
-        let rr = rad;
-        const pts = 26;
-        for (let i = 0; i <= pts; i++) {
-          rr = cl(rr + (r2() - .5) * rad * .5, rad * .5, rad * 1.45);
-          const ang = (i / pts) * TAU;
-          const px = cx0 + off + Math.cos(ang) * rr * 1.5, py = cy0 + Math.sin(ang) * rr * .8;
-          i ? c.lineTo(px, py) : c.moveTo(px, py);
-        }
-        c.closePath();
-        c.fillStyle = k % 2 ? "#177a55" : "#1d8a5f";
-        c.fill();
-        c.strokeStyle = "rgba(6,40,30,.5)"; c.lineWidth = 3; c.stroke();
-      };
-      build(0); build(-TW); build(TW);
-      for (let j = 0; j < 46; j++) {
-        const lx = ((cx0 + (r2() - .5) * rad * 2.2) % TW + TW) % TW;
-        const ly = cy0 + (r2() - .5) * rad * 1.3;
-        lc.fillStyle = `rgba(255,214,150,${.35 + r2() * .6})`;
-        lc.fillRect(lx, ly, 1.6 + r2() * 1.8, 1.4 + r2() * 1.4);
-      }
+    for (let i = 0; i < 16; i++) {
+      c.fillStyle = `rgba(178,10,96,${.06 + r2() * .06})`;
+      c.beginPath(); c.ellipse(r2() * TW, r2() * TH, 60 + r2() * 190, 8 + r2() * 22, 0, 0, TAU); c.fill();
     }
-    c.fillStyle = "rgba(240,248,255,.85)";
-    c.fillRect(0, 0, TW, TH * .055); c.fillRect(0, TH * .945, TW, TH * .055);
-    c.fillStyle = "rgba(240,248,255,.35)";
-    c.fillRect(0, TH * .055, TW, TH * .03); c.fillRect(0, TH * .915, TW, TH * .03);
-    PLcloud = document.createElement("canvas"); PLcloud.width = TW; PLcloud.height = TH;
-    const cc = PLcloud.getContext("2d");
-    for (let i = 0; i < 90; i++) {
-      const x = r2() * TW, y = r2() * TH, rw = 30 + r2() * 130, rh = 6 + r2() * 16, al = .05 + r2() * .13;
-      cc.fillStyle = `rgba(255,255,255,${al})`;
-      [x, x - TW, x + TW].forEach(xx => { cc.beginPath(); cc.ellipse(xx, y, rw, rh, 0, 0, TAU); cc.fill(); });
+    for (let i = 0; i < 10; i++) {
+      c.fillStyle = `rgba(255,170,214,${.05 + r2() * .05})`;
+      c.beginPath(); c.ellipse(r2() * TW, r2() * TH, 50 + r2() * 160, 6 + r2() * 16, 0, 0, TAU); c.fill();
+    }
+    const poly = (pts, off) => {
+      c.beginPath();
+      pts.forEach(([x, y], i) => { const px = x * TW + off, py = y * TH; i ? c.lineTo(px, py) : c.moveTo(px, py); });
+      c.closePath();
+      c.fillStyle = "#ffffff"; c.fill();
+      c.strokeStyle = "rgba(150,8,80,.35)"; c.lineWidth = 2; c.stroke();
+    };
+    CONT.forEach(pts => [0, -TW, TW].forEach(off => poly(pts, off)));
+    const isle = (x, y, rx2, ry2) => [0, -TW, TW].forEach(off => {
+      c.fillStyle = "#ffffff";
+      c.beginPath(); c.ellipse(x * TW + off, y * TH, rx2, ry2, .3, 0, TAU); c.fill();
+    });
+    isle(.435, .185, 7, 4); isle(.862, .27, 6, 9); isle(.945, .70, 5, 7);
+    isle(.74, .52, 9, 4); isle(.78, .545, 6, 3); isle(.70, .545, 5, 3);
+    c.fillStyle = "rgba(255,255,255,.96)";
+    c.fillRect(0, TH * .935, TW, TH * .065);
+    GLwisp = document.createElement("canvas"); GLwisp.width = TW; GLwisp.height = TH;
+    const wc = GLwisp.getContext("2d");
+    for (let i = 0; i < 26; i++) {
+      wc.fillStyle = `rgba(255,255,255,${.04 + r2() * .05})`;
+      const x = r2() * TW, y = r2() * TH, rw = 40 + r2() * 150, rh = 5 + r2() * 12;
+      [x, x - TW, x + TW].forEach(xx => { wc.beginPath(); wc.ellipse(xx, y, rw, rh, 0, 0, TAU); wc.fill(); });
     }
   }
   function drawPlanet(ctx, p, w, h) {
-    if (!PLtex) makePlanetTex();
+    if (!GLtex) makeGlobeTex();
     const night = sm(ph2(p, .3, .68));
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = `rgb(${Math.round(lp(255, 15, night))},${Math.round(lp(255, 16, night))},${Math.round(lp(255, 24, night))})`;
@@ -4694,49 +4776,45 @@ function initSetpieces() {
       ctx.fillStyle = `rgba(255,255,255,${night * tw * (.25 + .5 * st.z)})`;
       ctx.fillRect(st.x * w, st.y * .96 * h, 1 + st.z, 1 + st.z);
     }
-    const R = Math.min(w, h) * .36 * (1 + .05 * ph2(p, .78, 1));
-    const cx = w / 2, cy = h * .54 + h * .07 * sm(ph2(p, .82, 1));
-    const mixc = `${Math.round(lp(156, 255, night))},${Math.round(lp(200, 61, night))},${Math.round(lp(255, 154, night))}`;
-    const halo = ctx.createRadialGradient(cx, cy, R * .92, cx, cy, R * 1.28);
-    halo.addColorStop(0, `rgba(${mixc},.34)`); halo.addColorStop(1, `rgba(${mixc},0)`);
-    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, R * 1.28, 0, TAU); ctx.fill();
+    const R = Math.min(w, h) * .37 * (1 + .04 * ph2(p, .78, 1));
+    const cx = w / 2, cy = h * .53 + h * .06 * sm(ph2(p, .82, 1));
+    const halo = ctx.createRadialGradient(cx, cy, R * .9, cx, cy, R * 1.34);
+    halo.addColorStop(0, `rgba(255,${Math.round(lp(116, 61, night))},${Math.round(lp(184, 154, night))},.4)`);
+    halo.addColorStop(1, "rgba(255,61,154,0)");
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(cx, cy, R * 1.34, 0, TAU); ctx.fill();
     ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(-.16); ctx.translate(-cx, -cy);
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.clip();
     const MW = R * 4;
-    const off = ((p * 1.4) % 1) * MW;
-    ctx.drawImage(PLtex, cx - R - off, cy - R, MW, R * 2);
-    ctx.drawImage(PLtex, cx - R - off + MW, cy - R, MW, R * 2);
-    ctx.globalAlpha = .85;
-    const offc = ((p * 1.85) % 1) * MW;
-    ctx.drawImage(PLcloud, cx - R - offc, cy - R, MW, R * 2);
-    ctx.drawImage(PLcloud, cx - R - offc + MW, cy - R, MW, R * 2);
+    const off = ((p * 1.5) % 1) * MW;
+    ctx.drawImage(GLtex, cx - R - off, cy - R, MW, R * 2);
+    ctx.drawImage(GLtex, cx - R - off + MW, cy - R, MW, R * 2);
+    ctx.globalAlpha = .8;
+    const offw = ((p * 1.95) % 1) * MW;
+    ctx.drawImage(GLwisp, cx - R - offw, cy - R, MW, R * 2);
+    ctx.drawImage(GLwisp, cx - R - offw + MW, cy - R, MW, R * 2);
     ctx.globalAlpha = 1;
-    if (night > .05) {
-      ctx.globalCompositeOperation = "lighter";
-      ctx.globalAlpha = night * .9;
-      ctx.drawImage(PLlights, cx - R - off, cy - R, MW, R * 2);
-      ctx.drawImage(PLlights, cx - R - off + MW, cy - R, MW, R * 2);
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
-    }
-    const sweep = sm(ph2(p, .22, .78));
-    const edge = lp(R * 1.25, -R * 1.35, sweep);
-    const sg = ctx.createLinearGradient(cx + edge - R * .5, 0, cx + edge + R * .55, 0);
-    sg.addColorStop(0, "rgba(3,5,12,0)"); sg.addColorStop(1, "rgba(3,5,12,.96)");
-    ctx.fillStyle = sg; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-    const limb = ctx.createRadialGradient(cx - R * .25, cy - R * .2, R * .3, cx, cy, R);
-    limb.addColorStop(0, "rgba(0,0,0,0)"); limb.addColorStop(.85, "rgba(0,0,8,.05)"); limb.addColorStop(1, "rgba(0,0,10,.42)");
+    const sweep = sm(ph2(p, .24, .78));
+    const edge = lp(R * 1.3, -R * 1.4, sweep);
+    const sg = ctx.createLinearGradient(cx + edge - R * .55, 0, cx + edge + R * .55, 0);
+    sg.addColorStop(0, "rgba(46,2,26,0)"); sg.addColorStop(1, "rgba(24,1,14,.95)");
+    ctx.fillStyle = sg; ctx.fillRect(cx - R * 1.2, cy - R * 1.2, R * 2.4, R * 2.4);
+    const limb = ctx.createRadialGradient(cx - R * .28, cy - R * .3, R * .3, cx, cy, R * 1.02);
+    limb.addColorStop(0, "rgba(0,0,0,0)"); limb.addColorStop(.82, "rgba(90,4,48,.06)"); limb.addColorStop(1, "rgba(70,3,38,.4)");
     ctx.fillStyle = limb; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-    const dayA = (1 - night) * .5;
-    if (dayA > .02) {
-      const sp = ctx.createRadialGradient(cx - R * .45, cy - R * .4, 0, cx - R * .45, cy - R * .4, R * .8);
-      sp.addColorStop(0, `rgba(255,255,255,${dayA})`); sp.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sp; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-    }
+    const gl = (1 - night * .45) * .5;
+    const gg2 = ctx.createRadialGradient(cx - R * .38, cy - R * .42, 0, cx - R * .38, cy - R * .42, R * .9);
+    gg2.addColorStop(0, `rgba(255,255,255,${gl})`); gg2.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gg2; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+    ctx.fillStyle = `rgba(255,255,255,${.4 * (1 - night * .3)})`;
+    ctx.beginPath(); ctx.ellipse(cx - R * .42, cy - R * .55, R * .3, R * .12, -.5, 0, TAU); ctx.fill();
     ctx.restore();
-    ctx.strokeStyle = `rgba(${mixc},.55)`;
-    ctx.lineWidth = Math.max(1.2, R * .012);
-    ctx.beginPath(); ctx.arc(cx, cy, R * .998, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = `rgba(255,255,255,.75)`;
+    ctx.lineWidth = Math.max(1.4, R * .012);
+    ctx.beginPath(); ctx.arc(cx, cy, R * .995, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = `rgba(255,${Math.round(lp(116, 61, night))},${Math.round(lp(184, 154, night))},.5)`;
+    ctx.lineWidth = Math.max(2.5, R * .03);
+    ctx.beginPath(); ctx.arc(cx, cy, R * 1.02, 0, TAU); ctx.stroke();
   }
 
   /* ---------- controller -------------------------------------------------- */

@@ -47,14 +47,14 @@ section#team{overflow-x:clip;}
 .sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(255,140,195,.75);color:#fff;}
 /* the vault's "+ 3 more" popover — hover (or tap) to meet the next marks */
 .sm-morepop{
-  display:none;position:absolute;z-index:8;left:50%;top:calc(100% + 12px);
-  transform:translateX(-50%);width:292px;background:#0f1119;
+  display:none;position:absolute;z-index:8;left:calc(100% + 12px);top:-6px;
+  width:292px;background:#0f1119;
   border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 16px;
   box-shadow:0 18px 50px rgba(0,0,0,.55);text-align:left;
 }
 .sm-morepop.show{display:block;animation:mpIn .25s var(--ease-out);}
-@keyframes mpIn{from{opacity:0;transform:translateX(-50%) translateY(-7px);}to{opacity:1;transform:translateX(-50%);}}
-.sm-morepop::after{content:"";position:absolute;left:50%;bottom:100%;margin-left:-6px;border:6px solid transparent;border-bottom-color:rgba(255,255,255,.16);}
+@keyframes mpIn{from{opacity:0;transform:translateX(-7px);}to{opacity:1;transform:none;}}
+.sm-morepop::after{content:"";position:absolute;right:100%;top:142px;border:6px solid transparent;border-right-color:rgba(255,255,255,.16);}
 .sm-morepop h5{margin:0 0 7px;font-size:.66rem;font-weight:800;letter-spacing:.15em;color:rgba(255,140,195,.9);}
 .sm-morepop .mp-row{display:flex;gap:10px;padding:7px 0;align-items:flex-start;}
 .sm-morepop .mp-row + .mp-row{border-top:1px solid rgba(255,255,255,.07);}
@@ -64,7 +64,17 @@ section#team{overflow-x:clip;}
 .sm-morepop .mp-row b{display:block;font-size:.84rem;color:#f3f4fb;letter-spacing:-.01em;}
 .sm-morepop .mp-row span{font-size:.73rem;color:rgba(243,244,251,.62);line-height:1.45;}
 .sm-morepop p{margin:8px 0 0;font-size:.68rem;color:rgba(243,244,251,.5);line-height:1.5;}
-.sm-brands{position:absolute;z-index:4;width:min(330px,26%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 14px 11px;background:rgba(15,17,25,.9);}
+/* the section's headline lives INSIDE the map — first thing the manifest births */
+.sm-head{position:absolute;z-index:4;left:1.8%;top:2.5%;width:min(470px,36%);}
+.sm-head .kicker{font-size:.62rem;margin-bottom:6px;}
+.sm-head h2{margin:0 0 7px;font-size:clamp(1.05rem,1.45vw,1.45rem);line-height:1.16;color:#fff;}
+.sm-head p{margin:0;font-size:.76rem;line-height:1.5;color:rgba(243,244,251,.62);}
+.sm-head p b{color:rgba(243,244,251,.92);}
+.sm-head .ns{display:flex;gap:8px;margin-top:10px;}
+.sm-head .ns span{flex:1;border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:5px 4px 5px;text-align:center;font-size:.53rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:rgba(243,244,251,.58);background:rgba(15,17,25,.6);}
+.sm-head .ns b{display:block;font-size:.95rem;letter-spacing:0;margin-bottom:2px;}
+.sm-brands{position:absolute;z-index:4;width:min(330px,26%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:8px 14px 9px;background:rgba(15,17,25,.9);}
+.sm-brands:has(.sm-morepop.show){z-index:9;}   /* the "+ 3 more" popover rises above the company cards */
 .sm-brands .cap{display:block;text-align:center;font-size:.62rem;font-weight:800;letter-spacing:.13em;color:rgba(243,244,251,.6);margin-bottom:8px;}
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 /* pointer to the courier — the future-companies detail lives in the rocket's manifest */
@@ -142,7 +152,9 @@ section#team{overflow-x:clip;}
   .sysmap.reveal,.sysmap.reveal.in{transform:none;}
   /* the cinematic map is desktop-only — on phones the content stacks clean */
   .sysmap svg,.rk-panel,.sys-nova,.sm-futnote{display:none !important;}
-  .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap,.sm-brands{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;opacity:1 !important;pointer-events:auto;}
+  .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap,.sm-brands,.sm-head{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;opacity:1 !important;pointer-events:auto;}
+  .sm-head .ns{flex-wrap:wrap;}
+  .sm-head .ns span{min-width:42%;}
   .sm-brands::before{display:none;}
   /* on phones the popover opens inline, under the chips, on tap */
   .sm-morepop{position:static;transform:none;width:auto;margin-top:10px;}
@@ -1892,37 +1904,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <canvas class="sys-nova" aria-hidden="true"></canvas>
       <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
     </div></div>
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="kicker">The Freedom System</span>
-        <h2>One Group. Three Companies.<br><span class="grad-text">One Orbit Around Holdings.</span></h2>
-        <p class="section-sub">The Freedom Group Holdings Ltd sits at the head of the system as sole owner of the three operating companies, holding every brand, trademark and piece of intellectual property within the group. Each operating company orbits it — licensed to take the group's brands to market, with royalties remitted to Holdings each quarter — and every future venture, from Freedom Form to Freedom Fly, plugs into the same licence-and-royalty engine from day one. Hover a planet to spotlight its panel — and the vault's <b>+ 3 more</b> chip to meet the marks joining it.</p>
-        <div class="sys-chips" role="list">
-          <span class="sys-chip" role="listitem" style="--c:var(--pink)"><span class="cdot"></span><b>Ownership</b> Holdings owns 100% of every operating company</span>
-          <span class="sys-chip" role="listitem" style="--c:var(--blue)"><span class="cdot"></span><b>Brand vault</b> Firestorm™ · Voltz™ · Kunergy™ · T3™ · Crystal Solutions™ — plus HepaFellas™, DustBros™ &amp; Lynxa™ on the way</span>
-          <span class="sys-chip" role="listitem" style="--c:var(--mint)"><span class="cdot"></span><b>Royalties</b> Remitted to Holdings every quarter</span>
-          <span class="sys-chip" role="listitem" style="--c:var(--ember)"><span class="cdot"></span><b>Protection</b> One IP vault shields every trading company</span>
-        </div>
-        <div class="sys-stats reveal d1" role="list">
-          <div class="sys-stat" role="listitem" style="--c:var(--pink)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3.4 2.5 3.4 15.5 0 18M12 3c-3.4 2.5-3.4 15.5 0 18"/></svg>
-            <b>1</b><span class="l">HOLDING COMPANY</span><span class="s">The centre of the system</span>
-          </div>
-          <div class="sys-stat" role="listitem" style="--c:var(--blue)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.4"/><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="19.4" cy="7.6" r="1.3" fill="currentColor" stroke="none"/></svg>
-            <b>3</b><span class="l">OPERATING COMPANIES</span><span class="s">Licensed to operate and scale</span>
-          </div>
-          <div class="sys-stat" role="listitem" style="--c:var(--ember)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.4c0 5-3.2 8.3-7.5 10.1C7.7 19.7 4.5 16.4 4.5 11.4V6z"/><path d="M8.7 12l2.3 2.3 4.4-4.6"/></svg>
-            <b>5+3</b><span class="l">MARKS IN THE VAULT</span><span class="s">5 live brands · 3 more on the way</span>
-          </div>
-          <div class="sys-stat" role="listitem" style="--c:var(--mint)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>
-            <b>2</b><span class="l">FUTURE COMPANIES</span><span class="s">Planned for future growth</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ====================================================================
@@ -3075,9 +3056,22 @@ function renderSystem() {
     [800, 216, 526, "sm-orbit"],
     [950, 258, 550, "sm-orbit future"],
   ];
-  const shell = ([rx, ry, cyR, cls]) => `
-    <path class="${cls} far" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
+  const shell = ([rx, ry, cyR, cls], i) => `
+    <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
+  // the behind-the-globe arcs fade out smoothly: each ring's far half wears a
+  // vertical gradient that starts at the bright lower-arc opacity right at
+  // the endpoints and melts to almost nothing at the apex behind the planet
+  const ringDefs = SHELLS.map(([rx, ry, cyR, cls], i) => {
+    const white = cls.indexOf("future") !== -1;
+    const col = white ? "255,255,255" : "255,61,154";
+    const a0 = cls.indexOf("o1") !== -1 ? .66 : white ? .26 : .45;
+    return `<linearGradient id="smrg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${cyR}" x2="0" y2="${cyR - ry}">
+      <stop offset="0" stop-color="rgb(${col})" stop-opacity="${a0}"/>
+      <stop offset=".45" stop-color="rgb(${col})" stop-opacity="${(a0 * .42).toFixed(2)}"/>
+      <stop offset="1" stop-color="rgb(${col})" stop-opacity=".05"/>
+    </linearGradient>`;
+  }).join("");
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
       at: [950, 585], r: 48, status: "FLAGSHIP",
@@ -3147,18 +3141,18 @@ function renderSystem() {
       </g>`;
   });
 
-  // neon spine (reference style): one smooth arc sweeping from the left
-  // company THROUGH behind the sun to the right one, plus a vertical drop
-  // to the flagship — royalties run alongside, dashed, back to Holdings
+  // three INDIVIDUAL licence lanes — each leaves the sun's own edge and
+  // flies directly to its planet; a dashed royalty curve runs back beside
+  // every lane, arrowing INTO Holdings
   const spine = `
-    <path class="sm-flowglow g-form" d="M ${cx} 475.5 C 757.5 475.5, 590 521, 516 585"/>
-    <path class="sm-flowglow g-storm" d="M ${cx} 475.5 C 1142.5 475.5, 1310 521, 1384 585"/>
+    <path class="sm-flowglow g-form" d="M 871 394 C 760 472, 630 538, 516 585"/>
+    <path class="sm-flowglow g-storm" d="M 1029 394 C 1140 472, 1270 538, 1384 585"/>
     <path class="sm-flowglow g-fly" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${cx} 475.5 C 757.5 475.5, 590 521, 516 585"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${cx} 475.5 C 1142.5 475.5, 1310 521, 1384 585"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1140 472, 1270 538, 1384 585"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 516 569 C 590 505, 757.5 459.5, ${cx - 38} 459.5"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1384 569 C 1310 505, 1142.5 459.5, ${cx + 38} 459.5"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 528 566 C 645 512, 762 462, 890 410"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1372 566 C 1255 512, 1138 462, 1010 410"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
     <text class="sm-roylab rl-form" x="640" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
     <text class="sm-roylab rl-storm" x="1260" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
@@ -3167,13 +3161,14 @@ function renderSystem() {
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
       <defs>
         ${planetDefs}
+        ${ringDefs}
         <radialGradient id="smSunGlow">
           <stop offset="0" stop-color="rgba(255,61,154,.5)"/><stop offset=".6" stop-color="rgba(255,61,154,.16)"/><stop offset="1" stop-color="rgba(255,61,154,0)"/>
         </radialGradient>
-        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="${cx}" y1="475" x2="516" y2="585">
+        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="871" y1="394" x2="516" y2="585">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="${cx}" y1="475" x2="1384" y2="585">
+        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1384" y2="585">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/>
         </linearGradient>
         <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${cx}" y1="448" x2="${cx}" y2="523">
@@ -3184,18 +3179,10 @@ function renderSystem() {
         <clipPath id="smSunClip"><circle cx="${cx}" cy="${cy}" r="${sunR}"/></clipPath>
       </defs>
       ${stars}
-      <g class="sm-legend" transform="translate(40,60)">
+      <g class="sm-legend" transform="translate(1560,56)">
         <line x1="0" y1="0" x2="28" y2="0" stroke="rgba(243,244,251,.8)"/><text x="38" y="4">Ownership</text>
         <line x1="0" y1="26" x2="22" y2="26" stroke="#38a9ff" marker-end="url(#smArr)"/><text x="38" y="30">Brand &amp; IP licence</text>
         <line x1="0" y1="52" x2="28" y2="52" stroke="var(--pink)" stroke-dasharray="5 6"/><text x="38" y="56">Royalties · remitted quarterly</text>
-      </g>
-      <g class="sm-how" transform="translate(40,172)">
-        <text class="sm-howcap">HOW THE SYSTEM WORKS</text>
-        <text class="sm-lab" y="32"><tspan class="sm-emph">1 · </tspan>Holdings owns every brand, trademark &amp; piece of IP</text>
-        <text class="sm-lab" y="60"><tspan class="sm-emph">2 · </tspan>The operating companies licence them group-wide</text>
-        <text class="sm-lab" y="88"><tspan class="sm-emph">3 · </tspan>Each company takes the brands to its own market</text>
-        <text class="sm-lab" y="116"><tspan class="sm-emph">4 · </tspan>Royalties return to Holdings every quarter</text>
-        <text class="sm-lab" y="144"><tspan class="sm-emph">5 · </tspan>New ventures plug into the same engine from day one</text>
       </g>
       ${SHELLS.map(shell).join("")}
       ${spine}
@@ -3226,7 +3213,18 @@ function renderSystem() {
         <p class="ch">${p.ch}</p>
         ${p.pts ? `<p class="pts">${p.pts}</p>` : ""}
       </div>`).join("")}
-    <div class="sm-brands" style="left:1.8%;top:26.5%">
+    <div class="sm-head">
+      <span class="kicker">The Freedom System</span>
+      <h2>One Group. Three Companies.<br><span class="grad-text">One Orbit Around Holdings.</span></h2>
+      <p>Holdings owns the three operating companies — and every brand, trademark and piece of IP. Each licences the marks to its own market, royalties return every quarter, and new ventures plug into the same engine. Hover a planet — or the vault's <b>+ 3 more</b> chip — to explore.</p>
+      <div class="ns" role="list">
+        <span role="listitem"><b style="color:var(--pink)">1</b>Holding company</span>
+        <span role="listitem"><b style="color:var(--blue)">3</b>Operating companies</span>
+        <span role="listitem"><b style="color:var(--ember)">5+3</b>Marks in the vault</span>
+        <span role="listitem"><b style="color:var(--mint)">2</b>Future companies</span>
+      </div>
+    </div>
+    <div class="sm-brands" style="left:1.8%;top:28.5%">
       <span class="cap">KEY BRANDS · OWNED BY HOLDINGS</span>
       <div class="chips">
         ${BRANDS.map(([n, c]) => c
@@ -3321,15 +3319,15 @@ function renderSystem() {
   const REG = [];
   const reg = (el, a, b, fx) => { if (el) REG.push({ el, a, b, fx }); };
   const q = sel => svgEl.querySelector(sel);
-  reg(q(".sm-kick"), .04, .10, "rise");
-  reg(q(".sm-suntitle"), .05, .12, "rise");
-  reg(q(".sm-sunsub"), .07, .14, "rise");
-  reg(q(".sm-mini"), .09, .16, "fade");
-  reg(q(".sm-legend"), .10, .16, "fade");
-  reg(q(".sm-how"), .11, .19, "fade");
+  reg(map.querySelector(".sm-head"), .01, .07, "rise");      // the headline is born FIRST, right after the sun
+  reg(q(".sm-kick"), .10, .16, "rise");
+  reg(q(".sm-suntitle"), .11, .17, "rise");
+  reg(q(".sm-sunsub"), .12, .18, "rise");
+  reg(q(".sm-mini"), .13, .19, "fade");
+  reg(q(".sm-legend"), .13, .19, "fade");
   [...svgEl.querySelectorAll("path.sm-orbit")].forEach((pth, idx) => {
     const ring = Math.floor(idx / 2);
-    const a = .12 + ring * .06, b = a + .11;
+    const a = .16 + ring * .06, b = a + .11;
     if (pth.classList.contains("future")) { reg(pth, a, b, "fade"); return; }
     pth.setAttribute("pathLength", "1"); pth.style.strokeDasharray = "1";
     reg(pth, a, b, "draw");
@@ -3350,9 +3348,9 @@ function renderSystem() {
   chain("form", .70, .74, .74, .80, .80, .84);
   chain("storm", .84, .87, .87, .92, .92, .955);
   reg(map.querySelector(".sm-futnote"), .95, .99, "rise");  // the courier's notice arrives with the rocket
-  reg(svgEl.querySelector(".mg-rocket"), .955, .995, "fade");   // the courier arrives last
+  reg(svgEl.querySelector(".mg-rocket"), .07, .12, "fade");     // the courier launches right behind the headline
   const rkp = map.querySelector(".rk-panel");
-  if (rkp) reg(rkp, .955, .995, "fade");
+  if (rkp) reg(rkp, .07, .12, "fade");
 
   let lastMp = -1;
   const applyManifest = mp => {

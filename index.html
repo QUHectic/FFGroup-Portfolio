@@ -47,14 +47,14 @@ section#team{overflow-x:clip;}
 .sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(255,140,195,.75);color:#fff;}
 /* the vault's "+ 3 more" popover — hover (or tap) to meet the next marks */
 .sm-morepop{
-  display:none;position:absolute;z-index:8;left:50%;bottom:calc(100% + 12px);
+  display:none;position:absolute;z-index:8;left:50%;top:calc(100% + 12px);
   transform:translateX(-50%);width:292px;background:#0f1119;
   border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 16px;
   box-shadow:0 18px 50px rgba(0,0,0,.55);text-align:left;
 }
 .sm-morepop.show{display:block;animation:mpIn .25s var(--ease-out);}
-@keyframes mpIn{from{opacity:0;transform:translateX(-50%) translateY(7px);}to{opacity:1;transform:translateX(-50%);}}
-.sm-morepop::after{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:rgba(255,255,255,.16);}
+@keyframes mpIn{from{opacity:0;transform:translateX(-50%) translateY(-7px);}to{opacity:1;transform:translateX(-50%);}}
+.sm-morepop::after{content:"";position:absolute;left:50%;bottom:100%;margin-left:-6px;border:6px solid transparent;border-bottom-color:rgba(255,255,255,.16);}
 .sm-morepop h5{margin:0 0 7px;font-size:.66rem;font-weight:800;letter-spacing:.15em;color:rgba(255,140,195,.9);}
 .sm-morepop .mp-row{display:flex;gap:10px;padding:7px 0;align-items:flex-start;}
 .sm-morepop .mp-row + .mp-row{border-top:1px solid rgba(255,255,255,.07);}
@@ -64,14 +64,13 @@ section#team{overflow-x:clip;}
 .sm-morepop .mp-row b{display:block;font-size:.84rem;color:#f3f4fb;letter-spacing:-.01em;}
 .sm-morepop .mp-row span{font-size:.73rem;color:rgba(243,244,251,.62);line-height:1.45;}
 .sm-morepop p{margin:8px 0 0;font-size:.68rem;color:rgba(243,244,251,.5);line-height:1.5;}
-.sm-brands{position:absolute;z-index:4;width:min(430px,36%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 14px 11px;background:rgba(15,17,25,.9);}
-.sm-brands::before{content:"";position:absolute;left:50%;top:-15px;width:1.5px;height:15px;background:rgba(255,255,255,.25);}
+.sm-brands{position:absolute;z-index:4;width:min(330px,26%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 14px 11px;background:rgba(15,17,25,.9);}
 .sm-brands .cap{display:block;text-align:center;font-size:.62rem;font-weight:800;letter-spacing:.13em;color:rgba(243,244,251,.6);margin-bottom:8px;}
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
-.sm-futwrap{position:absolute;left:50%;transform:translateX(-50%);width:min(1080px,94%);text-align:center;}
+.sm-futwrap{position:absolute;right:1.8%;top:13.5%;z-index:4;width:min(330px,26%);text-align:left;}
 .sm-futcap{font-size:.68rem;font-weight:800;letter-spacing:.16em;color:rgba(243,244,251,.5);}
-.sm-futrow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px;text-align:left;}
-.sm-fut{border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:13px 15px;background:rgba(15,17,25,.6);}
+.sm-futrow{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;text-align:left;}
+.sm-fut{border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:11px 13px;background:rgba(15,17,25,.72);}
 .sm-fut h4{margin:0;font-size:.92rem;color:#fff;display:flex;gap:8px;align-items:center;}
 .sm-fut h4 svg{width:17px;height:17px;flex:none;color:var(--c);}
 .sm-fut p{margin:6px 0 0;font-size:.74rem;line-height:1.5;color:rgba(243,244,251,.55);}
@@ -88,12 +87,12 @@ section#team{overflow-x:clip;}
 .sysmap.reveal{transform:perspective(1600px) rotateX(7deg) translateY(24px) scale(.988);}
 .sysmap.reveal.in{transform:perspective(1600px) rotateX(7deg);}
 .sysmap svg{width:100%;height:auto;display:block;overflow:visible;}
-.sm-orbit{fill:none;stroke:rgba(255,61,154,.26);stroke-width:1.6;}
-.sm-orbit.o1{stroke:rgba(255,61,154,.4);}
-.sm-orbit.future{stroke:rgba(255,255,255,.16);stroke-dasharray:5 9;}
-.sm-orbit.far{stroke:rgba(255,61,154,.10);}
-.sm-orbit.o1.far{stroke:rgba(255,61,154,.14);}
-.sm-orbit.future.far{stroke:rgba(255,255,255,.07);}
+.sm-orbit{fill:none;stroke:rgba(255,61,154,.45);stroke-width:2;}
+.sm-orbit.o1{stroke:rgba(255,61,154,.66);stroke-width:2.4;}
+.sm-orbit.future{stroke:rgba(255,255,255,.26);stroke-dasharray:5 9;}
+.sm-orbit.far{stroke:rgba(255,61,154,.16);}
+.sm-orbit.o1.far{stroke:rgba(255,61,154,.24);}
+.sm-orbit.future.far{stroke:rgba(255,255,255,.11);}
 .sm-vaultorbit.far{stroke:rgba(255,255,255,.05);}
 .sm-vaultorbit{fill:none;stroke:rgba(255,255,255,.13);stroke-dasharray:2 6;}
 .sm-flow{fill:none;stroke-width:2.6;opacity:.85;stroke-linecap:round;}
@@ -3067,38 +3066,40 @@ function renderSystem() {
   const globeSrc = ($(".nav-mark .globe") || {}).src || "";
   const W = 1900, H = 1400, cx = 950, cy = 350, sunR = 84;
   const f = n => n.toFixed(1);
+  /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls]
+     so all four top apexes (349/328/310/292) tuck INSIDE the sun's disk: the
+     globe is threaded ON the rings, logo-style, their arcs emerging from
+     behind its edges and fanning wide and downward. The lower arcs run
+     exactly through the three planets' coordinates, so every lane, arrow and
+     card keeps its anchor untouched. */
   const SHELLS = [
-    [340, 143, "sm-orbit"],
-    [560, 235, "sm-orbit o1"],
-    [780, 328, "sm-orbit"],
-    [980, 412, "sm-orbit future"],
+    [330, 118, 467, "sm-orbit o1"],
+    [618, 172, 500, "sm-orbit"],
+    [800, 216, 526, "sm-orbit"],
+    [950, 258, 550, "sm-orbit future"],
   ];
-  const shell = ([rx, ry, cls]) => `
-    <path class="${cls} far" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cy}"/>
-    <path class="${cls}" d="M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cy}"/>`;
-  const pos = (rx, ry, tDeg) => {
-    const t = tDeg * Math.PI / 180;
-    return { x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) };
-  };
+  const shell = ([rx, ry, cyR, cls]) => `
+    <path class="${cls} far" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
+    <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      shell: [560, 235], t: 90, r: 48, status: "FLAGSHIP",
+      at: [950, 585], r: 48, status: "FLAGSHIP",
       role: "The group's direct-to-consumer division",
       ta: "Trading today as Freedom Fire & Safety Ltd",
       ch: "Sales channels: eBay · Amazon · Shopify · Temu · TikTok",
       pts: "£1.22m revenue 2025 · £26m target by 2031",
       card: { left: 38, top: 47 } },
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      shell: [780, 328], t: 127, r: 42, status: "IN DEVELOPMENT · 2027",
+      at: [480.6, 612], r: 42, status: "IN DEVELOPMENT · 2027",
       role: "Facilities-management division delivering servicing and maintenance contracts",
       ch: "On-site servicing · PPE supply · drone inspection · PAT testing",
-      pts: "25,000+ units refurbished in a single year · record 280 serviced in one day · clients incl. Salford City Council, JD Sports, BBC & ITV",
+      pts: "25,000+ units refurbished in a single year · clients incl. Salford City Council, JD Sports & the BBC",
       card: { left: 13, top: 48 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      shell: [780, 328], t: 53, r: 36, status: "IN DEVELOPMENT · 2028",
+      at: [1419.4, 612], r: 36, status: "IN DEVELOPMENT · 2028",
       role: "Business-to-business division supplying wholesale and retail trade",
       ch: "National retailers · dealer network · trade counters",
-      pts: "Direct supply from JinDun — the world's 3rd-largest extinguisher manufacturer · 6,982 Firestorm™ units landed Dec 2025",
+      pts: "Supplied direct by JinDun — the world's 3rd-largest extinguisher manufacturer",
       card: { left: 63, top: 48 } },
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
@@ -3121,9 +3122,9 @@ function renderSystem() {
   ];
   const ROCKET_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>`;
   const FUTURE = [
-    { name: "Freedom Form Ltd", c: "var(--ember)", blurb: "Property &amp; asset management — will operate from the group's next warehouse, led by a managing director with ten years' architectural experience." },
-    { name: "Freedom Fly Ltd", c: "var(--blue)", blurb: "Aerial inspection &amp; drone imaging — live drone footage paired with interconnected alarms, already proven on client sites." },
-    { name: "+ More future companies", c: "", blurb: "Every new venture plugs into the same engine — licensing the group's brands from day one and remitting royalties back to Holdings." },
+    { name: "Freedom Form Ltd", c: "var(--ember)", blurb: "Property &amp; asset management — run from the group's next warehouse." },
+    { name: "Freedom Fly Ltd", c: "var(--blue)", blurb: "Aerial inspection &amp; drone imaging — already proven on client sites." },
+    { name: "+ More future companies", c: "", blurb: "Each new venture plugs into the same licence-and-royalty engine from day one." },
   ];
 
   let seed = 20260712 >>> 0;
@@ -3139,7 +3140,7 @@ function renderSystem() {
 
   let planets = "";
   PLANETS.forEach((p, i) => {
-    const pp = pos(p.shell[0], p.shell[1], p.t);
+    const pp = { x: p.at[0], y: p.at[1] };   // riding the rings' lower arcs — lanes/cards anchor here
     p.px = pp.x; p.py = pp.y;
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
@@ -3204,15 +3205,6 @@ function renderSystem() {
         <text class="sm-lab" y="116"><tspan class="sm-emph">4 · </tspan>Royalties return to Holdings every quarter</text>
         <text class="sm-lab" y="144"><tspan class="sm-emph">5 · </tspan>New ventures plug into the same engine from day one</text>
       </g>
-      <g class="sm-glance" transform="translate(1860,172)" text-anchor="end">
-        <text class="sm-howcap">THE ENGINE AT A GLANCE</text>
-        <text class="sm-lab" y="32"><tspan class="sm-emph">2020</tspan> the story begins · Bury, Greater Manchester</text>
-        <text class="sm-lab" y="60"><tspan class="sm-emph">£1.22m</tspan> group revenue · 2025 actual</text>
-        <text class="sm-lab" y="88"><tspan class="sm-emph">£26m</tspan> multi-channel target · 2031</text>
-        <text class="sm-lab" y="116"><tspan class="sm-emph">£71.85m</tspan> the horizon · 2036</text>
-        <text class="sm-lab" y="144"><tspan class="sm-emph">8</tspan> sales channels mapped to 2031</text>
-        <text class="sm-lab" y="172"><tspan class="sm-emph">5+3</tspan> marks in the vault — hover “+ 3 more”</text>
-      </g>
       ${SHELLS.map(shell).join("")}
       ${spine}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
@@ -3226,8 +3218,7 @@ function renderSystem() {
       <text class="sm-kick" x="${cx}" y="120" text-anchor="middle">GROUP STRUCTURE</text>
       <text class="sm-suntitle" x="${cx}" y="158" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
       <text class="sm-sunsub" x="${cx}" y="182" text-anchor="middle">Registered holding company — proprietor of the group's brands, trademarks and intellectual property</text>
-      <text class="sm-sunsub sm-sunsub2" x="${cx}" y="204" text-anchor="middle">Owns 100% of each operating company · licences the marks group-wide · collects royalties every quarter</text>
-      <g class="sm-mini" transform="translate(${cx - 152} 222)">
+      <g class="sm-mini" transform="translate(${cx - 152} 204)">
         <rect width="84" height="24" rx="12"/><text x="42" y="16" text-anchor="middle">BRANDS</text>
         <rect x="94" width="118" height="24" rx="12"/><text x="153" y="16" text-anchor="middle">TRADEMARKS</text>
         <rect x="222" width="52" height="24" rx="12"/><text x="248" y="16" text-anchor="middle">IP</text>
@@ -3243,8 +3234,8 @@ function renderSystem() {
         <p class="ch">${p.ch}</p>
         ${p.pts ? `<p class="pts">${p.pts}</p>` : ""}
       </div>`).join("")}
-    <div class="sm-brands" style="left:33%;top:67.5%">
-      <span class="cap">KEY BRANDS · OWNED BY HOLDINGS · LICENSED GROUP-WIDE</span>
+    <div class="sm-brands" style="left:1.8%;top:26.5%">
+      <span class="cap">KEY BRANDS · OWNED BY HOLDINGS</span>
       <div class="chips">
         ${BRANDS.map(([n, c]) => c
           ? `<span class="sm-brand" style="--c:${c}"><i></i>${n}</span>`
@@ -3257,7 +3248,7 @@ function renderSystem() {
         <p>Each mark is held by Freedom Group Holdings Ltd and licenses group-wide on the same quarterly-royalty terms.</p>
       </div>
     </div>
-    <div class="sm-futwrap" style="top:81%">
+    <div class="sm-futwrap">
       <div class="sm-futcap">FUTURE COMPANIES · IN DEVELOPMENT</div>
       <div class="sm-futrow">
         ${FUTURE.map(g => `
@@ -3347,11 +3338,9 @@ function renderSystem() {
   reg(q(".sm-kick"), .04, .10, "rise");
   reg(q(".sm-suntitle"), .05, .12, "rise");
   reg(q(".sm-sunsub"), .07, .14, "rise");
-  reg(q(".sm-sunsub2"), .08, .15, "rise");
   reg(q(".sm-mini"), .09, .16, "fade");
   reg(q(".sm-legend"), .10, .16, "fade");
   reg(q(".sm-how"), .11, .19, "fade");
-  reg(q(".sm-glance"), .12, .20, "fade");
   [...svgEl.querySelectorAll("path.sm-orbit")].forEach((pth, idx) => {
     const ring = Math.floor(idx / 2);
     const a = .12 + ring * .06, b = a + .11;
@@ -3371,10 +3360,10 @@ function renderSystem() {
     reg(lab, c0, c1, "fade");
   };
   chain("fly", .46, .52, .52, .59, .59, .65);
-  reg(map.querySelector(".sm-brands"), .65, .70, "rise");   // the vault docks under the flagship
+  reg(map.querySelector(".sm-brands"), .65, .70, "rise");   // the vault settles in the left flank
   chain("form", .70, .74, .74, .80, .80, .84);
   chain("storm", .84, .87, .87, .92, .92, .955);
-  reg(map.querySelector(".sm-futwrap"), .95, .99, "riseC");
+  reg(map.querySelector(".sm-futwrap"), .95, .99, "rise");  // the future arrives last, right flank
   reg(svgEl.querySelector(".mg-rocket"), .955, .995, "fade");   // the courier arrives last
   const rkp = map.querySelector(".rk-panel");
   if (rkp) reg(rkp, .955, .995, "fade");

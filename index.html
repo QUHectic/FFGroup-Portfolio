@@ -67,15 +67,12 @@ section#team{overflow-x:clip;}
 .sm-brands{position:absolute;z-index:4;width:min(330px,26%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 14px 11px;background:rgba(15,17,25,.9);}
 .sm-brands .cap{display:block;text-align:center;font-size:.62rem;font-weight:800;letter-spacing:.13em;color:rgba(243,244,251,.6);margin-bottom:8px;}
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
-.sm-futwrap{position:absolute;right:1.8%;top:13.5%;z-index:4;width:min(330px,26%);text-align:left;}
-.sm-futcap{font-size:.68rem;font-weight:800;letter-spacing:.16em;color:rgba(243,244,251,.5);}
-.sm-futrow{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;text-align:left;}
-.sm-fut{border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:11px 13px;background:rgba(15,17,25,.72);}
-.sm-fut h4{margin:0;font-size:.92rem;color:#fff;display:flex;gap:8px;align-items:center;}
-.sm-fut h4 svg{width:17px;height:17px;flex:none;color:var(--c);}
-.sm-fut p{margin:6px 0 0;font-size:.74rem;line-height:1.5;color:rgba(243,244,251,.55);}
-.sm-fut.more{border-color:rgba(255,255,255,.16);}
-.sm-fut.more h4{color:rgba(243,244,251,.7);}
+/* pointer to the courier — the future-companies detail lives in the rocket's manifest */
+.sm-futnote{position:absolute;right:1.8%;top:13.5%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
+.sm-futnote .fn-ico{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;color:var(--pink);border:1px solid rgba(255,61,154,.55);box-shadow:0 0 12px -4px var(--pink);background:rgba(20,21,31,.6);}
+.sm-futnote .fn-ico svg{width:17px;height:17px;display:block;}
+.sm-futnote b{display:block;font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:rgba(243,244,251,.6);margin-bottom:3px;}
+.sm-futnote > div > span{font-size:.74rem;line-height:1.5;color:rgba(243,244,251,.62);}
 .sysmap{
   position:relative;margin:30px auto 0;max-width:1780px;
   padding-inline:max(10px, calc(50vw - 890px));
@@ -144,7 +141,7 @@ section#team{overflow-x:clip;}
   .sysmap{padding-inline:0;}
   .sysmap.reveal,.sysmap.reveal.in{transform:none;}
   /* the cinematic map is desktop-only — on phones the content stacks clean */
-  .sysmap svg,.rk-panel,.sys-nova{display:none !important;}
+  .sysmap svg,.rk-panel,.sys-nova,.sm-futnote{display:none !important;}
   .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap,.sm-brands{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;opacity:1 !important;pointer-events:auto;}
   .sm-brands::before{display:none;}
   /* on phones the popover opens inline, under the chips, on tap */
@@ -607,7 +604,7 @@ html.spx .tr2-planet{height:330vh;} /* long runway scrub — relaxed, year by ye
 html.spx .tr2-planet{background:#0f1018;}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
-html.spx .sys-build{height:340vh;} /* nova ~60%, crossfade — the system then builds ITSELF (time-driven); the residual scroll only glides the docked scene up */
+html.spx .sys-build{height:340vh;} /* nova ~60%, crossfade — then the manifest SCRUBS with scroll (.615→.95, reversible) while the docked scene glides up */
 .sys-nova{display:none;}
 html.spx .sys-nova{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:9;pointer-events:none;}
 html.spx .sys-build-stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:flex-start;}
@@ -1553,8 +1550,8 @@ input[type="range"]::-moz-range-thumb{
 }
 .intro.build .intro-word{opacity:1;transform:none;}
 .intro-term{
-  margin:0;width:100%;max-width:400px;min-height:150px;
-  font:600 12.5px/1.75 ui-monospace,"Cascadia Mono",Consolas,monospace;
+  margin:0;width:100%;max-width:400px;min-height:140px;
+  font:600 11.5px/1.8 ui-monospace,"Cascadia Mono",Consolas,monospace;
   color:#DC94BC;text-align:left;white-space:pre-wrap;
 }
 .intro-term .ok{color:var(--mint);}
@@ -3121,11 +3118,6 @@ function renderSystem() {
       `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 3l1.9 5.6L18.5 10.5l-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9z" fill="currentColor" opacity=".22" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.6 3.4l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z" fill="currentColor" opacity=".6"/></svg>`],
   ];
   const ROCKET_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>`;
-  const FUTURE = [
-    { name: "Freedom Form Ltd", c: "var(--ember)", blurb: "Property &amp; asset management — run from the group's next warehouse." },
-    { name: "Freedom Fly Ltd", c: "var(--blue)", blurb: "Aerial inspection &amp; drone imaging — already proven on client sites." },
-    { name: "+ More future companies", c: "", blurb: "Each new venture plugs into the same licence-and-royalty engine from day one." },
-  ];
 
   let seed = 20260712 >>> 0;
   const rnd = () => { seed += 0x6D2B79F5; let r = Math.imul(seed ^ seed >>> 15, 1 | seed); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; };
@@ -3248,15 +3240,9 @@ function renderSystem() {
         <p>Each mark is held by Freedom Group Holdings Ltd and licenses group-wide on the same quarterly-royalty terms.</p>
       </div>
     </div>
-    <div class="sm-futwrap">
-      <div class="sm-futcap">FUTURE COMPANIES · IN DEVELOPMENT</div>
-      <div class="sm-futrow">
-        ${FUTURE.map(g => `
-          <div class="sm-fut${g.c ? "" : " more"}"${g.c ? ` style="--c:${g.c}"` : ""}>
-            <h4>${g.c ? ROCKET_ICO : ""}${g.name}</h4>
-            <p>${g.blurb}</p>
-          </div>`).join("")}
-      </div>
+    <div class="sm-futnote">
+      <span class="fn-ico">${ROCKET_ICO}</span>
+      <div><b>Future companies</b><span>Hover or click the courier rocket orbiting the system — it carries every venture in development.</span></div>
     </div>
   `;
 
@@ -3363,7 +3349,7 @@ function renderSystem() {
   reg(map.querySelector(".sm-brands"), .65, .70, "rise");   // the vault settles in the left flank
   chain("form", .70, .74, .74, .80, .80, .84);
   chain("storm", .84, .87, .87, .92, .92, .955);
-  reg(map.querySelector(".sm-futwrap"), .95, .99, "rise");  // the future arrives last, right flank
+  reg(map.querySelector(".sm-futnote"), .95, .99, "rise");  // the courier's notice arrives with the rocket
   reg(svgEl.querySelector(".mg-rocket"), .955, .995, "fade");   // the courier arrives last
   const rkp = map.querySelector(".rk-panel");
   if (rkp) reg(rkp, .955, .995, "fade");
@@ -3397,36 +3383,9 @@ function renderSystem() {
   const stage = build && build.querySelector(".sys-build-stage");
   const nvCv = stage && stage.querySelector(".sys-nova");
   const nvCtx = nvCv ? nvCv.getContext("2d") : null;
-  let bw = 0, bh = 0, mfPlayed = false, mfGate = 0, lastSp = 0;
-  // the system assembles ITSELF: one ~4s pass fired the instant the newborn
-  // planet docks — no scrub runway, no further scrolling required
-  const openGate = () => {
-    // the framing glide stays LOCKED until the system has fully manifested
-    // at the dock point — only then may the assembled scene float up
-    if (mfGate >= 1) return;
-    if (REDUCED || document.hidden) { mfGate = 1; driveBuild(lastSp); return; }
-    const t0 = performance.now(), DUR = 700;
-    (function frame(now) {
-      mfGate = _cl((now - t0) / DUR, 0, 1);
-      driveBuild(lastSp);
-      if (mfGate < 1) requestAnimationFrame(frame);
-    })(t0);
-  };
-  const playManifest = () => {
-    if (mfPlayed) return;
-    mfPlayed = true;
-    if (REDUCED || document.hidden) { applyManifest(1); openGate(); return; }
-    const t0 = performance.now(), DUR = 4200;
-    (function frame(now) {
-      const t = _cl((now - t0) / DUR, 0, 1);
-      applyManifest(t);
-      if (t < 1) requestAnimationFrame(frame);
-      else openGate();
-    })(t0);
-  };
+  let bw = 0, bh = 0;
   const driveBuild = sp2 => {
     sp2 = _cl(sp2, 0, 1);
-    lastSp = sp2;
     const np = _cl(sp2 / .6, 0, 1);
     const fade = 1 - _win(sp2, .605, .645);
     // measure the REAL on-screen map width so the canvas planet and the SVG
@@ -3450,15 +3409,15 @@ function renderSystem() {
     }
     // dock-drop: the map waits LOW, its sun slot exactly under the settled
     // planet (h*DOCK_Y — see drawNova), so the newborn globe only ever moves
-    // DOWN — and it HOLDS there while the whole system manifests around it.
-    // Only after the manifest completes (mfGate opens) does the residual pin
-    // scroll glide the assembled scene up into its final frame.
-    const drop = Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) * (1 - _win(sp2, .72, .97) * mfGate);
+    // DOWN. The assembled scene then glides up over the pin's final stretch.
+    const drop = Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) * (1 - _win(sp2, .72, .97));
     map.style.transform = drop > .5
       ? `translateY(${drop.toFixed(1)}px) perspective(1600px) rotateX(7deg)`
       : "";
-    if (sp2 >= .615) playManifest();
-    else if (!mfPlayed) applyManifest(0);
+    // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
+    // scrolling on builds it, scrolling back up deconstructs it again,
+    // frame-exact in both directions.
+    applyManifest(_cl((sp2 - .615) / .335, 0, 1));
   };
   window.__ffBuild = driveBuild;
   if (build) {
@@ -5595,22 +5554,32 @@ function runIntro() {
 
   const t = (ms, fn) => timers.push(setTimeout(fn, ms));
   const STEP = 300;
+  const SEG = 12;
+  const authAt = 220 + LINES.length * STEP + 140;
+  // the terminal and the bar share ONE width — the longest boot line
+  // (monospace, so ch is exact) — and the fill runs at a single constant
+  // speed, reaching 100% the very moment AUTHORISATION does
+  const longest = LINES.reduce((m, [l, o]) =>
+    Math.max(m, l.length + (o ? Math.max(2, 30 - l.length) + 1 + o.length : 0)), 0);
+  const track = bar.parentElement;
+  track.style.font = getComputedStyle(term).font;   // resolve ch identically
+  track.style.width = track.style.maxWidth = longest + "ch";
+  term.style.width = term.style.maxWidth = longest + "ch";
+  bar.style.transition = `width ${authAt + SEG * 75}ms linear`;
+  void bar.offsetWidth;                              // commit width:0 first
+  bar.style.width = "100%";
   LINES.forEach((_, i) => {
     t(220 + i * STEP, () => {
       term.innerHTML = LINES.slice(0, i + 1).map(([l, o]) =>
         l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
       ).join("\n") + '<span class="caret"></span>';
-      bar.style.width = Math.round(((i + 1) / LINES.length) * 55) + "%";
     });
   });
   // green AUTHORISATION counter replaces the old logo build-up
-  const authAt = 220 + LINES.length * STEP + 140;
-  const SEG = 12;
   const renderAuth = pct => {
     term.innerHTML = LINES.map(([l, o]) =>
       l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
     ).join("\n") + `\n<span class="auth">AUTHORISATION: ${pct}%</span><span class="caret"></span>`;
-    bar.style.width = (55 + pct * 0.45) + "%";
   };
   for (let k = 0; k <= SEG; k++) {
     const pct = Math.round(k * 100 / SEG);

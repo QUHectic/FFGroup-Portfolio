@@ -142,13 +142,11 @@ section#team{overflow-x:clip;}
   transition:border-color .3s, transform .3s var(--ease-out);
 }
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
-.sm-card h3{margin:0;font-size:1rem;display:flex;align-items:center;gap:8px;color:#fff;}
+.sm-card h3{margin:0;font-size:.98rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
-.sm-card .role{color:rgba(243,244,251,.72);font-size:.83rem;margin:6px 0 0;}
-.sm-card .ta{color:var(--pink);font-size:.76rem;font-style:italic;margin:5px 0 0;}
-.sm-card .ch{color:rgba(243,244,251,.5);font-size:.74rem;margin:9px 0 0;letter-spacing:.02em;}
-.sm-card .pts{color:rgba(255,170,210,.8);font-size:.7rem;line-height:1.5;margin:8px 0 0;padding-top:7px;border-top:1px dashed rgba(255,255,255,.14);}
-.sm-card .status{float:right;font-size:.62rem;font-weight:800;letter-spacing:.1em;color:var(--c);border:1px solid var(--c);padding:3px 9px;border-radius:99px;margin-left:8px;}
+.sm-card .cat{color:var(--c);font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:6px 0 0;}
+.sm-card .ch{color:rgba(243,244,251,.6);font-size:.76rem;line-height:1.6;margin:8px 0 0;letter-spacing:.02em;}
+.sm-card .opill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:4px 12px;margin-top:11px;opacity:.9;}
 .sm-note{
   position:absolute;max-width:340px;border:1px dashed rgba(255,255,255,.25);
   border-radius:14px;padding:12px 15px;color:rgba(243,244,251,.6);font-size:.78rem;line-height:1.55;
@@ -1589,6 +1587,15 @@ input[type="range"]::-moz-range-thumb{
   vertical-align:-2px;animation:caretBlink .7s steps(1) infinite;
 }
 @keyframes caretBlink{50%{opacity:0;}}
+/* AUTHORISATION readout — a dedicated row that hugs the bar it authorises
+   (the grid gap stays for the terminal above; -13px pulls the bar tight) */
+.intro-auth{
+  display:flex;justify-content:space-between;align-items:baseline;
+  width:100%;max-width:400px;margin-bottom:-13px;
+  font:800 11.5px/1 ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color:var(--mint);letter-spacing:.08em;
+}
+.intro-auth[hidden]{display:none;}
 .intro-bar{width:100%;max-width:300px;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
 .intro-bar i{
   display:block;height:100%;width:0;border-radius:99px;
@@ -1831,6 +1838,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 <div class="intro" id="intro" aria-label="Loading The Freedom Group">
   <div class="intro-core" id="introCore">
     <pre class="intro-term" id="introTerm"></pre>
+    <div class="intro-auth" id="introAuth" hidden><span>AUTHORISATION</span><b id="introPct">0%</b></div>
     <div class="intro-bar"><i id="introBar"></i></div>
   </div>
   <button class="intro-skip" id="introSkip" type="button">Skip intro</button>
@@ -2851,12 +2859,12 @@ function mountRocket(stage, g) {
 
 /* =========================================================================
    COURIER FLIGHT — right after the cloud transition the courier becomes an
-   actual piece of page content: it bursts out beneath the deck and escorts
-   the scroll down through every section, always inside the viewport, then
-   flies a full 360° orbit-insertion around the destination planet and docks
-   behind its limb as the runway scrub begins. Scroll-driven and fully
-   reversible; once it has left the group system it is pure scenery
-   (pointer-events:none — never clickable or hoverable).
+   actual piece of page content: it bursts out beneath the deck, locks onto
+   the journey timeline's rail, then flies each of the two line graphs from
+   first point to summit, and finally performs a full 360° orbit-insertion
+   around the destination planet, docking behind its limb as the runway
+   scrub begins. Scroll-driven and fully reversible; once it has left the
+   group system it is pure scenery (pointer-events:none — never clickable).
    ========================================================================= */
 function initCourier() {
   if (REDUCED) return;
@@ -2875,36 +2883,85 @@ function initCourier() {
   const T2 = Math.PI * 2;
   const cl01 = v => Math.min(1, Math.max(0, v));
   const smt = t => t * t * (3 - 2 * t);
-  // serpentine cruise — viewport-fraction waypoints, Catmull-Rom smoothed,
-  // entering from above (out of the clouds) and weaving down the page
-  const WP = [[.84, -.14], [.78, .22], [.16, .34], [.82, .48], [.18, .60], [.72, .68]];
-  const wp = k => WP[Math.max(0, Math.min(WP.length - 1, k))];
-  const crm = (a, b, c, d, u) =>
-    b + .5 * u * (c - a + u * (2 * a - 5 * b + 4 * c - d + u * (3 * (b - c) + d - a)));
-  const cruise = t => {
-    const segs = WP.length - 1, i = Math.min(segs - 1, Math.floor(t * segs)), u = t * segs - i;
-    return {
-      x: crm(wp(i - 1)[0], wp(i)[0], wp(i + 1)[0], wp(i + 2)[0], u) * innerWidth,
-      y: crm(wp(i - 1)[1], wp(i)[1], wp(i + 1)[1], wp(i + 2)[1], u) * innerHeight
-        + Math.sin(t * 26) * innerHeight * .008,
-    };
-  };
-  let FIN = .85;                      // cruise | orbit-insertion split — set per
-                                      // frame so the orbit only starts once the
-                                      // planet scene has actually risen on screen
+  // ---- doc-anchored flight plan — every leg evaluated LIVE each frame ----
+  // sky exit → the journey timeline's rail → the growth line → the
+  // trajectory line → 360° orbit-insertion at the destination planet.
+  // Smooth blends bridge the gaps, so the whole flight is one seamless path.
   const orbitTh = q => Math.PI + smt(cl01((q - .14) / .86)) * T2;   // one full 360°
-  const pos = p => {
-    if (p < FIN) return cruise(p / FIN);
-    const q = (p - FIN) / (1 - FIN);
-    const r = pStage.getBoundingClientRect();
-    const R = Math.min(r.width, r.height) * .33;          // drawPlanet's own radius
-    const cx = r.left + r.width / 2, cy = r.top + r.height * .52;
-    const th = orbitTh(q);
-    const rx = R * (1.52 - .4 * smt(q)), ry = rx * .46;   // tightening flat orbit
-    const o = { x: cx + Math.cos(th) * rx, y: cy + Math.sin(th) * ry };
-    const mix = smt(cl01(q / .3));                        // glide onto the orbit
-    const ce = cruise(1);
-    return { x: ce.x + (o.x - ce.x) * mix, y: ce.y + (o.y - ce.y) * mix };
+  const pathRide = sels => {
+    const els = sels.map(s => document.querySelector(s)).filter(e2 => e2 && e2.getTotalLength);
+    if (!els.length) return null;
+    try {
+      const Ls = els.map(p2 => p2.getTotalLength());
+      const Lt = Ls.reduce((a2, b2) => a2 + b2, 0);
+      if (Lt < 40) return null;
+      const ptAt = t => {
+        let d2 = cl01(t) * Lt, i = 0;
+        while (i < els.length - 1 && d2 > Ls[i]) { d2 -= Ls[i]; i++; }
+        const pt2 = els[i].getPointAtLength(Math.max(0, Math.min(Ls[i], d2)));
+        const M2 = els[i].getScreenCTM();
+        return M2 ? { x: M2.a * pt2.x + M2.c * pt2.y + M2.e, y: M2.b * pt2.x + M2.d * pt2.y + M2.f } : null;
+      };
+      const a2 = ptAt(0), b2 = ptAt(1);
+      if (!a2 || !b2) return null;
+      const vh = innerHeight;
+      return { s0: a2.y + scrollY - vh * .88, s1: b2.y + scrollY - vh * .12,
+               at: t => ptAt(t) || { x: innerWidth / 2, y: vh / 2 } };
+    } catch (e2) { return null; }
+  };
+  const buildSegs = (S0, S1, pT, vh) => {
+    const segs = [];
+    // the sky — dives out beneath the cloud deck
+    segs.push({ sky: true, s0: S0 - 9, s1: S0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
+    // the journey timeline — the courier locks onto the rail and holds the
+    // exact focus line where the milestones ignite as they scroll past it
+    const rail = document.getElementById("jrail");
+    if (rail) {
+      const r2 = rail.getBoundingClientRect();
+      const rx2 = r2.left + r2.width / 2;
+      const a3 = r2.top + scrollY - vh * .55 + 50, b3 = r2.bottom + scrollY - vh * .55 - 30;
+      if (b3 - a3 > 60) segs.push({ s0: a3, s1: b3, at: q => ({ x: rx2, y: vh * (.55 + q * .04) }) });
+    }
+    // the two line graphs — flies each drawn line, start → summit
+    const g2 = pathRide(["#growthChart svg .gc-line"]);
+    if (g2 && g2.s1 - g2.s0 > 60) segs.push(g2);
+    const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
+    if (t3 && t3.s1 - t3.s0 > 60) segs.push(t3);
+    // orbit-insertion at the destination planet
+    segs.push({
+      orbit: true, s0: pT - vh * .3, s1: S1,
+      at: q => {
+        const r2 = pStage.getBoundingClientRect();
+        const R = Math.min(r2.width, r2.height) * .33;    // drawPlanet's own radius
+        const cx2 = r2.left + r2.width / 2, cy2 = r2.top + r2.height * .52;
+        const th = orbitTh(q);
+        const rx2 = R * (1.52 - .4 * smt(q)), ry2 = rx2 * .46;
+        return { x: cx2 + Math.cos(th) * rx2, y: cy2 + Math.sin(th) * ry2 };
+      }
+    });
+    return segs.sort((x2, y2) => x2.s0 - y2.s0);
+  };
+  // blend endpoints stay inside the viewport band — a chart that has already
+  // scrolled away must never drag the courier off screen with it
+  const band = p2 => ({ x: p2.x, y: Math.min(innerHeight * .9, Math.max(innerHeight * .08, p2.y)) });
+  const locate = (segs, yEff) => {
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i];
+      if (yEff < s.s0) {
+        const prev = segs[i - 1];
+        if (!prev) return { p: s.at(0), oq: null };
+        const g2 = smt(cl01((yEff - prev.s1) / Math.max(1, s.s0 - prev.s1)));
+        const a2 = prev.sky ? prev.at(1) : band(prev.at(1));
+        const b2 = band(s.at(0));
+        return { p: { x: a2.x + (b2.x - a2.x) * g2, y: a2.y + (b2.y - a2.y) * g2 }, oq: null };
+      }
+      if (yEff <= s.s1) {
+        const q = cl01((yEff - s.s0) / Math.max(1, s.s1 - s.s0));
+        return { p: s.at(q), oq: s.orbit ? q : null };
+      }
+    }
+    const last = segs[segs.length - 1];
+    return { p: last.at(1), oq: last.orbit ? 1 : null };
   };
   let pd = -1, angS = null, lastT = 0;
   const frame = (now, snap) => {
@@ -2915,9 +2972,6 @@ function initCourier() {
       const S0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
       const pT = scrollY + planet.getBoundingClientRect().top;
       const S1 = pT + vh * .9;                                            // orbit complete, planet pinned
-      // cruise ends as the planet scene rises into view; the 360° plays out
-      // over the pin itself so the whole loop stays inside the viewport
-      FIN = Math.min(.94, Math.max(.5, (pT - vh * .3 - S0) / (S1 - S0)));
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
@@ -2925,8 +2979,12 @@ function initCourier() {
         pd = pd < 0 ? pt : pd + (pt - pd) * k;
         if (Math.abs(pt - pd) < .0005) pd = pt;
         if (pd > .0004 && pd < .9996) {
-          const P = pos(pd);
-          const A2 = pos(Math.min(1, pd + .004)), B2 = pos(Math.max(0, pd - .004));
+          const segs = buildSegs(S0, S1, pT, vh);
+          const yAt = pv => S0 + pv * (S1 - S0);
+          const L0 = locate(segs, yAt(pd));
+          const P = L0.p;
+          const A2 = locate(segs, yAt(Math.min(1, pd + .004))).p;
+          const B2 = locate(segs, yAt(Math.max(0, pd - .004))).p;
           const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x);
           if (angS == null) angS = ta;
           let dA = ta - angS;
@@ -2935,8 +2993,8 @@ function initCourier() {
           angS += dA * (snap ? 1 : Math.min(1, k * 1.7));
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
           let sc = 1;
-          if (pd >= FIN) {
-            const q = (pd - FIN) / (1 - FIN);
+          if (L0.oq != null) {
+            const q = L0.oq;
             const back = cl01((-Math.sin(orbitTh(q)) - .12) / .55) * smt(cl01(q / .3));
             alpha *= 1 - .62 * back;                      // dips passing behind the planet
             sc *= 1 - .1 * back;
@@ -3199,26 +3257,27 @@ function renderSystem() {
       <stop offset="1" stop-color="rgb(${col})" stop-opacity=".05"/>
     </linearGradient>`;
   }).join("");
+  // each operating company rides its OWN ring — blue on the 1st, mint on the
+  // 2nd, ember dropped to the 3rd — so the orbits themselves read as tiers
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      at: [950, 585], r: 48, status: "FLAGSHIP",
+      at: [950, 585], r: 48,
       role: "The group's direct-to-consumer division",
-      ta: "Trading today as Freedom Fire & Safety Ltd",
-      ch: "Sales channels: eBay · Amazon · Shopify · Temu · TikTok",
-      pts: "£1.22m revenue 2025 · £26m target by 2031",
-      card: { left: 38, top: 47 } },
+      cat: "B2C E-COMMERCE",
+      chs: "eBay | Amazon | Shopify | TikTok Shop | OnBuy | More",
+      card: { left: "calc(50% - min(150px,12.5vw))", top: 47 } },   // centred on its planet
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      at: [480.6, 612], r: 42, status: "IN DEVELOPMENT · 2027",
+      at: [480.6, 612], r: 42,
       role: "Facilities-management division delivering servicing and maintenance contracts",
-      ch: "On-site servicing · PPE supply · drone inspection · PAT testing",
-      pts: "25,000+ units refurbished in a single year · clients incl. Salford City Council, JD Sports & the BBC",
+      cat: "SERVICING &amp; MAINTENANCE",
+      chs: "Fire safety servicing | Compliance | Installations | Maintenance",
       card: { left: 13, top: 48 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      at: [1419.4, 612], r: 36, status: "IN DEVELOPMENT · 2028",
+      at: [1560, 665.8], r: 36,                                     // third ring's lower arc — a tier below
       role: "Business-to-business division supplying wholesale and retail trade",
-      ch: "National retailers · dealer network · trade counters",
-      pts: "Supplied direct by JinDun — the world's 3rd-largest extinguisher manufacturer",
-      card: { left: 63, top: 48 } },
+      cat: "B2B WHOLESALE",
+      chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
+      card: { left: "calc(81.3% - min(300px,25vw) + 38px)", top: 50.5 } },  // right edge under its planet
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
   const BRANDS = [
@@ -3273,16 +3332,16 @@ function renderSystem() {
   // every lane, arrowing INTO Holdings
   const spine = `
     <path class="sm-flowglow g-form" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flowglow g-storm" d="M 1029 394 C 1140 472, 1270 538, 1384 585"/>
+    <path class="sm-flowglow g-storm" d="M 1029 394 C 1150 470, 1350 560, 1525 639"/>
     <path class="sm-flowglow g-fly" d="M ${cx} 448 L ${cx} 523"/>
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1140 472, 1270 538, 1384 585"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1150 470, 1350 560, 1525 639"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 528 566 C 645 512, 762 462, 890 410"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1372 566 C 1255 512, 1138 462, 1010 410"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1513 620 C 1350 540, 1180 470, 1010 410"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
     <text class="sm-roylab rl-form" x="640" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1260" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <text class="sm-roylab rl-storm" x="1300" y="466" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
@@ -3298,7 +3357,7 @@ function renderSystem() {
         <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="871" y1="394" x2="516" y2="585">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1384" y2="585">
+        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1525" y2="639">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/>
         </linearGradient>
         <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${cx}" y1="448" x2="${cx}" y2="523">
@@ -3336,13 +3395,11 @@ function renderSystem() {
       ${planets}
     </svg>
     ${PLANETS.map(p => `
-      <div class="sm-card" data-key="${p.key}" style="--c:${p.c};left:${p.card.left}%;top:${p.card.top}%">
-        <span class="status">${p.status}</span>
+      <div class="sm-card" data-key="${p.key}" style="--c:${p.c};left:${typeof p.card.left === "number" ? p.card.left + "%" : p.card.left};top:${p.card.top}%">
         <h3><i></i>${p.name}</h3>
-        <p class="role">${p.role}</p>
-        ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
-        <p class="ch">${p.ch}</p>
-        ${p.pts ? `<p class="pts">${p.pts}</p>` : ""}
+        <p class="cat">${p.cat}</p>
+        <p class="ch">${p.chs}</p>
+        <span class="opill">Operating Company</span>
       </div>`).join("")}
     <div class="sm-head">
       <span class="kicker">The Freedom System</span>
@@ -3701,7 +3758,7 @@ function renderGrowthChart() {
     fill: "url(#gArea)", opacity: "0"
   }, svg);
   const line = svgEl("path", {
-    d: lineD, fill: "none", stroke: "url(#gLine)", "stroke-width": "4.5", "stroke-linecap": "round"
+    d: lineD, fill: "none", stroke: "url(#gLine)", "stroke-width": "4.5", "stroke-linecap": "round", class: "gc-line"
   }, svg);
 
   // entrance: draw the line, fade the area
@@ -4039,8 +4096,8 @@ function renderTrajectory() {
     </linearGradient>`;
 
   const area = svgEl("path", { fill: "url(#tArea)" }, svg);
-  const solid = svgEl("path", { fill: "none", stroke: "var(--blue)", "stroke-width": "4.5", "stroke-linecap": "round" }, svg);
-  const dashed = svgEl("path", { fill: "none", stroke: "var(--mint-ink)", "stroke-width": "4", "stroke-linecap": "round", "stroke-dasharray": "3 9" }, svg);
+  const solid = svgEl("path", { fill: "none", stroke: "var(--blue)", "stroke-width": "4.5", "stroke-linecap": "round", class: "tj-solid" }, svg);
+  const dashed = svgEl("path", { fill: "none", stroke: "var(--mint-ink)", "stroke-width": "4", "stroke-linecap": "round", "stroke-dasharray": "3 9", class: "tj-dashed" }, svg);
 
   // x labels
   years.forEach(yr => {
@@ -5669,12 +5726,15 @@ function runIntro() {
   const timers = [];
   let done = false;
 
+  // every line composes to EXACTLY the STATUS line's 37 characters — labels
+  // padded with dots to PAD, then " OK" (3 chars): len + (34 − len) + 3 = 37
+  const PAD = 34;
   const LINES = [
-    ["> FREEDOM GROUP // BOOT ", ""],
+    ["> FREEDOM GROUP // BOOT SEQUENCE v1.0", ""],
     ["> orbital engine ", "OK"],
     ["> revenue channels [8/8] ", "OK"],
     ["> journey 2020 → 2036 ", "OK"],
-    ["> planets · GLOBAL · FACILITIES · DISTRIBUTION ", "OK"],
+    ["> planets [3/3] aligned ", "OK"],
     ["> STATUS: OPERATIONAL — engaging warp", ""]
   ];
 
@@ -5711,30 +5771,27 @@ function runIntro() {
   // (monospace, so ch is exact) — and the fill runs at a single constant
   // speed, reaching 100% the very moment AUTHORISATION does
   const longest = LINES.reduce((m, [l, o]) =>
-    Math.max(m, l.length + (o ? Math.max(2, 30 - l.length) + 1 + o.length : 0)), 0);
+    Math.max(m, l.length + (o ? Math.max(2, PAD - l.length) + 1 + o.length : 0)), 0);
   const track = bar.parentElement;
+  const auth = $("#introAuth"), pctEl = $("#introPct");
   track.style.font = getComputedStyle(term).font;   // resolve ch identically
   track.style.width = track.style.maxWidth = longest + "ch";
   term.style.width = term.style.maxWidth = longest + "ch";
+  auth.style.width = auth.style.maxWidth = longest + "ch";
   bar.style.transition = `width ${authAt + SEG * 75}ms linear`;
   void bar.offsetWidth;                              // commit width:0 first
   bar.style.width = "100%";
   LINES.forEach((_, i) => {
     t(220 + i * STEP, () => {
       term.innerHTML = LINES.slice(0, i + 1).map(([l, o]) =>
-        l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
+        l + (o ? `<span class="ok">${"·".repeat(Math.max(2, PAD - l.length))} ${o}</span>` : "")
       ).join("\n") + '<span class="caret"></span>';
     });
   });
-  // green AUTHORISATION counter replaces the old logo build-up
-  const renderAuth = pct => {
-    term.innerHTML = LINES.map(([l, o]) =>
-      l + (o ? `<span class="ok">${"·".repeat(Math.max(2, 30 - l.length))} ${o}</span>` : "")
-    ).join("\n") + `\n<span class="auth">AUTHORISATION: ${pct}%</span><span class="caret"></span>`;
-  };
+  // green AUTHORISATION readout — its own row hugging the bar it authorises
   for (let k = 0; k <= SEG; k++) {
     const pct = Math.round(k * 100 / SEG);
-    t(authAt + k * 75, () => renderAuth(pct));
+    t(authAt + k * 75, () => { auth.hidden = false; pctEl.textContent = pct + "%"; });
   }
   t(authAt + SEG * 75 + 380, () => finish(true));
 }

@@ -624,14 +624,6 @@ html.spx .tr2-planet{height:330vh;} /* long runway scrub — relaxed, year by ye
 .rw-years span{pointer-events:auto;cursor:pointer;}
 .rw-years span:hover{color:#fff;}
 html.spx .tr2-planet{background:#0f1018;}
-/* COURIER FLIGHT — the system's rocket as free-flying page content: bursts
-   out beneath the cloud deck and escorts the scroll down to the destination
-   planet. Fixed layer, never interactive, always inside the viewport. */
-.ff-courier{position:fixed;left:0;top:0;width:0;height:0;z-index:70;pointer-events:none;opacity:0;
-  will-change:transform,opacity;
-  filter:drop-shadow(0 6px 16px rgba(7,7,13,.38)) drop-shadow(0 0 12px rgba(255,61,154,.20));}
-.ff-courier svg{position:absolute;left:-78px;top:-35px;display:block;overflow:visible;}
-@media (max-width:760px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
 html.spx .sys-build{height:340vh;} /* nova ~60%, crossfade — then the manifest SCRUBS with scroll (.615→.95, reversible) while the docked scene glides up */
@@ -2849,117 +2841,6 @@ function mountRocket(stage, g) {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); rocket.dispatchEvent(new Event("click")); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
-}
-
-/* =========================================================================
-   COURIER FLIGHT — right after the cloud transition the courier becomes an
-   actual piece of page content: it bursts out beneath the deck and escorts
-   the scroll down through every section, always inside the viewport, then
-   flies a full 360° orbit-insertion around the destination planet and docks
-   behind its limb as the runway scrub begins. Scroll-driven and fully
-   reversible; once it has left the group system it is pure scenery
-   (pointer-events:none — never clickable or hoverable).
-   ========================================================================= */
-function initCourier() {
-  if (REDUCED) return;
-  const clouds = $(".tr2-clouds"), planet = $(".tr2-planet");
-  const pStage = planet && planet.querySelector(".tr2-stage");
-  const art = $("#sysMap .mg-rocket .rk-size");
-  if (!clouds || !pStage || !art) return;
-  const wrap = document.createElement("div");
-  wrap.className = "ff-courier";
-  wrap.setAttribute("aria-hidden", "true");
-  // clone the system rocket's exact art; re-uid the gradient defs so the two
-  // copies never fight over ids
-  wrap.innerHTML = `<svg viewBox="-119 -35 156 70" width="156" height="70">${
-    art.outerHTML.replace(/rk\d+-/g, "fcrk-")}</svg>`;
-  document.body.appendChild(wrap);
-  const T2 = Math.PI * 2;
-  const cl01 = v => Math.min(1, Math.max(0, v));
-  const smt = t => t * t * (3 - 2 * t);
-  // serpentine cruise — viewport-fraction waypoints, Catmull-Rom smoothed,
-  // entering from above (out of the clouds) and weaving down the page
-  const WP = [[.84, -.14], [.78, .22], [.16, .34], [.82, .48], [.18, .60], [.72, .68]];
-  const wp = k => WP[Math.max(0, Math.min(WP.length - 1, k))];
-  const crm = (a, b, c, d, u) =>
-    b + .5 * u * (c - a + u * (2 * a - 5 * b + 4 * c - d + u * (3 * (b - c) + d - a)));
-  const cruise = t => {
-    const segs = WP.length - 1, i = Math.min(segs - 1, Math.floor(t * segs)), u = t * segs - i;
-    return {
-      x: crm(wp(i - 1)[0], wp(i)[0], wp(i + 1)[0], wp(i + 2)[0], u) * innerWidth,
-      y: crm(wp(i - 1)[1], wp(i)[1], wp(i + 1)[1], wp(i + 2)[1], u) * innerHeight
-        + Math.sin(t * 26) * innerHeight * .008,
-    };
-  };
-  let FIN = .85;                      // cruise | orbit-insertion split — set per
-                                      // frame so the orbit only starts once the
-                                      // planet scene has actually risen on screen
-  const orbitTh = q => Math.PI + smt(cl01((q - .14) / .86)) * T2;   // one full 360°
-  const pos = p => {
-    if (p < FIN) return cruise(p / FIN);
-    const q = (p - FIN) / (1 - FIN);
-    const r = pStage.getBoundingClientRect();
-    const R = Math.min(r.width, r.height) * .33;          // drawPlanet's own radius
-    const cx = r.left + r.width / 2, cy = r.top + r.height * .52;
-    const th = orbitTh(q);
-    const rx = R * (1.52 - .4 * smt(q)), ry = rx * .46;   // tightening flat orbit
-    const o = { x: cx + Math.cos(th) * rx, y: cy + Math.sin(th) * ry };
-    const mix = smt(cl01(q / .3));                        // glide onto the orbit
-    const ce = cruise(1);
-    return { x: ce.x + (o.x - ce.x) * mix, y: ce.y + (o.y - ce.y) * mix };
-  };
-  let pd = -1, angS = null, lastT = 0;
-  const frame = (now, snap) => {
-    const vh = innerHeight;
-    let alpha = 0;
-    if (document.documentElement.classList.contains("spx") && innerWidth > 760) {
-      const cR = clouds.getBoundingClientRect();
-      const S0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
-      const pT = scrollY + planet.getBoundingClientRect().top;
-      const S1 = pT + vh * .9;                                            // orbit complete, planet pinned
-      // cruise ends as the planet scene rises into view; the 360° plays out
-      // over the pin itself so the whole loop stays inside the viewport
-      FIN = Math.min(.94, Math.max(.5, (pT - vh * .3 - S0) / (S1 - S0)));
-      if (S1 - S0 > vh) {
-        const pt = cl01((scrollY - S0) / (S1 - S0));
-        const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
-        const k = snap ? 1 : 1 - Math.exp(-dt * 7);
-        pd = pd < 0 ? pt : pd + (pt - pd) * k;
-        if (Math.abs(pt - pd) < .0005) pd = pt;
-        if (pd > .0004 && pd < .9996) {
-          const P = pos(pd);
-          const A2 = pos(Math.min(1, pd + .004)), B2 = pos(Math.max(0, pd - .004));
-          const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x);
-          if (angS == null) angS = ta;
-          let dA = ta - angS;
-          while (dA > Math.PI) dA -= T2;
-          while (dA < -Math.PI) dA += T2;
-          angS += dA * (snap ? 1 : Math.min(1, k * 1.7));
-          alpha = smt(cl01(pd / .028));                   // fade in out of the deck
-          let sc = 1;
-          if (pd >= FIN) {
-            const q = (pd - FIN) / (1 - FIN);
-            const back = cl01((-Math.sin(orbitTh(q)) - .12) / .55) * smt(cl01(q / .3));
-            alpha *= 1 - .62 * back;                      // dips passing behind the planet
-            sc *= 1 - .1 * back;
-            alpha *= 1 - smt(cl01((q - .9) / .1));        // docks behind the limb
-          }
-          wrap.style.transform =
-            `translate3d(${P.x.toFixed(1)}px,${P.y.toFixed(1)}px,0) rotate(${angS.toFixed(4)}rad) scale(${sc.toFixed(3)})`;
-        } else if (angS != null && (pd <= .0004 || pd >= .9996)) angS = null;
-      }
-    }
-    wrap.style.opacity = alpha > .003 ? alpha.toFixed(3) : "0";
-    lastT = now;
-  };
-  const loop = now => { frame(now, false); requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-  // deterministic single-step for automated verification (hidden tabs get no rAF)
-  window.__ffCourier = sy => {
-    if (sy != null) window.scrollTo({ top: sy, behavior: "instant" });
-    frame(performance.now(), true);
-    return { p: +pd.toFixed(4), o: wrap.style.opacity, t: wrap.style.transform };
-  };
 }
 
 function renderMegaLogo() {
@@ -5765,7 +5646,6 @@ safeBoot("blackhole", initBlackhole); // after hero+logo render — it measures 
 safeBoot("setpieces", initSetpieces);
 safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
-safeBoot("courier", initCourier); // after system — it clones the mounted rocket's art
 safeBoot("journey", renderJourney);
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);

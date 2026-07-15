@@ -77,7 +77,7 @@ section#team{overflow-x:clip;}
 .sm-head p{margin:0;font-size:.85rem;line-height:1.55;color:rgba(243,244,251,.62);}
 .sm-head p b{color:rgba(243,244,251,.92);}
 /* the four stats — original icons restored — hold the upper-left flank */
-.sm-stats{position:absolute;z-index:4;left:1.8%;top:2.5%;width:min(320px,25%);display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.sm-stats{position:absolute;z-index:4;right:1.8%;top:2.5%;width:min(640px,48%);display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
 .sm-stats > div{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:13px 8px 11px;background:rgba(15,17,25,.6);text-align:center;}
 .sm-stats > div > svg{width:23px;height:23px;color:var(--c);}   /* out-specifies the map-wide `.sysmap svg` sizing */
 .sm-stats > div > b{display:block;font-size:1.3rem;color:var(--ink);margin:6px 0 2px;line-height:1;}   /* tile numbers only — NOT the hint's inline bold */
@@ -92,7 +92,7 @@ section#team{overflow-x:clip;}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* the "+ 3 more" popover rises above the company cards */
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 /* pointer to the courier — the future-companies detail lives in the rocket's manifest */
-.sm-futnote{position:absolute;right:1.8%;top:13.5%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
+.sm-futnote{position:absolute;right:1.8%;top:26%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
 .sm-futnote .fn-ico{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;color:var(--pink);border:1px solid rgba(255,61,154,.55);box-shadow:0 0 12px -4px var(--pink);background:rgba(20,21,31,.6);}
 .sm-futnote .fn-ico svg{width:17px;height:17px;display:block;}
 .sm-futnote b{display:block;font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:rgba(243,244,251,.6);margin-bottom:3px;}
@@ -606,7 +606,7 @@ html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 html.spx .tr2-clouds{background:#eef1f8;}
-html.spx .tr2-planet{height:330vh;} /* long runway scrub — relaxed, year by year */
+html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market runway, the NIGHT half the export routes */
 .rw-over{
   position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);
   width:min(860px,92%);padding:20px 24px 18px;border-radius:18px;
@@ -2877,7 +2877,7 @@ function mountStation(stage, g) {
     return { x: g.cx + u * cosR - v * sinR, y: g.cy + u * sinR + v * cosR };
   };
   const f = n => n.toFixed(1);
-  const st = pt(g.tStatic || 300);
+  const st = g.at ? { x: g.at[0], y: g.at[1] } : pt(g.tStatic || 300);
   svg.insertAdjacentHTML("beforeend", `
     <g class="mg-station" id="${uid}" role="button" tabindex="0"
        aria-label="The group's orbital station — every venture in development docks here; click to pause its roll and read them"
@@ -3441,11 +3441,11 @@ function renderSystem() {
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
     <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1200 465, 1420 555, 1581 629"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 533 601 C 660 540, 770 470, 890 410"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1572 636 C 1390 540, 1180 460, 1010 410"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 484 562 C 484 470, 700 420, 886 408"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1622 603 C 1622 500, 1350 430, 1014 410"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
-    <text class="sm-roylab rl-form" x="640" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1290" y="488" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <text class="sm-roylab rl-form" x="615" y="430" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-storm" x="1450" y="452" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
@@ -3455,7 +3455,7 @@ function renderSystem() {
         <radialGradient id="smSunGlow">
           <stop offset="0" stop-color="rgba(255,61,154,.5)"/><stop offset=".6" stop-color="rgba(255,61,154,.16)"/><stop offset="1" stop-color="rgba(255,61,154,0)"/>
         </radialGradient>
-        <linearGradient id="lgMast" gradientUnits="userSpaceOnUse" x1="965" y1="0" x2="1450" y2="0">
+        <linearGradient id="lgMast" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="520" y2="0">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset=".55" stop-color="#38a9ff"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
         <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="871" y1="394" x2="516" y2="585">
@@ -3482,12 +3482,13 @@ function renderSystem() {
           : `<circle cx="${cx}" cy="${cy}" r="${sunR}" fill="#ff3d9a"/>`}
         <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
       </g>
-      <g class="sm-mast" text-anchor="middle">
-        <line x1="${cx - 118}" y1="52" x2="${cx - 92}" y2="52" stroke="url(#lgMast)" stroke-width="3" stroke-linecap="round"/>
-        <text class="mh-kick" x="${cx + 14}" y="56">THE FREEDOM SYSTEM</text>
-        <text class="mh-h2" x="${cx}" y="96">One Group. Three Companies. <tspan fill="url(#lgMast)">One Orbit Around Holdings.</tspan></text>
-        <text class="mh-p" x="${cx}" y="128">One registered holding company owns every brand, trademark and piece of IP —</text>
-        <text class="mh-p" x="${cx}" y="151">licensing them to three operating companies, with royalties returning every quarter.</text>
+      <g class="sm-mast">
+        <line x1="40" y1="50" x2="66" y2="50" stroke="url(#lgMast)" stroke-width="3" stroke-linecap="round"/>
+        <text class="mh-kick" x="76" y="54">THE FREEDOM SYSTEM</text>
+        <text class="mh-h2" x="40" y="104">One Group. Three Companies.</text>
+        <text class="mh-h2" x="40" y="146" style="fill:url(#lgMast)">One Orbit Around Holdings.</text>
+        <text class="mh-p" x="40" y="182">One registered holding company owns every brand, trademark and piece of IP —</text>
+        <text class="mh-p" x="40" y="205">licensing them to three operating companies, with royalties returning every quarter.</text>
       </g>
       <text class="sm-suntitle" x="${cx}" y="186" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
       <g class="sm-mini" transform="translate(${cx - 210} 206)">
@@ -3631,7 +3632,7 @@ function renderSystem() {
   }
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
-  mountStation(map, { cx: 950, cy: 520, rx: 800, ry: 342, rotDeg: 0, out: 1, art: 1, tStatic: 300 });
+  mountStation(map, { cx: 950, cy: 520, rx: 800, ry: 342, rotDeg: 0, out: 1, art: 1, at: [1245, 800] });
 
   // the KEY BRANDS vault and the KEY FUNCTION sub-boxes hang centred beneath
   // their parent cards — positioned in px so the connector stems stay tight
@@ -3648,9 +3649,9 @@ function renderSystem() {
     // line (planet at vb 1618,645 r36) — clamped so narrow maps keep it in
     const sCard = cardFor("storm");
     if (sCard) {
-      const want = (svgR.left - mR.left) + (1618 - 36) * sc2;
+      const want = (svgR.left - mR.left) + (1618 - 36) * sc2 - 26;
       sCard.style.left = Math.max(8, Math.min(mR.width - sCard.offsetWidth - 8, want)) + "px";
-      sCard.style.top = ((svgR.top - mR.top) + (645 + 36) * sc2 + 6) + "px";
+      sCard.style.top = ((svgR.top - mR.top) + (645 + 36) * sc2 + 14) + "px";
     }
     const under = (el, key) => {
       const c = cardFor(key);
@@ -5601,7 +5602,8 @@ function initSetpieces() {
   }
   function drawPlanet(ctx, p, w, h) {
     if (!GLland) makeGlobeTex();
-    const night = sm(ph2(p, .3, .68));
+    // day half (runway) → dusk at the midpoint → night half (export routes)
+    const night = sm(ph2(p, .42, .58));
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = `rgb(${Math.round(lp(255, 15, night))},${Math.round(lp(255, 16, night))},${Math.round(lp(255, 24, night))})`;
     ctx.fillRect(0, 0, w, h);
@@ -5624,7 +5626,7 @@ function initSetpieces() {
     ctx.fillStyle = ob; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
     sphereStrips(ctx, GLland, cx, cy, R, (p * 1.55) % 1, 1);
     sphereStrips(ctx, GLcloud, cx, cy, R, (p * 2.0) % 1, .8);
-    const sweep = sm(ph2(p, .24, .78));
+    const sweep = sm(ph2(p, .40, .62));
     const edge = lp(R * 1.3, -R * 1.4, sweep);
     const sg = ctx.createLinearGradient(cx + edge - R * .55, 0, cx + edge + R * .55, 0);
     sg.addColorStop(0, "rgba(46,2,26,0)"); sg.addColorStop(1, "rgba(24,1,14,.95)");
@@ -5654,8 +5656,9 @@ function initSetpieces() {
     // EXPORT-ROUTE info boxes — four fixed cards around the globe, each
     // tethered by a curved leader to its country's EXACT map point (the same
     // strip projection the sphere is drawn with, rotated by the −.16 tilt).
-    // While a country rides the far side its card waits, dimmed, untethered.
-    const pv = sm(ph2(p, .07, .16)) * (1 - sm(ph2(p, .93, .985)));
+    // NIGHT-side content: they wake as the terminator sweeps through and the
+    // runway hands over. While a country rides the far side its card dims.
+    const pv = sm(ph2(p, .52, .62)) * (1 - sm(ph2(p, .93, .985)));
     if (pv > .02) {
       const rot2 = (p * 1.55) % 1;
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
@@ -5886,7 +5889,7 @@ function initSetpieces() {
       const seekTo = fx2 => {
         const t2 = Math.min(1, Math.max(0, fx2));
         const span = wrapEl.offsetHeight - innerHeight;
-        window.scrollTo({ top: wrapEl.offsetTop + (.08 + t2 * .82) * span, behavior: "instant" });
+        window.scrollTo({ top: wrapEl.offsetTop + (.07 + t2 * .31) * span, behavior: "instant" });
       };
       const fxOf = e => { const r2 = track.getBoundingClientRect(); return (e.clientX - r2.left) / r2.width; };
       let drag = false;
@@ -5901,10 +5904,12 @@ function initSetpieces() {
       });
     }
     const traj = FG_DATA.trajectory, M = FG_DATA.market;
-    const vis = sm(ph2(p, .05, .12)) * (1 - sm(ph2(p, .9, .97)));
+    // DAY-side content: the runway lives in the white half and bows out as
+    // the terminator brings the night (and the export routes) in
+    const vis = sm(ph2(p, .04, .1)) * (1 - sm(ph2(p, .4, .48)));
     RWels.o.style.opacity = vis.toFixed(3);
     if (vis <= 0) return;
-    const t = cl(ph2(p, .08, .9), 0, 1);
+    const t = cl(ph2(p, .07, .38), 0, 1);
     const fi = t * (traj.length - 1);
     const d = traj[Math.min(traj.length - 1, Math.round(fi))];
     RWels.knob.style.left = ((fi / (traj.length - 1)) * 100).toFixed(2) + "%";

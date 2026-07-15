@@ -41,7 +41,7 @@ section#team{overflow-x:clip;}
 .sm-vaultbox{position:absolute;max-width:330px;}
 .sm-vb-cap{font-size:.66rem;font-weight:800;letter-spacing:.14em;color:rgba(243,244,251,.55);}
 .sm-vb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
-.sm-brand{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(20,21,31,.94);font-size:.78rem;font-weight:700;color:#fff;}
+.sm-brand{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(20,21,31,.94);font-size:.72rem;font-weight:700;color:#fff;}
 .sm-brand i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 7px var(--c);}
 .sm-brand.more{border-style:dashed;color:rgba(243,244,251,.55);font-weight:600;cursor:pointer;outline:none;transition:border-color .25s,color .25s;}
 .sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(255,140,195,.75);color:#fff;}
@@ -83,10 +83,11 @@ section#team{overflow-x:clip;}
 .sm-stats .s{display:block;font-size:.6rem;color:rgba(243,244,251,.44);line-height:1.35;margin-top:4px;}
 .sm-stats .hint{grid-column:1 / -1;margin:2px 0 0;font-size:.66rem;text-align:center;color:rgba(243,244,251,.5);}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
-.sm-brands{position:absolute;z-index:4;width:min(680px,52%);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:7px 14px 7px;background:rgba(15,17,25,.9);}
+.sm-brands{position:absolute;z-index:4;width:min(380px,30%);text-align:center;}
 .sm-brands::before{content:"";position:absolute;left:50%;top:-7px;width:2px;height:7px;background:rgba(255,255,255,.28);}
+.sm-brands .cap2{display:block;font-size:.56rem;font-weight:800;letter-spacing:.16em;color:rgba(243,244,251,.5);margin-bottom:4px;}
+.sm-brands .bx{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:7px 10px;background:rgba(15,17,25,.9);}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* the "+ 3 more" popover rises above the company cards */
-.sm-brands .cap{display:block;text-align:center;font-size:.62rem;font-weight:800;letter-spacing:.13em;color:rgba(243,244,251,.6);margin-bottom:8px;}
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 /* pointer to the courier — the future-companies detail lives in the rocket's manifest */
 .sm-futnote{position:absolute;right:1.8%;top:13.5%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
@@ -139,7 +140,7 @@ section#team{overflow-x:clip;}
 .sm-lead{stroke:rgba(255,255,255,.2);stroke-width:1.4;stroke-dasharray:2 6;}
 .sm-card{
   position:absolute;z-index:5;width:min(300px,25vw);background:rgba(15,17,25,.94);
-  border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px;
+  border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
 }
@@ -156,7 +157,7 @@ section#team{overflow-x:clip;}
 .sm-sub .fn2 svg{width:17px;height:17px;flex:none;color:var(--c);}
 .sm-sub .fn2 span{font-size:.66rem;line-height:1.35;color:rgba(243,244,251,.66);}
 .sm-card .ch{color:rgba(243,244,251,.6);font-size:.76rem;line-height:1.6;margin:8px 0 0;letter-spacing:.02em;}
-.sm-card .opill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:4px 12px;margin-top:11px;opacity:.9;}
+.sm-card .opill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:4px 12px;margin-top:8px;opacity:.9;}
 .sm-note{
   position:absolute;max-width:340px;border:1px dashed rgba(255,255,255,.25);
   border-radius:14px;padding:12px 15px;color:rgba(243,244,251,.6);font-size:.78rem;line-height:1.55;
@@ -1690,7 +1691,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .mg-station.hold{animation-play-state:paused;}
 .mg-station .st-art{transition:transform .3s var(--ease-out);}
 .mg-station:hover .st-art,.mg-station:focus-visible .st-art,.mg-station.hold .st-art{transform:scale(1.14);}
-.st-spin{transform-box:fill-box;transform-origin:center;animation:stSpin 60s linear infinite;}
+.st-spin{transform-box:fill-box;transform-origin:center;animation:stSpin 36s linear infinite;}
 @keyframes stSpin{to{transform:rotate(360deg);}}
 .mg-station.hold .st-spin{animation-play-state:paused;}
 .st-ring{fill:none;stroke:var(--pink);stroke-width:2;opacity:.4;}
@@ -2856,10 +2857,10 @@ function mountRocket(stage, g) {
 }
 
 /* The orbital station — same graphic language as the courier (hull gradients,
-   strobe, pink accents). It wheels a full 360° around the system on its own
-   slow counter-orbit, gently rolling as it goes, and it now carries the
-   future-ventures panel: hover or click the STATION to read them (the rocket
-   itself is pure scenery — never clickable or hoverable). */
+   strobe, pink accents). It holds station at ONE fixed anchor in the upper
+   sky, slowly rolling on its own axis, and it carries the future-ventures
+   panel: hover or click the STATION to read them (the rocket itself is pure
+   scenery — never clickable or hoverable). */
 function mountStation(stage, g) {
   const svg = stage && stage.querySelector("svg");
   if (!svg) return;
@@ -2870,15 +2871,12 @@ function mountStation(stage, g) {
     const t = tDeg * Math.PI / 180, u = rx * Math.cos(t), v = ry * Math.sin(t);
     return { x: g.cx + u * cosR - v * sinR, y: g.cy + u * sinR + v * cosR };
   };
-  const MOVE = !REDUCED && typeof CSS !== "undefined" && CSS.supports
-    && CSS.supports("offset-path", 'path("M 0 0")');
   const f = n => n.toFixed(1);
-  const a = pt(0), b = pt(180), st = pt(g.tStatic || 120);
-  const d = `M ${f(a.x)} ${f(a.y)} A ${f(rx)} ${f(ry)} ${g.rotDeg} 0 1 ${f(b.x)} ${f(b.y)} A ${f(rx)} ${f(ry)} ${g.rotDeg} 0 1 ${f(a.x)} ${f(a.y)}`;
+  const st = pt(g.tStatic || 300);
   svg.insertAdjacentHTML("beforeend", `
-    <g class="mg-station${MOVE ? " orbiting" : ""}" id="${uid}" role="button" tabindex="0"
-       aria-label="The group's orbital station — every venture in development docks here; click to pause it and read them"
-       style="${MOVE ? `offset-path:path('${d}');animation-duration:${g.dur}s;animation-direction:reverse` : `transform:translate(${f(st.x)}px,${f(st.y)}px)`}">
+    <g class="mg-station" id="${uid}" role="button" tabindex="0"
+       aria-label="The group's orbital station — every venture in development docks here; click to pause its roll and read them"
+       style="transform:translate(${f(st.x)}px,${f(st.y)}px)">
       <g class="st-size" transform="scale(${g.art || 1})">
         <g class="st-spin"><g class="st-art">
           <defs>
@@ -2979,8 +2977,16 @@ function initCourier() {
       const a2 = ptAt(0), b2 = ptAt(1);
       if (!a2 || !b2) return null;
       const vh = innerHeight;
-      return { s0: a2.y + scrollY - vh * .88, s1: b2.y + scrollY - vh * .12,
-               at: t => ptAt(t) || { x: innerWidth / 2, y: vh / 2 } };
+      // 3-sample moving average rounds off polyline corners (the trajectory
+      // line is segment-built) so the ride flows instead of kinking
+      const eased = t => {
+        const s3 = .022;
+        const A3 = ptAt(Math.max(0, t - s3)), B3 = ptAt(t), C3 = ptAt(Math.min(1, t + s3));
+        return (A3 && B3 && C3)
+          ? { x: (A3.x + B3.x + C3.x) / 3, y: (A3.y + B3.y + C3.y) / 3 }
+          : (B3 || { x: innerWidth / 2, y: vh / 2 });
+      };
+      return { s0: a2.y + scrollY - vh * .88, s1: b2.y + scrollY - vh * .12, at: eased };
     } catch (e2) { return null; }
   };
   const buildSegs = (S0, S1, pT, vh) => {
@@ -3050,7 +3056,7 @@ function initCourier() {
     const last = segs[segs.length - 1];
     return { p: last.at(1), oq: last.orbit ? 1 : null };
   };
-  let pd = -1, angS = null, lastT = 0;
+  let pd = -1, angS = null, lastT = 0, ptPrev = null, dirState = 1;
   const frame = (now, snap) => {
     const vh = innerHeight;
     let alpha = 0;
@@ -3062,7 +3068,11 @@ function initCourier() {
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
-        const k = snap ? 1 : 1 - Math.exp(-dt * 7);
+        const k = snap ? 1 : 1 - Math.exp(-dt * 4.6);     // soft, floaty follow
+        // travelling direction — scrolling back up TURNS the ship around so
+        // it always flies nose-first (the smoothing animates the U-turn)
+        if (ptPrev != null && Math.abs(pt - ptPrev) > .0004) dirState = pt > ptPrev ? 1 : -1;
+        ptPrev = pt;
         pd = pd < 0 ? pt : pd + (pt - pd) * k;
         if (Math.abs(pt - pd) < .0005) pd = pt;
         if (pd > .0004 && pd < .9996) {
@@ -3072,12 +3082,13 @@ function initCourier() {
           const P = L0.p;
           const A2 = locate(segs, yAt(Math.min(1, pd + .004))).p;
           const B2 = locate(segs, yAt(Math.max(0, pd - .004))).p;
-          const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x);
+          const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
           if (angS == null) angS = ta;
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
           while (dA < -Math.PI) dA += T2;
-          angS += dA * (snap ? 1 : Math.min(1, k * 1.7));
+          angS += dA * (snap ? 1 : Math.min(1, k * 1.25));
+          const bobY = Math.sin(pd * 150) * 3;            // a breath of life on the cruise
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
           let sc = 1;
           if (L0.oq != null) {
@@ -3088,7 +3099,7 @@ function initCourier() {
             alpha *= 1 - smt(cl01((q - .9) / .1));        // docks behind the limb
           }
           wrap.style.transform =
-            `translate3d(${P.x.toFixed(1)}px,${P.y.toFixed(1)}px,0) rotate(${angS.toFixed(4)}rad) scale(${sc.toFixed(3)})`;
+            `translate3d(${P.x.toFixed(1)}px,${(P.y + bobY).toFixed(1)}px,0) rotate(${angS.toFixed(4)}rad) scale(${sc.toFixed(3)})`;
         } else if (angS != null && (pd <= .0004 || pd >= .9996)) angS = null;
       }
     }
@@ -3361,11 +3372,11 @@ function renderSystem() {
       chs: "Fire safety servicing | Compliance | Installations | Maintenance",
       card: { left: 13, top: 46.5 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      at: [1668, 621.3], r: 36,                                     // third ring's lower arc — a tier below
+      at: [1400, 704.6], r: 36,                                     // third ring's lower arc — a tier below
       role: "Business-to-business division supplying wholesale and retail trade",
       cat: "B2B WHOLESALE",
       chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
-      card: { left: "calc(87.4% - min(300px,25vw))", top: 47 } },   // right edge aligned to its planet
+      card: { left: "76%", top: 43 } },                             // the card sits to the RIGHT of its planet
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
   const BRANDS = [
@@ -3420,16 +3431,16 @@ function renderSystem() {
   // every lane, arrowing INTO Holdings
   const spine = `
     <path class="sm-flowglow g-form" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flowglow g-storm" d="M 1029 394 C 1180 460, 1420 545, 1632 608"/>
+    <path class="sm-flowglow g-storm" d="M 1029 394 C 1130 480, 1260 590, 1369 679"/>
     <path class="sm-flowglow g-fly" d="M ${cx} 448 L ${cx} 523"/>
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1180 460, 1420 545, 1632 608"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1130 480, 1260 590, 1369 679"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 533 601 C 660 540, 770 470, 890 410"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1624 613 C 1430 525, 1205 455, 1010 410"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M 1354 692 C 1220 570, 1100 470, 1010 410"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
     <text class="sm-roylab rl-form" x="640" y="438" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1315" y="458" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <text class="sm-roylab rl-storm" x="1170" y="512" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
@@ -3445,7 +3456,7 @@ function renderSystem() {
         <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="871" y1="394" x2="516" y2="585">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1632" y2="608">
+        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1369" y2="679">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/>
         </linearGradient>
         <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${cx}" y1="448" x2="${cx}" y2="523">
@@ -3529,12 +3540,14 @@ function renderSystem() {
       <p class="hint">Hover a planet — or the vault's <b>+&nbsp;3&nbsp;more</b>&nbsp;chip — to explore.</p>
     </div>
     <div class="sm-brands">
-      <span class="cap">KEY BRANDS · OWNED BY HOLDINGS</span>
+      <span class="cap2">KEY BRANDS</span>
+      <div class="bx">
       <div class="chips">
         ${BRANDS.map(([n, c]) => c
           ? `<span class="sm-brand" style="--c:${c}"><i></i>${n}</span>`
           : `<span class="sm-brand more" id="smMore" role="button" tabindex="0" aria-expanded="false"
                aria-label="Show the three marks launching next: HepaFellas, DustBros and Lynxa">${n}</span>`).join("")}
+      </div>
       </div>
       <div class="sm-morepop" id="smMorePop" role="tooltip">
         <h5>+ 3 MORE · NEXT TO LAUNCH</h5>
@@ -3613,7 +3626,7 @@ function renderSystem() {
   }
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
-  mountStation(map, { cx: 950, cy: 520, rx: 800, ry: 342, rotDeg: 0, out: 1, dur: 54, art: 1, tStatic: 120 });
+  mountStation(map, { cx: 950, cy: 520, rx: 800, ry: 342, rotDeg: 0, out: 1, art: 1, tStatic: 300 });
 
   // the KEY BRANDS vault and the KEY FUNCTION sub-boxes hang centred beneath
   // their parent cards — positioned in px so the connector stems stay tight

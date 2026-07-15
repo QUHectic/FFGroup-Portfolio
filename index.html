@@ -643,6 +643,11 @@ html.spx .tr2-planet{background:#0f1018;}
 .ff-courier svg{position:absolute;left:-78px;top:-35px;display:block;overflow:visible;
   width:156px;height:70px;max-width:none;   /* the global img,svg{max-width:100%} reset would collapse it inside the 0×0 anchor */
   filter:drop-shadow(0 6px 16px rgba(7,7,13,.38)) drop-shadow(0 0 12px rgba(255,61,154,.20));}
+/* chart points MANIFEST as the courier passes them mid-ride */
+#growthChart .pt-dot,#growthChart .gc-val,#trajChart .pt-dot{
+  transition:opacity .4s var(--ease-out),transform .4s var(--ease-out);
+  transform-box:fill-box;transform-origin:center;}
+#growthChart .pt-dot.unlit,#growthChart .gc-val.unlit,#trajChart .pt-dot.unlit{opacity:0;transform:scale(.25);}
 @media (max-width:760px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
@@ -1728,7 +1733,8 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-panel{
   position:absolute;z-index:5;width:292px;
   background:#0f1119;border:1px solid rgba(255,255,255,.14);border-radius:16px;
-  padding:15px 17px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+  padding:13px 17px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+  max-height:calc(100vh - 32px);overflow-y:auto;   /* fail-safe: content can NEVER be unreachable */
   opacity:0;transform:translateY(6px) scale(.97);pointer-events:none;
   transition:opacity .25s var(--ease-out), transform .25s var(--ease-out);
 }
@@ -2911,10 +2917,10 @@ function mountStation(stage, g) {
   const panel = document.createElement("div");
   panel.className = "rk-panel";
   const ST_FUTURE = [
-    { n: "Freedom Form Ltd", d: "2028 · Property &amp; management — operating from the group's next warehouse.", c: "var(--ember)" },
-    { n: "Freedom Fly Ltd", d: "2029 · Drone visual — live footage paired with interconnected alarms.", c: "var(--blue)" },
-    { n: "Freedom Fuel Ltd", d: "2036 · Fuel &amp; energy supply for the group's fleet and trade partners.", c: "var(--mint)" },
-    { n: "Freedom Energy+", d: "Beyond 2036 · the group's long-horizon energy venture.", c: "var(--pink)" },
+    { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
+    { n: "Freedom Fly Ltd", d: "2029 · Drone visual &amp; alarms", c: "var(--blue)" },
+    { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
+    { n: "Freedom Energy+", d: "Beyond 2036 · long-horizon energy", c: "var(--pink)" },
   ];
   panel.innerHTML = "<h4>Future Ltd aspirations</h4>" + ST_FUTURE.map(x =>
     `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
@@ -3016,9 +3022,9 @@ function initCourier() {
     }
     // the two line graphs — flies each drawn line, start → summit
     const g2 = pathRide(["#growthChart svg .gc-line"]);
-    if (g2 && g2.s1 - g2.s0 > 60) segs.push(g2);
+    if (g2 && g2.s1 - g2.s0 > 60) { g2.kind = "growth"; segs.push(g2); }
     const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
-    if (t3 && t3.s1 - t3.s0 > 60) segs.push(t3);
+    if (t3 && t3.s1 - t3.s0 > 60) { t3.kind = "traj"; segs.push(t3); }
     // orbit-insertion at the destination planet
     segs.push({
       orbit: true, s0: pT - vh * .3, s1: S1,
@@ -3064,6 +3070,18 @@ function initCourier() {
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
         const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
         pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long gutter run
+        // on the LONG hauls the courier throws a full loop-the-loop mid-run —
+        // smt() eases the sweep in and out so the entry and exit tangents
+        // match the gutter path exactly: pure aerobatics, zero kinks
+        if (s.s0 - prev.s1 > innerHeight * 1.05) {
+          const lw = cl01((g2 - .36) / .28);
+          if (lw > 0 && lw < 1) {
+            const th3 = smt(lw) * T2;
+            const rL = Math.min(56, innerHeight * .08);
+            pos3.x += Math.sin(th3) * rL;
+            pos3.y -= (1 - Math.cos(th3)) * rL * .85;
+          }
+        }
         return { p: pos3, oq: null };
       }
       if (yEff <= s.s1) {
@@ -3075,6 +3093,24 @@ function initCourier() {
     return { p: last.at(1), oq: last.orbit ? 1 : null };
   };
   let pd = -1, angS = null, lastT = 0, ptPrev = null, dirState = 1;
+  // the chart points the courier ignites as it flies past them (lazy caches —
+  // the charts render after the courier boots)
+  let gDotsC = [], tDotsC = [];
+  const refreshDots = () => {
+    if (!gDotsC.length) gDotsC = [...document.querySelectorAll("#growthChart svg .pt-dot, #growthChart svg .gc-val")];
+    if (!tDotsC.length) tDotsC = [...document.querySelectorAll("#trajChart svg .pt-dot")];
+  };
+  const lightDots = (segs, kind, dots, yEffV, noseX) => {
+    if (!dots.length) return;
+    const seg2 = segs.find(s2 => s2.kind === kind);
+    if (!seg2) return;
+    if (yEffV >= seg2.s1) { dots.forEach(d2 => d2.classList.remove("unlit")); return; }
+    if (yEffV <= seg2.s0) { dots.forEach(d2 => d2.classList.add("unlit")); return; }
+    dots.forEach(d2 => {
+      const r2 = d2.getBoundingClientRect();
+      d2.classList.toggle("unlit", (r2.left + r2.right) / 2 > noseX + 26);
+    });
+  };
   const frame = (now, snap) => {
     const vh = innerHeight;
     let alpha = 0;
@@ -3098,6 +3134,9 @@ function initCourier() {
           const yAt = pv => S0 + pv * (S1 - S0);
           const L0 = locate(segs, yAt(pd));
           const P = L0.p;
+          refreshDots();
+          lightDots(segs, "growth", gDotsC, yAt(pd), P.x);
+          lightDots(segs, "traj", tDotsC, yAt(pd), P.x);
           const A2 = locate(segs, yAt(Math.min(1, pd + .004))).p;
           const B2 = locate(segs, yAt(Math.max(0, pd - .004))).p;
           const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
@@ -3658,13 +3697,14 @@ function renderSystem() {
     const svg2 = map.querySelector("svg");
     const mR = map.getBoundingClientRect(), svgR = svg2.getBoundingClientRect();
     const sc2 = svgR.width / 1900;
-    // Distribution's card hangs DIRECTLY BENEATH its planet, left edges in
-    // line (planet at vb 1618,645 r36) — clamped so narrow maps keep it in
+    // Distribution's card hangs DIRECTLY BENEATH its planet, the planet
+    // sitting centred on the card's top edge (planet at vb 1618,645 r36) —
+    // centred it fits every map width without clamping
     const sCard = cardFor("storm");
     if (sCard) {
-      const want = (svgR.left - mR.left) + (1618 - 36) * sc2 - 4;
+      const want = (svgR.left - mR.left) + 1618 * sc2 - sCard.offsetWidth / 2;
       sCard.style.left = Math.max(8, Math.min(mR.width - sCard.offsetWidth - 8, want)) + "px";
-      sCard.style.top = ((svgR.top - mR.top) + (645 + 36) * sc2 + 14) + "px";
+      sCard.style.top = ((svgR.top - mR.top) + (645 + 36) * sc2 + 10) + "px";
     }
     const under = (el, key) => {
       const c = cardFor(key);
@@ -3947,7 +3987,7 @@ function renderGrowthChart() {
   const tip = makeTip(fig);
   data.forEach((d, i) => {
     svgEl("text", {
-      x: xs[i], y: ys[i] - 18, "text-anchor": "middle",
+      x: xs[i], y: ys[i] - 18, "text-anchor": "middle", class: "gc-val",
       fill: "var(--ink)", "font-size": "15", "font-weight": "800"
     }, svg).textContent = fmtCompact(d.value);
     const dot = svgEl("circle", {

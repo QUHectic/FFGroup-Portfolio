@@ -2923,8 +2923,9 @@ function mountStation(stage, g) {
   const place = () => {
     const rr = station.getBoundingClientRect(), sr = stage.getBoundingClientRect();
     const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
+    const ph2 = panel.offsetHeight || 340;   // real height — four aspirations must never clip
     panel.style.left = Math.max(8, Math.min(sr.width - 300, x + 26)) + "px";
-    panel.style.top = Math.max(8, Math.min(sr.height - 310, y - 30)) + "px";
+    panel.style.top = Math.max(8, Math.min(sr.height - ph2 - 8, y - 30)) + "px";
   };
   const open = () => { clearTimeout(closeT); station.classList.add("hold"); place(); panel.classList.add("show"); };
   const shut = () => { pinned = false; station.classList.remove("hold"); panel.classList.remove("show"); };
@@ -3044,20 +3045,26 @@ function initCourier() {
         const g2 = smt(cl01((yEff - prev.s1) / Math.max(1, s.s0 - prev.s1)));
         const a2 = prev.sky ? prev.at(1) : band(prev.at(1));
         const b2 = band(s.at(0));
-        // a graceful S-sweep between legs — the courier banks out of one
-        // landmark and carves into the next, never a straight rigid hop
-        const ddx = b2.x - a2.x, ddy = b2.y - a2.y;
-        const dd = Math.hypot(ddx, ddy) || 1;
-        const nx = -ddy / dd, ny = ddx / dd;
-        const side = (a2.x + b2.x) / 2 < innerWidth / 2 ? 1 : -1;
-        const amp = Math.min(80, dd * .25) * side;
-        const c1x = a2.x + ddx * .25 + nx * amp, c1y = a2.y + ddy * .25 + ny * amp;
-        const c2x = a2.x + ddx * .75 - nx * amp, c2y = a2.y + ddy * .75 - ny * amp;
-        const iu = 1 - g2;
-        return { p: {
-          x: iu * iu * iu * a2.x + 3 * iu * iu * g2 * c1x + 3 * iu * g2 * g2 * c2x + g2 * g2 * g2 * b2.x,
-          y: iu * iu * iu * a2.y + 3 * iu * iu * g2 * c1y + 3 * iu * g2 * g2 * c2y + g2 * g2 * g2 * b2.y
-        }, oq: null };
+        // between landmarks the courier NEVER loiters across the analytics:
+        // it banks out of the last landmark, dives to the page margin, cruises
+        // the gutter with a light sway, then carves back in to the next —
+        // one continuous Catmull-Rom through the gutter waypoints
+        const gx = b2.x < innerWidth / 2
+          ? Math.max(52, innerWidth * .05)
+          : Math.min(innerWidth - 52, innerWidth * .95);
+        const W1 = { x: gx, y: a2.y + (b2.y - a2.y) * .3 };
+        const W2 = { x: gx, y: a2.y + (b2.y - a2.y) * .72 };
+        const P4 = [a2, W1, W2, b2];
+        const pk = k => P4[Math.max(0, Math.min(3, k))];
+        const crm2 = (p0, p1, p2, p3, u) => ({
+          x: p1.x + .5 * u * (p2.x - p0.x + u * (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x + u * (3 * (p1.x - p2.x) + p3.x - p0.x))),
+          y: p1.y + .5 * u * (p2.y - p0.y + u * (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y + u * (3 * (p1.y - p2.y) + p3.y - p0.y)))
+        });
+        const s3 = Math.min(2, Math.floor(g2 * 3)), u3 = g2 * 3 - s3;
+        const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
+        const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
+        pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long gutter run
+        return { p: pos3, oq: null };
       }
       if (yEff <= s.s1) {
         const q = cl01((yEff - s.s0) / Math.max(1, s.s1 - s.s0));

@@ -3023,6 +3023,42 @@ function mountStation(stage, g) {
   const f = n => Number(n).toFixed(1);
   const kind = g.kind === "moon" ? "moon" : "destroyer";
   const side = g.side === "left" ? "left" : "right";
+  const stationType = g.stationType === "deathstar2" ? "deathstar2" : "deathstar1";
+
+  /* The cinematic render contains both stations. Each interactive SVG object
+     displays a tightly clipped half of that source image, then mirrors it so
+     its centre-facing hemisphere keeps the render's shared key light. The
+     wrapper remains the original .mg-station element, so hover, keyboard,
+     click, panel positioning and future-company data are all unchanged. */
+  const fleetImage = "group-system-assets/death-stars-dual.png";
+  const source = stationType === "deathstar2"
+    ? { cx: 1347, cy: 460 }
+    : { cx: 329, cy: 458 };
+  const sourceScale = .236;
+  const photoArt = `
+    <g class="fc-float">
+      <g class="fc-art fc-photo-art">
+        <defs>
+          <clipPath id="${uid}-photo-clip"><circle r="69"/></clipPath>
+          <radialGradient id="${uid}-photo-halo">
+            <stop offset=".70" stop-color="#000" stop-opacity="0"/>
+            <stop offset=".88" stop-color="${stationType === "deathstar2" ? "#ff8a3d" : "#d8e7ff"}" stop-opacity=".10"/>
+            <stop offset="1" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle r="73" fill="url(#${uid}-photo-halo)"/>
+        <g clip-path="url(#${uid}-photo-clip)" transform="scale(-1 1)" pointer-events="none">
+          <image href="${fleetImage}"
+                 x="${f(-source.cx * sourceScale)}"
+                 y="${f(-source.cy * sourceScale)}"
+                 width="${f(1672 * sourceScale)}"
+                 height="${f(941 * sourceScale)}"
+                 preserveAspectRatio="none"/>
+        </g>
+        <circle r="67" fill="none" stroke="rgba(224,232,246,.20)" stroke-width=".65" pointer-events="none"/>
+        <circle class="fc-hit" r="73" fill="transparent" pointer-events="all"/>
+      </g>
+    </g>`;
 
   // seeded per craft — the generated detail is stable on every load
   let sd = (kind === "moon" ? 811 : 407) >>> 0;
@@ -3270,10 +3306,10 @@ function mountStation(stage, g) {
     </g></g></g>`;
 
   svg.insertAdjacentHTML("beforeend", `
-    <g class="mg-station fc-${side} fc-${kind}" id="${uid}" role="button" tabindex="0"
+    <g class="mg-station fc-${side} fc-${kind} fc-${stationType}" id="${uid}" role="button" tabindex="0"
        aria-label="${g.title || "Future Ltd aspirations"}; hover or click to show its companies"
        style="transform:translate(${f(g.at[0])}px,${f(g.at[1])}px)">
-      <g transform="scale(${g.art || 1})">${kind === "moon" ? moonArt : destroyerArt}</g>
+      <g transform="scale(${g.art || 1})">${photoArt}</g>
     </g>`);
 
   const craft = svg.querySelector("#" + uid);
@@ -3287,7 +3323,8 @@ function mountStation(stage, g) {
 
   let pinned = false, closeT = null;
   const place = () => {
-    const rr = craft.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const target = craft.querySelector(".fc-hit") || craft;
+    const rr = target.getBoundingClientRect(), sr = stage.getBoundingClientRect();
     const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
     const pw = panel.offsetWidth || 324, ph = panel.offsetHeight || 170;
     const desiredLeft = (g.panelSide || 1) < 0 ? x - pw - 44 : x + 44;
@@ -4146,7 +4183,7 @@ function renderSystem() {
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
-    kind: "destroyer", side: "right", art: 1.24, at: [1728, 402], panelSide: -1,
+    kind: "destroyer", stationType: "deathstar1", side: "right", art: .94, at: [1728, 402], panelSide: -1,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
@@ -4154,7 +4191,7 @@ function renderSystem() {
     ],
   });
   mountStation(map, {
-    kind: "moon", side: "left", art: 1.12, at: [191, 395], panelSide: 1,
+    kind: "moon", stationType: "deathstar2", side: "left", art: .94, at: [191, 395], panelSide: 1,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },

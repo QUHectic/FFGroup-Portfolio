@@ -87,11 +87,12 @@ section#team{overflow-x:clip;}
 .sm-stats .hint{grid-column:1 / -1;margin:2px 0 0;font-size:.66rem;text-align:center;color:rgba(243,244,251,.5);}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
 .sm-brands{position:absolute;z-index:4;width:min(290px,24%);text-align:center;}
-.sm-brands::before{content:"";position:absolute;left:50%;top:-7px;width:2px;height:7px;background:rgba(255,255,255,.28);}
-.sm-brands .cap2{position:absolute;z-index:2;left:50%;top:-7px;transform:translateX(-50%);display:block;padding:0 10px;background:#0f1119;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--pink);white-space:nowrap;}
-.sm-brands .bx{position:relative;border:1px solid rgba(255,61,154,.66);border-radius:13px;padding:15px 8px 9px;background:rgba(15,17,25,.94);box-shadow:0 10px 28px rgba(0,0,0,.24),inset 0 0 24px rgba(255,61,154,.025);}
+.sm-brands::before{content:"";position:absolute;z-index:2;left:50%;top:-18px;width:2px;height:18px;background:rgba(255,255,255,.7);transform:translateX(-1px);}
+.sm-brands .cap2{position:absolute;z-index:3;left:50%;top:4px;transform:translateX(-50%);display:block;padding:0 9px;background:#07070d;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--pink);white-space:nowrap;}
+.sm-brands .bx{position:relative;padding:19px 0 0;background:transparent;}
+.sm-brands .bx::before{content:"";position:absolute;z-index:1;left:50%;top:0;width:150px;height:30px;transform:translateX(-50%);border:1px solid rgba(255,61,154,.72);border-bottom:0;border-radius:11px 11px 0 0;box-shadow:0 -5px 18px rgba(255,61,154,.06);}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* expanded portfolio rises above the company cards */
-.sm-brands .chips{display:grid;grid-template-columns:repeat(3,max-content);gap:7px 6px;justify-content:center;align-items:center;}
+.sm-brands .chips{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:7px 6px;justify-content:center;align-items:center;}
 /* future-station legend — high on the right flank, clear of the operating
    planets and the two interactive Death Stars */
 .sm-futnote{position:absolute;right:.4%;top:30.5%;z-index:4;width:min(230px,18%);display:flex;gap:8px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:11px;padding:7px 9px;background:rgba(15,17,25,.82);}
@@ -166,7 +167,8 @@ section#team{overflow-x:clip;}
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
 }
-.sm-card::before{content:"";position:absolute;left:var(--lead-x,50%);bottom:100%;height:calc(var(--lead-h,42px) + 12px);border-left:1.4px dashed color-mix(in srgb,var(--c,#fff) 62%,transparent);transform:translateX(-.7px);pointer-events:none;opacity:.82;}
+.sm-card::before{content:"";position:absolute;left:var(--lead-x,50%);bottom:100%;height:calc(var(--lead-h,42px) + 32px);border-left:1.4px dashed color-mix(in srgb,var(--c,#fff) 62%,transparent);transform:translateX(-.7px);pointer-events:none;opacity:.82;}
+.sm-lead-probe{position:absolute;left:var(--lead-x,50%);top:calc(-1 * (var(--lead-h,42px) + 32px));width:0;height:0;pointer-events:none;visibility:hidden;}
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
 .sm-card h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
@@ -670,10 +672,10 @@ html.spx .tr2-planet{background:#0f1018;}
 @media (max-width:760px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
-html.spx .sys-build{height:340vh;} /* nova ~60%, crossfade — then the manifest SCRUBS with scroll (.615→.95, reversible) while the docked scene glides up */
+html.spx .sys-build{height:calc(340vh + 320px);} /* extra lower runway keeps the 2036 station panel and outer ring inside the system section */
 .sys-nova{display:none;}
 html.spx .sys-nova{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:9;pointer-events:none;}
-html.spx .sys-build-stage{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:flex-start;}
+html.spx .sys-build-stage{position:sticky;top:0;height:100vh;overflow:visible;display:flex;align-items:flex-start;}
 html.spx .sys-build-stage .sysmap{width:100%;margin-top:0;}
 /* the nova crossfade IS the map's reveal — no offset may shift the globe */
 html.spx .sys-build .sysmap.reveal{transform:perspective(1600px) rotateX(7deg);opacity:1;transition:none;}
@@ -4435,9 +4437,15 @@ function renderSystem() {
         <rect x="320" width="100" height="24" rx="12"/><text x="370" y="16" text-anchor="middle">FACILITIES</text>
       </g>
       ${planets}
+      <g class="sm-card-anchors" aria-hidden="true" opacity="0" pointer-events="none">
+        ${PLANETS.map(p => `
+          <circle data-key="${p.key}" data-anchor="left" cx="${f(p.px - p.r)}" cy="${f(p.py)}" r=".5"/>
+          <circle data-key="${p.key}" data-anchor="lead" cx="${f(p.px)}" cy="${f(p.py + p.r)}" r=".5"/>`).join("")}
+      </g>
     </svg>
     ${PLANETS.map(p => `
       <div class="sm-card" data-key="${p.key}" style="--c:${p.c};left:${typeof p.card.left === "number" ? p.card.left + "%" : p.card.left};top:${p.card.top}%">
+        <span class="sm-lead-probe" aria-hidden="true"></span>
         <h3><i></i>${p.name}</h3>
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="cat">${p.cat}</p>
@@ -4591,6 +4599,48 @@ function renderSystem() {
   // the KEY BRANDS vault and the KEY FUNCTION sub-boxes hang centred beneath
   // their parent cards — positioned in px so the connector stems stay tight
   // at every viewport
+  const alignProjectedCards = () => {
+    const anchorX = (key, kind) => {
+      const a = map.querySelector(`.sm-card-anchors [data-key="${key}"][data-anchor="${kind}"]`);
+      if (!a) return null;
+      const r = a.getBoundingClientRect();
+      return (r.left + r.right) / 2;
+    };
+
+    // The orange card is deliberately left-aligned to its planet in SCREEN
+    // space. This second pass matters while the map is carrying its cinematic
+    // perspective transform: matching raw SVG/CSS coordinates is not enough.
+    const sCard = cardFor("storm");
+    const stormLeft = anchorX("storm", "left");
+    if (sCard && Number.isFinite(stormLeft)) {
+      for (let i = 0; i < 2; i++) {
+        const r = sCard.getBoundingClientRect();
+        const sx = r.width / Math.max(1, sCard.offsetWidth);
+        sCard.style.left = (sCard.offsetLeft + (stormLeft - r.left) / Math.max(.001, sx)) + "px";
+      }
+      const sub = map.querySelector('.sm-sub[data-for="storm"]');
+      if (sub) {
+        sub.style.width = sCard.offsetWidth + "px";
+        sub.style.left = sCard.offsetLeft + "px";
+      }
+    }
+
+    // Align the TOP of each dotted stem to a static anchor at the bottom of
+    // its planet. A hidden probe shares the pseudo-element's exact endpoint,
+    // so the line stays attached through perspective, resize and scroll.
+    PLANETS.forEach(p => {
+      const c = cardFor(p.key), probe = c && c.querySelector(".sm-lead-probe");
+      const targetX = anchorX(p.key, "lead");
+      if (!c || !probe || !Number.isFinite(targetX)) return;
+      for (let i = 0; i < 2; i++) {
+        const cr = c.getBoundingClientRect(), pr = probe.getBoundingClientRect();
+        const sx = cr.width / Math.max(1, c.offsetWidth);
+        const current = parseFloat(getComputedStyle(c).getPropertyValue("--lead-x")) || c.offsetWidth / 2;
+        c.style.setProperty("--lead-x", (current + (targetX - pr.left) / Math.max(.001, sx)) + "px");
+      }
+    });
+  };
+
   const layoutSubs = () => {
     // measure with the dock transform neutralised so mid-scroll resizes
     // can't bake the perspective tilt into the layout
@@ -4620,10 +4670,10 @@ function renderSystem() {
       const planetCentreX = (svgR.left - mR.left) + p.px * sc2;
       c.style.setProperty("--lead-x", (planetCentreX - c.offsetLeft) + "px");
     });
-    const under = (el, key) => {
+    const under = (el, key, gap = 9) => {
       const c = cardFor(key);
       if (!el || !c) return;
-      el.style.top = (c.offsetTop + c.offsetHeight + 9) + "px";
+      el.style.top = (c.offsetTop + c.offsetHeight + gap) + "px";
       if (key === "storm") {
         el.style.width = c.offsetWidth + "px";
         el.style.left = c.offsetLeft + "px";
@@ -4632,8 +4682,9 @@ function renderSystem() {
       }
     };
     $$(".sm-sub", map).forEach(su => under(su, su.dataset.for));
-    under(map.querySelector(".sm-brands"), "fly");
+    under(map.querySelector(".sm-brands"), "fly", 18);
     map.style.transform = keepT;
+    alignProjectedCards();
   };
   window.addEventListener("resize", layoutSubs);
   layoutSubs(); setTimeout(layoutSubs, 350);
@@ -4755,6 +4806,7 @@ function renderSystem() {
     map.style.transform = drop > .5
       ? `translateY(${drop.toFixed(1)}px) perspective(1600px) rotateX(${(7 * g2).toFixed(2)}deg)`
       : "";
+    alignProjectedCards();
     // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
     // scrolling on builds it, scrolling back up deconstructs it again,
     // frame-exact in both directions.

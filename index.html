@@ -112,6 +112,7 @@ section#team{overflow-x:clip;}
 .sm-orbit{fill:none;stroke:rgba(255,61,154,.45);stroke-width:2;}
 .sm-orbit.o1{stroke:rgba(255,61,154,.66);stroke-width:2.4;}
 .sm-orbit.future{stroke:rgba(255,255,255,.26);stroke-dasharray:5 9;}
+.sm-orbit.future.outer{stroke:rgba(255,255,255,.20);stroke-width:1.55;stroke-dasharray:2.5 12;}
 .sm-orbit.far{stroke:rgba(255,61,154,.16);}
 .sm-orbit.o1.far{stroke:rgba(255,61,154,.24);}
 .sm-orbit.future.far{stroke:rgba(255,255,255,.11);}
@@ -138,7 +139,16 @@ section#team{overflow-x:clip;}
 .mf,.sm-planet{transform-box:fill-box;transform-origin:center;}
 .sm-bob{animation:smBob 7s ease-in-out infinite;}
 @keyframes smBob{50%{transform:translateY(-8px);}}
-@media (prefers-reduced-motion:reduce){.sm-bob{animation:none;}}
+.sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:smSurfaceSpin 16s linear infinite;will-change:transform;transform-box:view-box;transform-origin:0 0;}
+.sm-cloud-spin{animation-duration:21s;animation-direction:reverse;opacity:.62;}
+.sm-world-belt{animation-duration:24s;}
+.sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.1;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,255,255,.22));}
+.sm-surface-line{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1;stroke-linecap:round;}
+.sm-crater{fill:rgba(71,25,19,.16);stroke:rgba(90,35,24,.38);stroke-width:1;}
+.sm-world-land{fill:#fff;stroke:rgba(255,255,255,.96);stroke-width:.8;stroke-linejoin:round;}
+.sm-world-island{fill:#fff;opacity:.96;}
+@keyframes smSurfaceSpin{to{transform:translateX(var(--travel,-96px));}}
+@media (prefers-reduced-motion:reduce){.sm-bob,.sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:none;}}
 .sm-ghost circle.body2{fill:rgba(255,255,255,.04);stroke-width:1.6;stroke-dasharray:5 6;}
 .sm-ghostlab{font-size:13px;font-weight:800;fill:rgba(243,244,251,.85);}
 .sm-ghostsub{font-size:11px;fill:rgba(243,244,251,.55);}
@@ -4030,7 +4040,6 @@ const DOCK_Y = .68;
 function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
-  const globeSrc = ($(".nav-mark .globe") || {}).src || "";
   const W = 1900, H = 1400, cx = 950, cy = 350, sunR = 84;
   const f = n => n.toFixed(1);
   /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls]
@@ -4044,6 +4053,7 @@ function renderSystem() {
     [618, 172, 500, "sm-orbit"],
     [800, 216, 526, "sm-orbit"],
     [950, 258, 550, "sm-orbit future"],
+    [1060, 286, 578, "sm-orbit future outer"],
   ];
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
@@ -4127,12 +4137,72 @@ function renderSystem() {
   const planetDefs = PLANETS.map(p => `
     <radialGradient id="smp-${p.key}" cx="0.36" cy="0.30" r="0.75">
       <stop offset="0" stop-color="${p.grad[0]}"/><stop offset="0.55" stop-color="${p.grad[1]}"/><stop offset="1" stop-color="${p.grad[2]}"/>
-    </radialGradient>`).join("");
+    </radialGradient>
+    <radialGradient id="smshade-${p.key}" cx=".28" cy=".24" r=".88">
+      <stop offset="0" stop-color="#fff" stop-opacity=".20"/>
+      <stop offset=".42" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".76" stop-color="#07101c" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#02050a" stop-opacity=".50"/>
+    </radialGradient>
+    <clipPath id="smclip-${p.key}"><circle r="${p.r}"/></clipPath>`).join("");
+
+  /* Each texture is a duplicated 96-unit belt clipped to its sphere. The
+     lighting stays fixed above it, so the motion reads as axial rotation. */
+  const planetSurface = key => {
+    if (key === "fly") return {
+      speed: 17,
+      terrain: `
+        <path fill="#07549b" opacity=".64" d="M-52-31C-31-42-9-25 8-33 27-42 42-31 54-28V-8C35-2 20-16 1-8-19 1-35-10-52-4Z"/>
+        <path fill="#79d8ff" opacity=".34" d="M-54-19C-31-8-12-23 8-16 28-8 39-16 54-11V1C38 7 24-1 5 5-16 11-33 1-54 9Z"/>
+        <path fill="#0a3f82" opacity=".48" d="M-54 8C-31 1-13 14 8 8 29 2 42 13 54 18V35C31 43 18 28-2 36-24 44-39 31-54 36Z"/>
+        <path fill="#59bdea" opacity=".31" d="M-52 26C-34 17-16 31 4 24 25 17 39 28 54 24V39C33 48 18 38-2 45-24 51-41 40-52 44Z"/>
+        <path class="sm-surface-line" d="M-48-6C-25-15-10-1 11-8 29-14 41-8 49-4M-46 20C-26 12-8 25 13 18 29 13 40 18 48 22"/>
+        <ellipse cx="18" cy="9" rx="13" ry="6" fill="#c9f2ff" opacity=".42"/>
+        <ellipse cx="18" cy="9" rx="6.5" ry="2.7" fill="#166eb0" opacity=".70"/>
+        <ellipse cx="18" cy="9" rx="2.2" ry="1.2" fill="#dff9ff" opacity=".72"/>`,
+      clouds: `
+        <path class="sm-cloud-streak" d="M-47-27C-29-34-9-26 8-31 24-35 35-31 45-27"/>
+        <path class="sm-cloud-streak" d="M-42 1C-25-5-10 2 7-2 23-6 33-3 42 1"/>
+        <path class="sm-cloud-streak" d="M-44 30C-26 23-5 32 12 27 25 23 35 27 43 31"/>`
+    };
+    if (key === "form") return {
+      speed: 21,
+      terrain: `
+        <path fill="#075d51" opacity=".70" d="M-53-19C-39-31-25-26-15-36-6-43 9-34 8-20-2-9-14-12-19 2-29 7-43 1-53 7Z"/>
+        <path fill="#0b8663" opacity=".82" d="M3-41C18-47 35-37 48-25L53-5C39-11 26 1 17-7 8-14-1-21 3-41Z"/>
+        <path fill="#67df9c" opacity=".58" d="M-48 8C-34-1-23 4-18 14-12 25 1 24 5 36-7 47-27 44-40 34-47 27-50 19-48 8Z"/>
+        <path fill="#087257" opacity=".76" d="M13 6C25-3 44 3 51 15 45 26 39 40 25 45 12 40 4 31 8 20Z"/>
+        <path fill="#a7f2b5" opacity=".32" d="M-22-29-12-20-17-11-29-15ZM23 11l12 5-8 14-13-4z"/>
+        <path class="sm-surface-line" d="M-38-13l8-7 7 5 8-9M13 25l7-9 6 7 8-11M-36 28c9-8 17-7 25-2"/>
+        <circle cx="37" cy="-20" r="4" fill="#42c88b" opacity=".46"/>`,
+      clouds: `
+        <path class="sm-cloud-streak" d="M-45-25C-30-31-16-25 0-29 12-32 25-29 34-25"/>
+        <path class="sm-cloud-streak" d="M-42 5C-29 0-15 6-3 3 9 0 22 2 34 7"/>
+        <path class="sm-cloud-streak" d="M-29 35C-14 29 2 37 17 32 27 29 36 32 43 35"/>`
+    };
+    return {
+      speed: 25,
+      terrain: `
+        <path fill="#8e2818" opacity=".68" d="M-53-29C-35-38-18-30-4-38 12-47 31-36 53-28V-9C34-13 21-5 4-12-14-20-29-8-53-13Z"/>
+        <path fill="#d44a25" opacity=".66" d="M-53-3C-36-12-22-2-7-7 10-13 28-2 53-9V13C37 20 20 8 4 17-14 26-31 13-53 21Z"/>
+        <path fill="#792414" opacity=".58" d="M-53 24C-33 13-18 29 0 22 19 14 36 27 53 20V42C35 47 17 38 1 46-18 52-36 41-53 44Z"/>
+        <path class="sm-surface-line" d="M-45-18C-27-7-19-20-3-12 12-4 24-17 43-9M-40 15c11-10 20-5 28 2 9 7 18 1 27-5 9-6 18-4 26 2"/>
+        <path fill="none" stroke="#641d13" stroke-width="2.2" opacity=".58" d="M-16-41c-7 13 6 19-2 31-7 12 3 19-4 31-4 7-2 15 2 22"/>
+        <ellipse class="sm-crater" cx="25" cy="-20" rx="9" ry="5"/><ellipse class="sm-crater" cx="30" cy="25" rx="6" ry="3.5"/>
+        <ellipse class="sm-crater" cx="-35" cy="7" rx="5" ry="3"/><circle class="sm-crater" cx="8" cy="4" r="3.4"/>`,
+      clouds: `
+        <path class="sm-cloud-streak" style="stroke:#ffd4a8;opacity:.38" d="M-44-27C-25-32-8-25 9-29 24-32 36-27 45-24"/>
+        <path class="sm-cloud-streak" style="stroke:#ffd4a8;opacity:.30" d="M-45 31C-29 25-10 32 7 28 22 24 34 28 44 31"/>`
+    };
+  };
 
   let planets = "";
   PLANETS.forEach((p, i) => {
     const pp = { x: p.at[0], y: p.at[1] };   // riding the rings' lower arcs — lanes/cards anchor here
     p.px = pp.x; p.py = pp.y;
+    const texture = planetSurface(p.key);
+    const textureScale = p.r / 48;
+    const textureSpan = p.r * 2;
     planets += `
       <g class="sm-planet" data-key="${p.key}" role="button" tabindex="0"
          aria-label="${p.name} — ${p.role}."
@@ -4140,7 +4210,19 @@ function renderSystem() {
         <g class="mf"><g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
           <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
           <circle r="${p.r}" fill="url(#smp-${p.key})"/>
-          <ellipse cx="${f(-p.r * .28)}" cy="${f(-p.r * .34)}" rx="${f(p.r * .34)}" ry="${f(p.r * .22)}" fill="#fff" opacity=".28"/>
+          <g clip-path="url(#smclip-${p.key})">
+            <g class="sm-surface-spin" style="--travel:-${textureSpan}px;animation-duration:${texture.speed}s;animation-delay:${(-i * 3.1).toFixed(1)}s">
+              <g transform="scale(${textureScale})">${texture.terrain}</g>
+              <g transform="translate(${textureSpan} 0)"><g transform="scale(${textureScale})">${texture.terrain}</g></g>
+            </g>
+            <g class="sm-cloud-spin" style="--travel:-${textureSpan}px;animation-duration:${texture.speed + 8}s;animation-delay:${(-i * 2.4 - 4).toFixed(1)}s">
+              <g transform="scale(${textureScale})">${texture.clouds}</g>
+              <g transform="translate(${textureSpan} 0)"><g transform="scale(${textureScale})">${texture.clouds}</g></g>
+            </g>
+          </g>
+          <circle r="${p.r}" fill="url(#smshade-${p.key})"/>
+          <ellipse cx="${f(-p.r * .30)}" cy="${f(-p.r * .34)}" rx="${f(p.r * .28)}" ry="${f(p.r * .17)}" fill="#fff" opacity=".17"/>
+          <circle r="${p.r}" fill="none" stroke="rgba(255,255,255,.24)" stroke-width="1.2"/>
           <circle r="${p.r + 14}" fill="transparent"/>
         </g></g>
       </g>`;
@@ -4149,6 +4231,32 @@ function renderSystem() {
   // three INDIVIDUAL licence lanes — each leaves the sun's own edge and
   // flies directly to its planet; a dashed royalty curve runs back beside
   // every lane, arrowing INTO Holdings
+  /* Three matching flat-white atlas panels move across the pink sphere. The
+     fourth repeats the first, keeping the loop seamless as the world turns. */
+  const worldStep = sunR * 2;
+  const worldA = `
+    <path class="sm-world-land" d="M-67-38l13-9 19 2 13 10-5 9-10-1-6 9-13-5-7-8z"/>
+    <path class="sm-world-land" d="M-40-17l12 5 7 12-5 13-2 17-10 17-8-8 4-15-7-13z"/>
+    <path class="sm-world-land" d="M12-39l14-5 14 7-4 8-11 1-5 8 12 8 7 16-5 21-12 13-9-9-2-18-9-9-6-13 7-10z"/>
+    <ellipse class="sm-world-island" cx="-23" cy="-40" rx="4" ry="2.5"/><ellipse class="sm-world-island" cx="44" cy="-30" rx="3" ry="2"/>`;
+  const worldB = `
+    <path class="sm-world-land" d="M-69-30l14-13 22-4 17 7 17-5 23 6 18 10 15 2 10 12-11 9-17-3-9 8-13-3-7 10-9-6-12-13-16 2-12-8-17 4-13-7z"/>
+    <path class="sm-world-land" d="M3-3l12 5 5 13-8 18-8-8-6-17z"/>
+    <path class="sm-world-land" d="M31 26l14-7 15 8-2 14-13 8-17-7z"/>
+    <ellipse class="sm-world-island" cx="56" cy="-2" rx="2.5" ry="7" transform="rotate(18 56 -2)"/>
+    <ellipse class="sm-world-island" cx="24" cy="17" rx="2.4" ry="1.7"/><ellipse class="sm-world-island" cx="18" cy="22" rx="2" ry="1.5"/>`;
+  const worldC = `
+    <path class="sm-world-land" d="M-29-39l15-7 16 5 8 9-8 7-13-2-7 8 13 7 8 16-5 22-12 17-11-7-3-19-10-13-6-15 7-9z"/>
+    <path class="sm-world-land" d="M8-26l14-8 19 3 11 10-5 10-12-2-8 8-12-5-10-7z"/>
+    <path class="sm-world-land" d="M24 4l14-5 9 8-6 13-12 2-9-8z"/>
+    <path class="sm-world-land" d="M-67 49c18-7 34-3 50 0 18 4 36-5 54-1 12 2 22 1 30-1l-8 10H-57z"/>
+    <ellipse class="sm-world-island" cx="-1" cy="-36" rx="3" ry="2"/><ellipse class="sm-world-island" cx="52" cy="27" rx="3" ry="2"/>`;
+  const worldBelt = `
+    <g>${worldA}</g>
+    <g transform="translate(${worldStep} 0)">${worldB}</g>
+    <g transform="translate(${worldStep * 2} 0)">${worldC}</g>
+    <g transform="translate(${worldStep * 3} 0)">${worldA}</g>`;
+
   const stormPlanet = PLANETS.find(p => p.key === "storm");
   const stormLaneX = stormPlanet.at[0] - stormPlanet.r - 1;
   const stormLaneY = stormPlanet.at[1] - 16;
@@ -4173,6 +4281,14 @@ function renderSystem() {
       <defs>
         ${planetDefs}
         ${ringDefs}
+        <radialGradient id="smHoldingsSphere" cx=".31" cy=".24" r=".86">
+          <stop offset="0" stop-color="#ff82c4"/><stop offset=".48" stop-color="#f31b98"/>
+          <stop offset=".82" stop-color="#b8076a"/><stop offset="1" stop-color="#69023b"/>
+        </radialGradient>
+        <radialGradient id="smHoldingsShade" cx=".28" cy=".22" r=".90">
+          <stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/>
+          <stop offset=".76" stop-color="#31001b" stop-opacity=".04"/><stop offset="1" stop-color="#240014" stop-opacity=".58"/>
+        </radialGradient>
         <radialGradient id="smSunGlow">
           <stop offset="0" stop-color="rgba(255,61,154,.5)"/><stop offset=".6" stop-color="rgba(255,61,154,.16)"/><stop offset="1" stop-color="rgba(255,61,154,0)"/>
         </radialGradient>
@@ -4200,9 +4316,14 @@ function renderSystem() {
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
         <circle class="halo" cx="${cx}" cy="${cy}" r="${sunR + 22}" fill="#ff3d9a" opacity="0" style="filter:blur(16px)"/>
-        ${globeSrc
-          ? `<image href="${globeSrc}" x="${cx - sunR}" y="${cy - sunR}" width="${sunR * 2}" height="${sunR * 2}" clip-path="url(#smSunClip)"/>`
-          : `<circle cx="${cx}" cy="${cy}" r="${sunR}" fill="#ff3d9a"/>`}
+        <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="url(#smHoldingsSphere)"/>
+        <g clip-path="url(#smSunClip)">
+          <g transform="translate(${cx} ${cy})">
+            <g class="sm-world-belt" style="--travel:-${worldStep * 3}px;animation-delay:-4s">${worldBelt}</g>
+          </g>
+        </g>
+        <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="url(#smHoldingsShade)"/>
+        <ellipse cx="${cx - 25}" cy="${cy - 31}" rx="25" ry="15" fill="#fff" opacity=".14"/>
         <circle cx="${cx}" cy="${cy}" r="${sunR}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
       </g>
       <g class="sm-mast">

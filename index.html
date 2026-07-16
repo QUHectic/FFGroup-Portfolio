@@ -92,7 +92,7 @@ section#team{overflow-x:clip;}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* the "+ 3 more" popover rises above the company cards */
 .sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 /* pointer to the courier — the future-companies detail lives in the rocket's manifest */
-.sm-futnote{position:absolute;right:1.8%;top:26%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
+.sm-futnote{position:absolute;right:1.8%;top:14%;z-index:4;width:min(310px,25%);display:flex;gap:11px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:12px 14px;background:rgba(15,17,25,.72);}
 .sm-futnote .fn-ico{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;color:var(--pink);border:1px solid rgba(255,61,154,.55);box-shadow:0 0 12px -4px var(--pink);background:rgba(20,21,31,.6);}
 .sm-futnote .fn-ico svg{width:17px;height:17px;display:block;}
 .sm-futnote b{display:block;font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:rgba(243,244,251,.6);margin-bottom:3px;}
@@ -1695,12 +1695,23 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .mg-rocket{offset-rotate:auto;}
 .mg-rocket.orbiting{animation:mgRocket 26s linear infinite;will-change:transform;}
 .mg-rocket.hold{animation-play-state:paused;}
-/* the orbital station — upright on a slow counter-orbit, gently rolling */
+/* FUTURE FLEET — two original, code-native craft derived from the supplied
+   wedge-destroyer and unfinished battle-station references. */
 .mg-station{offset-rotate:0deg;cursor:pointer;outline:none;}
 .mg-station.orbiting{animation:mgRocket 26s linear infinite;will-change:transform;}
 .mg-station.hold{animation-play-state:paused;}
-.mg-station .st-art{transition:transform .3s var(--ease-out);}
-.mg-station:hover .st-art,.mg-station:focus-visible .st-art,.mg-station.hold .st-art{transform:scale(1.14);}
+.mg-station .fc-art{transition:transform .35s var(--ease-out);transform-box:fill-box;transform-origin:center;}
+.mg-station:hover .fc-art,.mg-station:focus-visible .fc-art,.mg-station.hold .fc-art{transform:scale(1.13);}
+.fc-float{transform-box:fill-box;transform-origin:center;animation:fcFloat 7.5s ease-in-out infinite;}
+.fc-left .fc-float{animation-delay:-3.4s;}
+.mg-station.hold .fc-float{animation-play-state:paused;}
+@keyframes fcFloat{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-8px) rotate(1.2deg);}}
+.fc-metal{stroke:rgba(255,255,255,.38);stroke-width:1;stroke-linejoin:round;}
+.fc-panel{fill:none;stroke:rgba(20,28,48,.46);stroke-width:.8;stroke-linecap:round;}
+.fc-window{fill:#8fd8ff;filter:drop-shadow(0 0 3px rgba(56,169,255,.8));}
+.fc-engine{fill:#dff5ff;filter:drop-shadow(0 0 5px rgba(56,169,255,.95));animation:rkGlow .8s ease-in-out infinite alternate;}
+.fc-dish{fill:rgba(15,20,31,.42);stroke:rgba(218,228,246,.7);stroke-width:1;}
+.fc-build{fill:none;stroke:rgba(218,228,246,.55);stroke-width:.8;stroke-dasharray:2 2;}
 .st-spin{transform-box:fill-box;transform-origin:center;animation:stSpin 36s linear infinite;}
 @keyframes stSpin{to{transform:rotate(360deg);}}
 .mg-station.hold .st-spin{animation-play-state:paused;}
@@ -1727,7 +1738,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 @keyframes rkFlick{from{transform:scaleX(1);}to{transform:scaleX(.7);}}
 @keyframes rkGlow{from{opacity:.5;}to{opacity:1;}}
 @keyframes rkStrobe{50%{opacity:.12;}}
-@media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe,.st-strobe,.st-spin{animation:none;}}
+@media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe,.st-strobe,.st-spin,.fc-float,.fc-engine{animation:none;}}
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
@@ -2872,7 +2883,7 @@ function mountRocket(stage, g) {
    sky, slowly rolling on its own axis, and it carries the future-ventures
    panel: hover or click the STATION to read them (the rocket itself is pure
    scenery — never clickable or hoverable). */
-function mountStation(stage, g) {
+function mountLegacyStation(stage, g) {
   const svg = stage && stage.querySelector("svg");
   if (!svg) return;
   const uid = "st" + (++RK_UID);
@@ -2949,6 +2960,110 @@ function mountStation(stage, g) {
   station.addEventListener("click", () => { if (pinned) shut(); else { pinned = true; open(); } });
   station.addEventListener("keydown", e => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); station.dispatchEvent(new Event("click")); }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
+}
+
+/* Two fixed future-company craft. Their silhouettes borrow only the broad
+   visual cues from the supplied references; every shape remains original,
+   inline SVG so it stays sharp and interactive at any proposal size. */
+function mountStation(stage, g) {
+  const svg = stage && stage.querySelector("svg");
+  if (!svg || !g || !g.at) return;
+  const uid = "fc" + (++RK_UID);
+  const f = n => Number(n).toFixed(1);
+  const kind = g.kind === "moon" ? "moon" : "destroyer";
+  const side = g.side === "left" ? "left" : "right";
+
+  const destroyerArt = `
+    <g transform="rotate(-7)"><g class="fc-float"><g class="fc-art">
+      <defs>
+        <linearGradient id="${uid}-metal" x1="0" y1="-34" x2="0" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f3f7ff"/><stop offset=".46" stop-color="#aeb9cb"/><stop offset="1" stop-color="#566176"/>
+        </linearGradient>
+        <linearGradient id="${uid}-upper" x1="-36" y1="-18" x2="34" y2="18" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#dce4f1"/><stop offset="1" stop-color="#707c91"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="2" cy="2" rx="73" ry="39" fill="rgba(56,169,255,.08)"/>
+      <path class="fc-metal" fill="url(#${uid}-metal)" d="M-70 0 52-34 40-3 52 34Z"/>
+      <path fill="rgba(18,24,38,.22)" d="M-70 0 52 34 40-3Z"/>
+      <path class="fc-metal" fill="url(#${uid}-upper)" d="M-43 0 35-21 28-2 36 21Z"/>
+      <path class="fc-panel" d="M-55 0 43-25M-44 5 39 26M-28-7 30-18M-17 10 31 19M-3-14 6 13M18-20 21 16M38-27 34 24"/>
+      <path class="fc-metal" fill="#9ba7ba" d="M5-10 26-13 28-3 8-2Z"/>
+      <path class="fc-metal" fill="#707b8f" d="M12-22 25-23 27-12 10-10Z"/>
+      <path class="fc-metal" fill="#bbc4d2" d="M8-27 31-27 30-22 11-21Z"/>
+      <rect x="17" y="-33" width="4" height="7" rx="1" fill="#8e99ad"/>
+      <path class="fc-window" d="M12-24h3v1.4h-3zm5 0h3v1.4h-3zm5 0h3v1.4h-3z"/>
+      <circle class="fc-engine" cx="47" cy="-21" r="2.5"/><circle class="fc-engine" cx="43" cy="0" r="2.8"/><circle class="fc-engine" cx="47" cy="21" r="2.5"/>
+      <ellipse rx="78" ry="43" fill="transparent"/>
+    </g></g></g>`;
+
+  const moonArt = `
+    <g transform="rotate(5)"><g class="fc-float"><g class="fc-art">
+      <defs>
+        <radialGradient id="${uid}-sphere" cx=".28" cy=".24" r=".82">
+          <stop offset="0" stop-color="#f5f8ff"/><stop offset=".48" stop-color="#abb8ca"/><stop offset="1" stop-color="#4c586a"/>
+        </radialGradient>
+        <clipPath id="${uid}-clip"><circle r="39"/></clipPath>
+      </defs>
+      <circle r="45" fill="rgba(255,61,154,.07)"/>
+      <circle class="fc-metal" r="39" fill="url(#${uid}-sphere)"/>
+      <g clip-path="url(#${uid}-clip)" class="fc-panel">
+        <path d="M-38-10C-17-3 17-3 38-10M-39 5C-15 12 16 12 39 5M-34 20C-12 27 13 27 34 20M-24-32C-11-14-11 16-23 34M2-38C11-15 11 16 2 38M24-31C16-12 16 13 25 31"/>
+        <path d="M-39 1H39M-37 5H37" stroke-width="2.4"/>
+      </g>
+      <circle class="fc-dish" cx="-12" cy="-10" r="12"/>
+      <circle cx="-12" cy="-10" r="5" fill="rgba(9,13,22,.62)" stroke="rgba(225,234,247,.55)" stroke-width=".8"/>
+      <path class="fc-panel" d="M-12-22v24M-24-10H0M-20-18-4-2M-20-2-4-18"/>
+      <circle class="fc-window" cx="-12" cy="-10" r="1.4"/>
+      <path fill="#080910" d="M13-37 26-34 19-27 31-20 22-12 35-4 25 5 36 13 22 21 31 30 13 38 51 48 51-48Z"/>
+      <g class="fc-build">
+        <path d="M14-36 35-24 20-20 37-8 23-2 38 11 20 17 33 29 13 37M18-29 18 31M25-31 25 29M32-26 32 24M15-18 36-18M14-7 37-7M14 5 37 5M14 17 33 17"/>
+        <circle cx="23" cy="-18" r="2"/><circle cx="31" cy="5" r="1.7"/><circle cx="20" cy="17" r="1.8"/>
+      </g>
+      <circle r="46" fill="transparent"/>
+    </g></g></g>`;
+
+  svg.insertAdjacentHTML("beforeend", `
+    <g class="mg-station fc-${side}" id="${uid}" role="button" tabindex="0"
+       aria-label="${g.title || "Future Ltd aspirations"}; hover or click to show its companies"
+       style="transform:translate(${f(g.at[0])}px,${f(g.at[1])}px)">
+      <g transform="scale(${g.art || 1})">${kind === "moon" ? moonArt : destroyerArt}</g>
+    </g>`);
+
+  const craft = svg.querySelector("#" + uid);
+  if (getComputedStyle(stage).position === "static") stage.style.position = "relative";
+  const panel = document.createElement("div");
+  panel.className = "rk-panel";
+  panel.dataset.craft = kind;
+  panel.innerHTML = `<h4>${g.title || "Future Ltd aspirations"}</h4>` + (g.items || []).map(x =>
+    `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
+  stage.appendChild(panel);
+
+  let pinned = false, closeT = null;
+  const place = () => {
+    const rr = craft.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
+    const pw = panel.offsetWidth || 324, ph = panel.offsetHeight || 170;
+    const desiredLeft = (g.panelSide || 1) < 0 ? x - pw - 44 : x + 44;
+    const maxLeft = Math.max(8, sr.width - pw - 8);
+    const viewTop = Math.max(8, -sr.top + 8);
+    const viewBottom = Math.min(sr.height - 8, innerHeight - sr.top - 8);
+    const latestTop = Math.max(viewTop, viewBottom - ph);
+    panel.style.left = Math.max(8, Math.min(maxLeft, desiredLeft)) + "px";
+    panel.style.top = Math.max(viewTop, Math.min(latestTop, y - ph / 2)) + "px";
+  };
+  const open = () => { clearTimeout(closeT); craft.classList.add("hold"); place(); panel.classList.add("show"); };
+  const shut = () => { pinned = false; craft.classList.remove("hold"); panel.classList.remove("show"); };
+  const scheduleShut = () => { if (!pinned) closeT = setTimeout(shut, 260); };
+  craft.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") open(); });
+  craft.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") scheduleShut(); });
+  panel.addEventListener("pointerenter", () => clearTimeout(closeT));
+  panel.addEventListener("pointerleave", scheduleShut);
+  craft.addEventListener("click", () => { if (pinned) shut(); else { pinned = true; open(); } });
+  craft.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); craft.dispatchEvent(new Event("click")); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
 }
@@ -3480,7 +3595,7 @@ function renderSystem() {
       "A next-generation consumer range, widening the group's reach.",
       `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 3l1.9 5.6L18.5 10.5l-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9z" fill="currentColor" opacity=".22" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.6 3.4l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z" fill="currentColor" opacity=".6"/></svg>`],
   ];
-  const STATION_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="12.5" rx="9" ry="3.4"/><rect x="2.5" y="10.6" width="4.6" height="3.8" rx="1"/><rect x="16.9" y="10.6" width="4.6" height="3.8" rx="1"/><circle cx="12" cy="12.5" r="3.1"/><path d="M12 9.4V6.6"/><circle cx="12" cy="5.6" r=".9" fill="currentColor" stroke="none"/></svg>`;
+  const STATION_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.2 10.6 4l-2.2 3.2 2.2 3.2z"/><path d="M4.7 7.2h5.9M7.5 5.2v4"/><circle cx="17" cy="16" r="4.3"/><path d="M13 15.1c2.6.8 5.3.8 8 0M16.1 11.8c-.8 2.8-.8 5.6 0 8.4M18.7 12.4l-2.2 2.2"/></svg>`;
 
   let seed = 20260712 >>> 0;
   const rnd = () => { seed += 0x6D2B79F5; let r = Math.imul(seed ^ seed >>> 15, 1 | seed); r ^= r + Math.imul(r ^ r >>> 7, 61 | r); return ((r ^ r >>> 14) >>> 0) / 4294967296; };
@@ -3518,7 +3633,6 @@ function renderSystem() {
   const stormLaneY = stormPlanet.at[1] - 16;
   const stormCtrlX = stormPlanet.at[0] - 198;
   const stormCtrlY = stormPlanet.at[1] - 90;
-  const royaltyJoinY = 438;                                        // taller stems before both routes converge on Holdings
   const royaltyLeftHitX = cx - sunR + 2, royaltyRightHitX = cx + sunR - 2;
   const spine = `
     <path class="sm-flowglow g-form" d="M 871 394 C 760 472, 630 538, 516 585"/>
@@ -3527,11 +3641,11 @@ function renderSystem() {
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
     <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1200 465, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneX)} ${f(stormLaneY)}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 484 562 L 484 ${royaltyJoinY} L ${royaltyLeftHitX} ${cy}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormPlanet.at[0] + 4)} ${f(stormPlanet.at[1] - 42)} L ${f(stormPlanet.at[0] + 4)} ${royaltyJoinY} L ${royaltyRightHitX} ${cy}"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 528 575 C 642 528, 772 462, 850 398 Q 864 380, ${royaltyLeftHitX} ${cy}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormLaneX + 10)} ${f(stormLaneY - 10)} C ${f(stormCtrlX + 10)} ${f(stormCtrlY - 10)}, 1210 455, 1048 397 Q 1038 380, ${royaltyRightHitX} ${cy}"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
-    <text class="sm-roylab rl-form" x="615" y="430" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="${f(stormPlanet.at[0] - 168)}" y="452" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <text class="sm-roylab rl-form" x="680" y="500" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-storm" x="1325" y="505" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
@@ -3649,7 +3763,7 @@ function renderSystem() {
     </div>
     <div class="sm-futnote">
       <span class="fn-ico">${STATION_ICO}</span>
-      <div><b>Future companies</b><span>Hover or click the space station orbiting the system — every venture in development docks there.</span></div>
+      <div><b>Future companies</b><span>Hover or click either future craft — the sooner ventures are on the right, with the longer-horizon pair on the left.</span></div>
     </div>
   `;
 
@@ -3718,7 +3832,22 @@ function renderSystem() {
   }
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
-  mountStation(map, { cx: 950, cy: 520, rx: 800, ry: 342, rotDeg: 0, out: 1, art: 1, at: [1245, 800] });
+  mountStation(map, {
+    kind: "destroyer", side: "right", art: 1.3, at: [1660, 465], panelSide: -1,
+    title: "Future Ltd aspirations · 2028–2029",
+    items: [
+      { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
+      { n: "Freedom Fly Ltd", d: "2029 · Drone visual &amp; alarms", c: "var(--blue)" },
+    ],
+  });
+  mountStation(map, {
+    kind: "moon", side: "left", art: 1.15, at: [245, 470], panelSide: 1,
+    title: "Future Ltd aspirations · 2036+",
+    items: [
+      { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
+      { n: "Freedom Energy+", d: "Beyond 2036 · Long-horizon energy", c: "var(--pink)" },
+    ],
+  });
 
   // the KEY BRANDS vault and the KEY FUNCTION sub-boxes hang centred beneath
   // their parent cards — positioned in px so the connector stems stay tight
@@ -3731,18 +3860,24 @@ function renderSystem() {
     const svg2 = map.querySelector("svg");
     const mR = map.getBoundingClientRect(), svgR = svg2.getBoundingClientRect();
     const sc2 = svgR.width / 1900;
-    // Distribution forms a left-aligned vertical stack: the planet's visible
-    // left edge, the company card and the KEY FUNCTION box share one x-axis.
+    // Give every company a deliberate band of breathing room below its planet.
+    // Distribution additionally forms a left-aligned vertical stack: the
+    // planet, company card and KEY FUNCTION box share one x-axis.
+    const cardGap = { form: 50, fly: 54, storm: 50 };
+    PLANETS.forEach(p => {
+      const c = cardFor(p.key);
+      if (!c) return;
+      c.style.top = ((svgR.top - mR.top) + (p.py + p.r) * sc2 + cardGap[p.key]) + "px";
+    });
     const sCard = cardFor("storm");
     if (sCard) {
       const want = (svgR.left - mR.left) + (stormPlanet.px - stormPlanet.r) * sc2;
       sCard.style.left = want + "px";
-      sCard.style.top = ((svgR.top - mR.top) + (stormPlanet.py + stormPlanet.r) * sc2 + 10) + "px";
     }
     const under = (el, key) => {
       const c = cardFor(key);
       if (!el || !c) return;
-      el.style.top = (c.offsetTop + c.offsetHeight + 6) + "px";
+      el.style.top = (c.offsetTop + c.offsetHeight + 9) + "px";
       if (key === "storm") {
         el.style.width = c.offsetWidth + "px";
         el.style.left = c.offsetLeft + "px";
@@ -3796,9 +3931,8 @@ function renderSystem() {
   chain("storm", .84, .87, .87, .92, .92, .955);
   reg(map.querySelector(".sm-futnote"), .95, .99, "rise");  // the courier's notice arrives with the rocket
   reg(svgEl.querySelector(".mg-rocket"), .07, .12, "fade");     // the courier launches right behind the headline
-  reg(svgEl.querySelector(".mg-station"), .09, .14, "fade");    // the station wheels in on its heels
-  const rkp = map.querySelector(".rk-panel");
-  if (rkp) reg(rkp, .09, .14, "fade");
+  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, .09 + idx * .015, .14 + idx * .015, "fade"));
+  [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, .09 + idx * .015, .14 + idx * .015, "fade"));
 
   let lastMp = -1;
   const applyManifest = mp => {

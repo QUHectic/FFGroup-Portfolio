@@ -1703,8 +1703,8 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .mg-rocket{offset-rotate:auto;}
 .mg-rocket.orbiting{animation:mgRocket 26s linear infinite;will-change:transform;}
 .mg-rocket.hold{animation-play-state:paused;}
-/* FUTURE FLEET — two original, code-native craft derived from the supplied
-   wedge-destroyer and unfinished battle-station references. */
+/* FUTURE FLEET — two original, code-native battle stations sharing the
+   courier's illustrated metal, light and motion language. */
 .mg-station{offset-rotate:0deg;cursor:pointer;outline:none;}
 .mg-station.orbiting{animation:mgRocket 26s linear infinite;will-change:transform;}
 .mg-station.hold{animation-play-state:paused;}
@@ -1716,6 +1716,53 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 @keyframes fcFloat{0%,100%{transform:translateY(0) rotate(-.8deg);}35%{transform:translateY(-7px) rotate(.45deg);}70%{transform:translateY(-2px) rotate(1deg);}}
 .fc-destroyer .fc-art{filter:drop-shadow(0 14px 12px rgba(0,0,0,.65)) drop-shadow(0 0 16px rgba(56,169,255,.1));}
 .fc-moon .fc-art{filter:drop-shadow(0 12px 15px rgba(0,0,0,.72)) drop-shadow(0 0 18px rgba(255,61,154,.08));}
+/* code-native battle stations — built from the same faceted gradients,
+   micro-panels, lit windows and restrained motion language as the courier */
+.fc-deathstar1 .fc-art,.fc-deathstar2 .fc-art{filter:drop-shadow(0 10px 10px rgba(0,0,0,.7)) drop-shadow(0 0 12px rgba(114,154,210,.10));}
+.fc-station-float{animation:fcStationFloat 8.8s cubic-bezier(.45,.05,.55,.95) infinite;will-change:transform;}
+.fc-left .fc-station-float{animation-delay:-3.8s;}
+.mg-station.hold .fc-station-float{animation-play-state:paused;}
+@keyframes fcStationFloat{0%,100%{transform:translateY(0)}38%{transform:translateY(-5px)}72%{transform:translateY(-2px)}}
+.fc-bs-grid{fill:none;stroke:rgba(18,27,43,.52);stroke-width:.7;stroke-linecap:round;}
+.fc-bs-districts{fill:rgba(15,24,40,.15);stroke:rgba(230,237,248,.12);stroke-width:.5;}
+.fc-bs-meridian{fill:none;stroke:rgba(237,242,250,.16);stroke-width:.55;stroke-dasharray:5 3;}
+.fc-bs-rimlight{fill:none;stroke:rgba(255,255,255,.86);stroke-width:1.15;stroke-linecap:round;}
+.fc-bs-cut{fill:none;stroke:#090e18;stroke-width:3.8;stroke-linejoin:round;filter:drop-shadow(0 0 2px rgba(255,151,86,.45));}
+.fc-bs-skeleton{fill:none;stroke:rgba(210,222,240,.48);stroke-width:.7;stroke-dasharray:2.3 2.8;}
+.fc-bs-ribs{fill:none;stroke:rgba(235,241,250,.8);stroke-width:1.05;stroke-dasharray:4.5 2.4;}
+.fc-bs-thermal{fill:#ff9d55;stroke:rgba(255,132,66,.78);stroke-width:.75;filter:drop-shadow(0 0 3px rgba(255,104,48,.78));animation:fcThermal 2.4s ease-in-out infinite alternate;}
+.fc-bs-window{fill:#d9efff;opacity:.64;}
+.fc-bs-emitter{fill:#baffd2;stroke:#31ff83;stroke-width:.85;filter:drop-shadow(0 0 3px rgba(49,255,131,.95));}
+.fc-bs-nav{fill:#ff74b8;filter:drop-shadow(0 0 2px rgba(255,61,154,.9));animation:rkStrobe 1.7s steps(2,start) infinite;}
+.fc-bs-nav.alt{fill:#8fd8ff;animation-delay:-.8s;}
+@keyframes fcThermal{from{opacity:.46}to{opacity:.94}}
+
+/* Alternating superlaser cycle: a visible charge-up, one clean primary pulse,
+   a shorter echo pulse and a quickly fading ionised afterline. The stations
+   are phase-shifted, so the two shots never fire on top of one another. */
+.fc-beam{opacity:0;animation:fcBeamCycle 12s linear infinite;}
+.fc-beam-haze{fill:none;stroke:rgba(34,255,122,.22);stroke-width:8;stroke-linecap:round;filter:blur(2.2px);}
+.fc-beam-outer{fill:none;stroke:#2dff83;stroke-width:3.4;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(45,255,131,.95));}
+.fc-beam-core{fill:none;stroke:#eafff1;stroke-width:1.05;stroke-linecap:round;}
+.fc-beam-after{fill:none;stroke:rgba(82,255,146,.42);stroke-width:.8;stroke-linecap:round;stroke-dasharray:3 5;}
+.fc-beam-tip{fill:#f4fff8;filter:drop-shadow(0 0 3px #35ff86) drop-shadow(0 0 8px rgba(53,255,134,.9));}
+.fc-beam-charge{fill:none;stroke:#46ff91;stroke-width:1;opacity:0;transform-box:fill-box;transform-origin:center;animation:fcChargeCycle 12s linear infinite;filter:drop-shadow(0 0 4px rgba(60,255,140,.95));pointer-events:none;}
+@keyframes fcBeamCycle{
+  0%,56%{opacity:0}
+  58%{opacity:.12}
+  59.2%{opacity:1}
+  61.6%{opacity:.88}
+  62.5%{opacity:0}
+  64.1%{opacity:.72}
+  65.2%,100%{opacity:0}
+}
+@keyframes fcChargeCycle{
+  0%,49%{opacity:0;transform:scale(.35)}
+  53%{opacity:.32;transform:scale(.6)}
+  57.5%{opacity:1;transform:scale(1)}
+  59.2%{opacity:.9;transform:scale(1.28)}
+  60.2%,100%{opacity:0;transform:scale(1.55)}
+}
 .fc-metal{stroke:rgba(255,255,255,.42);stroke-width:.75;stroke-linejoin:round;}
 .fc-panel{fill:none;stroke:rgba(21,29,45,.58);stroke-width:.7;stroke-linecap:round;stroke-linejoin:round;}
 .fc-panel-hi{fill:none;stroke:rgba(232,239,250,.36);stroke-width:.62;stroke-linecap:round;}
@@ -1773,7 +1820,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 @keyframes rkFlick{from{transform:scaleX(1);}to{transform:scaleX(.7);}}
 @keyframes rkGlow{from{opacity:.5;}to{opacity:1;}}
 @keyframes rkStrobe{50%{opacity:.12;}}
-@media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe,.st-strobe,.st-spin,.fc-float,.fc-engine,.fc-window,.fc-plume,.fc-sweep,.fc-reactor,.fc-debris,.fc2-flow,.fc2-emit,.fc2-weld,.fc2-drone{animation:none;}}
+@media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe,.st-strobe,.st-spin,.fc-float,.fc-station-float,.fc-engine,.fc-window,.fc-plume,.fc-sweep,.fc-reactor,.fc-debris,.fc2-flow,.fc2-emit,.fc2-weld,.fc2-drone,.fc-bs-thermal,.fc-bs-nav,.fc-beam,.fc-beam-charge{animation:none;}}
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
@@ -3009,13 +3056,9 @@ function mountLegacyStation(stage, g) {
   document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
 }
 
-/* FUTURE FLEET v3 — the two craft holding station on the outer dotted orbit,
-   rebuilt to the courier's material standard: faceted hull metal under one
-   key light, hard rim highlights, seeded greeble districts and lit window
-   rows, layered flickering engine plasma — and, on the half-built sphere, a
-   live construction site: skeleton ribs, glowing cut-face decks, weld
-   flashes and a patrolling tug. Silhouettes only nod to the supplied
-   references; every shape is original, code-native SVG. */
+/* FUTURE FLEET v4 — interactive twin battle stations on the outer dotted
+   orbit. The mounted art is original code-native SVG; the legacy kind keys
+   remain only so the existing future-company panels keep their identities. */
 function mountStation(stage, g) {
   const svg = stage && stage.querySelector("svg");
   if (!svg || !g || !g.at) return;
@@ -3024,39 +3067,38 @@ function mountStation(stage, g) {
   const kind = g.kind === "moon" ? "moon" : "destroyer";
   const side = g.side === "left" ? "left" : "right";
   const stationType = g.stationType === "deathstar2" ? "deathstar2" : "deathstar1";
-
-  /* The cinematic render contains both stations. Each interactive SVG object
-     displays a tightly clipped half of that source image, then mirrors it so
-     its centre-facing hemisphere keeps the render's shared key light. The
-     wrapper remains the original .mg-station element, so hover, keyboard,
-     click, panel positioning and future-company data are all unchanged. */
+  const beamDelay = stationType === "deathstar2" ? -6 : 0;
   const fleetImage = "group-system-assets/death-stars-dual.png";
-  const source = stationType === "deathstar2"
-    ? { cx: 1347, cy: 460 }
-    : { cx: 329, cy: 458 };
-  const sourceScale = .236;
+  /* The generated widescreen render is mirrored once, then each sphere is
+     isolated through a compact nested SVG viewport. Keeping the viewport
+     itself sphere-sized prevents the hidden half of the source image from
+     distorting hover scaling or future-panel placement. */
+  const sourceCrop = stationType === "deathstar2"
+    ? { x: 20, y: 155 }
+    : { x: 1038, y: 153 };
   const photoArt = `
     <g class="fc-float">
       <g class="fc-art fc-photo-art">
         <defs>
-          <clipPath id="${uid}-photo-clip"><circle r="69"/></clipPath>
+          <clipPath id="${uid}-photo-clip"><circle r="67"/></clipPath>
           <radialGradient id="${uid}-photo-halo">
             <stop offset=".70" stop-color="#000" stop-opacity="0"/>
             <stop offset=".88" stop-color="${stationType === "deathstar2" ? "#ff8a3d" : "#d8e7ff"}" stop-opacity=".10"/>
             <stop offset="1" stop-color="#000" stop-opacity="0"/>
           </radialGradient>
         </defs>
-        <circle r="73" fill="url(#${uid}-photo-halo)"/>
-        <g clip-path="url(#${uid}-photo-clip)" transform="scale(-1 1)" pointer-events="none">
-          <image href="${fleetImage}"
-                 x="${f(-source.cx * sourceScale)}"
-                 y="${f(-source.cy * sourceScale)}"
-                 width="${f(1672 * sourceScale)}"
-                 height="${f(941 * sourceScale)}"
-                 preserveAspectRatio="none"/>
+        <circle r="70" fill="url(#${uid}-photo-halo)"/>
+        <g clip-path="url(#${uid}-photo-clip)" pointer-events="none">
+          <svg x="-68" y="-68" width="136" height="136"
+               viewBox="${sourceCrop.x} ${sourceCrop.y} 610 610"
+               preserveAspectRatio="xMidYMid slice" overflow="hidden">
+            <g transform="translate(1672 0) scale(-1 1)">
+              <image href="${fleetImage}" width="1672" height="941" preserveAspectRatio="none"/>
+            </g>
+          </svg>
         </g>
-        <circle r="67" fill="none" stroke="rgba(224,232,246,.20)" stroke-width=".65" pointer-events="none"/>
-        <circle class="fc-hit" r="73" fill="transparent" pointer-events="all"/>
+        <circle r="63" fill="none" stroke="rgba(224,232,246,.20)" stroke-width=".65" pointer-events="none"/>
+        <circle class="fc-hit" r="68" fill="transparent" pointer-events="all"/>
       </g>
     </g>`;
 
@@ -3137,6 +3179,136 @@ function mountStation(stage, g) {
   for (let x = -52; x < 42; x += 2.4) if (rnd() > .4) mTrench += `<rect x="${f(x)}" y="9.3" width="1.5" height="1.15" fill="#cfeaff" opacity="${f(.4 + rnd() * .5)}"/>`;
   let mSpokes = "";
   for (let k = 0; k < 8; k++) { const a = k * .785 + .32; mSpokes += `M${f(-17 + Math.cos(a) * 2.8)} ${f(-15 + Math.sin(a) * 2.8)}L${f(-17 + Math.cos(a) * 14.6)} ${f(-15 + Math.sin(a) * 14.6)}`; }
+  let mWindows = "";
+  for (let i = 0; i < 17; i++) {
+    const x = -40 + i * 5;
+    mWindows += `<rect class="${i % 4 === 0 ? "fc-window" : "fc-bs-window"}" x="${x}" y="20" width="1.45" height=".7" rx=".2" style="animation-delay:${f(-i * .13)}s"/>`;
+  }
+  for (let i = 0; i < 12; i++) {
+    const x = -30 + i * 5.1, y = -39.5 + Math.abs(i - 5.5) * .32;
+    mWindows += `<rect class="${i % 3 === 0 ? "fc-window" : "fc-bs-window"}" x="${f(x)}" y="${f(y)}" width="1.3" height=".65" rx=".2" style="animation-delay:${f(-.8 - i * .11)}s"/>`;
+  }
+
+  /* FUTURE FLEET v4 — both stations are now original, code-native SVGs in
+     the courier's illustrated material language. One shared construction
+     system produces a complete armoured sphere and an unfinished sibling;
+     the left-hand object is mirrored so both dishes and their intermittent
+     beams face logically into the centre of the Freedom System. */
+  const isUnfinished = stationType === "deathstar2";
+  const shellClip = isUnfinished ? `<path d="${BUILT}"/>` : `<circle r="53"/>`;
+  const shellOutline = isUnfinished
+    ? `<path d="${BUILT}" fill="none" stroke="rgba(226,235,248,.48)" stroke-width=".7"/>
+       <path class="fc-bs-cut" d="${jagLine}"/>`
+    : `<circle r="53" fill="none" stroke="rgba(226,235,248,.42)" stroke-width=".75"/>`;
+  const constructionWorks = isUnfinished ? `
+    <g clip-path="url(#${uid}-sphere-clip)">
+      <circle r="52.4" fill="#090e19"/>
+      <circle cx="26" cy="-5" r="43" fill="url(#${uid}-interior)"/>
+      <g class="fc-bs-skeleton">
+        <ellipse rx="19" ry="50"/><ellipse rx="32" ry="51"/><ellipse rx="44" ry="51"/>
+        <path d="M8-44V44M20-48V48M33-40V40M44-27V28"/>
+        <path d="M7-36H39M7-24H48M8-12H51M9 0H52M10 12H50M13 24H45M19 36H36"/>
+        <path d="M10-38 45 27M20-46 49 12M9 28 42-31M22 43 49-8"/>
+      </g>
+      <g class="fc-bs-thermal">
+        <path d="M13-31H40M18-18H49M15-5H48M18 9H49M22 22H43"/>
+        <circle cx="39" cy="-31" r="1.2"/><circle cx="48" cy="-18" r="1"/>
+        <circle cx="47" cy="9" r="1.15"/><circle cx="42" cy="22" r="1"/>
+      </g>
+      <g class="fc-bs-ribs">
+        <path d="M25-47A53 53 0 0 1 42 33"/>
+        <path d="M31-49A57 57 0 0 1 49 37"/>
+      </g>
+    </g>` : "";
+
+  const battleStationCore = `
+    <g class="fc-station-float">
+      <g class="fc-beam" style="animation-delay:${beamDelay}s" pointer-events="none">
+        <path class="fc-beam-haze" d="M-29-19L-220-40"/>
+        <path class="fc-beam-outer" d="M-29-19L-220-40"/>
+        <path class="fc-beam-core" d="M-29-19L-220-40"/>
+        <circle class="fc-beam-tip" cx="-220" cy="-40" r="2.2"/>
+        <path class="fc-beam-after" d="M-38-20L-170-34"/>
+      </g>
+      <g class="fc-art fc-battle-art">
+        <defs>
+          <clipPath id="${uid}-sphere-clip"><circle r="53"/></clipPath>
+          <clipPath id="${uid}-shell-clip">${shellClip}</clipPath>
+          <radialGradient id="${uid}-sphere" cx=".28" cy=".25" r=".92">
+            <stop offset="0" stop-color="#f3f7fd"/>
+            <stop offset=".25" stop-color="#c3cddd"/>
+            <stop offset=".55" stop-color="#727f94"/>
+            <stop offset=".79" stop-color="#364156"/>
+            <stop offset="1" stop-color="#151c2b"/>
+          </radialGradient>
+          <radialGradient id="${uid}-halo">
+            <stop offset=".66" stop-color="#38a9ff" stop-opacity="0"/>
+            <stop offset=".86" stop-color="#38a9ff" stop-opacity=".12"/>
+            <stop offset="1" stop-color="#38a9ff" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="${uid}-interior">
+            <stop offset="0" stop-color="#ffb06c" stop-opacity=".30"/>
+            <stop offset=".52" stop-color="#ff6a3d" stop-opacity=".11"/>
+            <stop offset="1" stop-color="#090e19" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="${uid}-dish" cx=".65" cy=".64" r=".82">
+            <stop offset="0" stop-color="#172033"/>
+            <stop offset=".48" stop-color="#526078"/>
+            <stop offset=".78" stop-color="#aeb9ca"/>
+            <stop offset="1" stop-color="#e8edf5"/>
+          </radialGradient>
+          <linearGradient id="${uid}-trench" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#111827"/><stop offset=".52" stop-color="#253147"/><stop offset="1" stop-color="#0b111e"/>
+          </linearGradient>
+        </defs>
+
+        <circle r="66" fill="url(#${uid}-halo)"/>
+        ${isUnfinished ? `<g class="fc-debris" opacity=".55"><path d="M-61-28l4-2 3 3-4 3zM58 31l5 1-1 4-5-1zM11-62l3-3 3 4-3 3z" fill="#aeb9c9"/></g>` : ""}
+        ${constructionWorks}
+
+        <g clip-path="url(#${uid}-shell-clip)">
+          <circle r="53" fill="url(#${uid}-sphere)"/>
+          <ellipse cx="-24" cy="-28" rx="34" ry="17" fill="#fff" opacity=".11" transform="rotate(-16 -24 -28)"/>
+          <g class="fc-bs-grid">
+            <path d="M-52-31C-28-22 27-22 52-31M-53-16C-27-7 27-7 53-16M-54 3C-27 12 27 12 54 3M-51 22C-25 31 25 31 51 22M-40 38C-18 46 18 46 40 38"/>
+            <path d="M-41-35C-25-12-24 18-38 41M-20-49C-7-18-7 20-19 49M6-52C18-20 18 20 7 52M31-43C23-19 23 20 34 41"/>
+          </g>
+          <g class="fc-bs-districts">
+            <path d="M-46-7-22-17-18 1-42 9ZM1 21 31 15 33 31 2 37ZM-35 27-12 24-14 42-34 43ZM-30-43-7-48-3-35-25-32Z"/>
+          </g>
+          ${mSurf}
+          ${mGlow}
+          ${mWindows}
+          <rect x="-55" y="7.4" width="110" height="6.8" fill="url(#${uid}-trench)"/>
+          <path d="M-55 7.5H55M-55 14.2H55" fill="none" stroke="rgba(232,239,250,.26)" stroke-width=".55"/>
+          ${mTrench}
+          <path class="fc-bs-meridian" d="M-49-20C-24-11 25-11 50-20M-47 27C-21 35 23 35 47 27"/>
+          <ellipse class="fc-sweep" cx="-69" cy="-8" rx="15" ry="64" fill="#fff" opacity=".17"/>
+        </g>
+
+        ${shellOutline}
+        ${isUnfinished ? mDecks : ""}
+        <path class="fc-bs-rimlight" d="M-50-17A53 53 0 0 1 -7-52"/>
+
+        <g class="fc-bs-dish">
+          <circle cx="-17" cy="-15" r="15.8" fill="url(#${uid}-dish)" stroke="rgba(244,247,252,.82)" stroke-width="1"/>
+          <circle cx="-17" cy="-15" r="12.1" fill="none" stroke="rgba(12,18,31,.48)" stroke-width=".62"/>
+          <circle cx="-17" cy="-15" r="8.1" fill="none" stroke="rgba(12,18,31,.52)" stroke-width=".58"/>
+          <circle cx="-17" cy="-15" r="4.4" fill="#111a2a" stroke="rgba(227,236,249,.42)" stroke-width=".5"/>
+          <path d="${mSpokes}" fill="none" stroke="rgba(10,15,27,.48)" stroke-width=".55"/>
+          <path d="M-31.7-20.4A15.8 15.8 0 0 1 -18.5-30.6" fill="none" stroke="rgba(255,255,255,.65)" stroke-width=".95" stroke-linecap="round"/>
+          <circle class="fc-bs-emitter" cx="-17" cy="-15" r="2.25"/>
+          <circle class="fc-beam-charge" style="animation-delay:${beamDelay}s" cx="-17" cy="-15" r="5.4"/>
+        </g>
+
+        <circle class="fc-bs-nav" cx="-43" cy="30" r="1"/>
+        <circle class="fc-bs-nav alt" cx="24" cy="-47" r=".9"/>
+        <circle class="fc-hit" r="64" fill="transparent" pointer-events="all"/>
+      </g>
+    </g>`;
+  const stationArt = side === "left"
+    ? `<g transform="scale(-1 1)">${battleStationCore}</g>`
+    : battleStationCore;
 
   const destroyerArt = `
     <g transform="rotate(-8)"><g class="fc-float">
@@ -3989,11 +4161,11 @@ function renderSystem() {
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
     <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1200 465, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneX)} ${f(stormLaneY)}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 528 575 C 642 528, 772 462, 850 398 Q 864 380, ${royaltyLeftHitX} ${cy}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormLaneX + 10)} ${f(stormLaneY - 10)} C ${f(stormCtrlX + 10)} ${f(stormCtrlY - 10)}, 1210 455, 1048 397 Q 1038 380, ${royaltyRightHitX} ${cy}"/>
-    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 14} 523 L ${cx + 14} 448"/>
-    <text class="sm-roylab rl-form" x="680" y="500" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1325" y="505" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 536 563 L ${royaltyLeftHitX} ${cy}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormLaneX + 20)} ${f(stormLaneY - 24)} L ${royaltyRightHitX} ${cy}"/>
+    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 23} 523 L ${cx + 23} 448"/>
+    <text class="sm-roylab rl-form" x="690" y="472" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-storm" x="1288" y="478" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
@@ -4183,7 +4355,7 @@ function renderSystem() {
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
-    kind: "destroyer", stationType: "deathstar1", side: "right", art: .94, at: [1728, 402], panelSide: -1,
+    kind: "destroyer", stationType: "deathstar1", side: "right", art: .68, at: [1728, 402], panelSide: -1,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
@@ -4191,7 +4363,7 @@ function renderSystem() {
     ],
   });
   mountStation(map, {
-    kind: "moon", stationType: "deathstar2", side: "left", art: .94, at: [191, 395], panelSide: 1,
+    kind: "moon", stationType: "deathstar2", side: "left", art: .68, at: [191, 395], panelSide: 1,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },

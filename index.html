@@ -43,9 +43,10 @@ section#team{overflow-x:clip;}
 .sm-vaultbox{position:absolute;max-width:330px;}
 .sm-vb-cap{font-size:.66rem;font-weight:800;letter-spacing:.14em;color:rgba(243,244,251,.55);}
 .sm-vb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
-.sm-brand{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(20,21,31,.94);font-size:.72rem;font-weight:700;color:#fff;}
-.sm-brand i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 7px var(--c);}
-.sm-brand.more{border-style:dashed;color:rgba(243,244,251,.55);font-weight:600;cursor:pointer;outline:none;transition:border-color .25s,color .25s;}
+.sm-brand{display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;padding:4px 8px;border:1px solid rgba(255,61,154,.62);border-radius:10px;background:rgba(12,13,22,.96);font-size:.62rem;font-weight:700;color:#fff;white-space:nowrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);}
+.sm-brand .brand-ico{width:14px;height:14px;display:grid;place-items:center;flex:none;color:var(--c,var(--pink));filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c,var(--pink)) 50%,transparent));}
+.sm-brand .brand-ico svg{width:14px;height:14px;display:block;overflow:visible;}
+.sm-brand.more{border-style:solid;color:rgba(243,244,251,.62);font-weight:600;cursor:pointer;outline:none;transition:border-color .25s,color .25s,background .25s;}
 .sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(255,140,195,.75);color:#fff;}
 /* expanded brand-vault portfolio — hover (or tap) for the remaining marks */
 .sm-morepop{
@@ -85,12 +86,12 @@ section#team{overflow-x:clip;}
 .sm-stats .s{display:block;font-size:.6rem;color:rgba(243,244,251,.44);line-height:1.35;margin-top:4px;}
 .sm-stats .hint{grid-column:1 / -1;margin:2px 0 0;font-size:.66rem;text-align:center;color:rgba(243,244,251,.5);}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
-.sm-brands{position:absolute;z-index:4;width:min(380px,30%);text-align:center;}
+.sm-brands{position:absolute;z-index:4;width:min(290px,24%);text-align:center;}
 .sm-brands::before{content:"";position:absolute;left:50%;top:-7px;width:2px;height:7px;background:rgba(255,255,255,.28);}
-.sm-brands .cap2{display:block;font-size:.56rem;font-weight:800;letter-spacing:.16em;color:rgba(243,244,251,.5);margin-bottom:4px;}
-.sm-brands .bx{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:7px 10px;background:rgba(15,17,25,.9);}
+.sm-brands .cap2{position:absolute;z-index:2;left:50%;top:-7px;transform:translateX(-50%);display:block;padding:0 10px;background:#0f1119;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--pink);white-space:nowrap;}
+.sm-brands .bx{position:relative;border:1px solid rgba(255,61,154,.66);border-radius:13px;padding:15px 8px 9px;background:rgba(15,17,25,.94);box-shadow:0 10px 28px rgba(0,0,0,.24),inset 0 0 24px rgba(255,61,154,.025);}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* expanded portfolio rises above the company cards */
-.sm-brands .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+.sm-brands .chips{display:grid;grid-template-columns:repeat(3,max-content);gap:7px 6px;justify-content:center;align-items:center;}
 /* future-station legend — high on the right flank, clear of the operating
    planets and the two interactive Death Stars */
 .sm-futnote{position:absolute;right:.4%;top:30.5%;z-index:4;width:min(230px,18%);display:flex;gap:8px;align-items:flex-start;border:1px dashed rgba(255,255,255,.3);border-radius:11px;padding:7px 9px;background:rgba(15,17,25,.82);}
@@ -154,12 +155,18 @@ section#team{overflow-x:clip;}
 .sm-ghostsub{font-size:11px;fill:rgba(243,244,251,.55);}
 .sm-star2{fill:#fff;}
 .sm-lead{stroke:rgba(255,255,255,.2);stroke-width:1.4;stroke-dasharray:2 6;}
+.sm-year{pointer-events:none;}
+.sm-year circle{fill:#fff;opacity:.76;filter:drop-shadow(0 0 5px rgba(255,255,255,.35));}
+.sm-year rect{fill:rgba(10,11,18,.90);stroke:rgba(255,61,154,.48);stroke-width:1;}
+.sm-year.future rect{stroke:rgba(255,255,255,.38);}
+.sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:rgba(255,255,255,.78);}
 .sm-card{
   position:absolute;z-index:5;width:min(300px,25vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
 }
+.sm-card::before{content:"";position:absolute;left:var(--lead-x,50%);bottom:100%;height:calc(var(--lead-h,42px) + 12px);border-left:1.4px dashed color-mix(in srgb,var(--c,#fff) 62%,transparent);transform:translateX(-.7px);pointer-events:none;opacity:.82;}
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
 .sm-card h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
@@ -184,6 +191,7 @@ section#team{overflow-x:clip;}
   /* the cinematic map is desktop-only — on phones the content stacks clean */
   .sysmap svg,.rk-panel,.sys-nova,.sm-futnote{display:none !important;}
   .sm-card,.sm-note,.sm-vaultbox,.sm-futwrap,.sm-brands,.sm-head,.sm-stats,.sm-sub{position:static;width:auto;max-width:none;margin:12px 18px;transform:none !important;opacity:1 !important;pointer-events:auto;}
+  .sm-card::before{display:none;}
   .sm-head{display:block;}
   /* no planets to hover on the stacked mobile view — the popover opens on tap */
   .sm-stats .hint{display:none;}
@@ -3498,7 +3506,7 @@ function mountStation(stage, g) {
   const craft = svg.querySelector("#" + uid);
   if (getComputedStyle(stage).position === "static") stage.style.position = "relative";
   const panel = document.createElement("div");
-  panel.className = "rk-panel";
+  panel.className = "rk-panel" + (g.autoOpen ? " auto-panel" : "");
   panel.dataset.craft = kind;
   panel.innerHTML = `<h4>${g.title || "Future Ltd aspirations"}</h4>` + (g.items || []).map(x =>
     `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
@@ -3510,13 +3518,41 @@ function mountStation(stage, g) {
     const rr = target.getBoundingClientRect(), sr = stage.getBoundingClientRect();
     const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
     const pw = panel.offsetWidth || 324, ph = panel.offsetHeight || 170;
-    const desiredLeft = (g.panelSide || 1) < 0 ? x - pw - 44 : x + 44;
+    const desiredLeft = ((g.panelSide || 1) < 0 ? x - pw - 44 : x + 44) + (g.panelNudgeX || 0);
     const maxLeft = Math.max(8, sr.width - pw - 8);
-    const viewTop = Math.max(8, -sr.top + 8);
-    const viewBottom = Math.min(sr.height - 8, innerHeight - sr.top - 8);
-    const latestTop = Math.max(viewTop, viewBottom - ph);
-    panel.style.left = Math.max(8, Math.min(maxLeft, desiredLeft)) + "px";
-    panel.style.top = Math.max(viewTop, Math.min(latestTop, y - ph / 2)) + "px";
+    const left = Math.max(8, Math.min(maxLeft, desiredLeft));
+    const craftHalf = rr.height / 2;
+    const desiredTop = g.panelPlacement === "above"
+      ? y - craftHalf - ph - 18
+      : g.panelPlacement === "below" ? y + craftHalf + 18 : y - ph / 2;
+    const stageHeight = stage.clientHeight || sr.height;
+    const minTop = 8, maxTop = Math.max(minTop, stageHeight - ph - 8), clearance = 30;
+    const blockers = [...stage.querySelectorAll(".sm-card,.sm-sub,.sm-brands,.sm-futnote,.sm-stats,.rk-panel")]
+      .filter(el => el !== panel && el.offsetWidth && el.offsetHeight)
+      .map(el => ({ left: el.offsetLeft, right: el.offsetLeft + el.offsetWidth,
+        top: el.offsetTop - clearance, bottom: el.offsetTop + el.offsetHeight + clearance }))
+      .filter(r => r.right > left && r.left < left + pw)
+      .sort((a, b) => a.top - b.top);
+    const merged = [];
+    blockers.forEach(r => {
+      const last = merged[merged.length - 1];
+      if (last && r.top <= last.bottom) last.bottom = Math.max(last.bottom, r.bottom);
+      else merged.push({ top: r.top, bottom: r.bottom });
+    });
+    const slots = [];
+    let cursor = minTop;
+    merged.forEach(r => {
+      if (r.top - cursor >= ph) slots.push([cursor, Math.min(maxTop, r.top - ph)]);
+      cursor = Math.max(cursor, r.bottom);
+    });
+    if (maxTop - cursor >= 0) slots.push([Math.min(maxTop, cursor), maxTop]);
+    let top = Math.max(minTop, Math.min(maxTop, desiredTop));
+    if (slots.length) {
+      const choices = slots.map(([lo, hi]) => Math.max(lo, Math.min(hi, desiredTop)));
+      top = choices.reduce((best, n) => Math.abs(n - desiredTop) < Math.abs(best - desiredTop) ? n : best, choices[0]);
+    }
+    panel.style.left = left + "px";
+    panel.style.top = top + "px";
   };
   const open = () => { clearTimeout(closeT); craft.classList.add("hold"); place(); panel.classList.add("show"); };
   const shut = () => { pinned = false; craft.classList.remove("hold"); panel.classList.remove("show"); };
@@ -3530,6 +3566,8 @@ function mountStation(stage, g) {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); craft.dispatchEvent(new Event("click")); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") shut(); });
+  window.addEventListener("resize", () => { if (panel.classList.contains("show")) place(); });
+  if (g.autoOpen) setTimeout(() => { pinned = true; open(); }, 460);
 }
 
 /* =========================================================================
@@ -4050,11 +4088,27 @@ function renderSystem() {
      card keeps its anchor untouched. */
   const SHELLS = [
     [330, 118, 467, "sm-orbit o1"],
-    [618, 172, 500, "sm-orbit"],
-    [800, 216, 526, "sm-orbit"],
-    [950, 258, 550, "sm-orbit future"],
-    [1060, 286, 578, "sm-orbit future outer"],
+    [618, 188, 516, "sm-orbit"],
+    [800, 255, 565, "sm-orbit"],
+    [950, 324, 616, "sm-orbit future"],
+    [1060, 394, 670, "sm-orbit future outer"],
   ];
+  const lowerShellAtX = (ring, x) => {
+    const [rx, ry, ringCy] = SHELLS[ring];
+    const cos = Math.max(-1, Math.min(1, (x - cx) / rx));
+    return [x, ringCy + ry * Math.sqrt(Math.max(0, 1 - cos * cos))];
+  };
+  const lowerShellAtAngle = (ring, deg) => {
+    const [rx, ry, ringCy] = SHELLS[ring], a = deg * Math.PI / 180;
+    return [cx + rx * Math.cos(a), ringCy + ry * Math.sin(a)];
+  };
+  const dockArc = (ring, fromDeg, toDeg) => {
+    const a = lowerShellAtAngle(ring, fromDeg), b = lowerShellAtAngle(ring, toDeg);
+    const [rx, ry] = SHELLS[ring];
+    return `M ${f(a[0])} ${f(a[1])} A ${rx} ${ry} 0 0 1 ${f(b[0])} ${f(b[1])}`;
+  };
+  const deathStar1At = lowerShellAtAngle(3, 24);
+  const deathStar2At = lowerShellAtAngle(4, 140);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -4071,39 +4125,63 @@ function renderSystem() {
       <stop offset="1" stop-color="rgb(${col})" stop-opacity=".05"/>
     </linearGradient>`;
   }).join("");
+  const RING_YEARS = [2026, 2028, 2030, 2033, 2036];
+  const yearMarks = SHELLS.map((shell2, i) => {
+    const p = lowerShellAtAngle(i, 65), future = shell2[3].includes("future") ? " future" : "";
+    return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
+      <circle r="3.2"/><rect x="10" y="-12" width="62" height="24" rx="12"/>
+      <text x="41" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
+    </g>`;
+  }).join("");
   // each operating company rides its OWN ring — blue on the 1st, mint on the
   // 2nd, ember dropped to the 3rd — so the orbits themselves read as tiers
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#cfe8ff", "#38a9ff", "#0b5aa8"],
-      at: [950, 585], r: 48,
+      at: lowerShellAtX(0, 950), r: 48,
       role: "The group's direct-to-consumer division",
       ta: "(Currently Trading As Freedom Fire &amp; Safety Ltd)",
       cat: "B2C E-COMMERCE",
       chs: "eBay | Amazon | Shopify | TikTok Shop | OnBuy | More",
       card: { left: "calc(50% - min(150px,12.5vw))", top: 45 } },   // centred on its planet
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#c7ffe6", "#2fe0a0", "#0a8f5f"],
-      at: [480.6, 612], r: 42,
+      at: lowerShellAtX(1, 480.6), r: 42,
       role: "Facilities-management division delivering servicing and maintenance contracts",
       cat: "SERVICING &amp; MAINTENANCE",
       chs: "Fire safety servicing | Compliance | Installations | Maintenance",
       card: { left: 13, top: 46.5 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffd0b3", "#ff6a3d", "#b83000"],
-      at: [1560, 665.7], r: 36,                                    // lifted slightly while remaining on the third ring
+      at: lowerShellAtX(2, 1560), r: 36,
       role: "Business-to-business division supplying wholesale and retail trade",
       cat: "B2B WHOLESALE",
       chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
       card: { left: "72%", top: 49 } },                             // fallback — layoutSubs pins it under the planet, left edges aligned
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
+  const BRAND_ICONS = {
+    fire: `<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M11.6 1.4c.5 3-1.8 3.7-1.3 6.2.8-.6 1.5-1.5 1.8-2.6 2.4 2 3.6 4.1 3.2 6.7-.4 3.4-2.8 5.8-5.8 5.8-3.2 0-5.7-2.5-5.7-5.8 0-2.8 1.5-5.3 4.7-8.1-.2 2 .2 3.1 1 3.7.1-2.3 1.3-3.6 2.1-5.9Z"/></svg>`,
+    bolt: `<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M11.3 1.6 5.4 10h3.8l-.8 8.4 6.2-10.2h-3.8z"/></svg>`,
+    cell: `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6.2 5.1h7.6v11.2H6.2zM8 3.2h4v1.9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.2 11h3.6M10 9.2v3.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    glove: `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6.1 9.4V4.9c0-.8 1.2-.8 1.2 0v3.3-5c0-.9 1.3-.9 1.3 0V8 2.5c0-.9 1.3-.9 1.3 0v5.4-4.5c0-.9 1.3-.9 1.3 0v5.1-3.3c0-.8 1.3-.8 1.3.1v5.2c0 3.4-1.8 5.7-4.6 5.7-2.5 0-3.7-1.3-4.6-3.3L2.1 10c-.4-.9.8-1.5 1.4-.7l1.3 1.7c.5.7 1.3.3 1.3-.6Z" fill="currentColor"/></svg>`,
+    drop: `<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.8c1.2 2.1 5.2 6.7 5.2 10a5.2 5.2 0 1 1-10.4 0c0-3.3 4-7.9 5.2-10Zm-3.1 10c0 2.1 1.2 3.5 3.1 3.8-1.2-.8-1.8-2-1.8-3.6 0-1.3.5-2.7 1.4-4.2-1.7 1.8-2.7 3-2.7 4Z"/></svg>`,
+  };
   const BRANDS = [
-    ["FireStorm™", "var(--ember)"], ["Skyline™", "var(--blue)"], ["FXL™", "var(--mint)"],
-    ["Voltz™", "var(--blue)"], ["Kunergy™", "var(--mint)"], ["T3™", "var(--pink)"],
-    ["Crystal Solutions™", "var(--blue)"], ["+ 7 more", ""],
+    ["FireStorm™", "var(--pink)", BRAND_ICONS.fire],
+    ["Voltz™", "var(--pink)", BRAND_ICONS.bolt],
+    ["Kunergy™", "var(--pink)", BRAND_ICONS.cell],
+    ["T3™", "#f3f4fb", BRAND_ICONS.glove],
+    ["Crystal Solutions™", "var(--blue)", BRAND_ICONS.drop],
+    ["+ More", "", ""],
   ];
   // the remaining parent marks — product families stay grouped beneath their
   // umbrella mark so the vault communicates the portfolio cleanly.
   // [ name, accent, category, description, illustrative icon ]
   const MORE_BRANDS = [
+    ["Skyline™", "var(--blue)", "Safety technology",
+      "Connected safety, monitoring and intelligent site-visibility products.",
+      `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19h16M6 19V9l4-4v14M10 19V3l5 4v12M15 19v-8l3 2v6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>`],
+    ["FXL™", "var(--mint)", "Professional equipment",
+      "A scalable professional-products mark for trade, facilities and safety ranges.",
+      `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 17 17 5M14 5h3v3M7 7l10 10M14 17h3v-3M7 5H5v2M5 14v3h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
     ["HepaFellas™", "var(--mint)", "Home care",
       "Hoover bags and filtration consumables for home and trade use.",
       `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4h10l2 16H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="11" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M9 4V2h6v2" stroke="currentColor" stroke-width="1.7"/></svg>`],
@@ -4257,22 +4335,36 @@ function renderSystem() {
     <g transform="translate(${worldStep * 2} 0)">${worldC}</g>
     <g transform="translate(${worldStep * 3} 0)">${worldA}</g>`;
 
+  const formPlanet = PLANETS.find(p => p.key === "form");
   const stormPlanet = PLANETS.find(p => p.key === "storm");
-  const stormLaneX = stormPlanet.at[0] - stormPlanet.r - 1;
-  const stormLaneY = stormPlanet.at[1] - 16;
+  const flyPlanet = PLANETS.find(p => p.key === "fly");
+  const circleAt = (x, y, r, deg) => {
+    const a = deg * Math.PI / 180;
+    return [x + r * Math.cos(a), y + r * Math.sin(a)];
+  };
+  const edgeToward = (p, tx, ty, turn = 0) => {
+    const deg = Math.atan2(ty - p.at[1], tx - p.at[0]) * 180 / Math.PI + turn;
+    return circleAt(p.at[0], p.at[1], p.r, deg);
+  };
+  const sunAt = deg => circleAt(cx, cy, sunR, deg);
+  const formOut = sunAt(145), formIn = sunAt(165);
+  const stormOut = sunAt(35), stormIn = sunAt(15);
+  const flyOut = sunAt(90), flyIn = sunAt(78);
+  const formLaneEnd = edgeToward(formPlanet, cx, cy), formRoyalStart = edgeToward(formPlanet, cx, cy, -12);
+  const stormLaneEnd = edgeToward(stormPlanet, cx, cy), stormRoyalStart = edgeToward(stormPlanet, cx, cy, 12);
+  const flyLaneEnd = edgeToward(flyPlanet, cx, cy), flyRoyalStart = edgeToward(flyPlanet, cx, cy, 18);
   const stormCtrlX = stormPlanet.at[0] - 198;
   const stormCtrlY = stormPlanet.at[1] - 90;
-  const royaltyLeftHitX = cx - sunR + 2, royaltyRightHitX = cx + sunR - 2;
   const spine = `
-    <path class="sm-flowglow g-form" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flowglow g-storm" d="M 1029 394 C 1200 465, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneX)} ${f(stormLaneY)}"/>
-    <path class="sm-flowglow g-fly" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M 871 394 C 760 472, 630 538, 516 585"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M 1029 394 C 1200 465, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneX)} ${f(stormLaneY)}"/>
-    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${cx} 448 L ${cx} 523"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M 536 563 L ${royaltyLeftHitX} ${cy}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormLaneX + 20)} ${f(stormLaneY - 24)} L ${royaltyRightHitX} ${cy}"/>
-    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${cx + 23} 523 L ${cx + 23} 448"/>
+    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
+    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
+    <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyLaneEnd[0])} ${f(flyLaneEnd[1])}"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
+    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyLaneEnd[0])} ${f(flyLaneEnd[1])}"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 642 536, 770 454, ${f(formIn[0])} ${f(formIn[1])}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C ${f(stormCtrlX + 8)} ${f(stormCtrlY - 20)}, 1200 450, ${f(stormIn[0])} ${f(stormIn[1])}"/>
+    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
     <text class="sm-roylab rl-form" x="690" y="472" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
     <text class="sm-roylab rl-storm" x="1288" y="478" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
 
@@ -4295,13 +4387,13 @@ function renderSystem() {
         <linearGradient id="lgMast" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="520" y2="0">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset=".55" stop-color="#38a9ff"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="871" y1="394" x2="516" y2="585">
+        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="${f(formOut[0])}" y1="${f(formOut[1])}" x2="${f(formLaneEnd[0])}" y2="${f(formLaneEnd[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="1029" y1="394" x2="1581" y2="629">
+        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="${f(stormOut[0])}" y1="${f(stormOut[1])}" x2="${f(stormLaneEnd[0])}" y2="${f(stormLaneEnd[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/>
         </linearGradient>
-        <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${cx}" y1="448" x2="${cx}" y2="523">
+        <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${f(flyOut[0])}" y1="${f(flyOut[1])}" x2="${f(flyLaneEnd[0])}" y2="${f(flyLaneEnd[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/>
         </linearGradient>
         <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
@@ -4310,8 +4402,9 @@ function renderSystem() {
       </defs>
       ${stars}
       ${SHELLS.map(shell).join("")}
-      <path class="sm-orbit future dock" d="M 1621.8 367.6 A 950 258 0 0 1 1788.8 428.9"/>
-      <path class="sm-orbit future dock" d="M 111.2 428.9 A 950 258 0 0 1 278.2 367.6"/>
+      ${yearMarks}
+      <path class="sm-orbit future dock" d="${dockArc(3, 10, 38)}"/>
+      <path class="sm-orbit future outer dock" d="${dockArc(4, 124, 154)}"/>
       ${spine}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
@@ -4387,20 +4480,20 @@ function renderSystem() {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>
         <b>4</b><span class="l">Future companies</span><span class="s">Planned for future growth</span>
       </div>
-      <p class="hint">Hover a planet — or the vault's <b>+&nbsp;7&nbsp;more</b>&nbsp;chip — to explore.</p>
+      <p class="hint">Hover a planet — or the vault's <b>+&nbsp;More</b>&nbsp;chip — to explore.</p>
     </div>
     <div class="sm-brands">
-      <span class="cap2">KEY BRANDS</span>
       <div class="bx">
+      <span class="cap2">KEY BRANDS</span>
       <div class="chips">
-        ${BRANDS.map(([n, c]) => c
-          ? `<span class="sm-brand" style="--c:${c}"><i></i>${n}</span>`
+        ${BRANDS.map(([n, c, ico]) => c
+          ? `<span class="sm-brand" style="--c:${c}"><span class="brand-ico">${ico}</span>${n}</span>`
           : `<span class="sm-brand more" id="smMore" role="button" tabindex="0" aria-expanded="false"
-               aria-label="Show seven more portfolio marks">${n}</span>`).join("")}
+               aria-label="Show more portfolio marks">${n}</span>`).join("")}
       </div>
       </div>
       <div class="sm-morepop" id="smMorePop" role="tooltip">
-        <h5>+ 7 MORE · PORTFOLIO PIPELINE</h5>
+        <h5>MORE BRANDS · PORTFOLIO PIPELINE</h5>
         ${MORE_BRANDS.map(([n, c, cat, d, ico]) => `<div class="mp-row" style="--c:${c}"><span class="mp-ico">${ico}</span><div><b>${n}<span class="mp-tag">${cat}</span></b><span>${d}</span></div></div>`).join("")}
         <p>Each mark is already held by Freedom Group Holdings Ltd and is licensed group-wide on the same quarterly-royalty terms.</p>
       </div>
@@ -4477,7 +4570,8 @@ function renderSystem() {
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
-    kind: "destroyer", stationType: "deathstar1", side: "right", art: .68, at: [1728, 402], panelSide: -1,
+    kind: "destroyer", stationType: "deathstar1", side: "right", art: .68, at: deathStar1At, panelSide: -1,
+    panelPlacement: "above", panelNudgeX: -190, autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
@@ -4485,7 +4579,8 @@ function renderSystem() {
     ],
   });
   mountStation(map, {
-    kind: "moon", stationType: "deathstar2", side: "left", art: .68, at: [191, 395], panelSide: 1,
+    kind: "moon", stationType: "deathstar2", side: "left", art: .68, at: deathStar2At, panelSide: 1,
+    panelPlacement: "below", panelNudgeX: -32, autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
@@ -4512,12 +4607,19 @@ function renderSystem() {
       const c = cardFor(p.key);
       if (!c) return;
       c.style.top = ((svgR.top - mR.top) + (p.py + p.r) * sc2 + cardGap[p.key]) + "px";
+      c.style.setProperty("--lead-h", cardGap[p.key] + "px");
     });
     const sCard = cardFor("storm");
     if (sCard) {
       const want = (svgR.left - mR.left) + (stormPlanet.px - stormPlanet.r) * sc2;
       sCard.style.left = want + "px";
     }
+    PLANETS.forEach(p => {
+      const c = cardFor(p.key);
+      if (!c) return;
+      const planetCentreX = (svgR.left - mR.left) + p.px * sc2;
+      c.style.setProperty("--lead-x", (planetCentreX - c.offsetLeft) + "px");
+    });
     const under = (el, key) => {
       const c = cardFor(key);
       if (!el || !c) return;
@@ -4556,6 +4658,10 @@ function renderSystem() {
     if (pth.classList.contains("future")) { reg(pth, a, b, "fade"); return; }
     pth.setAttribute("pathLength", "1"); pth.style.strokeDasharray = "1";
     reg(pth, a, b, "draw");
+  });
+  [...svgEl.querySelectorAll(".sm-year")].forEach((mark, idx) => {
+    const a = .21 + idx * .06;
+    reg(mark, a, a + .07, "fade");
   });
   // strict one-at-a-time company chains: lane → planet → panel
   const chain = (key, l0, l1, p0, p1, c0, c1) => {

@@ -683,6 +683,74 @@ section#system{overflow-x:clip;}
 html.spx section#journey{background:var(--bg);}
 html.spx section#team{background:var(--bg-soft);}
 
+/* ============ FUNDING CLIMB — the long "why we need this money" cloud ride
+   between the team chapter and the launch pad. The canvas is a second cloud
+   set-piece (drawFunding) that climbs from the team's dark, cruises a bright
+   deck while the brief unfolds, then descends into launch-night. ============ */
+html.spx .tr2-funding{height:560vh;background:#07070d;}
+.fund-over{position:absolute;inset:0;z-index:2;display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;}
+.fund-inner{width:min(680px,88vw);text-align:center;}
+.fund-kick{font-size:.66rem;font-weight:800;letter-spacing:.22em;color:#8d1d56;opacity:0;}
+.fund-h{margin:8px 0 0;font-size:clamp(1.6rem,3.2vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:#0b0e1a;opacity:0;}
+.fund-cards{display:grid;gap:12px;margin-top:22px;text-align:left;}
+.fund-card{opacity:0;background:rgba(255,255,255,.88);border:1px solid rgba(10,14,26,.14);border-radius:16px;padding:13px 18px 14px;box-shadow:0 18px 44px rgba(25,35,70,.16);display:flex;gap:14px;align-items:flex-start;}
+.fund-card .no{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:2px;}
+.fund-card h4{margin:0 0 3px;font-size:.95rem;color:#0b0e1a;letter-spacing:-.01em;}
+.fund-card p{margin:0;font-size:.8rem;line-height:1.5;color:#39405a;}
+.fund-note{margin:16px 0 0;font-size:.68rem;color:#4a516b;opacity:0;}
+html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb instead */
+
+/* ============ LIFTOFF — the earth-side finale. Night launch complex with
+   trees, birds and floodlights; the courier that has flown the whole page
+   descends, enlarges into the pad rocket, and PRESS FOR LIFTOFF returns the
+   visitor to the very top under full burn. ============ */
+#liftoff{position:relative;padding:96px 0 0;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
+#liftoff .lo-head{text-align:center;position:relative;z-index:3;}
+#liftoff .lo-head p{max-width:64ch;margin-inline:auto;}
+.lo-scene{position:relative;margin:8px auto 0;max-width:1900px;--pads:2.2;}
+.lo-scene svg.lo-art{width:100%;height:auto;display:block;}
+.lo-slot{position:absolute;left:63.68%;top:52.56%;width:0;height:0;}
+#padRocket{position:absolute;left:63.68%;top:52.56%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
+html.spx.has-courier #padRocket{opacity:0;transition:opacity .35s var(--ease-out);}
+html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
+#padRocket svg{position:absolute;left:-78px;top:-35px;width:156px;height:70px;max-width:none;display:block;overflow:visible;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
+#liftoff.launching #padRocket{opacity:1;transition:transform 2.6s cubic-bezier(.58,.02,.86,.36),opacity .2s;transform:translateY(-128vh) rotate(-90deg) scale(var(--pads,2.2));}
+html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during the ascent */
+.lo-flash{position:absolute;left:63.68%;top:85.6%;width:0;height:0;opacity:0;transition:opacity .5s var(--ease-out);pointer-events:none;}
+.lo-flash::before{content:"";position:absolute;left:-190px;top:-60px;width:380px;height:150px;background:radial-gradient(ellipse at center,rgba(255,214,150,.85),rgba(255,120,60,.35) 45%,transparent 72%);filter:blur(6px);}
+#liftoff.launching .lo-flash{opacity:1;}
+.lo-beacon{animation:loBlink 2.4s infinite;}
+.lo-beacon.b2{animation-delay:-1.1s;}
+@keyframes loBlink{0%,86%,100%{opacity:.22}90%,95%{opacity:1}}
+.lo-birds{animation:loBirds 44s linear infinite;}
+.lo-birds.b2{animation-duration:58s;animation-delay:-24s;}
+.lo-birds.b3{animation-duration:36s;animation-delay:-9s;}
+@keyframes loBirds{from{transform:translateX(-220px);}to{transform:translateX(2140px);}}
+.lo-vent{transform-box:fill-box;transform-origin:50% 100%;animation:loVent 7.5s ease-in-out infinite alternate;}
+.lo-vent.v2{animation-duration:9.5s;animation-delay:-4s;}
+@keyframes loVent{from{transform:scale(1) translateX(0);opacity:.5;}to{transform:scale(1.25) translateX(14px);opacity:.22;}}
+.lo-console{position:relative;z-index:4;text-align:center;padding:0 18px 84px;margin-top:-44px;}
+.liftoff-btn{
+  position:relative;display:inline-flex;align-items:center;gap:12px;cursor:pointer;
+  font:800 1rem/1 "Orbitron",system-ui,sans-serif;letter-spacing:.16em;color:#fff;
+  background:linear-gradient(135deg,#ff3d9a,#c9186f);border:1px solid rgba(255,255,255,.35);
+  border-radius:99px;padding:19px 34px;
+  box-shadow:0 0 0 6px rgba(255,61,154,.12),0 0 34px rgba(255,61,154,.45),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .2s var(--ease-out),box-shadow .3s var(--ease-out);
+}
+.liftoff-btn i{width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff;animation:loBtnPulse 1.9s infinite;}
+@keyframes loBtnPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(.72);}}
+.liftoff-btn:hover,.liftoff-btn:focus-visible{transform:translateY(-2px) scale(1.03);box-shadow:0 0 0 9px rgba(255,61,154,.16),0 0 54px rgba(255,61,154,.65),inset 0 1px 0 rgba(255,255,255,.4);outline:none;}
+.liftoff-btn:active{transform:translateY(1px) scale(.99);}
+#liftoff.launching .liftoff-btn{pointer-events:none;filter:saturate(.6) brightness(.8);}
+.lo-hint{display:block;margin-top:12px;font-size:.7rem;color:rgba(243,244,251,.45);letter-spacing:.06em;}
+@media (prefers-reduced-motion:reduce){.lo-birds,.lo-vent,.lo-beacon,.liftoff-btn i{animation:none;}}
+@media (max-width:760px){
+  #liftoff{padding-top:64px;}
+  .lo-scene{min-height:300px;}
+  .lo-console{margin-top:-10px;}
+}
+
 @keyframes secRiseAlt{
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
   to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) translateX(0) scale(1);}
@@ -1852,7 +1920,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:292px;
+  position:absolute;z-index:5;width:clamp(236px,18vw,292px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
   background:#0f1119;border:1px solid color-mix(in srgb,var(--panel-c,#fff) 74%,transparent);border-radius:16px;
   padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -1860,7 +1928,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   transition:opacity .25s var(--ease-out), transform .25s var(--ease-out);
 }
 .rk-panel.show{opacity:1;transform:none;pointer-events:auto;}
-.rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.45;stroke-dasharray:3 6;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
+.rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
 .rk-panel-link.show{opacity:.76;}
 .rk-panel h4{margin:0 0 6px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
 .rk-row{display:flex;gap:10px;padding:5px 0;align-items:flex-start;}
@@ -2294,6 +2362,198 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="team-controls reveal" id="teamFilters" role="group" aria-label="Filter team by division"></div>
       <div class="matrix-grid" id="orgChart"></div>
       <div class="person-detail" id="personDetail" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       FUNDING CLIMB — a second, LONG cloud ascent. While the deck drifts
+       past, the "why we need this money" brief unfolds card by card, then
+       the sky settles back to night for the launch pad below.
+       ==================================================================== -->
+  <div class="tr2 tr2-funding"><div class="tr2-stage"><canvas></canvas>
+    <div class="fund-over" id="fundOver" aria-hidden="true">
+      <div class="fund-inner">
+        <div class="fund-kick">THE RAISE · WHY WE NEED THIS MONEY</div>
+        <h3 class="fund-h">Fuel for the climb.</h3>
+        <div class="fund-cards">
+          <article class="fund-card"><span class="no">01</span><div>
+            <h4>Inventory &amp; buying power</h4>
+            <p>[Placeholder] Deeper stock positions across the fastest-moving lines, unlocking supplier volume pricing and closing out-of-stock windows for good.</p>
+          </div></article>
+          <article class="fund-card"><span class="no">02</span><div>
+            <h4>Warehousing &amp; fulfilment</h4>
+            <p>[Placeholder] A larger facility with automated pick-and-pack, cutting dispatch times and the carriage cost of every order we ship.</p>
+          </div></article>
+          <article class="fund-card"><span class="no">03</span><div>
+            <h4>People &amp; compliance</h4>
+            <p>[Placeholder] Key operational hires and accreditation programmes that keep quality, safety and service ahead of demand as the group scales.</p>
+          </div></article>
+          <article class="fund-card"><span class="no">04</span><div>
+            <h4>Channel &amp; brand growth</h4>
+            <p>[Placeholder] Measured investment in marketplace expansion, direct-to-consumer growth and the trade pipeline behind the licence engine.</p>
+          </div></article>
+        </div>
+        <p class="fund-note">Figures are placeholders — the full deployment schedule lives in the data room.</p>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ====================================================================
+       LIFTOFF — the earth-side finale: night launch complex, the courier
+       touches down and becomes the pad rocket, and PRESS FOR LIFTOFF sends
+       the visitor back to the very top under full burn.
+       ==================================================================== -->
+  <section data-sec="liftoff" id="liftoff" aria-label="Mission control — press for liftoff">
+    <div class="wrap lo-head">
+      <div class="sec-head reveal">
+        <span class="kicker">Mission control</span>
+        <h2>Ready for <span class="grad-text">liftoff.</span></h2>
+        <p>The courier has flown the whole story — hero to horizon. One press puts you back on the launch rail at the very top.</p>
+      </div>
+      <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
+        <span class="kicker">Why we need this money</span>
+        <div style="display:grid;gap:10px;margin-top:12px;font-size:.85rem;line-height:1.5;">
+          <div><b>01 · Inventory &amp; buying power</b> — [Placeholder] deeper stock positions and supplier volume pricing.</div>
+          <div><b>02 · Warehousing &amp; fulfilment</b> — [Placeholder] automated pick-and-pack, faster dispatch, lower carriage cost.</div>
+          <div><b>03 · People &amp; compliance</b> — [Placeholder] key hires and accreditation programmes ahead of demand.</div>
+          <div><b>04 · Channel &amp; brand growth</b> — [Placeholder] marketplace expansion, DTC growth and the trade pipeline.</div>
+        </div>
+      </div>
+    </div>
+    <div class="lo-scene" aria-hidden="true">
+      <svg class="lo-art" viewBox="0 0 1900 780" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="loGround" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0d1511"/><stop offset="1" stop-color="#070c08"/>
+          </linearGradient>
+          <linearGradient id="loConeL" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(224,238,255,.34)"/><stop offset="1" stop-color="rgba(224,238,255,0)"/>
+          </linearGradient>
+          <linearGradient id="loConeR" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(224,238,255,.30)"/><stop offset="1" stop-color="rgba(224,238,255,0)"/>
+          </linearGradient>
+          <radialGradient id="loPadGlow" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="rgba(210,228,255,.20)"/><stop offset="1" stop-color="rgba(210,228,255,0)"/>
+          </radialGradient>
+          <radialGradient id="loMoonHalo" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="rgba(232,238,255,.30)"/><stop offset="1" stop-color="rgba(232,238,255,0)"/>
+          </radialGradient>
+        </defs>
+        <!-- stars + moon -->
+        <g fill="#fff">
+          <circle cx="140" cy="84" r="1.3" opacity=".6"/><circle cx="310" cy="150" r=".9" opacity=".38"/><circle cx="452" cy="60" r="1.1" opacity=".5"/>
+          <circle cx="610" cy="120" r="1.4" opacity=".65"/><circle cx="742" cy="52" r=".8" opacity=".35"/><circle cx="892" cy="96" r="1.2" opacity=".55"/>
+          <circle cx="1022" cy="40" r="1" opacity=".42"/><circle cx="1120" cy="140" r=".9" opacity=".4"/><circle cx="1298" cy="70" r="1.3" opacity=".6"/>
+          <circle cx="1444" cy="128" r="1" opacity=".45"/><circle cx="1530" cy="56" r=".9" opacity=".4"/><circle cx="1750" cy="86" r="1.2" opacity=".55"/>
+          <circle cx="240" cy="250" r=".9" opacity=".34"/><circle cx="530" cy="230" r="1" opacity=".4"/><circle cx="820" cy="210" r=".8" opacity=".3"/>
+          <circle cx="1180" cy="235" r="1" opacity=".4"/><circle cx="1370" cy="196" r=".9" opacity=".35"/><circle cx="1590" cy="240" r="1.1" opacity=".45"/>
+          <circle cx="80" cy="180" r="1" opacity=".4"/><circle cx="980" cy="168" r=".9" opacity=".36"/><circle cx="1840" cy="170" r="1" opacity=".42"/>
+        </g>
+        <circle cx="1642" cy="128" r="86" fill="url(#loMoonHalo)"/>
+        <circle cx="1642" cy="128" r="24" fill="#eef2fc" opacity=".92"/>
+        <circle cx="1634" cy="122" r="4.5" fill="#c9d2e6" opacity=".5"/><circle cx="1652" cy="136" r="3" fill="#c9d2e6" opacity=".45"/>
+        <!-- birds -->
+        <g class="lo-birds" opacity=".5" fill="none" stroke="#cfd8ea" stroke-width="2" stroke-linecap="round">
+          <path d="M0 182 q7 -8 14 0 q7 -8 14 0"/><path d="M36 194 q6 -7 12 0 q6 -7 12 0"/><path d="M66 176 q5 -6 10 0 q5 -6 10 0"/>
+        </g>
+        <g class="lo-birds b2" opacity=".38" fill="none" stroke="#cfd8ea" stroke-width="1.7" stroke-linecap="round">
+          <path d="M0 258 q6 -7 12 0 q6 -7 12 0"/><path d="M34 268 q5 -6 10 0 q5 -6 10 0"/>
+        </g>
+        <g class="lo-birds b3" opacity=".3" fill="none" stroke="#cfd8ea" stroke-width="1.4" stroke-linecap="round">
+          <path d="M0 128 q5 -6 10 0 q5 -6 10 0"/><path d="M26 120 q4 -5 8 0 q4 -5 8 0"/><path d="M50 134 q4 -5 8 0 q4 -5 8 0"/>
+        </g>
+        <!-- distant treeline -->
+        <path fill="#0a0f12" d="M0 574 L0 556 Q40 548 70 556 L96 540 L110 556 Q170 544 215 554 L232 534 L246 552 Q320 542 380 552 Q450 540 520 552 L545 532 L560 550 Q640 540 720 552 Q800 542 870 552 L893 536 L908 552 Q970 544 1030 552 L1560 552 Q1620 542 1680 552 L1704 534 L1719 550 Q1790 542 1900 554 L1900 574 Z"/>
+        <!-- ground -->
+        <rect x="0" y="570" width="1900" height="210" fill="url(#loGround)"/>
+        <ellipse cx="1210" cy="668" rx="430" ry="64" fill="url(#loPadGlow)"/>
+        <!-- floodlight cones (behind the pad hardware) -->
+        <polygon points="726,548 748,556 1105,636 1010,676" fill="url(#loConeL)" opacity=".5"/>
+        <polygon points="1656,548 1634,556 1315,636 1415,676" fill="url(#loConeR)" opacity=".5"/>
+        <!-- launch pad -->
+        <ellipse cx="1210" cy="672" rx="300" ry="40" fill="#121920"/>
+        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="#1b232d"/>
+        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="none" stroke="#2b3745" stroke-width="2"/>
+        <ellipse cx="1210" cy="666" rx="128" ry="17" fill="none" stroke="#26313e" stroke-width="1.4" stroke-dasharray="10 8"/>
+        <rect x="1150" y="660" width="120" height="16" rx="7" fill="#04060a"/>
+        <path d="M1152 636 L1170 634 L1174 648 L1156 650 Z" fill="#232d38"/>
+        <path d="M1268 636 L1250 634 L1246 648 L1264 650 Z" fill="#232d38"/>
+        <!-- vapour -->
+        <ellipse class="lo-vent" cx="1252" cy="652" rx="27" ry="10" fill="#b8c4d4" opacity=".26"/>
+        <ellipse class="lo-vent v2" cx="1172" cy="649" rx="21" ry="8" fill="#b8c4d4" opacity=".2"/>
+        <!-- gantry tower -->
+        <g>
+          <rect x="1036" y="248" width="9" height="412" fill="#131b23"/>
+          <rect x="1093" y="248" width="9" height="412" fill="#0f151c"/>
+          <path d="M1040 660 L1098 618 M1040 618 L1098 576 M1040 576 L1098 534 M1040 534 L1098 492 M1040 492 L1098 450 M1040 450 L1098 408 M1040 408 L1098 366 M1040 366 L1098 324 M1040 324 L1098 282 M1040 282 L1098 250" stroke="#1f2933" stroke-width="3" fill="none"/>
+          <path d="M1098 660 L1040 618 M1098 618 L1040 576 M1098 576 L1040 534 M1098 534 L1040 492 M1098 492 L1040 450 M1098 450 L1040 408 M1098 408 L1040 366 M1098 366 L1040 324 M1098 324 L1040 282 M1098 282 L1040 250" stroke="#161e27" stroke-width="2.2" fill="none"/>
+          <rect x="1032" y="240" width="74" height="10" rx="3" fill="#1a232d"/>
+          <rect x="1030" y="418" width="98" height="8" rx="3" fill="#1a232d"/>
+          <rect x="1030" y="540" width="104" height="8" rx="3" fill="#161e27"/>
+          <rect x="1100" y="330" width="64" height="7" rx="3" fill="#1d2731"/>
+          <rect x="1156" y="322" width="10" height="20" rx="2" fill="#232d38"/>
+          <line x1="1069" y1="240" x2="1069" y2="192" stroke="#232d38" stroke-width="3"/>
+          <circle cx="1069" cy="188" r="3" fill="#3a4653"/>
+          <circle class="lo-beacon" cx="1069" cy="246" r="4.4" fill="#ff5d5d"/>
+          <circle class="lo-beacon b2" cx="1069" cy="422" r="3.6" fill="#ff5d5d"/>
+          <rect x="1048" y="452" width="7" height="5" fill="#f6c66b" opacity=".8"/>
+          <rect x="1082" y="500" width="7" height="5" fill="#f6c66b" opacity=".6"/>
+          <rect x="1058" y="360" width="7" height="5" fill="#f6c66b" opacity=".7"/>
+        </g>
+        <!-- control bunker -->
+        <g>
+          <rect x="872" y="622" width="96" height="44" rx="4" fill="#0e141b"/>
+          <rect x="872" y="614" width="96" height="12" rx="5" fill="#141c25"/>
+          <rect x="884" y="636" width="12" height="8" fill="#f6c66b" opacity=".85"/>
+          <rect x="904" y="636" width="12" height="8" fill="#f6c66b" opacity=".55"/>
+          <rect x="924" y="636" width="12" height="8" fill="#f6c66b" opacity=".75"/>
+          <line x1="952" y1="614" x2="952" y2="586" stroke="#232d38" stroke-width="2.4"/>
+          <circle class="lo-beacon" cx="952" cy="582" r="2.6" fill="#ff5d5d"/>
+        </g>
+        <!-- floodlight pylons -->
+        <g fill="#10161d">
+          <rect x="738" y="548" width="7" height="118" rx="3"/>
+          <rect x="722" y="536" width="40" height="16" rx="5" fill="#1b242e"/>
+          <circle cx="762" cy="544" r="2.2" fill="#dfeaff" opacity=".9"/>
+          <rect x="1648" y="548" width="7" height="118" rx="3"/>
+          <rect x="1632" y="536" width="40" height="16" rx="5" fill="#1b242e"/>
+          <circle cx="1638" cy="544" r="2.2" fill="#dfeaff" opacity=".9"/>
+        </g>
+        <!-- fence -->
+        <g stroke="#1a2129" stroke-width="3">
+          <line x1="92" y1="618" x2="560" y2="618"/><line x1="92" y1="632" x2="560" y2="632"/>
+        </g>
+        <g fill="#141b22">
+          <rect x="92" y="606" width="5" height="34"/><rect x="154" y="606" width="5" height="34"/><rect x="216" y="606" width="5" height="34"/>
+          <rect x="278" y="606" width="5" height="34"/><rect x="340" y="606" width="5" height="34"/><rect x="402" y="606" width="5" height="34"/>
+          <rect x="464" y="606" width="5" height="34"/><rect x="526" y="606" width="5" height="34"/>
+        </g>
+        <!-- trees -->
+        <g fill="#05090c">
+          <path d="M150 640 L150 596 M150 596 L118 606 L142 576 L122 580 L146 548 L130 550 L150 512 L170 550 L154 548 L178 580 L158 576 L182 606 L150 596" stroke="#05090c" stroke-width="7" stroke-linejoin="round"/>
+          <rect x="146" y="630" width="8" height="22" fill="#0a0d10"/>
+          <path d="M235 648 L235 612 M235 612 L210 620 L228 596 L214 598 L232 572 L222 574 L235 546 L248 574 L238 572 L256 598 L242 596 L260 620 L235 612" stroke="#05090c" stroke-width="6" stroke-linejoin="round"/>
+          <rect x="232" y="640" width="6" height="16" fill="#0a0d10"/>
+          <path d="M1758 652 L1758 606 M1758 606 L1722 616 L1748 584 L1728 588 L1754 552 L1738 554 L1758 512 L1778 554 L1762 552 L1788 588 L1768 584 L1794 616 L1758 606" stroke="#05090c" stroke-width="8" stroke-linejoin="round"/>
+          <rect x="1753" y="642" width="9" height="24" fill="#0a0d10"/>
+          <circle cx="62" cy="560" r="34"/><circle cx="34" cy="576" r="28"/><circle cx="88" cy="578" r="26"/>
+          <rect x="56" y="586" width="10" height="52" fill="#0a0d10"/>
+          <circle cx="1866" cy="560" r="38"/><circle cx="1896" cy="580" r="30"/><circle cx="1838" cy="580" r="24"/>
+          <rect x="1860" y="590" width="10" height="54" fill="#0a0d10"/>
+        </g>
+        <!-- grass tufts -->
+        <g stroke="#16211a" stroke-width="2" stroke-linecap="round" opacity=".8">
+          <path d="M320 690 l4 -12 M328 690 l-2 -10 M700 706 l4 -12 M708 706 l-3 -11 M980 720 l4 -12 M988 720 l-3 -10"/>
+          <path d="M1450 700 l4 -12 M1458 700 l-2 -10 M1620 686 l4 -11 M1628 686 l-3 -10 M480 712 l4 -11 M488 712 l-3 -10"/>
+        </g>
+      </svg>
+      <div class="lo-slot" id="padSlot"></div>
+      <div id="padRocket"></div>
+      <div class="lo-flash"></div>
+    </div>
+    <div class="lo-console">
+      <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff — return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
+      <span class="lo-hint">Full burn back to the top of the story.</span>
     </div>
   </section>
 </main>
@@ -3053,7 +3313,7 @@ function mountLegacyStation(stage, g) {
     { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
     { n: "Freedom Fly Ltd", d: "2029 · Drone visual &amp; alarms", c: "var(--blue)" },
     { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
-    { n: "Freedom Energy+", d: "Beyond 2036 · long-horizon energy", c: "var(--pink)" },
+    { n: "Freedom Freight", d: "Beyond 2036 · freight &amp; logistics", c: "var(--pink)" },
   ];
   panel.innerHTML = "<h4>Future Ltd aspirations</h4>" + ST_FUTURE.map(x =>
     `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
@@ -3600,6 +3860,15 @@ function mountStation(stage, g) {
     </g>`);
 
   const craft = svg.querySelector("#" + uid);
+  // the two future planets' true silhouettes, in svg units — the BODY radius
+  // aligns panel tops to the planet's crown, the EDGE radius is where the
+  // dash-dot tether must stop (the gold planet's edge is its RING tip when
+  // approached side-on, the moon's is its body)
+  const artScale = g.art || 1;
+  const bodyRad = stationType === "futureRing" ? 57 * artScale
+    : stationType === "futureAurora" ? 58 * artScale : 0;
+  const edgeRad = stationType === "futureRing" ? 91 * artScale
+    : stationType === "futureAurora" ? 62 * artScale : 0;
   const panelColor = g.panelColor || (stationType === "futureRing" ? "#d7b35f" : "#a487df");
   const panelLink = document.createElementNS("http://www.w3.org/2000/svg", "path");
   panelLink.classList.add("rk-panel-link");
@@ -3622,7 +3891,29 @@ function mountStation(stage, g) {
     const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
     const pw = panel.offsetWidth || 324, ph = panel.offsetHeight || 170;
     const stageHeight = stage.clientHeight || sr.height;
-    const desiredLeft = g.panelPin
+    // screen→offset-space factors (the stage may carry a perspective tilt)
+    const kx = stage.offsetWidth / Math.max(1, sr.width), ky = stage.offsetHeight / Math.max(1, sr.height);
+    /* SKETCH FORMATION — panelBeside parks the box shoulder-to-shoulder with
+       its planet: horizontal offset measured from the planet's visual EDGE
+       (ring tip for the gold planet), and the panel TOP locked to the body's
+       crown so the two tops read as one line. Everything is computed from the
+       craft's NOMINAL anchor (g.at) in pure layout space — the live rect
+       carries the float bob and the map's perspective, both of which would
+       smear the alignment. Exactness is the point, so this mode also bypasses
+       the blocker slots below. */
+    const vbB = svg.viewBox.baseVal;
+    const scl = svg.clientWidth / ((vbB && vbB.width) || 1900);
+    const nomX = (svg.offsetLeft || 0) + g.at[0] * scl;
+    const nomY = (svg.offsetTop || 0) + g.at[1] * (svg.clientHeight / ((vbB && vbB.height) || 1400));
+    const beside = g.panelBeside;
+    const besideLeft = beside
+      ? ((beside.side || 1) > 0
+        ? nomX + (edgeRad + (beside.gap || 40)) * scl
+        : nomX - (edgeRad + (beside.gap || 40)) * scl - pw)
+      : 0;
+    const desiredLeft = beside
+      ? besideLeft
+      : g.panelPin
       ? sr.width * g.panelPin.x
       : g.panelDock
       ? sr.width - pw - sr.width * (g.panelDock.right || 0)
@@ -3630,7 +3921,9 @@ function mountStation(stage, g) {
     const maxLeft = Math.max(8, sr.width - pw - 8);
     const left = Math.max(8, Math.min(maxLeft, desiredLeft));
     const craftHalf = rr.height / 2;
-    const desiredTop = g.panelPin
+    const desiredTop = beside
+      ? nomY - bodyRad * scl
+      : g.panelPin
       ? stageHeight * g.panelPin.y
       : g.panelDock
       ? stageHeight * (g.panelDock.top || .34)
@@ -3640,7 +3933,6 @@ function mountStation(stage, g) {
     // planets and sister stations count as obstacles too — their rects come
     // from screen space, so they're mapped back through the stage's own
     // perspective scale before joining the offset-space blocker list
-    const kx = stage.offsetWidth / Math.max(1, sr.width), ky = stage.offsetHeight / Math.max(1, sr.height);
     const orbBlockers = [...stage.querySelectorAll(".sm-planet,.mg-station")]
       .filter(el => el !== craft)
       .map(el => {
@@ -3671,7 +3963,7 @@ function mountStation(stage, g) {
     });
     if (maxTop - cursor >= 0) slots.push([Math.min(maxTop, cursor), maxTop]);
     let top = Math.max(minTop, Math.min(maxTop, desiredTop));
-    if (slots.length) {
+    if (!beside && slots.length) {
       const choices = slots.map(([lo, hi]) => Math.max(lo, Math.min(hi, desiredTop)));
       top = choices.reduce((best, n) => Math.abs(n - desiredTop) < Math.abs(best - desiredTop) ? n : best, choices[0]);
     }
@@ -3704,7 +3996,15 @@ function mountStation(stage, g) {
     else { exLocal = pl; eyLocal = Math.max(pt + 16, Math.min(pb - 16, cyLocal)); }
     const ax = (cxLocal - svgX) * sx + vb.x, ay = (cyLocal - svgY) * sy + vb.y;
     const bx = (exLocal - svgX) * sx + vb.x, by = (eyLocal - svgY) * sy + vb.y;
-    panelLink.setAttribute("d", `M${f(ax)} ${f(ay)} L${f(bx)} ${f(by)}`);
+    // the tether starts ON the planet's edge (sketch rule: never inside the
+    // body) — nudged along the panel direction by the station's edge radius
+    let tx = ax, ty = ay;
+    if (edgeRad) {
+      const dxE = bx - ax, dyE = by - ay, lenE = Math.hypot(dxE, dyE) || 1;
+      const r0 = Math.min(edgeRad + 3, lenE * .9);
+      tx = ax + dxE / lenE * r0; ty = ay + dyE / lenE * r0;
+    }
+    panelLink.setAttribute("d", `M${f(tx)} ${f(ty)} L${f(bx)} ${f(by)}`);
   };
   const open = () => { clearTimeout(closeT); craft.classList.add("hold"); place(); panel.classList.add("show"); panelLink.classList.add("show"); };
   const shut = () => { pinned = false; craft.classList.remove("hold"); panel.classList.remove("show"); panelLink.classList.remove("show"); };
@@ -3740,6 +4040,7 @@ function initCourier() {
   const wrap = document.createElement("div");
   wrap.className = "ff-courier";
   wrap.setAttribute("aria-hidden", "true");
+  document.documentElement.classList.add("has-courier");   // the pad rocket defers to the courier's landing only when a courier exists
   // clone the system rocket's exact art; re-uid the gradient defs so the two
   // copies never fight over ids
   wrap.innerHTML = `<svg viewBox="-119 -35 156 70" width="156" height="70">${
@@ -3818,8 +4119,17 @@ function initCourier() {
         return { x: cx2 + Math.cos(th) * rx2, y: cy2 + Math.sin(th) * ry2 };
     };
     segs.push({ orbit: true, s0: pT - vh * .3, s1: orbitEnd, at: orbitAt });
+    // if the launch pad exists, the long-range descent hands over to a final
+    // tail-first LANDING leg: the courier drops out of the funding clouds,
+    // rides its own burn down onto the pad slot and becomes the pad rocket
+    const loEl = document.getElementById("liftoff");
+    const slotEl = document.getElementById("padSlot");
+    let padS0 = null;
+    if (loEl && slotEl) {
+      padS0 = Math.max(orbitEnd + vh * .6, scrollY + loEl.getBoundingClientRect().top - vh * .35);
+    }
     segs.push({
-      finale: true, s0: orbitEnd, s1: S1,
+      finale: true, s0: orbitEnd, s1: padS0 != null ? Math.min(S1, padS0 - vh * .22) : S1,
       at: q => {
         const u = smt5(cl01(q)), R = Math.min(innerWidth, vh) * .33;
         const a = { x: innerWidth / 2 - R * 1.12, y: vh * .52 };
@@ -3835,6 +4145,16 @@ function initCourier() {
         return p2;
       }
     });
+    if (padS0 != null) {
+      segs.push({
+        pad: true, s0: padS0, s1: Math.max(padS0 + vh * .4, S1 - 6),
+        at: q => {
+          const sr2 = slotEl.getBoundingClientRect();
+          const u = smt5(cl01(q));
+          return { x: sr2.left + Math.sin(u * Math.PI) * -36, y: sr2.top - vh * .62 * (1 - u) };
+        }
+      });
+    }
     return segs.sort((x2, y2) => x2.s0 - y2.s0);
   };
   // blend endpoints stay inside the viewport band — a chart that has already
@@ -3884,13 +4204,15 @@ function initCourier() {
       }
       if (yEff <= s.s1) {
         const q = cl01((yEff - s.s0) / Math.max(1, s.s1 - s.s0));
-        return { p: s.at(q), oq: s.orbit ? q : null, kind: s.kind || null, q };
+        return { p: s.at(q), oq: s.orbit ? q : null, pq: s.pad ? q : null, kind: s.kind || null, q };
       }
     }
     const last = segs[segs.length - 1];
-    return { p: last.at(1), oq: last.orbit ? 1 : null, kind: last.kind || null, q: 1 };
+    return { p: last.at(1), oq: last.orbit ? 1 : null, pq: last.pad ? 1 : null, kind: last.kind || null, q: 1 };
   };
   let pd = -1, angS = null, posS = null, lastT = 0, ptPrev = null, dirState = 1;
+  const loSecRef = document.getElementById("liftoff");
+  let dockOn = false;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
   let gDotsC = [], tDotsC = [];
@@ -3996,7 +4318,12 @@ function initCourier() {
           lightDots(segs, "traj", tDotsC, yEffNow, P.x);
           const A2 = locate(segs, yAt(Math.min(1, pd + .007))).p;
           const B2 = locate(segs, yAt(Math.max(0, pd - .007))).p;
-          const ta = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+          const padQ = L0.pq != null ? L0.pq : null;
+          // on the landing leg the nose locks skyward — descending scroll is a
+          // tail-first burn, ascending scroll a clean climb, both physical
+          const ta = padQ != null
+            ? -Math.PI / 2
+            : Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
           if (angS == null) angS = ta;
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
@@ -4007,12 +4334,23 @@ function initCourier() {
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
           const lifeT = snap ? pd * 10000 : now;           // deterministic in the verification hook
           const drift = (Math.sin(lifeT * .00165 + pd * 17) * 2.5
-            + Math.sin(lifeT * .00061 + 1.2) * 1.15) * (L0.oq == null ? 1 : .55);
+            + Math.sin(lifeT * .00061 + 1.2) * 1.15) * (L0.oq == null ? 1 : .55)
+            * (padQ == null ? 1 : 1 - smt(cl01(padQ)));   // the wobble dies at touchdown
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
           const bank = Math.max(-.075, Math.min(.075, dA * .22));
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
           let sc = 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
+          if (padQ != null) {
+            // the courier ENLARGES into the pad rocket as it settles on the slot
+            const ps = window.__ffPadScale ? window.__ffPadScale() : 2.2;
+            sc *= 1 + (ps - 1) * smt5(cl01(padQ));
+          }
+          if (loSecRef) {
+            const dk = padQ != null && padQ >= .985;
+            if (dk !== dockOn) { dockOn = dk; loSecRef.classList.toggle("docked", dk); }
+            if (dk) alpha = 0;                            // the pad rocket takes over seamlessly
+          }
           if (L0.oq != null) {
             const q = L0.oq;
             // Upper/rear half of the ellipse is physically behind the globe.
@@ -4039,6 +4377,69 @@ function initCourier() {
     frame(performance.now(), true);
     return { p: +pd.toFixed(4), o: wrap.style.opacity, t: wrap.style.transform };
   };
+}
+
+/* =========================================================================
+   LIFTOFF FINALE — mounts the standing pad rocket (the courier's own art at
+   launch scale), keeps its size in lockstep with the scene, and wires PRESS
+   FOR LIFTOFF: ignition, a beat to clear the tower, then an accelerating
+   burn that carries the visitor back to the very top of the story.
+   ========================================================================= */
+function initLiftoff() {
+  const lo = $("#liftoff");
+  if (!lo) return;
+  const scene = lo.querySelector(".lo-scene");
+  const host = $("#padRocket");
+  const art = $("#sysMap .mg-rocket .rk-size");
+  if (host && art) {
+    // same art as the courier, re-uid'd so gradient ids never collide
+    host.innerHTML = `<svg viewBox="-119 -35 156 70" width="156" height="70">${
+      art.outerHTML.replace(/rk\d+-/g, "lork-")}</svg>`;
+  }
+  // the rocket's LENGTH tracks the scene: 460 scene-units tall on the pad,
+  // whatever the viewport. The courier's landing leg reads the same number,
+  // so the enlarge-into handoff is pixel-true at every width.
+  const padScale = () => {
+    const w = (scene && scene.clientWidth) || 1400;
+    return Math.max(1.05, (w / 1900) * 460 / 156);
+  };
+  window.__ffPadScale = padScale;
+  const sync = () => { if (scene) scene.style.setProperty("--pads", padScale().toFixed(4)); };
+  window.addEventListener("resize", sync);
+  sync();
+
+  const btn = $("#liftoffBtn");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    if (lo.classList.contains("launching")) return;
+    const de = document.documentElement;
+    if (REDUCED) { de.style.scrollBehavior = "auto"; window.scrollTo(0, 0); de.style.scrollBehavior = ""; return; }
+    lo.classList.add("launching");
+    de.classList.add("launching");      // hides the courier — one rocket owns the sky
+    const y0 = de.scrollTop;
+    const dur = Math.min(3400, 1100 + y0 * .14);
+    const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    de.style.scrollBehavior = "auto";   // the page's smooth default would fight the burn
+    const finish = () => {
+      de.scrollTop = 0;
+      de.style.scrollBehavior = "";
+      setTimeout(() => { lo.classList.remove("launching"); de.classList.remove("launching"); }, 450);
+    };
+    const begin = () => {
+      const t0 = performance.now();
+      // watchdog: if rAF ever stalls, the burn still completes — the page can
+      // never be left wedged at the bottom with a dead button
+      const guard = setTimeout(finish, dur + 1600);
+      const step = now => {
+        const t = Math.min(1, (now - t0) / dur);
+        de.scrollTop = y0 * (1 - ease(t));
+        if (t < 1) requestAnimationFrame(step);
+        else { clearTimeout(guard); finish(); }
+      };
+      requestAnimationFrame(step);
+    };
+    setTimeout(begin, 640);             // ignition — let the bird clear the tower first
+  });
 }
 
 function renderMegaLogo() {
@@ -4280,8 +4681,11 @@ function renderSystem() {
     const [rx, ry] = SHELLS[ring];
     return `M ${f(a[0])} ${f(a[1])} A ${rx} ${ry} 0 0 1 ${f(b[0])} ${f(b[1])}`;
   };
-  const deathStar1At = lowerShellAtAngle(3, 30);
-  const deathStar2At = lowerShellAtAngle(4, 140);
+  /* The 2028–29 ring rides the 2029 shell's near arc; the 2036+ moon rides
+     the 2036 shell's FAR arc at the top-left, so each planet can park its
+     aspirations panel right BESIDE itself, sketch-style (tops aligned). */
+  const deathStar1At = lowerShellAtAngle(3, 24);
+  const deathStar2At = lowerShellAtAngle(4, -135);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -4301,8 +4705,12 @@ function renderSystem() {
   /* The three operating lanes advance annually; the two future lanes then
      land on the dates stated in their aspiration cards. */
   const RING_YEARS = [2026, 2027, 2028, 2029, 2036];
+  // per-ring pill angles: 2028/2029 tuck into the gap between the fly card
+  // and the storm planet, 2036 rides out right of the storm card — all four
+  // stay clear of the 2028–29 panel parked beside its planet
+  const YEAR_ANGLES = [65, 65, 73, 74, 40];
   const yearMarks = SHELLS.map((shell2, i) => {
-    const p = lowerShellAtAngle(i, 65), future = shell2[3].includes("future") ? " future" : "";
+    const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
       <circle r="3.2"/><rect x="10" y="-12" width="62" height="24" rx="12"/>
       <text x="41" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
@@ -4325,7 +4733,7 @@ function renderSystem() {
       chs: "Fire safety servicing | Compliance | Installations | Maintenance",
       card: { left: 13, top: 46.5 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(2, 1470), r: 36,
+      at: lowerShellAtX(2, 1300), r: 36,
       role: "Business-to-business division supplying wholesale and retail trade",
       cat: "B2B WHOLESALE",
       chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
@@ -4707,15 +5115,18 @@ function renderSystem() {
   const stormCtrlY = stormPlanet.at[1] - 90;
   // Both FUTURE stations dock into the same engine as the operating trio: a
   // licence lane sweeping out from Holdings, a dotted royalty promise curving
-  // back — gold for the 2028–29 ring, violet for the 2036+ moon. Their radii
-  // are the stations' scaled body sizes (57×.70 / 58×.72) plus the same edge
-  // clearance the spheres get, so arrows kiss the surface, never the ring.
-  const ds1Body = { at: deathStar1At, r: 44 };
-  const ds2Body = { at: deathStar2At, r: 46 };
+  // back — gold for the 2028–29 ring, violet for the 2036+ moon. Because each
+  // panel parks BESIDE its planet (sketch formation), the lanes land on the
+  // planets' CROWNS: the gold lane arcs OVER its panel and dives in from the
+  // top-right; the violet pair skims the sky corridor under the masthead.
+  // Radii are the scaled bodies (57×.70 / 58×.72) + 2 so arrows kiss the
+  // surface, never the ring.
+  const ds1Top = circleAt(deathStar1At[0], deathStar1At[1], 42, -90);
+  const ds1RoyalStart = circleAt(deathStar1At[0], deathStar1At[1], 42, -90 - gapDeg(42));
+  const ds2Top = circleAt(deathStar2At[0], deathStar2At[1], 44, -90);
+  const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 + gapDeg(44));
   const ds1Out = sunAt(15), ds1In = sunAt(15 - sunGap);
   const ds2Out = sunAt(168), ds2In = sunAt(168 + sunGap);
-  const ds1LaneEnd = edgeToward(ds1Body, cx, cy), ds1RoyalStart = edgeToward(ds1Body, cx, cy, gapDeg(ds1Body.r));
-  const ds2LaneEnd = edgeToward(ds2Body, cx, cy), ds2RoyalStart = edgeToward(ds2Body, cx, cy, -gapDeg(ds2Body.r));
   const spine = `
     <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
     <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
@@ -4726,16 +5137,16 @@ function renderSystem() {
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 637 540, 767 462, ${f(formIn[0])} ${f(formIn[1])}"/>
     <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C ${f(stormCtrlX + 8)} ${f(stormCtrlY - 12)}, 1208 462, ${f(stormIn[0])} ${f(stormIn[1])}"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
-    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1210 650, 1560 710, ${f(ds1LaneEnd[0])} ${f(ds1LaneEnd[1])}"/>
-    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 510 470, 168 630, ${f(ds2LaneEnd[0])} ${f(ds2LaneEnd[1])}"/>
-    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1210 650, 1560 710, ${f(ds1LaneEnd[0])} ${f(ds1LaneEnd[1])}"/>
-    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 510 470, 168 630, ${f(ds2LaneEnd[0])} ${f(ds2LaneEnd[1])}"/>
-    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1560 690, 1240 640, ${f(ds1In[0])} ${f(ds1In[1])}"/>
-    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 152 588, 512 410, ${f(ds2In[0])} ${f(ds2In[1])}"/>
+    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1620 500, 1300 440, ${f(ds1In[0])} ${f(ds1In[1])}"/>
+    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 400 220, 700 215, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     <text class="sm-roylab rl-form" x="690" y="472" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1288" y="478" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-ds1" x="1500" y="608" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
-    <text class="sm-roylab rl-ds2" x="378" y="492" text-anchor="middle">FUTURE LICENCE · 2036+</text>`;
+    <text class="sm-roylab rl-storm" x="1288" y="512" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-ds1" x="1450" y="452" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
+    <text class="sm-roylab rl-ds2" x="500" y="294" text-anchor="middle">FUTURE LICENCE · 2036+</text>`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below, and both Future Ltd aspiration planets tethered to Holdings on the outer rings">
@@ -4765,10 +5176,10 @@ function renderSystem() {
         <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${f(flyOut[0])}" y1="${f(flyOut[1])}" x2="${f(flyLaneEnd[0])}" y2="${f(flyLaneEnd[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/>
         </linearGradient>
-        <linearGradient id="lgD1" gradientUnits="userSpaceOnUse" x1="${f(ds1Out[0])}" y1="${f(ds1Out[1])}" x2="${f(ds1LaneEnd[0])}" y2="${f(ds1LaneEnd[1])}">
+        <linearGradient id="lgD1" gradientUnits="userSpaceOnUse" x1="${f(ds1Out[0])}" y1="${f(ds1Out[1])}" x2="${f(ds1Top[0])}" y2="${f(ds1Top[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#d7b35f"/>
         </linearGradient>
-        <linearGradient id="lgD2" gradientUnits="userSpaceOnUse" x1="${f(ds2Out[0])}" y1="${f(ds2Out[1])}" x2="${f(ds2LaneEnd[0])}" y2="${f(ds2LaneEnd[1])}">
+        <linearGradient id="lgD2" gradientUnits="userSpaceOnUse" x1="${f(ds2Out[0])}" y1="${f(ds2Out[1])}" x2="${f(ds2Top[0])}" y2="${f(ds2Top[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/>
         </linearGradient>
         <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
@@ -4779,7 +5190,7 @@ function renderSystem() {
       ${SHELLS.map(shell).join("")}
       ${yearMarks}
       <path class="sm-orbit future dock" d="${dockArc(3, 10, 38)}"/>
-      <path class="sm-orbit future outer dock" d="${dockArc(4, 124, 154)}"/>
+      <path class="sm-orbit future outer dock" d="${dockArc(4, -149, -121)}"/>
       ${spine}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
@@ -4949,7 +5360,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "right", art: .70, at: deathStar1At,
-    panelDock: { right: .035, top: .22 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBeside: { side: -1, gap: 40 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
@@ -4958,11 +5369,11 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "left", art: .72, at: deathStar2At,
-    panelPin: { x: .063, y: .156 }, panelColor: "#a487df", autoOpen: true,
+    panelBeside: { side: 1, gap: 40 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
-      { n: "Freedom Energy+", d: "Beyond 2036 · Long-horizon energy", c: "var(--pink)" },
+      { n: "Freedom Freight", d: "Beyond 2036 · Freight &amp; logistics", c: "var(--pink)" },
     ],
   });
 
@@ -5022,7 +5433,9 @@ function renderSystem() {
     // Give every company a deliberate band of breathing room below its planet.
     // Distribution additionally forms a left-aligned vertical stack: the
     // planet, company card and KEY FUNCTION box share one x-axis.
-    const cardGap = { form: 50, fly: 54, storm: 50 };
+    // storm's gap is deeper so the 2028–29 aspirations panel (top-aligned
+    // beside its planet, directly above) never kisses the card at any width
+    const cardGap = { form: 50, fly: 54, storm: 85 };
     PLANETS.forEach(p => {
       const c = cardFor(p.key);
       if (!c) return;
@@ -7292,6 +7705,102 @@ function initSetpieces() {
     if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
   }
 
+  /* ---------- FUNDING CLIMB: the second, LONG cloud ride (team → liftoff).
+     Same cloud machinery, different arc — night → bright cruise → night, so
+     both ends hand off to dark chapters. The funding brief rides the bright
+     middle via updateFunding below. */
+  function drawFunding(ctx, p, w, h) {
+    if (!CLs) makeClouds();
+    const day = sm(ph2(p, .06, .20)) * (1 - sm(ph2(p, .78, .93)));
+    const top = [lp(7, 236, day), lp(7, 240, day), lp(13, 248, day)];
+    const bot = [lp(7, 226, day), lp(7, 232, day), lp(13, 242, day)];
+    const bg2 = ctx.createLinearGradient(0, 0, 0, h);
+    bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
+    bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
+    ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
+    // stars own both dark ends of the ride
+    const starA = Math.min(.92, (1 - sm(ph2(p, .03, .13))) * .9 + sm(ph2(p, .87, .975)) * .88);
+    if (starA > .02) for (let i = 0; i < 70; i++) {
+      const sx = ((i * 137.5) % 359) / 359, sy = ((i * 73.1) % 211) / 211 * .5;
+      ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
+      ctx.fillRect(sx * w, sy * h, 1.4, 1.4);
+    }
+    const lightMix = day;
+    const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
+    for (const { c2, g } of order) {
+      const { zf, k, scale, sw, sh, x, y } = g;
+      let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
+      al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
+      if (al <= .015) continue;
+      const spr = CLs[c2.s];
+      ctx.globalAlpha = al * (1 - lightMix);
+      ctx.drawImage(spr.dark, x, y, sw, sh);
+      ctx.globalAlpha = al * .38 * (1 - k);
+      ctx.drawImage(spr.mid, x, y, sw, sh);
+      ctx.globalAlpha = al * lightMix;
+      ctx.drawImage(spr.light, x, y, sw, sh);
+    }
+    ctx.globalAlpha = 1;
+    // the sea of clouds holds beneath the brief through the bright cruise
+    const sea = sm(ph2(p, .26, .46)) * (1 - sm(ph2(p, .72, .88)));
+    if (sea > .01) {
+      ctx.globalAlpha = sea * .5;
+      for (let i = 0; i < 9; i++) {
+        const sx2 = (i / 9) * w * 1.2 - w * .1 + ((i * 53) % 40);
+        const sw2 = w * .3, sh2 = sw2 * .5;
+        ctx.drawImage(CLs[i % 4].light, sx2, h * (.86 + ((i * 31) % 8) / 100), sw2, sh2);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // soft breathing haze at the brightest stretch
+    ctx.fillStyle = `rgba(255,255,255,${day * .12})`;
+    ctx.fillRect(0, 0, w, h);
+    // the moon leads the descent into launch-night
+    const moonA = sm(ph2(p, .84, .94));
+    if (moonA > .01) {
+      const mx = w * .24, my = h * .2;
+      const mh2 = ctx.createRadialGradient(mx, my, 0, mx, my, h * .18);
+      mh2.addColorStop(0, `rgba(235,240,255,${.36 * moonA})`);
+      mh2.addColorStop(1, "rgba(235,240,255,0)");
+      ctx.fillStyle = mh2; ctx.beginPath(); ctx.arc(mx, my, h * .18, 0, TAU); ctx.fill();
+      ctx.fillStyle = `rgba(248,250,255,${.92 * moonA})`;
+      ctx.beginPath(); ctx.arc(mx, my, h * .03, 0, TAU); ctx.fill();
+    }
+    // dark handoffs — the team chapter above, the launch pad below
+    const inDark = 1 - sm(ph2(p, .012, .07));
+    if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
+    const outDark = sm(ph2(p, .93, .995));
+    if (outDark > .01) { ctx.fillStyle = `rgba(7,7,13,${outDark})`; ctx.fillRect(0, 0, w, h); }
+  }
+  let FDels = null;
+  function updateFunding(p) {
+    if (!FDels) {
+      const over = document.getElementById("fundOver");
+      if (!over) return;
+      FDels = {
+        over,
+        head: [over.querySelector(".fund-kick"), over.querySelector(".fund-h")],
+        cards: [...over.querySelectorAll(".fund-card")],
+        note: over.querySelector(".fund-note")
+      };
+    }
+    const vis = sm(ph2(p, .10, .17)) * (1 - sm(ph2(p, .82, .90)));
+    FDels.over.style.opacity = vis.toFixed(3);
+    FDels.over.style.visibility = vis > .01 ? "visible" : "hidden";
+    const head = sm(ph2(p, .11, .18));
+    FDels.head.forEach(el => {
+      if (!el) return;
+      el.style.opacity = head.toFixed(3);
+      el.style.transform = `translateY(${((1 - head) * 18).toFixed(1)}px)`;
+    });
+    FDels.cards.forEach((c2, i) => {
+      const t = sm(ph2(p, .20 + i * .13, .27 + i * .13));
+      c2.style.opacity = t.toFixed(3);
+      c2.style.transform = `translateY(${((1 - t) * 26).toFixed(1)}px)`;
+    });
+    if (FDels.note) FDels.note.style.opacity = sm(ph2(p, .74, .80)).toFixed(3);
+  }
+
   /* ---------- MARKET RUNWAY overlay: rides the planet set-piece scrub.
      Values reuse the deck's exact interpolation; visibility fades in and out
      inside the scrub so the set-piece endpoints stay pixel-exact. */
@@ -7353,7 +7862,7 @@ function initSetpieces() {
   }
 
   /* ---------- controller -------------------------------------------------- */
-  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-clouds": drawClouds };
+  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-funding": drawFunding, "tr2-clouds": drawClouds };
   const items = [];
   els.forEach(el => {
     const key = Object.keys(TYPES).find(k => el.classList.contains(k));
@@ -7392,6 +7901,7 @@ function initSetpieces() {
       it.last = p;
       it.draw(it.ctx, p, it.w, it.h);
       if (it.draw === drawPlanet) updateRunway(p);
+      else if (it.draw === drawFunding) updateFunding(p);
     });
   };
   const onScroll = rafScroll(() => paint(false));
@@ -7399,7 +7909,7 @@ function initSetpieces() {
   addEventListener("resize", () => { gate(); items.forEach(it => { it.w = 0; }); paint(true); });
   gate();
   paint(true);
-  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); it.last = p; return { w: it.w, h: it.h }; };
+  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); else if (it.draw === drawFunding) updateFunding(p); it.last = p; return { w: it.w, h: it.h }; };
 }
 
 /* =========================================================================
@@ -7499,6 +8009,7 @@ safeBoot("setpieces", initSetpieces);
 safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
 safeBoot("courier", initCourier); // after system — it clones the mounted rocket's art
+safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones the same art
 safeBoot("journey", renderJourney);
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);

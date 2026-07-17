@@ -88,7 +88,7 @@ section#team{overflow-x:clip;}
 .sm-stats .s{display:block;font-size:.6rem;color:rgba(243,244,251,.44);line-height:1.35;margin-top:4px;}
 .sm-stats .hint{grid-column:1 / -1;margin:2px 0 0;font-size:.66rem;text-align:center;color:rgba(243,244,251,.5);}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
-.sm-brands{position:absolute;z-index:4;width:min(290px,24%);text-align:center;}
+.sm-brands{position:absolute;z-index:4;width:min(280px,20vw);text-align:center;}
 .sm-brands::before{content:"";position:absolute;z-index:2;left:50%;top:-18px;width:2px;height:18px;background:rgba(255,255,255,.7);transform:translateX(-1px);}
 .sm-brands .cap2{position:absolute;z-index:3;left:50%;top:4px;transform:translateX(-50%);display:block;padding:0 9px;background:#07070d;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--blue);white-space:nowrap;}
 .sm-brands .bx{position:relative;padding:19px 0 0;background:transparent;}
@@ -138,7 +138,9 @@ section#team{overflow-x:clip;}
 .sm-planet:hover .halo,.sm-planet.hot .halo,.sm-planet:focus-visible .halo{opacity:.85;}
 .mf,.sm-planet{transform-box:fill-box;transform-origin:center;}
 .sm-bob{animation:smBob 7s ease-in-out infinite;}
-@keyframes smBob{50%{transform:translateY(-8px);}}
+/* whisper-level bob — the sketch formation locks each box top to its
+   planet's crown, so the drift must never read as misalignment */
+@keyframes smBob{50%{transform:translateY(-2px);}}
 .sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:smSurfaceSpin 16s linear infinite;will-change:transform;transform-box:view-box;transform-origin:0 0;}
 .sm-cloud-spin{animation-duration:21s;animation-direction:reverse;opacity:.62;}
 .sm-world-belt{animation-duration:24s;}
@@ -159,25 +161,29 @@ section#team{overflow-x:clip;}
 .sm-year.future rect{stroke:rgba(255,255,255,.38);}
 .sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:rgba(255,255,255,.78);}
 .sm-card{
-  position:absolute;z-index:5;width:min(300px,25vw);background:rgba(15,17,25,.94);
+  position:absolute;z-index:5;width:min(272px,20.5vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
 }
-.sm-card::before{content:"";position:absolute;left:var(--lead-x,50%);bottom:100%;height:calc(var(--lead-h,42px) + 32px);border-left:1.4px dashed color-mix(in srgb,var(--c,#fff) 62%,transparent);transform:translateX(-.7px);pointer-events:none;opacity:.82;}
-.sm-lead-probe{position:absolute;left:var(--lead-x,50%);top:calc(-1 * (var(--lead-h,42px) + 32px));width:0;height:0;pointer-events:none;visibility:hidden;}
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
-.sm-card h3{margin:0;font-size:.95rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
+.sm-card h3{margin:0;font-size:.92rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
-.sm-card .ta{color:var(--pink);font-size:.68rem;font-style:italic;margin:4px 0 0;}
-.sm-card .cat{color:var(--c);font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:6px 0 0;}
-/* KEY FUNCTION sub-boxes — hang from a stem centred beneath their card */
-.sm-sub{position:absolute;z-index:4;width:min(320px,26vw);text-align:center;}
-.sm-sub::before{content:"";position:absolute;left:50%;top:-6px;width:2px;height:6px;background:rgba(255,255,255,.28);}
-.sm-sub .cap2{display:block;font-size:.52rem;font-weight:800;letter-spacing:.16em;color:rgba(243,244,251,.5);margin-bottom:2px;}
+.sm-card .ta{color:var(--pink);font-size:.66rem;font-style:italic;margin:4px 0 0;}
+.sm-card .cat{color:var(--c);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:6px 0 0;line-height:1.4;}
+/* sketch formation — the dash-dot line from each MAIN BOX to its planet's
+   edge, and the stem dropping to the detail shelf, live in the SVG */
+.sm-cardlink{fill:none;stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:.85;}
+.sm-colstem{fill:none;stroke-width:1.3;stroke-dasharray:2.5 7;stroke-linecap:round;opacity:.5;}
+/* the two future planets are formation-locked to their boxes — no bob */
+.fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
+/* DETAIL SHELF boxes — channels / services / partners under the trio */
+.sm-sub{position:absolute;z-index:4;width:min(280px,20vw);text-align:center;}
+.sm-sub .cap2{display:block;font-size:.52rem;font-weight:800;letter-spacing:.16em;color:var(--c,rgba(243,244,251,.5));margin-bottom:3px;}
+.sm-sub .cap2.c2b{margin-top:8px;}
 .sm-sub .fn2{display:flex;align-items:center;gap:8px;text-align:left;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 10px;background:rgba(15,17,25,.8);}
 .sm-sub .fn2 svg{width:16px;height:16px;flex:none;color:var(--c);}
-.sm-sub .fn2 span{font-size:.64rem;line-height:1.35;color:rgba(243,244,251,.66);}
+.sm-sub .fn2 span{font-size:.64rem;line-height:1.4;color:rgba(243,244,251,.66);}
 .sm-card .ch{color:rgba(243,244,251,.6);font-size:.76rem;line-height:1.5;margin:7px 0 0;letter-spacing:.02em;}
 .sm-card .opill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:4px 12px;margin-top:8px;opacity:.9;}
 .sm-note{
@@ -692,7 +698,12 @@ html.spx .tr2-funding{height:560vh;background:#07070d;}
 .fund-inner{width:min(680px,88vw);text-align:center;}
 .fund-kick{font-size:.66rem;font-weight:800;letter-spacing:.22em;color:#8d1d56;opacity:0;}
 .fund-h{margin:8px 0 0;font-size:clamp(1.6rem,3.2vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:#0b0e1a;opacity:0;}
-.fund-cards{display:grid;gap:12px;margin-top:22px;text-align:left;}
+.fund-sub{margin:10px auto 0;max-width:56ch;font-size:.86rem;line-height:1.55;color:#39405a;opacity:0;}
+.fund-card h4 .pct{float:right;font-style:normal;font-family:"Orbitron",system-ui,sans-serif;font-size:.72rem;font-weight:700;color:#c9186f;letter-spacing:.06em;}
+.fund-card .fc-body{flex:1;min-width:0;}
+.fund-card .bar{display:block;height:4px;border-radius:99px;background:rgba(10,14,26,.10);margin-top:9px;overflow:hidden;}
+.fund-card .bar i{display:block;height:100%;width:var(--w,50%);border-radius:99px;background:linear-gradient(90deg,#ff3d9a,#38a9ff);}
+.fund-cards{display:grid;gap:12px;margin-top:20px;text-align:left;}
 .fund-card{opacity:0;background:rgba(255,255,255,.88);border:1px solid rgba(10,14,26,.14);border-radius:16px;padding:13px 18px 14px;box-shadow:0 18px 44px rgba(25,35,70,.16);display:flex;gap:14px;align-items:flex-start;}
 .fund-card .no{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:2px;}
 .fund-card h4{margin:0 0 3px;font-size:.95rem;color:#0b0e1a;letter-spacing:-.01em;}
@@ -2373,27 +2384,32 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <div class="tr2 tr2-funding"><div class="tr2-stage"><canvas></canvas>
     <div class="fund-over" id="fundOver" aria-hidden="true">
       <div class="fund-inner">
-        <div class="fund-kick">THE RAISE · WHY WE NEED THIS MONEY</div>
-        <h3 class="fund-h">Fuel for the climb.</h3>
+        <div class="fund-kick">THE RAISE · USE OF FUNDS</div>
+        <h3 class="fund-h">Why we need this money.</h3>
+        <p class="fund-sub">Four deployments, one engine — every pound is put to work inside the licence structure that returns royalties to Holdings each quarter.</p>
         <div class="fund-cards">
-          <article class="fund-card"><span class="no">01</span><div>
-            <h4>Inventory &amp; buying power</h4>
-            <p>[Placeholder] Deeper stock positions across the fastest-moving lines, unlocking supplier volume pricing and closing out-of-stock windows for good.</p>
+          <article class="fund-card"><span class="no">01</span><div class="fc-body">
+            <h4>Inventory &amp; buying power <em class="pct">40%</em></h4>
+            <p>[Placeholder] Deeper stock positions across the fastest-moving lines — unlocking supplier volume pricing, protecting availability and lifting margin on every unit sold.</p>
+            <span class="bar"><i style="--w:40%"></i></span>
           </div></article>
-          <article class="fund-card"><span class="no">02</span><div>
-            <h4>Warehousing &amp; fulfilment</h4>
-            <p>[Placeholder] A larger facility with automated pick-and-pack, cutting dispatch times and the carriage cost of every order we ship.</p>
+          <article class="fund-card"><span class="no">02</span><div class="fc-body">
+            <h4>Warehousing &amp; fulfilment <em class="pct">25%</em></h4>
+            <p>[Placeholder] A larger facility with automated pick-and-pack — faster dispatch, lower carriage cost per order, and the capacity the 2028 sectors will stand on.</p>
+            <span class="bar"><i style="--w:25%"></i></span>
           </div></article>
-          <article class="fund-card"><span class="no">03</span><div>
-            <h4>People &amp; compliance</h4>
-            <p>[Placeholder] Key operational hires and accreditation programmes that keep quality, safety and service ahead of demand as the group scales.</p>
+          <article class="fund-card"><span class="no">03</span><div class="fc-body">
+            <h4>People &amp; compliance <em class="pct">20%</em></h4>
+            <p>[Placeholder] Key operational hires and accreditation programmes — keeping quality, safety and service ahead of demand as the group scales nationally.</p>
+            <span class="bar"><i style="--w:20%"></i></span>
           </div></article>
-          <article class="fund-card"><span class="no">04</span><div>
-            <h4>Channel &amp; brand growth</h4>
+          <article class="fund-card"><span class="no">04</span><div class="fc-body">
+            <h4>Channel &amp; brand growth <em class="pct">15%</em></h4>
             <p>[Placeholder] Measured investment in marketplace expansion, direct-to-consumer growth and the trade pipeline behind the licence engine.</p>
+            <span class="bar"><i style="--w:15%"></i></span>
           </div></article>
         </div>
-        <p class="fund-note">Figures are placeholders — the full deployment schedule lives in the data room.</p>
+        <p class="fund-note">Indicative split — placeholder figures pending the formal deployment schedule in the data room.</p>
       </div>
     </div>
   </div></div>
@@ -2411,12 +2427,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <p>The courier has flown the whole story — hero to horizon. One press puts you back on the launch rail at the very top.</p>
       </div>
       <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
-        <span class="kicker">Why we need this money</span>
+        <span class="kicker">The raise · why we need this money</span>
         <div style="display:grid;gap:10px;margin-top:12px;font-size:.85rem;line-height:1.5;">
-          <div><b>01 · Inventory &amp; buying power</b> — [Placeholder] deeper stock positions and supplier volume pricing.</div>
-          <div><b>02 · Warehousing &amp; fulfilment</b> — [Placeholder] automated pick-and-pack, faster dispatch, lower carriage cost.</div>
-          <div><b>03 · People &amp; compliance</b> — [Placeholder] key hires and accreditation programmes ahead of demand.</div>
-          <div><b>04 · Channel &amp; brand growth</b> — [Placeholder] marketplace expansion, DTC growth and the trade pipeline.</div>
+          <div><b>01 · Inventory &amp; buying power (40%)</b> — [Placeholder] deeper stock positions and supplier volume pricing.</div>
+          <div><b>02 · Warehousing &amp; fulfilment (25%)</b> — [Placeholder] automated pick-and-pack, faster dispatch, lower carriage cost.</div>
+          <div><b>03 · People &amp; compliance (20%)</b> — [Placeholder] key hires and accreditation programmes ahead of demand.</div>
+          <div><b>04 · Channel &amp; brand growth (15%)</b> — [Placeholder] marketplace expansion, DTC growth and the trade pipeline.</div>
+          <div style="opacity:.65;font-size:.75rem;">Indicative split — placeholder figures pending the formal deployment schedule.</div>
         </div>
       </div>
     </div>
@@ -3097,8 +3114,10 @@ function renderHero() {
 /* Future Ltd aspirations — from the group-structure notes; shared by the
    overview strip and the hero rocket's manifest */
 const FUTURE = [
-  { n: "Freedom Form Ltd", d: "Property &amp; management — will operate from the group's next warehouse. Its managing director brings 10 years in architecture.", c: "var(--ember)" },
-  { n: "Freedom Fly Ltd", d: "Drone visual — live drone footage paired with interconnected alarms, already in use on site.", c: "var(--blue)" }
+  { n: "Freedom Form Ltd", d: "Property · Development · Design — acquiring and developing the warehouses, commercial premises and strategic property behind the group's expansion. Its managing director brings 10 years in architecture.", c: "var(--ember)" },
+  { n: "Freedom Freight Ltd", d: "Global logistics — ocean and air freight, container imports and customs, taking control of the supply chain from factory to customer.", c: "var(--mint)" },
+  { n: "Freedom Fly Ltd", d: "Aerial technology — drone surveys, thermal imaging, fire-risk inspections and commercial visuals, already in use on site.", c: "var(--blue)" },
+  { n: "Freedom Fuel Ltd", d: "Forecourt &amp; energy — a national network of modern forecourts, convenience retail and future mobility infrastructure.", c: "var(--pink)" }
 ];
 
 const ICONS = {
@@ -3122,7 +3141,7 @@ function renderBrands() {
   const fr = $("#futureRow");
   if (fr) fr.innerHTML = FUTURE.map(f => `
     <div class="fs-chip" style="--c:${f.c}"><i></i><div><b>${f.n}</b><span>${f.d}</span></div></div>`).join("")
-    + `<div class="fs-note">Both companies are already mapped into the group's expansion plan. The moment each goes live, it licenses the group's brands and plugs straight into the shared systems — with royalties flowing back to Holdings.</div>`;
+    + `<div class="fs-note">Every future company is already mapped into the group's expansion plan as its own sector. The moment each goes live, it licenses the group's brands and plugs straight into the shared systems — with royalties flowing back to Holdings.</div>`;
   // the company icons live inside the group graph now
   [["ggIcoGlobal", "globe"], ["ggIcoFac", "wrench"], ["ggIcoDist", "cube"]].forEach(([id, ic]) => {
     const slot = document.getElementById(id);
@@ -3310,10 +3329,10 @@ function mountLegacyStation(stage, g) {
   const panel = document.createElement("div");
   panel.className = "rk-panel";
   const ST_FUTURE = [
-    { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
-    { n: "Freedom Fly Ltd", d: "2029 · Drone visual &amp; alarms", c: "var(--blue)" },
-    { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
-    { n: "Freedom Freight", d: "Beyond 2036 · freight &amp; logistics", c: "var(--pink)" },
+    { n: "Freedom Form Ltd", d: "2028 · Property · Development · Design", c: "var(--ember)" },
+    { n: "Freedom Freight Ltd", d: "2028 · Global logistics", c: "var(--mint)" },
+    { n: "Freedom Fly Ltd", d: "2029 · Aerial technology", c: "var(--blue)" },
+    { n: "Freedom Fuel Ltd", d: "2036+ · Forecourt &amp; energy", c: "var(--pink)" },
   ];
   panel.innerHTML = "<h4>Future Ltd aspirations</h4>" + ST_FUTURE.map(x =>
     `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
@@ -4054,10 +4073,12 @@ function initCourier() {
   // sky exit → the journey timeline's rail → the growth line → the
   // trajectory line → 360° orbit-insertion at the destination planet.
   // Smooth blends bridge the gaps, so the whole flight is one seamless path.
-  // One uninterrupted 360° spiral. The old opening plateau held the courier
-  // rigidly at nine o'clock; smootherstep now gives it a fluid launch, sweep
-  // and dock without ever parking mid-flight.
-  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2;
+  // The courier now holds orbit for the WHOLE planet chapter — three full
+  // revolutions across the 600vh scrub, easing into and out of the spiral so
+  // insertion and departure stay fluid. It leaves from the same nine-o'clock
+  // gate it entered, ready for the long-range descent.
+  const ORBIT_REVS = 3;
+  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS;
   const pathRide = sels => {
     const els = sels.map(s => document.querySelector(s)).filter(e2 => e2 && e2.getTotalLength);
     if (!els.length) return null;
@@ -4107,9 +4128,9 @@ function initCourier() {
     if (g2 && g2.s1 - g2.s0 > 60) { g2.kind = "growth"; segs.push(g2); }
     const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
     if (t3 && t3.s1 - t3.s0 > 60) { t3.kind = "traj"; segs.push(t3); }
-    // orbit-insertion at the destination planet, followed by an uninterrupted
-    // long-range descent which carries the courier to the footer.
-    const orbitEnd = pT + vh * .9;
+    // orbit-insertion at the destination planet — held for the FULL planet
+    // scrub — followed by an uninterrupted long-range descent to the pad.
+    const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
     const orbitAt = q => {
         const r2 = pStage.getBoundingClientRect();
         const R = Math.min(r2.width, r2.height) * .33;    // drawPlanet's own radius
@@ -4284,7 +4305,7 @@ function initCourier() {
       const cR = clouds.getBoundingClientRect();
       const S0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
       const pT = scrollY + planet.getBoundingClientRect().top;
-      const orbitEnd = pT + vh * .9;
+      const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
       const S1 = Math.max(orbitEnd + vh, document.documentElement.scrollHeight - vh); // footer destination
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
@@ -4650,7 +4671,7 @@ const DOCK_Y = .68;
 function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
-  const W = 1900, H = 1400, cx = 950, cy = 350, sunR = 84;
+  const W = 1900, H = 1620, cx = 950, cy = 350, sunR = 84;   /* H grew for the sketch formation: main boxes ride BESIDE their planets, the detail shelf lives below */
   const f = n => n.toFixed(1);
   /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls].
      The three OPERATING apexes (349/328/310) tuck INSIDE the sun's disk: the
@@ -4708,7 +4729,7 @@ function renderSystem() {
   // per-ring pill angles: 2028/2029 tuck into the gap between the fly card
   // and the storm planet, 2036 rides out right of the storm card — all four
   // stay clear of the 2028–29 panel parked beside its planet
-  const YEAR_ANGLES = [65, 65, 73, 74, 40];
+  const YEAR_ANGLES = [30, 68, 104.5, 72, 40];
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -4718,26 +4739,24 @@ function renderSystem() {
   }).join("");
   // each operating company rides its OWN ring — blue on the 1st, mint on the
   // 2nd, ember dropped to the 3rd — so the orbits themselves read as tiers
+  /* Each operating company leads a SECTOR (the ecosystem language): the
+     card beside its planet carries the sector heading + key function; the
+     deep detail (channels, storefronts, services, partners) lives on the
+     detail shelf below. */
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#e0f7ff", "#328fda", "#071c52"],
-      at: lowerShellAtX(0, 950), r: 48,
-      role: "The group's direct-to-consumer division",
+      at: lowerShellAtX(0, 1180), r: 48,
+      role: "Direct-to-consumer retail, marketplace growth and customer acquisition",
       ta: "(Currently Trading As Freedom Fire &amp; Safety Ltd)",
-      cat: "B2C E-COMMERCE",
-      chs: "eBay | Amazon | Shopify | TikTok Shop | OnBuy | More",
-      card: { left: "calc(50% - min(150px,12.5vw))", top: 45 } },   // centred on its planet
+      cat: "CONSUMER COMMERCE · D2C" },
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#d9ffea", "#2abf8d", "#063d3b"],
-      at: lowerShellAtX(1, 480.6), r: 42,
-      role: "Facilities-management division delivering servicing and maintenance contracts",
-      cat: "SERVICING &amp; MAINTENANCE",
-      chs: "Fire safety servicing | Compliance | Installations | Maintenance",
-      card: { left: 13, top: 46.5 } },
+      at: lowerShellAtX(1, 480), r: 42,
+      role: "National field service operation delivering long-term recurring compliance contracts",
+      cat: "COMPLIANCE &amp; FACILITIES MANAGEMENT" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
       at: lowerShellAtX(2, 1300), r: 36,
-      role: "Business-to-business division supplying wholesale and retail trade",
-      cat: "B2B WHOLESALE",
-      chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
-      card: { left: "72%", top: 49 } },                             // fallback — layoutSubs pins it under the planet, left edges aligned
+      role: "Large-scale distribution of the group's proprietary brands across the UK and international markets",
+      cat: "TRADE DISTRIBUTION · B2B" },
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
   const BRAND_ICONS = {
@@ -5105,14 +5124,19 @@ function renderSystem() {
   const laneGap = 14;
   const gapDeg = r => 2 * Math.asin(Math.min(1, laneGap / (2 * r))) * 180 / Math.PI;
   const sunGap = gapDeg(sunR);
+  /* SKETCH FORMATION for the whole trio: every main box parks beside its
+     planet, so every licence lane lands on its planet's CROWN and every
+     royalty return leaves from a crown-adjacent point 14px along the edge —
+     the boxes' sky stays untouched. */
   const formOut = sunAt(145), formIn = sunAt(145 + sunGap);
   const stormOut = sunAt(35), stormIn = sunAt(35 - sunGap);
   const flyOut = sunAt(90), flyIn = sunAt(90 - sunGap);
-  const formLaneEnd = edgeToward(formPlanet, cx, cy), formRoyalStart = edgeToward(formPlanet, cx, cy, -gapDeg(formPlanet.r));
-  const stormLaneEnd = edgeToward(stormPlanet, cx, cy), stormRoyalStart = edgeToward(stormPlanet, cx, cy, gapDeg(stormPlanet.r));
-  const flyLaneEnd = edgeToward(flyPlanet, cx, cy), flyRoyalStart = edgeToward(flyPlanet, cx, cy, gapDeg(flyPlanet.r));
-  const stormCtrlX = stormPlanet.at[0] - 198;
-  const stormCtrlY = stormPlanet.at[1] - 90;
+  const flyTop = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -125);
+  const flyRoyalStart = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -125 + gapDeg(flyPlanet.r + 2));
+  const formTop = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -45);
+  const formRoyalStart = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -45 + gapDeg(formPlanet.r + 2));
+  const stormTop = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90);
+  const stormRoyalStart = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90 + gapDeg(stormPlanet.r + 2));
   // Both FUTURE stations dock into the same engine as the operating trio: a
   // licence lane sweeping out from Holdings, a dotted royalty promise curving
   // back — gold for the 2028–29 ring, violet for the 2036+ moon. Because each
@@ -5127,26 +5151,33 @@ function renderSystem() {
   const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 + gapDeg(44));
   const ds1Out = sunAt(15), ds1In = sunAt(15 - sunGap);
   const ds2Out = sunAt(168), ds2In = sunAt(168 + sunGap);
+  const cardLinks = PLANETS.map(p => {
+    const y2 = f(p.at[1]);
+    return `
+    <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d="M ${f(p.at[0] - p.r - 38)} ${y2} L ${f(p.at[0] - p.r - 3)} ${y2}"/>
+    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`;
+  }).join("");
   const spine = `
-    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
-    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
-    <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyLaneEnd[0])} ${f(flyLaneEnd[1])}"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
-    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyLaneEnd[0])} ${f(flyLaneEnd[1])}"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 637 540, 767 462, ${f(formIn[0])} ${f(formIn[1])}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C ${f(stormCtrlX + 8)} ${f(stormCtrlY - 12)}, 1208 462, ${f(stormIn[0])} ${f(stormIn[1])}"/>
-    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
+    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 425, 580 525, ${f(formTop[0])} ${f(formTop[1])}"/>
+    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1150 470, 1260 620, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 1010 480, 1090 490, ${f(flyTop[0])} ${f(flyTop[1])}"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 425, 580 525, ${f(formTop[0])} ${f(formTop[1])}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1150 470, 1260 620, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 1010 480, 1090 490, ${f(flyTop[0])} ${f(flyTop[1])}"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 580 480, 780 450, ${f(formIn[0])} ${f(formIn[1])}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1270 610, 1155 460, ${f(stormIn[0])} ${f(stormIn[1])}"/>
+    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} C 1098 478, 1012 462, ${f(flyIn[0])} ${f(flyIn[1])}"/>
     <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1620 500, 1300 440, ${f(ds1In[0])} ${f(ds1In[1])}"/>
     <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 400 220, 700 215, ${f(ds2In[0])} ${f(ds2In[1])}"/>
-    <text class="sm-roylab rl-form" x="690" y="472" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1288" y="512" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-form" x="350" y="570" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-storm" x="1350" y="574" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
     <text class="sm-roylab rl-ds1" x="1450" y="452" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
-    <text class="sm-roylab rl-ds2" x="500" y="294" text-anchor="middle">FUTURE LICENCE · 2036+</text>`;
+    <text class="sm-roylab rl-ds2" x="500" y="294" text-anchor="middle">FUTURE LICENCE · 2036+</text>
+    ${cardLinks}`;
 
   map.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below, and both Future Ltd aspiration planets tethered to Holdings on the outer rings">
@@ -5167,13 +5198,13 @@ function renderSystem() {
         <linearGradient id="lgMast" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="520" y2="0">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset=".55" stop-color="#38a9ff"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="${f(formOut[0])}" y1="${f(formOut[1])}" x2="${f(formLaneEnd[0])}" y2="${f(formLaneEnd[1])}">
+        <linearGradient id="lgL" gradientUnits="userSpaceOnUse" x1="${f(formOut[0])}" y1="${f(formOut[1])}" x2="${f(formTop[0])}" y2="${f(formTop[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/>
         </linearGradient>
-        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="${f(stormOut[0])}" y1="${f(stormOut[1])}" x2="${f(stormLaneEnd[0])}" y2="${f(stormLaneEnd[1])}">
+        <linearGradient id="lgR" gradientUnits="userSpaceOnUse" x1="${f(stormOut[0])}" y1="${f(stormOut[1])}" x2="${f(stormTop[0])}" y2="${f(stormTop[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/>
         </linearGradient>
-        <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${f(flyOut[0])}" y1="${f(flyOut[1])}" x2="${f(flyLaneEnd[0])}" y2="${f(flyLaneEnd[1])}">
+        <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${f(flyOut[0])}" y1="${f(flyOut[1])}" x2="${f(flyTop[0])}" y2="${f(flyTop[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/>
         </linearGradient>
         <linearGradient id="lgD1" gradientUnits="userSpaceOnUse" x1="${f(ds1Out[0])}" y1="${f(ds1Out[1])}" x2="${f(ds1Top[0])}" y2="${f(ds1Top[1])}">
@@ -5221,34 +5252,30 @@ function renderSystem() {
         <rect x="320" width="100" height="24" rx="12"/><text x="370" y="16" text-anchor="middle">FACILITIES</text>
       </g>
       ${planets}
-      <g class="sm-card-anchors" aria-hidden="true" opacity="0" pointer-events="none">
-        ${PLANETS.map(p => `
-          <circle data-key="${p.key}" data-anchor="left" cx="${f(p.px - p.r)}" cy="${f(p.py)}" r=".5"/>
-          <circle data-key="${p.key}" data-anchor="lead" cx="${f(p.px)}" cy="${f(p.py + p.r)}" r=".5"/>`).join("")}
-      </g>
     </svg>
     ${PLANETS.map(p => `
-      <div class="sm-card" data-key="${p.key}" style="--c:${p.c};left:${typeof p.card.left === "number" ? p.card.left + "%" : p.card.left};top:${p.card.top}%">
-        <span class="sm-lead-probe" aria-hidden="true"></span>
+      <div class="sm-card" data-key="${p.key}" style="--c:${p.c}">
         <h3><i></i>${p.name}</h3>
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="cat">${p.cat}</p>
-        <p class="ch">${p.chs}</p>
+        <p class="ch">${p.role}.</p>
         <span class="opill">Operating Company</span>
       </div>`).join("")}
+    <div class="sm-sub" data-for="fly" style="--c:var(--blue)">
+      <span class="cap2">KEY CHANNELS</span>
+      <div class="fn2"><span>Amazon Seller Central | eBay | Shopify | TikTok Shop | OnBuy | ManoMano | Fruugo | Temu | AliExpress</span></div>
+      <span class="cap2 c2b">OPERATING STOREFRONTS</span>
+      <div class="fn2"><span>Freedom Fire | FireExtinguishersDirect | BatteryBay | PPE-Me | CleanFreak | DriveBye | Future specialist stores</span></div>
+    </div>
     <div class="sm-sub" data-for="form" style="--c:var(--mint)">
-      <span class="cap2">KEY FUNCTION</span>
-      <div class="fn2">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.4c0 5-3.2 8.3-7.5 10.1C7.7 19.7 4.5 16.4 4.5 11.4V6z"/><path d="M8.7 12l2.3 2.3 4.4-4.6"/></svg>
-        <span>Fire safety compliance, servicing &amp; facilities management</span>
-      </div>
+      <span class="cap2">CORE SERVICES</span>
+      <div class="fn2"><span>Extinguisher &amp; alarm servicing | Emergency lighting | Fire risk assessments | Installation &amp; commissioning | Compliance audits | Cleaning &amp; FM contracts</span></div>
+      <span class="cap2 c2b">PRIMARY CUSTOMERS</span>
+      <div class="fn2"><span>Schools | Universities | Warehouses | Construction | Hotels | Factories | Care homes | Councils | FM companies</span></div>
     </div>
     <div class="sm-sub" data-for="storm" style="--c:var(--ember)">
-      <span class="cap2">KEY FUNCTION</span>
-      <div class="fn2">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
-        <span>Wholesale supply to trade &amp; retail partners</span>
-      </div>
+      <span class="cap2">PRIMARY TRADE PARTNERS</span>
+      <div class="fn2"><span>Amazon Vendor Central | Toolstation | Kingfisher | B&amp;Q | Screwfix | Costco | Wickes | The Range | Robert Dyas | Homebase | YESSS | CEF | Edmundson | WF Senate | Export partners</span></div>
     </div>
     <div class="sm-head">
       <span class="kicker">The Freedom System</span>
@@ -5363,8 +5390,9 @@ function renderSystem() {
     panelBeside: { side: -1, gap: 40 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
-      { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
-      { n: "Freedom Fly Ltd", d: "2029 · Drone visual &amp; alarms", c: "var(--blue)" },
+      { n: "Freedom Form Ltd", d: "2028 · Property · Development · Design", c: "var(--ember)" },
+      { n: "Freedom Freight Ltd", d: "2028 · Global logistics", c: "var(--mint)" },
+      { n: "Freedom Fly Ltd", d: "2029 · Aerial technology", c: "var(--blue)" },
     ],
   });
   mountStation(map, {
@@ -5372,102 +5400,67 @@ function renderSystem() {
     panelBeside: { side: 1, gap: 40 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
-      { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
-      { n: "Freedom Freight", d: "Beyond 2036 · Freight &amp; logistics", c: "var(--pink)" },
+      { n: "Freedom Fuel Ltd", d: "2036+ · Forecourt &amp; energy", c: "var(--pink)" },
     ],
   });
 
-  // the KEY BRANDS vault and the KEY FUNCTION sub-boxes hang centred beneath
-  // their parent cards — positioned in px so the connector stems stay tight
-  // at every viewport
-  const alignProjectedCards = () => {
-    const anchorX = (key, kind) => {
-      const a = map.querySelector(`.sm-card-anchors [data-key="${key}"][data-anchor="${kind}"]`);
-      if (!a) return null;
-      const r = a.getBoundingClientRect();
-      return (r.left + r.right) / 2;
-    };
+  // kept as a hook for driveBuild — the sketch formation is laid out flat in
+  // layoutSubs and co-projects with the map's tilt, so no per-frame pass is
+  // needed any more
+  const alignProjectedCards = () => {};
 
-    // The orange card is deliberately left-aligned to its planet in SCREEN
-    // space. This second pass matters while the map is carrying its cinematic
-    // perspective transform: matching raw SVG/CSS coordinates is not enough.
-    const sCard = cardFor("storm");
-    const stormLeft = anchorX("storm", "left");
-    if (sCard && Number.isFinite(stormLeft)) {
-      for (let i = 0; i < 2; i++) {
-        const r = sCard.getBoundingClientRect();
-        const sx = r.width / Math.max(1, sCard.offsetWidth);
-        sCard.style.left = (sCard.offsetLeft + (stormLeft - r.left) / Math.max(.001, sx)) + "px";
-      }
-      const sub = map.querySelector('.sm-sub[data-for="storm"]');
-      if (sub) {
-        sub.style.width = sCard.offsetWidth + "px";
-        sub.style.left = sCard.offsetLeft + "px";
-      }
-    }
-
-    // Align the TOP of each dotted stem to a static anchor at the bottom of
-    // its planet. A hidden probe shares the pseudo-element's exact endpoint,
-    // so the line stays attached through perspective, resize and scroll.
-    PLANETS.forEach(p => {
-      const c = cardFor(p.key), probe = c && c.querySelector(".sm-lead-probe");
-      const targetX = anchorX(p.key, "lead");
-      if (!c || !probe || !Number.isFinite(targetX)) return;
-      for (let i = 0; i < 2; i++) {
-        const cr = c.getBoundingClientRect(), pr = probe.getBoundingClientRect();
-        const sx = cr.width / Math.max(1, c.offsetWidth);
-        const current = parseFloat(getComputedStyle(c).getPropertyValue("--lead-x")) || c.offsetWidth / 2;
-        c.style.setProperty("--lead-x", (current + (targetX - pr.left) / Math.max(.001, sx)) + "px");
-      }
-    });
-  };
-
+  /* SKETCH FORMATION LAYOUT — every main box parks beside its planet with
+     its TOP on the planet's crown line; the dash-dot links live in the SVG
+     at fixed coordinates, so the boxes are simply pinned to the same
+     geometry in layout space. The deep detail (channels / services /
+     partners / the vault) sits on a fixed three-column shelf below, each
+     column tied to its card by a dotted stem. */
   const layoutSubs = () => {
     // measure with the dock transform neutralised so mid-scroll resizes
     // can't bake the perspective tilt into the layout
     const keepT = map.style.transform;
     map.style.transform = "none";
     const svg2 = map.querySelector("svg");
-    const mR = map.getBoundingClientRect(), svgR = svg2.getBoundingClientRect();
-    const sc2 = svgR.width / 1900;
-    // Give every company a deliberate band of breathing room below its planet.
-    // Distribution additionally forms a left-aligned vertical stack: the
-    // planet, company card and KEY FUNCTION box share one x-axis.
-    // storm's gap is deeper so the 2028–29 aspirations panel (top-aligned
-    // beside its planet, directly above) never kisses the card at any width
-    const cardGap = { form: 50, fly: 54, storm: 85 };
+    if (!svg2 || !svg2.clientWidth) { map.style.transform = keepT; return; }
+    const sclX = svg2.clientWidth / W, sclY = svg2.clientHeight / H;
+    const ox = svg2.offsetLeft || 0, oy = svg2.offsetTop || 0;
+    const CARD_GAP = 40;                       // svg units, box edge → planet edge
     PLANETS.forEach(p => {
       const c = cardFor(p.key);
       if (!c) return;
-      c.style.top = ((svgR.top - mR.top) + (p.py + p.r) * sc2 + cardGap[p.key]) + "px";
-      c.style.setProperty("--lead-h", cardGap[p.key] + "px");
+      c.style.left = (ox + (p.at[0] - p.r - CARD_GAP) * sclX - c.offsetWidth) + "px";
+      c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
     });
-    const sCard = cardFor("storm");
-    if (sCard) {
-      const want = (svgR.left - mR.left) + (stormPlanet.px - stormPlanet.r) * sc2;
-      sCard.style.left = want + "px";
+    const COLS = { form: 250, fly: 685, storm: 1120 };   // shelf column centres
+    const SHELF_Y = 1020;
+    $$(".sm-sub", map).forEach(su => {
+      const cx2 = COLS[su.dataset.for];
+      if (cx2 == null) return;
+      su.style.left = (ox + cx2 * sclX - su.offsetWidth / 2) + "px";
+      su.style.top = (oy + SHELF_Y * sclY) + "px";
+    });
+    const brands = map.querySelector(".sm-brands");
+    const flySub = map.querySelector('.sm-sub[data-for="fly"]');
+    if (brands && flySub) {
+      brands.style.left = (ox + COLS.fly * sclX - brands.offsetWidth / 2) + "px";
+      brands.style.top = (flySub.offsetTop + flySub.offsetHeight + 14) + "px";
     }
+    // dotted stems card → shelf column: a straight drop when the column sits
+    // under the card, a soft subway-style elbow when it doesn't (the cards'
+    // svg footprint shifts with viewport width, the columns don't)
     PLANETS.forEach(p => {
-      const c = cardFor(p.key);
-      if (!c) return;
-      const planetCentreX = (svgR.left - mR.left) + p.px * sc2;
-      c.style.setProperty("--lead-x", (planetCentreX - c.offsetLeft) + "px");
+      const c = cardFor(p.key), st2 = map.querySelector(".stem-" + p.key);
+      if (!c || !st2) return;
+      if (innerWidth <= 760) { st2.setAttribute("d", ""); return; }
+      const colX = COLS[p.key];
+      const yTop = (c.offsetTop + c.offsetHeight - oy) / sclY + 8;
+      const cx0 = (c.offsetLeft + c.offsetWidth / 2 - ox) / sclX;
+      const yEnd = SHELF_Y - 8;
+      st2.setAttribute("d", Math.abs(cx0 - colX) < 14
+        ? `M ${f(colX)} ${f(yTop)} L ${f(colX)} ${f(yEnd)}`
+        : `M ${f(cx0)} ${f(yTop)} L ${f(cx0)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f(yEnd)}`);
     });
-    const under = (el, key, gap = 9) => {
-      const c = cardFor(key);
-      if (!el || !c) return;
-      el.style.top = (c.offsetTop + c.offsetHeight + gap) + "px";
-      if (key === "storm") {
-        el.style.width = c.offsetWidth + "px";
-        el.style.left = c.offsetLeft + "px";
-      } else {
-        el.style.left = (c.offsetLeft + (c.offsetWidth - el.offsetWidth) / 2) + "px";
-      }
-    };
-    $$(".sm-sub", map).forEach(su => under(su, su.dataset.for));
-    under(map.querySelector(".sm-brands"), "fly", 18);
     map.style.transform = keepT;
-    alignProjectedCards();
   };
   window.addEventListener("resize", layoutSubs);
   layoutSubs(); setTimeout(layoutSubs, 350);
@@ -5508,6 +5501,8 @@ function renderSystem() {
     reg(cardFor(key), c0, c1, "rise");
     reg(map.querySelector(`.sm-sub[data-for="${key}"]`), c0, c1, "rise");
     reg(lab, c0, c1, "fade");
+    reg(q(".cl-" + key), c0, c1, "fade");     // the dash-dot box↔planet link
+    reg(q(".stem-" + key), c0, c1, "fade");   // the stem down to the shelf
   };
   chain("fly", .46, .52, .52, .59, .59, .65);
   reg(map.querySelector(".sm-brands"), .65, .70, "rise");   // the vault settles in the left flank
@@ -7427,8 +7422,10 @@ function initSetpieces() {
       ctx.fillStyle = `rgba(255,255,255,${night * tw * (.25 + .5 * st.z)})`;
       ctx.fillRect(st.x * w, st.y * .96 * h, 1 + st.z, 1 + st.z);
     }
-    const R = Math.min(w, h) * .33 * (1 + .04 * ph2(p, .8, 1));
-    const cx = w / 2, cy = h * .52 + h * .05 * sm(ph2(p, .84, 1));
+    // the planet HOLDS its station for the whole chapter — no end-of-scrub
+    // drop or growth, so the courier's orbit anchor never drifts
+    const R = Math.min(w, h) * .33;
+    const cx = w / 2, cy = h * .52;
     const halo = ctx.createRadialGradient(cx, cy, R * .92, cx, cy, R * 1.3);
     halo.addColorStop(0, `rgba(255,${Math.round(lp(116, 61, night))},${Math.round(lp(184, 154, night))},.3)`);
     halo.addColorStop(1, "rgba(255,61,154,0)");
@@ -7779,7 +7776,7 @@ function initSetpieces() {
       if (!over) return;
       FDels = {
         over,
-        head: [over.querySelector(".fund-kick"), over.querySelector(".fund-h")],
+        head: [over.querySelector(".fund-kick"), over.querySelector(".fund-h"), over.querySelector(".fund-sub")],
         cards: [...over.querySelectorAll(".fund-card")],
         note: over.querySelector(".fund-note")
       };

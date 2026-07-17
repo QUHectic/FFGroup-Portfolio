@@ -38,16 +38,18 @@ section#team{overflow-x:clip;}
 .sm-roylab{font-size:10.5px;font-weight:800;letter-spacing:.12em;fill:rgba(255,140,195,.7);}
 .sm-roylab.rl-form{fill:rgba(94,232,182,.75);}
 .sm-roylab.rl-storm{fill:rgba(255,150,110,.8);}
+.sm-roylab.rl-ds1{fill:rgba(223,189,120,.78);}
+.sm-roylab.rl-ds2{fill:rgba(180,151,235,.78);}
 .sm-howcap{font-size:11.5px;font-weight:800;letter-spacing:.16em;fill:rgba(255,140,195,.75);}
 .sm-emph{font-weight:800;fill:rgba(243,244,251,.92);}
 .sm-vaultbox{position:absolute;max-width:330px;}
 .sm-vb-cap{font-size:.66rem;font-weight:800;letter-spacing:.14em;color:rgba(243,244,251,.55);}
 .sm-vb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}
-.sm-brand{display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;padding:4px 8px;border:1px solid rgba(255,61,154,.62);border-radius:10px;background:rgba(12,13,22,.96);font-size:.62rem;font-weight:700;color:#fff;white-space:nowrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);}
-.sm-brand .brand-ico{width:14px;height:14px;display:grid;place-items:center;flex:none;color:var(--c,var(--pink));filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c,var(--pink)) 50%,transparent));}
+.sm-brand{display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;padding:4px 8px;border:1px solid rgba(56,169,255,.62);border-radius:10px;background:rgba(12,13,22,.96);font-size:.62rem;font-weight:700;color:#fff;white-space:nowrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);}
+.sm-brand .brand-ico{width:14px;height:14px;display:grid;place-items:center;flex:none;color:var(--c,var(--blue));filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c,var(--blue)) 50%,transparent));}
 .sm-brand .brand-ico svg{width:14px;height:14px;display:block;overflow:visible;}
 .sm-brand.more{border-style:solid;color:rgba(243,244,251,.62);font-weight:600;cursor:pointer;outline:none;transition:border-color .25s,color .25s,background .25s;}
-.sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(255,140,195,.75);color:#fff;}
+.sm-brand.more:hover,.sm-brand.more:focus-visible,.sm-brand.more[aria-expanded="true"]{border-color:rgba(125,200,255,.8);color:#fff;}
 /* expanded brand-vault portfolio — hover (or tap) for the remaining marks */
 .sm-morepop{
   display:none;position:absolute;z-index:8;left:50%;bottom:calc(100% + 10px);top:auto;
@@ -88,9 +90,9 @@ section#team{overflow-x:clip;}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
 .sm-brands{position:absolute;z-index:4;width:min(290px,24%);text-align:center;}
 .sm-brands::before{content:"";position:absolute;z-index:2;left:50%;top:-18px;width:2px;height:18px;background:rgba(255,255,255,.7);transform:translateX(-1px);}
-.sm-brands .cap2{position:absolute;z-index:3;left:50%;top:4px;transform:translateX(-50%);display:block;padding:0 9px;background:#07070d;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--pink);white-space:nowrap;}
+.sm-brands .cap2{position:absolute;z-index:3;left:50%;top:4px;transform:translateX(-50%);display:block;padding:0 9px;background:#07070d;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--blue);white-space:nowrap;}
 .sm-brands .bx{position:relative;padding:19px 0 0;background:transparent;}
-.sm-brands .bx::before{content:"";position:absolute;z-index:1;left:50%;top:0;width:150px;height:30px;transform:translateX(-50%);border:1px solid rgba(255,61,154,.72);border-bottom:0;border-radius:11px 11px 0 0;box-shadow:0 -5px 18px rgba(255,61,154,.06);}
+.sm-brands .bx::before{content:"";position:absolute;z-index:1;left:50%;top:0;width:150px;height:30px;transform:translateX(-50%);border:1px solid rgba(56,169,255,.72);border-bottom:0;border-radius:11px 11px 0 0;box-shadow:0 -5px 18px rgba(56,169,255,.06);}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* expanded portfolio rises above the company cards */
 .sm-brands .chips{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;align-items:center;}
 .sm-brands .brand-row{display:flex;gap:6px;justify-content:center;align-items:center;}
@@ -120,6 +122,8 @@ section#team{overflow-x:clip;}
 .sm-roy.ry-form{stroke:var(--mint);}
 .sm-roy.ry-storm{stroke:var(--ember);}
 .sm-roy.ry-fly{stroke:var(--blue);}
+.sm-roy.ry-ds1{stroke:#d7b35f;}
+.sm-roy.ry-ds2{stroke:#a487df;}
 .sm-lab{font-size:12px;fill:rgba(243,244,251,.55);letter-spacing:.05em;}
 .sm-lab.b{font-weight:700;fill:rgba(243,244,251,.85);}
 .sm-suntitle{font-family:"Orbitron",system-ui,sans-serif;font-size:19px;font-weight:700;fill:#fff;letter-spacing:.1em;}
@@ -3618,21 +3622,39 @@ function mountStation(stage, g) {
     const x = rr.left + rr.width / 2 - sr.left, y = rr.top + rr.height / 2 - sr.top;
     const pw = panel.offsetWidth || 324, ph = panel.offsetHeight || 170;
     const stageHeight = stage.clientHeight || sr.height;
-    const desiredLeft = g.panelDock
+    const desiredLeft = g.panelPin
+      ? sr.width * g.panelPin.x
+      : g.panelDock
       ? sr.width - pw - sr.width * (g.panelDock.right || 0)
       : ((g.panelSide || 1) < 0 ? x - pw - 44 : x + 44) + (g.panelNudgeX || 0);
     const maxLeft = Math.max(8, sr.width - pw - 8);
     const left = Math.max(8, Math.min(maxLeft, desiredLeft));
     const craftHalf = rr.height / 2;
-    const desiredTop = g.panelDock
+    const desiredTop = g.panelPin
+      ? stageHeight * g.panelPin.y
+      : g.panelDock
       ? stageHeight * (g.panelDock.top || .34)
       : g.panelPlacement === "above" ? y - craftHalf - ph - 18
       : g.panelPlacement === "below" ? y + craftHalf + 18 : y - ph / 2;
     const minTop = 8, maxTop = Math.max(minTop, stageHeight - ph - 8), clearance = 30;
+    // planets and sister stations count as obstacles too — their rects come
+    // from screen space, so they're mapped back through the stage's own
+    // perspective scale before joining the offset-space blocker list
+    const kx = stage.offsetWidth / Math.max(1, sr.width), ky = stage.offsetHeight / Math.max(1, sr.height);
+    const orbBlockers = [...stage.querySelectorAll(".sm-planet,.mg-station")]
+      .filter(el => el !== craft)
+      .map(el => {
+        const r = el.getBoundingClientRect();
+        if (!r.width) return null;
+        return { left: (r.left - sr.left) * kx, right: (r.right - sr.left) * kx,
+          top: (r.top - sr.top) * ky - clearance, bottom: (r.bottom - sr.top) * ky + clearance };
+      })
+      .filter(Boolean);
     const blockers = [...stage.querySelectorAll(".sm-card,.sm-sub,.sm-brands,.sm-stats,.rk-panel")]
       .filter(el => el !== panel && el.offsetWidth && el.offsetHeight)
       .map(el => ({ left: el.offsetLeft, right: el.offsetLeft + el.offsetWidth,
         top: el.offsetTop - clearance, bottom: el.offsetTop + el.offsetHeight + clearance }))
+      .concat(orbBlockers)
       .filter(r => r.right > left && r.left < left + pw)
       .sort((a, b) => a.top - b.top);
     const merged = [];
@@ -4229,18 +4251,20 @@ function renderSystem() {
   if (!map) return;
   const W = 1900, H = 1400, cx = 950, cy = 350, sunR = 84;
   const f = n => n.toFixed(1);
-  /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls]
-     so all four top apexes (349/328/310/292) tuck INSIDE the sun's disk: the
+  /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls].
+     The three OPERATING apexes (349/328/310) tuck INSIDE the sun's disk: the
      globe is threaded ON the rings, logo-style, their arcs emerging from
-     behind its edges and fanning wide and downward. The lower arcs run
-     exactly through the three planets' coordinates, so every lane, arrow and
-     card keeps its anchor untouched. */
+     behind its edges and fanning wide and downward. The two FUTURE rings ride
+     higher — their apexes (258/236) clear the sun's crown so the outer shells
+     visibly wrap AROUND the dome, the full-saucer look of the sketch. The
+     lower arcs still run exactly through the three planets' coordinates, so
+     every lane, arrow and card keeps its anchor untouched. */
   const SHELLS = [
     [330, 118, 467, "sm-orbit o1"],
     [618, 188, 516, "sm-orbit"],
     [800, 255, 565, "sm-orbit"],
-    [950, 324, 616, "sm-orbit future"],
-    [1060, 394, 670, "sm-orbit future outer"],
+    [950, 324, 582, "sm-orbit future"],
+    [1060, 394, 630, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -4256,7 +4280,7 @@ function renderSystem() {
     const [rx, ry] = SHELLS[ring];
     return `M ${f(a[0])} ${f(a[1])} A ${rx} ${ry} 0 0 1 ${f(b[0])} ${f(b[1])}`;
   };
-  const deathStar1At = lowerShellAtAngle(3, 24);
+  const deathStar1At = lowerShellAtAngle(3, 30);
   const deathStar2At = lowerShellAtAngle(4, 140);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
@@ -4271,7 +4295,7 @@ function renderSystem() {
     return `<linearGradient id="smrg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${cyR}" x2="0" y2="${cyR - ry}">
       <stop offset="0" stop-color="rgb(${col})" stop-opacity="${a0}"/>
       <stop offset=".45" stop-color="rgb(${col})" stop-opacity="${(a0 * .42).toFixed(2)}"/>
-      <stop offset="1" stop-color="rgb(${col})" stop-opacity=".05"/>
+      <stop offset="1" stop-color="rgb(${col})" stop-opacity="${white ? ".16" : ".05"}"/>
     </linearGradient>`;
   }).join("");
   /* The three operating lanes advance annually; the two future lanes then
@@ -4301,7 +4325,7 @@ function renderSystem() {
       chs: "Fire safety servicing | Compliance | Installations | Maintenance",
       card: { left: 13, top: 46.5 } },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(2, 1560), r: 36,
+      at: lowerShellAtX(2, 1470), r: 36,
       role: "Business-to-business division supplying wholesale and retail trade",
       cat: "B2B WHOLESALE",
       chs: "Toolstation | Kingfisher | Wickes | YESSS | CEF | Edmundson &amp; More",
@@ -4318,12 +4342,12 @@ function renderSystem() {
     fxl: `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15 15 4M12 4h3v3M6 6l9 9M12 15h3v-3M6 4H4v2M4 12v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   };
   const BRANDS = [
-    ["FireStorm™", "var(--pink)", BRAND_ICONS.fire],
+    ["FireStorm™", "var(--blue)", BRAND_ICONS.fire],
     ["Skyline™", "var(--blue)", BRAND_ICONS.skyline],
-    ["FXL™", "var(--mint)", BRAND_ICONS.fxl],
-    ["Voltz™", "var(--pink)", BRAND_ICONS.bolt],
-    ["Kunergy™", "var(--pink)", BRAND_ICONS.cell],
-    ["T3™", "#f3f4fb", BRAND_ICONS.glove],
+    ["FXL™", "var(--blue)", BRAND_ICONS.fxl],
+    ["Voltz™", "var(--blue)", BRAND_ICONS.bolt],
+    ["Kunergy™", "var(--blue)", BRAND_ICONS.cell],
+    ["T3™", "var(--blue)", BRAND_ICONS.glove],
     ["Crystal Solutions™", "var(--blue)", BRAND_ICONS.drop],
     ["+ More", "", ""],
   ];
@@ -4681,6 +4705,17 @@ function renderSystem() {
   const flyLaneEnd = edgeToward(flyPlanet, cx, cy), flyRoyalStart = edgeToward(flyPlanet, cx, cy, gapDeg(flyPlanet.r));
   const stormCtrlX = stormPlanet.at[0] - 198;
   const stormCtrlY = stormPlanet.at[1] - 90;
+  // Both FUTURE stations dock into the same engine as the operating trio: a
+  // licence lane sweeping out from Holdings, a dotted royalty promise curving
+  // back — gold for the 2028–29 ring, violet for the 2036+ moon. Their radii
+  // are the stations' scaled body sizes (57×.70 / 58×.72) plus the same edge
+  // clearance the spheres get, so arrows kiss the surface, never the ring.
+  const ds1Body = { at: deathStar1At, r: 44 };
+  const ds2Body = { at: deathStar2At, r: 46 };
+  const ds1Out = sunAt(15), ds1In = sunAt(15 - sunGap);
+  const ds2Out = sunAt(168), ds2In = sunAt(168 + sunGap);
+  const ds1LaneEnd = edgeToward(ds1Body, cx, cy), ds1RoyalStart = edgeToward(ds1Body, cx, cy, gapDeg(ds1Body.r));
+  const ds2LaneEnd = edgeToward(ds2Body, cx, cy), ds2RoyalStart = edgeToward(ds2Body, cx, cy, -gapDeg(ds2Body.r));
   const spine = `
     <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 474, 630 552, ${f(formLaneEnd[0])} ${f(formLaneEnd[1])}"/>
     <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1200 474, ${f(stormCtrlX)} ${f(stormCtrlY)}, ${f(stormLaneEnd[0])} ${f(stormLaneEnd[1])}"/>
@@ -4691,11 +4726,19 @@ function renderSystem() {
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 637 540, 767 462, ${f(formIn[0])} ${f(formIn[1])}"/>
     <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C ${f(stormCtrlX + 8)} ${f(stormCtrlY - 12)}, 1208 462, ${f(stormIn[0])} ${f(stormIn[1])}"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
+    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1210 650, 1560 710, ${f(ds1LaneEnd[0])} ${f(ds1LaneEnd[1])}"/>
+    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 510 470, 168 630, ${f(ds2LaneEnd[0])} ${f(ds2LaneEnd[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1210 650, 1560 710, ${f(ds1LaneEnd[0])} ${f(ds1LaneEnd[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 510 470, 168 630, ${f(ds2LaneEnd[0])} ${f(ds2LaneEnd[1])}"/>
+    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1560 690, 1240 640, ${f(ds1In[0])} ${f(ds1In[1])}"/>
+    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 152 588, 512 410, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     <text class="sm-roylab rl-form" x="690" y="472" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1288" y="478" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>`;
+    <text class="sm-roylab rl-storm" x="1288" y="478" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-ds1" x="1500" y="608" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
+    <text class="sm-roylab rl-ds2" x="378" y="492" text-anchor="middle">FUTURE LICENCE · 2036+</text>`;
 
   map.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below">
+    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="The Freedom System map — Holdings at the head of the system, the brand vault orbiting it, the operating companies connected on the orbits below, and both Future Ltd aspiration planets tethered to Holdings on the outer rings">
       <defs>
         ${planetDefs}
         ${ringDefs}
@@ -4721,6 +4764,12 @@ function renderSystem() {
         </linearGradient>
         <linearGradient id="lgV" gradientUnits="userSpaceOnUse" x1="${f(flyOut[0])}" y1="${f(flyOut[1])}" x2="${f(flyLaneEnd[0])}" y2="${f(flyLaneEnd[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/>
+        </linearGradient>
+        <linearGradient id="lgD1" gradientUnits="userSpaceOnUse" x1="${f(ds1Out[0])}" y1="${f(ds1Out[1])}" x2="${f(ds1LaneEnd[0])}" y2="${f(ds1LaneEnd[1])}">
+          <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#d7b35f"/>
+        </linearGradient>
+        <linearGradient id="lgD2" gradientUnits="userSpaceOnUse" x1="${f(ds2Out[0])}" y1="${f(ds2Out[1])}" x2="${f(ds2LaneEnd[0])}" y2="${f(ds2LaneEnd[1])}">
+          <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/>
         </linearGradient>
         <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
         <marker id="smArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
@@ -4900,7 +4949,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "right", art: .70, at: deathStar1At,
-    panelDock: { right: .035, top: .315 }, panelColor: "#d7b35f", autoOpen: true,
+    panelDock: { right: .035, top: .22 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property &amp; management", c: "var(--ember)" },
@@ -4908,8 +4957,8 @@ function renderSystem() {
     ],
   });
   mountStation(map, {
-    kind: "moon", stationType: "futureAurora", side: "left", art: .72, at: deathStar2At, panelSide: 1,
-    panelPlacement: "below", panelNudgeX: -32, panelColor: "#a487df", autoOpen: true,
+    kind: "moon", stationType: "futureAurora", side: "left", art: .72, at: deathStar2At,
+    panelPin: { x: .063, y: .156 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036 · Fleet fuel &amp; energy supply", c: "var(--mint)" },
@@ -5050,7 +5099,11 @@ function renderSystem() {
   chain("fly", .46, .52, .52, .59, .59, .65);
   reg(map.querySelector(".sm-brands"), .65, .70, "rise");   // the vault settles in the left flank
   chain("form", .70, .74, .74, .80, .80, .84);
-  chain("storm", .84, .87, .87, .92, .92, .955);
+  chain("storm", .84, .87, .87, .91, .91, .94);
+  // the future stations' lanes ride in last — planet/card/sub lookups no-op
+  // for these keys, so only lane + glow + royalty + label register
+  chain("ds1", .94, .97, .97, .97, .97, .985);
+  chain("ds2", .955, .985, .985, .985, .985, 1);
   reg(svgEl.querySelector(".mg-rocket"), .07, .12, "fade");     // the courier launches right behind the headline
   [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, .09 + idx * .015, .14 + idx * .015, "fade"));
   [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, .09 + idx * .015, .14 + idx * .015, "fade"));

@@ -161,7 +161,7 @@ section#team{overflow-x:clip;}
 .sm-year.future rect{stroke:rgba(255,255,255,.38);}
 .sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:rgba(255,255,255,.78);}
 .sm-card{
-  position:absolute;z-index:5;width:min(272px,20.5vw);background:rgba(15,17,25,.94);
+  position:absolute;z-index:5;width:min(272px,18vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
@@ -185,6 +185,15 @@ section#team{overflow-x:clip;}
 .sm-sub .fn2 svg{width:16px;height:16px;flex:none;color:var(--c);}
 .sm-sub .fn2 span{font-size:.64rem;line-height:1.4;color:rgba(243,244,251,.66);}
 .sm-card .ch{color:rgba(243,244,251,.6);font-size:.76rem;line-height:1.5;margin:7px 0 0;letter-spacing:.02em;}
+/* narrower panes: the beside-cards tighten so their heights never reach the
+   next formation row */
+@media (max-width:1500px){
+  .sm-card{padding:10px 13px;}
+  .sm-card h3{font-size:.84rem;}
+  .sm-card .ta{font-size:.6rem;}
+  .sm-card .cat{font-size:.62rem;}
+  .sm-card .ch{font-size:.7rem;line-height:1.42;}
+}
 .sm-card .opill{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:4px 12px;margin-top:8px;opacity:.9;}
 .sm-note{
   position:absolute;max-width:340px;border:1px dashed rgba(255,255,255,.25);
@@ -3886,8 +3895,10 @@ function mountStation(stage, g) {
   const artScale = g.art || 1;
   const bodyRad = stationType === "futureRing" ? 57 * artScale
     : stationType === "futureAurora" ? 58 * artScale : 0;
-  const edgeRad = stationType === "futureRing" ? 91 * artScale
-    : stationType === "futureAurora" ? 62 * artScale : 0;
+  // the tether must read FULLY connected: it runs to the BODY surface (for
+  // the ringed planet it passes over the ring tip on the way in — that IS
+  // the connection), and the beside-box gap is measured from the same edge
+  const edgeRad = bodyRad;
   const panelColor = g.panelColor || (stationType === "futureRing" ? "#d7b35f" : "#a487df");
   const panelLink = document.createElementNS("http://www.w3.org/2000/svg", "path");
   panelLink.classList.add("rk-panel-link");
@@ -3922,8 +3933,12 @@ function mountStation(stage, g) {
        the blocker slots below. */
     const vbB = svg.viewBox.baseVal;
     const scl = svg.clientWidth / ((vbB && vbB.width) || 1900);
-    const nomX = (svg.offsetLeft || 0) + g.at[0] * scl;
-    const nomY = (svg.offsetTop || 0) + g.at[1] * (svg.clientHeight / ((vbB && vbB.height) || 1400));
+    // SVG elements expose no offsetLeft/offsetTop — the svg sits after the
+    // stage's padding, so the computed padding IS its offset in the stage
+    const scs = getComputedStyle(stage);
+    const svgOX = parseFloat(scs.paddingLeft) || 0, svgOY = parseFloat(scs.paddingTop) || 0;
+    const nomX = svgOX + g.at[0] * scl;
+    const nomY = svgOY + g.at[1] * (svg.clientHeight / ((vbB && vbB.height) || 1400));
     const beside = g.panelBeside;
     const besideLeft = beside
       ? ((beside.side || 1) > 0
@@ -4004,7 +4019,7 @@ function mountStation(stage, g) {
        when the whole system was perspective-scaled; local offsets keep the
        dotted tether physically welded to both the planet and panel. */
     const vb = svg.viewBox.baseVal, sx = vb.width / Math.max(1, svg.clientWidth), sy = vb.height / Math.max(1, svg.clientHeight);
-    const svgX = svg.offsetLeft || 0, svgY = svg.offsetTop || 0;
+    const svgX = svgOX, svgY = svgOY;   // computed-padding offsets — see above (SVG has no offsetLeft)
     const cxLocal = svgX + g.at[0] / vb.width * svg.clientWidth;
     const cyLocal = svgY + g.at[1] / vb.height * svg.clientHeight;
     const pl = panel.offsetLeft, pt = panel.offsetTop, pr = pl + panel.offsetWidth, pb = pt + panel.offsetHeight;
@@ -4073,12 +4088,15 @@ function initCourier() {
   // sky exit → the journey timeline's rail → the growth line → the
   // trajectory line → 360° orbit-insertion at the destination planet.
   // Smooth blends bridge the gaps, so the whole flight is one seamless path.
-  // The courier now holds orbit for the WHOLE planet chapter — three full
-  // revolutions across the 600vh scrub, easing into and out of the spiral so
-  // insertion and departure stay fluid. It leaves from the same nine-o'clock
-  // gate it entered, ready for the long-range descent.
-  const ORBIT_REVS = 3;
-  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS;
+  // The courier holds orbit for the WHOLE planet chapter — and the spin is
+  // TIME-DRIVEN, so it keeps circling the globe even while the visitor
+  // parks mid-chapter (one extra scroll-driven revolution keeps the scrub
+  // feeling connected). courierSpin is set every frame; deterministic in
+  // the snap-verification hook.
+  const ORBIT_REVS = 1;
+  let courierSpin = 0;
+  const SPIN_W = T2 / 9500;                    // one lap ≈ 9.5s while parked
+  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS + courierSpin;
   const pathRide = sels => {
     const els = sels.map(s => document.querySelector(s)).filter(e2 => e2 && e2.getTotalLength);
     if (!els.length) return null;
@@ -4310,7 +4328,10 @@ function initCourier() {
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
-        const k = snap ? 1 : 1 - Math.exp(-dt * 6.4);     // responsive progress with soft inertia
+        // the orbit's own clock — keeps the courier circling the planet even
+        // while the page is parked (deterministic under the snap hook)
+        courierSpin = (snap ? pd * 12000 : now) * SPIN_W;
+        const k = snap ? 1 : 1 - Math.exp(-dt * 5.4);     // responsive progress with soft inertia
         // travelling direction — scrolling back up TURNS the ship around so
         // it always flies nose-first (the smoothing animates the U-turn)
         if (ptPrev != null && Math.abs(pt - ptPrev) > .0004) dirState = pt > ptPrev ? 1 : -1;
@@ -4326,7 +4347,7 @@ function initCourier() {
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
           // preserving the authored flight path.
-          const posK = snap ? 1 : 1 - Math.exp(-dt * 9.2);
+          const posK = snap ? 1 : 1 - Math.exp(-dt * 7.8);
           if (!posS || snap) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
@@ -4340,16 +4361,21 @@ function initCourier() {
           const A2 = locate(segs, yAt(Math.min(1, pd + .007))).p;
           const B2 = locate(segs, yAt(Math.max(0, pd - .007))).p;
           const padQ = L0.pq != null ? L0.pq : null;
-          // on the landing leg the nose locks skyward — descending scroll is a
-          // tail-first burn, ascending scroll a clean climb, both physical
-          const ta = padQ != null
-            ? -Math.PI / 2
-            : Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+          // heading: landing burn = nose skyward; in orbit it follows the
+          // ellipse tangent analytically (so the time-driven spin reads as
+          // true motion even when the scroll is parked); otherwise it flies
+          // nose-first along the scrubbed path
+          let ta;
+          if (padQ != null) ta = -Math.PI / 2;
+          else if (L0.oq != null) {
+            const th = orbitTh(L0.oq);
+            ta = Math.atan2(Math.cos(th) * .46, -Math.sin(th));
+          } else ta = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
           if (angS == null) angS = ta;
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
           while (dA < -Math.PI) dA += T2;
-          const angK = snap ? 1 : 1 - Math.exp(-dt * 8.2);
+          const angK = snap ? 1 : 1 - Math.exp(-dt * 7);
           angS += dA * angK;
           // Layered time-based drift moves perpendicular to the flight path:
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
@@ -4729,7 +4755,9 @@ function renderSystem() {
   // per-ring pill angles: 2028/2029 tuck into the gap between the fly card
   // and the storm planet, 2036 rides out right of the storm card — all four
   // stay clear of the 2028–29 panel parked beside its planet
-  const YEAR_ANGLES = [30, 68, 104.5, 72, 40];
+  /* the TIMELINE reads as one cascade down the right flank: 2026 → 2036,
+     each pill at its own ring, x stepping outward, y stepping down */
+  const YEAR_ANGLES = [75, 63, 66.8, 69, 40];
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -4745,7 +4773,7 @@ function renderSystem() {
      detail shelf below. */
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#e0f7ff", "#328fda", "#071c52"],
-      at: lowerShellAtX(0, 1180), r: 48,
+      at: lowerShellAtX(0, 950), r: 48, centered: true,   // the flagship hangs dead-centre under Holdings, card below
       role: "Direct-to-consumer retail, marketplace growth and customer acquisition",
       ta: "(Currently Trading As Freedom Fire &amp; Safety Ltd)",
       cat: "CONSUMER COMMERCE · D2C" },
@@ -4754,7 +4782,7 @@ function renderSystem() {
       role: "National field service operation delivering long-term recurring compliance contracts",
       cat: "COMPLIANCE &amp; FACILITIES MANAGEMENT" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(2, 1300), r: 36,
+      at: lowerShellAtX(3, 1240), r: 36,   // rides ring3's deeper arc so the centred flagship card above it always clears
       role: "Large-scale distribution of the group's proprietary brands across the UK and international markets",
       cat: "TRADE DISTRIBUTION · B2B" },
   ];
@@ -5131,10 +5159,10 @@ function renderSystem() {
   const formOut = sunAt(145), formIn = sunAt(145 + sunGap);
   const stormOut = sunAt(35), stormIn = sunAt(35 - sunGap);
   const flyOut = sunAt(90), flyIn = sunAt(90 - sunGap);
-  const flyTop = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -125);
-  const flyRoyalStart = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -125 + gapDeg(flyPlanet.r + 2));
-  const formTop = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -45);
-  const formRoyalStart = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -45 + gapDeg(formPlanet.r + 2));
+  const flyTop = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -90);
+  const flyRoyalStart = circleAt(flyPlanet.at[0], flyPlanet.at[1], flyPlanet.r + 2, -90 + gapDeg(flyPlanet.r + 2));
+  const formTop = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -90);
+  const formRoyalStart = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -90 + gapDeg(formPlanet.r + 2));
   const stormTop = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90);
   const stormRoyalStart = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90 + gapDeg(stormPlanet.r + 2));
   // Both FUTURE stations dock into the same engine as the operating trio: a
@@ -5151,22 +5179,21 @@ function renderSystem() {
   const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 + gapDeg(44));
   const ds1Out = sunAt(15), ds1In = sunAt(15 - sunGap);
   const ds2Out = sunAt(168), ds2In = sunAt(168 + sunGap);
-  const cardLinks = PLANETS.map(p => {
-    const y2 = f(p.at[1]);
-    return `
-    <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d="M ${f(p.at[0] - p.r - 38)} ${y2} L ${f(p.at[0] - p.r - 3)} ${y2}"/>
-    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`;
-  }).join("");
+  // the box↔planet links are drawn at layout time from MEASURED card edges
+  // (self-healing — they can never gap), so the paths start empty here
+  const cardLinks = PLANETS.map(p => `
+    <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d=""/>
+    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("");
   const spine = `
-    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 425, 580 525, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1150 470, 1260 620, ${f(stormTop[0])} ${f(stormTop[1])}"/>
-    <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 1010 480, 1090 490, ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 760 425, 580 525, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1150 470, 1260 620, ${f(stormTop[0])} ${f(stormTop[1])}"/>
-    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 1010 480, 1090 490, ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 580 480, 780 450, ${f(formIn[0])} ${f(formIn[1])}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1270 610, 1155 460, ${f(stormIn[0])} ${f(stormIn[1])}"/>
-    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} C 1098 478, 1012 462, ${f(flyIn[0])} ${f(flyIn[1])}"/>
+    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
+    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1120 500, 1200 700, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 955 470, 972 505, ${f(flyTop[0])} ${f(flyTop[1])}"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1120 500, 1200 700, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 955 470, 972 505, ${f(flyTop[0])} ${f(flyTop[1])}"/>
+    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 540 480, 740 425, ${f(formIn[0])} ${f(formIn[1])}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1245 700, 1165 480, ${f(stormIn[0])} ${f(stormIn[1])}"/>
+    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} C 995 500, 975 465, ${f(flyIn[0])} ${f(flyIn[1])}"/>
     <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
@@ -5174,7 +5201,7 @@ function renderSystem() {
     <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1620 500, 1300 440, ${f(ds1In[0])} ${f(ds1In[1])}"/>
     <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 400 220, 700 215, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     <text class="sm-roylab rl-form" x="350" y="570" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1350" y="574" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-storm" x="1290" y="560" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
     <text class="sm-roylab rl-ds1" x="1450" y="452" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
     <text class="sm-roylab rl-ds2" x="500" y="294" text-anchor="middle">FUTURE LICENCE · 2036+</text>
     ${cardLinks}`;
@@ -5259,7 +5286,6 @@ function renderSystem() {
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="cat">${p.cat}</p>
         <p class="ch">${p.role}.</p>
-        <span class="opill">Operating Company</span>
       </div>`).join("")}
     <div class="sm-sub" data-for="fly" style="--c:var(--blue)">
       <span class="cap2">KEY CHANNELS</span>
@@ -5423,16 +5449,40 @@ function renderSystem() {
     const svg2 = map.querySelector("svg");
     if (!svg2 || !svg2.clientWidth) { map.style.transform = keepT; return; }
     const sclX = svg2.clientWidth / W, sclY = svg2.clientHeight / H;
-    const ox = svg2.offsetLeft || 0, oy = svg2.offsetTop || 0;
+    // CRITICAL: SVG elements have no offsetLeft/offsetTop — reading them
+    // yields 0 and silently shifts every HTML overlay left by the map's
+    // side padding (57px at full width). The svg sits exactly after the
+    // map's padding, so the padding IS the offset.
+    const mcs = getComputedStyle(map);
+    const ox = parseFloat(mcs.paddingLeft) || 0, oy = parseFloat(mcs.paddingTop) || 0;
     const CARD_GAP = 40;                       // svg units, box edge → planet edge
     PLANETS.forEach(p => {
       const c = cardFor(p.key);
       if (!c) return;
-      c.style.left = (ox + (p.at[0] - p.r - CARD_GAP) * sclX - c.offsetWidth) + "px";
-      c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
+      if (p.centered) {
+        // the flagship's card hangs centred BELOW its planet, in the middle
+        c.style.left = (ox + p.at[0] * sclX - c.offsetWidth / 2) + "px";
+        c.style.top = (oy + (p.at[1] + p.r + 26) * sclY) + "px";
+      } else {
+        c.style.left = (ox + (p.at[0] - p.r - CARD_GAP) * sclX - c.offsetWidth) + "px";
+        c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
+      }
     });
-    const COLS = { form: 250, fly: 685, storm: 1120 };   // shelf column centres
-    const SHELF_Y = 1020;
+    // dash-dot box↔planet links, measured off the cards so they always
+    // touch BOTH the box edge and the planet surface
+    PLANETS.forEach(p => {
+      const c = cardFor(p.key), ln = map.querySelector(".cl-" + p.key);
+      if (!c || !ln) return;
+      if (p.centered) {
+        const topSvg = (c.offsetTop - oy) / sclY;
+        ln.setAttribute("d", `M ${f(p.at[0])} ${f(p.at[1] + p.r + 1)} L ${f(p.at[0])} ${f(topSvg + 2)}`);
+      } else {
+        const rightSvg = (c.offsetLeft + c.offsetWidth - ox) / sclX;
+        ln.setAttribute("d", `M ${f(rightSvg - 2)} ${f(p.at[1])} L ${f(p.at[0] - p.r - 1)} ${f(p.at[1])}`);
+      }
+    });
+    const COLS = { form: 250, fly: 660, storm: 1120 };   // shelf column centres
+    const SHELF_Y = 1040;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;
@@ -5454,12 +5504,24 @@ function renderSystem() {
       if (innerWidth <= 760) { st2.setAttribute("d", ""); return; }
       const colX = COLS[p.key];
       const yTop = (c.offsetTop + c.offsetHeight - oy) / sclY + 8;
-      const cx0 = (c.offsetLeft + c.offsetWidth / 2 - ox) / sclX;
+      const cardL = (c.offsetLeft - ox) / sclX, cardRr = cardL + c.offsetWidth / sclX;
+      // drop the stem from the point of the card nearest its column — a
+      // straight fall whenever the column lies under the card, and a short
+      // elbow (run below the card) only when it can't
+      const cx0 = Math.max(cardL + 18, Math.min(cardRr - 18, colX));
       const yEnd = SHELF_Y - 8;
-      st2.setAttribute("d", Math.abs(cx0 - colX) < 14
+      st2.setAttribute("d", Math.abs(cx0 - colX) < 3
         ? `M ${f(colX)} ${f(yTop)} L ${f(colX)} ${f(yEnd)}`
         : `M ${f(cx0)} ${f(yTop)} L ${f(cx0)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f(yEnd)}`);
     });
+    // the tall map overflows the 100vh pinned stage — grow the section by the
+    // overflow so the shelf is never buried under the next chapter's
+    // background (non-spx stages size to the map, so this becomes 0 there)
+    const stageEl = map.closest(".sys-build-stage");
+    const buildEl = map.closest(".sys-build");
+    if (stageEl && buildEl) {
+      buildEl.style.marginBottom = Math.max(0, map.offsetTop + map.offsetHeight - stageEl.clientHeight) + "px";
+    }
     map.style.transform = keepT;
   };
   window.addEventListener("resize", layoutSubs);

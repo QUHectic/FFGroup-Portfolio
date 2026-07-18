@@ -757,15 +757,17 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
    trees, birds and floodlights; the courier that has flown the whole page
    descends, enlarges into the pad rocket, and PRESS FOR LIFTOFF returns the
    visitor to the very top under full burn. ============ */
-#liftoff{position:relative;padding:56px 0 0;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
-#liftoff .lo-head{text-align:center;position:relative;z-index:3;}
+#liftoff{position:relative;padding:0;min-height:100vh;display:flex;align-items:flex-end;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
+/* full-screen cinema: the scene runs edge to edge; the heading floats on the
+   starfield and mission control floats on the pad apron */
+#liftoff .lo-head{position:absolute;left:50%;transform:translateX(-50%);top:clamp(14px,3.2vh,44px);width:min(92%,880px);z-index:6;text-align:center;pointer-events:none;}
 #liftoff .lo-head .sec-head{margin-bottom:0;}
 #liftoff .lo-head h2{margin-bottom:6px;}
 #liftoff .lo-head p{max-width:64ch;margin-inline:auto;}
 /* the scene is CAPPED so heading + full scene + mission control all share
    one viewport at the final scroll — nothing of the launch night is ever
    cut off again */
-.lo-scene{position:relative;margin:4px auto 0;max-width:min(1780px,138vh);--pads:2.2;}
+.lo-scene{position:relative;margin:0 auto;max-width:none;width:100%;--pads:2.2;}
 .lo-scene svg.lo-art{width:100%;height:auto;display:block;}
 .lo-slot{position:absolute;left:63.68%;top:70.24%;width:0;height:0;}
 #padRocket{position:absolute;left:63.68%;top:70.24%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
@@ -830,7 +832,10 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 @keyframes loVent{from{transform:scale(1) translateX(0);opacity:.5;}to{transform:scale(1.25) translateX(14px);opacity:.22;}}
 /* MISSION CONTROL — a glass console strip carrying the status board, the
    countdown readout and the launch button */
-.lo-console{position:relative;z-index:4;text-align:center;padding:0 18px 64px;margin-top:-52px;}
+/* mission control mans the LOWER-LEFT corner so the bird on the pad is never
+   hidden behind the glass */
+.lo-console{position:absolute;left:clamp(16px,2.6vw,48px);bottom:clamp(14px,3.4vh,38px);z-index:6;text-align:left;padding:0;margin:0;max-width:min(46vw,760px);}
+.lo-console .lo-panel{justify-content:flex-start;}
 .lo-panel{
   display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 22px;
   padding:16px 26px;border-radius:22px;
@@ -846,7 +851,7 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 #liftoff.launching .lo-chip i{background:#f6c66b;box-shadow:0 0 8px #f6c66b;}
 /* LAUNCH EXHAUST — ground effect at ignition: a blinding core, a flame
    column and rolling smoke that bursts outward as the bird climbs */
-.lo-exhaust{position:absolute;left:63.68%;top:84%;width:0;height:0;opacity:0;pointer-events:none;}
+.lo-exhaust{position:absolute;left:63.68%;top:84%;width:0;height:0;opacity:0;pointer-events:none;transform:scale(calc(var(--pads,2.2)/2.55));}
 #liftoff.launching .lo-exhaust{opacity:1;}
 .lo-exhaust .core{position:absolute;left:-14px;top:-56px;width:28px;height:64px;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#fff,#ffd9a1 55%,rgba(255,150,80,0));filter:blur(2px);opacity:0;}
 #liftoff.launching .lo-exhaust .core{animation:loExCore 2.6s ease-out forwards;}
@@ -884,10 +889,14 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
   /* phones get a PAD-CENTRED CROP: the art renders 2.4× the container and
      shifts so the launch pad owns the frame — every anchored overlay
      (slot, rocket, flash, exhaust) re-centres with it */
-  .lo-scene{max-width:none;overflow:hidden;}
+  /* phones stack normally: heading, raise brief, scene, console */
+  #liftoff .lo-head{position:static;transform:none;width:auto;pointer-events:auto;}
+  .lo-scene{max-width:none;overflow:hidden;margin-top:16px;}
   .lo-scene svg.lo-art{width:240%;max-width:none;margin-left:-102.8%;}
   .lo-slot,#padRocket,.lo-flash,.lo-exhaust{left:50% !important;}
-  .lo-console{margin-top:-8px;padding-bottom:48px;}
+  #liftoff{min-height:0;display:block;}
+  .lo-console{position:static;transform:none;width:auto;max-width:none;margin-top:16px;padding:0 18px 48px;text-align:center;}
+  .lo-console .lo-panel{justify-content:center;}
   .lo-panel{padding:14px 16px;gap:10px;}
   .lo-count{min-width:0;}
   .liftoff-btn{padding:16px 24px;font-size:.9rem;}
@@ -2152,9 +2161,15 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   100%{opacity:0;transform:rotate(var(--mr,-25deg)) scale(var(--ms,1)) translateX(-118vw);}
 }
 
-/* footer */
-footer{border-top:1px solid var(--line);padding:34px 0 44px;color:var(--ink-faint);font-size:.84rem;background:var(--bg-soft);}
+/* footer — on desktop it rides the bottom edge of the liftoff cinema as a
+   translucent strip, so the launch complex is the true end of the document
+   (the courier's landing maths depend on the page finishing at the pad) */
+body{position:relative;}   /* anchors the absolute footer to the document's true end */
+footer{position:absolute;left:0;right:0;bottom:0;z-index:7;border-top:0;padding:12px 0;color:var(--ink-faint);font-size:.74rem;background:linear-gradient(180deg,rgba(5,7,10,0) 0%,rgba(5,7,10,.55) 100%);pointer-events:none;}
 footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;}
+@media (max-width:760px){
+  footer{position:static;border-top:1px solid var(--line);padding:28px 0 38px;font-size:.8rem;background:var(--bg-soft);pointer-events:auto;}
+}
 
 /* ==========================================================================
    RESPONSIVE
@@ -4483,7 +4498,13 @@ function initCourier() {
     const slotEl = document.getElementById("padSlot");
     let padS0 = null;
     if (loEl && slotEl) {
-      padS0 = Math.max(orbitEnd + vh * .6, scrollY + loEl.getBoundingClientRect().top - vh * .35);
+      // clamp so the glide ALWAYS has ≥.4vh of reachable scroll before the
+      // page ends — a 100vh liftoff section leaves only .35vh after the
+      // section top, and an unreachable window would strand the courier
+      // hovering short of the pad forever
+      padS0 = Math.min(
+        Math.max(orbitEnd + vh * .6, scrollY + loEl.getBoundingClientRect().top - vh * .35),
+        S1 - 6 - vh * .4);
     }
     // THE RAISE — while the funding brief unfolds mid-chapter, the courier
     // flies a wide showcase circuit around the cards
@@ -4523,7 +4544,7 @@ function initCourier() {
     }
     if (padS0 != null) {
       segs.push({
-        pad: true, s0: padS0, s1: Math.max(padS0 + vh * .4, S1 - 6),
+        pad: true, s0: padS0, s1: S1 - 6,   // ends just inside max scroll so touchdown always completes
         at: q => {
           // GLIDE-SLOPE: a banked approach from high on the port side that
           // eases through a quadratic into the vertical touchdown — the
@@ -4697,7 +4718,7 @@ function initCourier() {
       const S0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
       const pT = scrollY + planet.getBoundingClientRect().top;
       const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
-      const S1 = Math.max(orbitEnd + vh, document.documentElement.scrollHeight - vh); // footer destination
+      const S1 = document.documentElement.scrollHeight - vh; // the page's true end IS the pad — never target scroll that can't exist
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
@@ -5144,11 +5165,12 @@ function renderSystem() {
     const [rx, ry] = SHELLS[ring];
     return `M ${f(a[0])} ${f(a[1])} A ${rx} ${ry} 0 0 1 ${f(b[0])} ${f(b[1])}`;
   };
-  /* The 2028–29 ring rides the 2029 shell's near arc; the 2036+ moon rides
-     the 2036 shell's FAR arc at the top-left, so each planet can park its
-     aspirations panel right BESIDE itself, sketch-style (tops aligned). */
-  const deathStar1At = lowerShellAtAngle(3, 24);
-  const deathStar2At = lowerShellAtAngle(4, -135);
+  /* SKETCH PLACEMENTS — the 2028–29 ring parks on the 2029 shell's LOWER-LEFT
+     arc (box on its left); the 2036+ moon rides the outermost 2036 shell's
+     LOWER-RIGHT arc (box on its right), so the futures mirror each other
+     across the bottom of the system exactly as drawn. */
+  const deathStar1At = lowerShellAtAngle(3, 105);
+  const deathStar2At = lowerShellAtAngle(4, 63);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -5173,7 +5195,7 @@ function renderSystem() {
   // stay clear of the 2028–29 panel parked beside its planet
   /* the TIMELINE reads as one cascade down the right flank: 2026 → 2036,
      each pill at its own ring, x stepping outward, y stepping down */
-  const YEAR_ANGLES = [75, 63, 66.8, 69, 40];
+  const YEAR_ANGLES = [75, 63, 66.8, 69, 43];
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -5198,7 +5220,7 @@ function renderSystem() {
       role: "National field service operation delivering long-term recurring compliance contracts",
       cat: "COMPLIANCE &amp; FACILITIES MANAGEMENT" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(3, 1240), r: 36,   // rides ring3's deeper arc so the centred flagship card above it always clears
+      at: lowerShellAtX(2, 1500), r: 36, side: 1,   // its OWN 2028 ring, upper-right flank, card parked on its RIGHT (sketch)
       role: "Large-scale distribution of the group's proprietary brands across the UK and international markets",
       cat: "TRADE DISTRIBUTION · B2B" },
   ];
@@ -5580,21 +5602,22 @@ function renderSystem() {
   const formTop = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -90);
   const formRoyalStart = circleAt(formPlanet.at[0], formPlanet.at[1], formPlanet.r + 2, -90 + gapDeg(formPlanet.r + 2));
   const stormTop = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90);
-  const stormRoyalStart = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90 + gapDeg(stormPlanet.r + 2));
+  // storm's card now parks on its RIGHT shoulder, so the royalty return
+  // leaves the crown on the LEFT — always the side away from the box
+  const stormRoyalStart = circleAt(stormPlanet.at[0], stormPlanet.at[1], stormPlanet.r + 2, -90 - gapDeg(stormPlanet.r + 2));
   // Both FUTURE stations dock into the same engine as the operating trio: a
   // licence lane sweeping out from Holdings, a dotted royalty promise curving
-  // back — gold for the 2028–29 ring, violet for the 2036+ moon. Because each
-  // panel parks BESIDE its planet (sketch formation), the lanes land on the
-  // planets' CROWNS: the gold lane arcs OVER its panel and dives in from the
-  // top-right; the violet pair skims the sky corridor under the masthead.
-  // Radii are the scaled bodies (57×.70 / 58×.72) + 2 so arrows kiss the
-  // surface, never the ring.
+  // back — gold for the 2028–29 ring (lower-LEFT, panel on its left), violet
+  // for the 2036+ moon (lower-RIGHT on the outermost shell, panel on its
+  // right). Lanes land on the CROWNS; each royalty return leaves the crown on
+  // the side AWAY from the parked panel. Radii are the scaled bodies
+  // (57×.70 / 58×.72) + 2 so arrows kiss the surface, never the ring.
   const ds1Top = circleAt(deathStar1At[0], deathStar1At[1], 42, -90);
-  const ds1RoyalStart = circleAt(deathStar1At[0], deathStar1At[1], 42, -90 - gapDeg(42));
+  const ds1RoyalStart = circleAt(deathStar1At[0], deathStar1At[1], 42, -90 + gapDeg(42));
   const ds2Top = circleAt(deathStar2At[0], deathStar2At[1], 44, -90);
-  const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 + gapDeg(44));
-  const ds1Out = sunAt(15), ds1In = sunAt(15 - sunGap);
-  const ds2Out = sunAt(168), ds2In = sunAt(168 + sunGap);
+  const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 - gapDeg(44));
+  const ds1Out = sunAt(118), ds1In = sunAt(118 - sunGap);
+  const ds2Out = sunAt(62), ds2In = sunAt(62 + sunGap);
   // the box↔planet links are drawn at layout time from MEASURED card edges
   // (self-healing — they can never gap), so the paths start empty here
   const cardLinks = PLANETS.map(p => `
@@ -5602,24 +5625,24 @@ function renderSystem() {
     <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("");
   const spine = `
     <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1120 500, 1200 700, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
     <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 955 470, 972 505, ${f(flyTop[0])} ${f(flyTop[1])}"/>
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1120 500, 1200 700, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} C 955 470, 972 505, ${f(flyTop[0])} ${f(flyTop[1])}"/>
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 540 480, 740 425, ${f(formIn[0])} ${f(formIn[1])}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1245 700, 1165 480, ${f(stormIn[0])} ${f(stormIn[1])}"/>
+    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1410 520, 1190 420, ${f(stormIn[0])} ${f(stormIn[1])}"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} C 995 500, 975 465, ${f(flyIn[0])} ${f(flyIn[1])}"/>
-    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 1300 500, 1650 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 700 240, 380 250, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 1620 500, 1300 440, ${f(ds1In[0])} ${f(ds1In[1])}"/>
-    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 400 220, 700 215, ${f(ds2In[0])} ${f(ds2In[1])}"/>
+    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 820 540, 700 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1150 560, 1420 740, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 820 540, 700 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1150 560, 1420 740, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 810 660, 900 500, ${f(ds1In[0])} ${f(ds1In[1])}"/>
+    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 1240 700, 1050 520, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     <text class="sm-roylab rl-form" x="350" y="570" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-storm" x="1290" y="560" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-ds1" x="1450" y="452" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
-    <text class="sm-roylab rl-ds2" x="500" y="294" text-anchor="middle">FUTURE LICENCE · 2036+</text>
+    <text class="sm-roylab rl-storm" x="1354" y="486" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
+    <text class="sm-roylab rl-ds1" x="772" y="602" text-anchor="middle">FUTURE LICENCE · 2028–2029</text>
+    <text class="sm-roylab rl-ds2" x="1350" y="640" text-anchor="middle">FUTURE LICENCE · 2036+</text>
     ${cardLinks}`;
 
   map.innerHTML = `
@@ -5663,8 +5686,8 @@ function renderSystem() {
       ${stars}
       ${SHELLS.map(shell).join("")}
       ${yearMarks}
-      <path class="sm-orbit future dock" d="${dockArc(3, 10, 38)}"/>
-      <path class="sm-orbit future outer dock" d="${dockArc(4, -149, -121)}"/>
+      <path class="sm-orbit future dock" d="${dockArc(3, 91, 119)}"/>
+      <path class="sm-orbit future outer dock" d="${dockArc(4, 49, 77)}"/>
       ${spine}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
@@ -5828,7 +5851,7 @@ function renderSystem() {
 
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
-    kind: "destroyer", stationType: "futureRing", side: "right", art: .70, at: deathStar1At,
+    kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
     panelBeside: { side: -1, gap: 40 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
@@ -5838,7 +5861,7 @@ function renderSystem() {
     ],
   });
   mountStation(map, {
-    kind: "moon", stationType: "futureAurora", side: "left", art: .72, at: deathStar2At,
+    kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
     panelBeside: { side: 1, gap: 40 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
@@ -5879,6 +5902,10 @@ function renderSystem() {
         // the flagship's card hangs centred BELOW its planet, in the middle
         c.style.left = (ox + p.at[0] * sclX - c.offsetWidth / 2) + "px";
         c.style.top = (oy + (p.at[1] + p.r + 26) * sclY) + "px";
+      } else if (p.side === 1) {
+        // sketch: this box parks on the planet's RIGHT shoulder, tops aligned
+        c.style.left = (ox + (p.at[0] + p.r + CARD_GAP) * sclX) + "px";
+        c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
       } else {
         c.style.left = (ox + (p.at[0] - p.r - CARD_GAP) * sclX - c.offsetWidth) + "px";
         c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
@@ -5892,13 +5919,16 @@ function renderSystem() {
       if (p.centered) {
         const topSvg = (c.offsetTop - oy) / sclY;
         ln.setAttribute("d", `M ${f(p.at[0])} ${f(p.at[1] + p.r + 1)} L ${f(p.at[0])} ${f(topSvg + 2)}`);
+      } else if (p.side === 1) {
+        const leftSvg = (c.offsetLeft - ox) / sclX;
+        ln.setAttribute("d", `M ${f(leftSvg + 2)} ${f(p.at[1])} L ${f(p.at[0] + p.r + 1)} ${f(p.at[1])}`);
       } else {
         const rightSvg = (c.offsetLeft + c.offsetWidth - ox) / sclX;
         ln.setAttribute("d", `M ${f(rightSvg - 2)} ${f(p.at[1])} L ${f(p.at[0] - p.r - 1)} ${f(p.at[1])}`);
       }
     });
     const COLS = { form: 250, fly: 660, storm: 1120 };   // shelf column centres
-    const SHELF_Y = 1040;
+    const SHELF_Y = 1120;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;

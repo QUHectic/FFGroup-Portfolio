@@ -110,7 +110,7 @@ section#team{overflow-x:clip;}
 .sm-orbit{fill:none;stroke:rgba(255,61,154,.45);stroke-width:2;}
 .sm-orbit.o1{stroke:rgba(255,61,154,.66);stroke-width:2.4;}
 .sm-orbit.future{stroke:rgba(255,255,255,.26);stroke-dasharray:5 9;}
-.sm-orbit.future.outer{stroke:rgba(255,255,255,.20);stroke-width:1.55;stroke-dasharray:2.5 12;}
+.sm-orbit.future.outer{stroke:rgba(255,255,255,.26);stroke-width:2;stroke-dasharray:5 9;}   /* reads exactly like the 2029 ring — the 2036 orbit is just as present */
 .sm-orbit.far{stroke:rgba(255,61,154,.16);}
 .sm-orbit.o1.far{stroke:rgba(255,61,154,.24);}
 .sm-orbit.future.far{stroke:rgba(255,255,255,.11);}
@@ -769,8 +769,8 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
    cut off again */
 .lo-scene{position:relative;margin:0 auto;max-width:none;width:100%;--pads:2.2;}
 .lo-scene svg.lo-art{width:100%;height:auto;display:block;}
-.lo-slot{position:absolute;left:63.68%;top:70.24%;width:0;height:0;}
-#padRocket{position:absolute;left:63.68%;top:70.24%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
+.lo-slot{position:absolute;left:63.68%;top:70.9%;width:0;height:0;}
+#padRocket{position:absolute;left:63.68%;top:70.9%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
 html.spx.has-courier #padRocket{opacity:0;transition:opacity .35s var(--ease-out);}
 html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
 #padRocket svg{position:absolute;left:-78px;top:-35px;width:156px;height:70px;max-width:none;display:block;overflow:visible;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
@@ -792,12 +792,13 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-flock{animation:loBirds 46s linear infinite;}
 .lo-flock.f2{animation-duration:60s;animation-delay:-26s;}
 .lo-flock.f3{animation-duration:38s;animation-delay:-11s;}
+.lo-flock.f4{animation-duration:52s;animation-delay:-37s;}
 @keyframes loBirds{from{transform:translateX(-240px);}to{transform:translateX(2160px);}}
-.bird path{fill:none;stroke:#eef3ff;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(220,232,255,.35));}
+.bird path{fill:none;stroke:#f4f8ff;stroke-width:3.4;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(226,238,255,.65));}
 .bird{animation:birdBob 2.6s ease-in-out infinite;}
 .bird.b{animation-delay:-.9s;}
 .bird.c{animation-delay:-1.7s;}
-@keyframes birdBob{0%,100%{transform:translate(var(--tx,0),0);}50%{transform:translate(var(--tx,0),-5px);}}
+@keyframes birdBob{0%,100%{transform:translate(var(--tx,0),0);}50%{transform:translate(var(--tx,0),-7px);}}
 .bird .wl,.bird .wr{transform-box:fill-box;transform-origin:100% 100%;animation:wingL .46s ease-in-out infinite alternate;}
 .bird .wr{transform-origin:0% 100%;animation-name:wingR;}
 .bird.b .wl,.bird.b .wr{animation-delay:-.15s;}
@@ -2670,21 +2671,25 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </g>
         <!-- BIRDS — small flocks with genuinely flapping wings, gliding by at
              different heights, speeds and depths -->
-        <g class="lo-flock f1" opacity=".85">
-          <g class="bird" transform="translate(0 184) scale(1.35)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(46 198) scale(1.12)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(86 176) scale(1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(126 190) scale(.9)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f1" opacity="1">
+          <g class="bird" transform="translate(0 184) scale(2.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(72 206) scale(2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(136 172) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(200 194) scale(1.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f2" opacity=".62">
-          <g class="bird" transform="translate(0 262) scale(1.05)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(38 274) scale(.85)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(72 258) scale(.78)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f2" opacity=".8">
+          <g class="bird" transform="translate(0 262) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(58 278) scale(1.5)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(112 256) scale(1.35)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f3" opacity=".48">
-          <g class="bird b" transform="translate(0 122) scale(.82)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird" transform="translate(30 112) scale(.74)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(60 128) scale(.66)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f3" opacity=".65">
+          <g class="bird b" transform="translate(0 122) scale(1.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird" transform="translate(46 110) scale(1.25)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(92 130) scale(1.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        </g>
+        <g class="lo-flock f4" opacity=".9">
+          <g class="bird" transform="translate(0 330) scale(2.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(66 348) scale(1.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
         <!-- moonlit horizon band -->
         <rect x="0" y="452" width="1900" height="126" fill="url(#loHorizon)"/>
@@ -4504,7 +4509,7 @@ function initCourier() {
       // hovering short of the pad forever
       padS0 = Math.min(
         Math.max(orbitEnd + vh * .6, scrollY + loEl.getBoundingClientRect().top - vh * .35),
-        S1 - 6 - vh * .4);
+        S1 - vh * .52);
     }
     // THE RAISE — while the funding brief unfolds mid-chapter, the courier
     // flies a wide showcase circuit around the cards
@@ -4544,7 +4549,7 @@ function initCourier() {
     }
     if (padS0 != null) {
       segs.push({
-        pad: true, s0: padS0, s1: S1 - 6,   // ends just inside max scroll so touchdown always completes
+        pad: true, s0: padS0, s1: S1 - vh * .12,   // touchdown completes BEFORE the last .12vh of scroll — parking short of the end still lands the bird
         at: q => {
           // GLIDE-SLOPE: a banked approach from high on the port side that
           // eases through a quadratic into the vertical touchdown — the
@@ -5927,7 +5932,7 @@ function renderSystem() {
         ln.setAttribute("d", `M ${f(rightSvg - 2)} ${f(p.at[1])} L ${f(p.at[0] - p.r - 1)} ${f(p.at[1])}`);
       }
     });
-    const COLS = { form: 250, fly: 660, storm: 1120 };   // shelf column centres
+    const COLS = { form: 250, fly: 950, storm: 1560 };   // shelf column centres: green left · blue centred · orange right, each under its own card
     const SHELF_Y = 1120;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
@@ -7863,7 +7868,10 @@ function initSetpieces() {
   // the LAND geometry was traced with: u = (lon+180)/360, v = (1−sin lat)/2.
   // side/lift place each info box in a fixed slot around the globe.
   const PL_PINS = [
-    { n: "China", u: (104 + 180) / 360, v: (1 - Math.sin(35 * Math.PI / 180)) / 2,
+    // limb:true → the FIRST popup's pin is planted on the planet's bright
+    // white rim (the "white section" of the edge), tether running level to
+    // its card — it never rotates away
+    { n: "China", u: (104 + 180) / 360, v: (1 - Math.sin(35 * Math.PI / 180)) / 2, limb: true,
       side: 1, lift: -.62, d1: "Primary export partner — JinDun,", d2: "the world's №3 extinguisher maker" },
     { n: "India", u: (78 + 180) / 360, v: (1 - Math.sin(21 * Math.PI / 180)) / 2,
       side: -1, lift: .34, d1: "Expanding sourcing & export lane —", d2: "components & safety equipment" },
@@ -8014,11 +8022,15 @@ function initSetpieces() {
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map((pin, i) => {
         const leadP = sm(ph2(p, .48 + i * .05, .55 + i * .05)) * pvBase;
-        const boxP = sm(ph2(p, .56 + i * .05, .64 + i * .05)) * pvBase;
+        // pin, tether and card share ONE clock — they manifest together in
+        // every frame, never pin-first-box-later
+        const boxP = leadP;
         const du = ((pin.u - rot2) % 1 + 1) % 1;
         // Soft face visibility replaces a hard on/off edge as the country
-        // rotates onto the globe.
-        const face = sm(cl((du - .08) / .04, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
+        // rotates onto the globe. A LIMB pin ignores rotation entirely — it
+        // is planted on the planet's bright white rim and never sets.
+        const face = pin.limb ? 1
+          : sm(cl((du - .08) / .04, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
         const bw = 212, bh = 56;
         const sx = pin.side < 0 ? cx - R * 1.58 : cx + R * 1.58;
         let bx = pin.side < 0 ? sx - bw : sx;
@@ -8034,11 +8046,21 @@ function initSetpieces() {
         const { pin, leadP, face, du, bw, bx, byC } = r;
         const leadA = leadP * face;
         if (leadA < .02) return;
-        const lam = (du / .5 - .5) * Math.PI;
-        const x0 = cx + Math.sin(lam) * R, y0 = cy - R + pin.v * 2 * R;
-        const dxr = x0 - cx, dyr = y0 - cy;
-        const px2 = cx + dxr * ct - dyr * st2, py2 = cy + dxr * st2 + dyr * ct;
-        const la2 = leadA * (.45 + .55 * Math.cos(lam));
+        let px2, py2, la2;
+        if (pin.limb) {
+          // planted exactly ON the white rim stroke (R·.996), at the same
+          // height as its card row so the tether runs dead level
+          const thL = Math.asin(cl(pin.lift, -1, 1));
+          px2 = cx + pin.side * Math.cos(thL) * R * .996;
+          py2 = cy + Math.sin(thL) * R * .996;
+          la2 = leadA;
+        } else {
+          const lam = (du / .5 - .5) * Math.PI;
+          const x0 = cx + Math.sin(lam) * R, y0 = cy - R + pin.v * 2 * R;
+          const dxr = x0 - cx, dyr = y0 - cy;
+          px2 = cx + dxr * ct - dyr * st2; py2 = cy + dxr * st2 + dyr * ct;
+          la2 = leadA * (.45 + .55 * Math.cos(lam));
+        }
         const hy = py2 - 13;                              // the pin's head centre
         const ex = pin.side < 0 ? bx + bw : bx;
         const mx = (ex + px2) / 2, my = (byC + hy) / 2 - 22;
@@ -8063,9 +8085,10 @@ function initSetpieces() {
 
       // Pass 2: reveal the corresponding cards after their routes exist.
       routes.forEach(r => {
-        const { pin, leadP, boxP, face, bw, bh, bx, by } = r;
-        // The card cannot begin until its connector is substantially visible.
-        const a2 = boxP * sm(cl((leadP * face - .48) / .32, 0, 1));
+        const { pin, boxP, face, bw, bh, bx, by } = r;
+        // One clock for the trio: the card carries the exact same alpha as
+        // its pin and tether, frame for frame.
+        const a2 = boxP * face;
         if (a2 < .02) return;
         ctx.fillStyle = `rgba(15,17,25,${(.9 * a2).toFixed(3)})`;
         ctx.strokeStyle = `rgba(255,255,255,${(.3 * a2).toFixed(3)})`;

@@ -464,6 +464,28 @@ h1:focus,h2:focus{outline:none;}
 .nav-btn.active{color:var(--blue-ink);background:var(--blue-soft);}
 .nav-btn.peek{color:var(--blue-ink);background:var(--blue-soft);}
 .nav.scrolled{backdrop-filter:blur(22px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+/* the Liftoff call-to-action stands out in the row */
+.nav-btn.nav-cta{color:#fff;background:linear-gradient(135deg,#ff3d9a,#c9186f);box-shadow:0 0 14px rgba(255,61,154,.35);margin-left:6px;}
+.nav-btn.nav-cta:hover{background:linear-gradient(135deg,#ff5cab,#e02280);color:#fff;}
+/* burger — phones get a clean drop-down sheet of the same buttons */
+.nav-burger{display:none;background:none;border:0;padding:10px;margin-left:auto;cursor:pointer;}
+.nav-burger span{display:block;width:22px;height:2.2px;border-radius:2px;background:var(--ink);margin:4.6px 0;transition:transform .25s var(--ease-out),opacity .2s;}
+.nav.nav-open .nav-burger span:nth-child(1){transform:translateY(6.8px) rotate(45deg);}
+.nav.nav-open .nav-burger span:nth-child(2){opacity:0;}
+.nav.nav-open .nav-burger span:nth-child(3){transform:translateY(-6.8px) rotate(-45deg);}
+@media (max-width:760px){
+  .nav-burger{display:block;}
+  .nav-links{
+    position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:4px;
+    padding:10px 14px 14px;background:rgba(7,7,13,.97);backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 24px 40px rgba(0,0,0,.5);
+    opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .22s var(--ease-out),transform .22s var(--ease-out),visibility .22s;
+  }
+  .nav.nav-open .nav-links{opacity:1;visibility:visible;transform:none;}
+  .nav-btn{padding:13px 16px;font-size:1rem;text-align:left;border-radius:12px;}
+  .nav-btn.nav-cta{margin-left:0;text-align:center;}
+}
 
 /* ==========================================================================
    REVEAL SYSTEM
@@ -719,21 +741,41 @@ html.spx .tr2-funding{height:560vh;background:#07070d;}
 .fund-card p{margin:0;font-size:.8rem;line-height:1.5;color:#39405a;}
 .fund-note{margin:16px 0 0;font-size:.68rem;color:#4a516b;opacity:0;}
 html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb instead */
+#fundStatic .fsr{display:flex;gap:12px;align-items:flex-start;padding:12px 0 11px;border-top:1px solid rgba(255,255,255,.08);}
+#fundStatic .kicker + .fsr{border-top:0;margin-top:10px;}
+#fundStatic .fsr-no{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.64rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:1px;}
+#fundStatic .fsr-body{flex:1;min-width:0;}
+#fundStatic .fsr-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+#fundStatic .fsr-top b{font-size:.88rem;letter-spacing:-.01em;}
+#fundStatic .fsr-pc{flex:none;font-family:"Orbitron",system-ui,sans-serif;font-size:.7rem;font-weight:700;color:#7cc4ff;}
+#fundStatic .fsr p{margin:3px 0 8px;font-size:.78rem;line-height:1.5;color:#aab3cf;}
+#fundStatic .fsr-bar{display:block;height:5px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;}
+#fundStatic .fsr-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff3d9a,#38a9ff);}
+#fundStatic .fsr-note{margin:12px 0 0;font-size:.7rem;color:#aab3cf;opacity:.75;}
 
 /* ============ LIFTOFF — the earth-side finale. Night launch complex with
    trees, birds and floodlights; the courier that has flown the whole page
    descends, enlarges into the pad rocket, and PRESS FOR LIFTOFF returns the
    visitor to the very top under full burn. ============ */
-#liftoff{position:relative;padding:96px 0 0;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
+#liftoff{position:relative;padding:56px 0 0;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
 #liftoff .lo-head{text-align:center;position:relative;z-index:3;}
+#liftoff .lo-head .sec-head{margin-bottom:0;}
+#liftoff .lo-head h2{margin-bottom:6px;}
 #liftoff .lo-head p{max-width:64ch;margin-inline:auto;}
-.lo-scene{position:relative;margin:8px auto 0;max-width:1900px;--pads:2.2;}
+/* the scene is CAPPED so heading + full scene + mission control all share
+   one viewport at the final scroll — nothing of the launch night is ever
+   cut off again */
+.lo-scene{position:relative;margin:4px auto 0;max-width:min(1780px,138vh);--pads:2.2;}
 .lo-scene svg.lo-art{width:100%;height:auto;display:block;}
-.lo-slot{position:absolute;left:63.68%;top:52.56%;width:0;height:0;}
-#padRocket{position:absolute;left:63.68%;top:52.56%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
+.lo-slot{position:absolute;left:63.68%;top:70.24%;width:0;height:0;}
+#padRocket{position:absolute;left:63.68%;top:70.24%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
 html.spx.has-courier #padRocket{opacity:0;transition:opacity .35s var(--ease-out);}
 html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
 #padRocket svg{position:absolute;left:-78px;top:-35px;width:156px;height:70px;max-width:none;display:block;overflow:visible;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
+/* parked = engines cold: the courier's flight effects stay dark until launch */
+#padRocket .rk-trailline,#padRocket .rk-plume,#padRocket .rk-plume2,#padRocket .rk-nozGlow{opacity:0;transition:opacity .3s ease;}
+#liftoff.launching #padRocket .rk-plume,#liftoff.launching #padRocket .rk-plume2,
+#liftoff.launching #padRocket .rk-nozGlow,#liftoff.launching #padRocket .rk-trailline{opacity:1;}
 #liftoff.launching #padRocket{opacity:1;transition:transform 2.6s cubic-bezier(.58,.02,.86,.36),opacity .2s;transform:translateY(-128vh) rotate(-90deg) scale(var(--pads,2.2));}
 html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during the ascent */
 .lo-flash{position:absolute;left:63.68%;top:85.6%;width:0;height:0;opacity:0;transition:opacity .5s var(--ease-out);pointer-events:none;}
@@ -749,7 +791,7 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-flock.f2{animation-duration:60s;animation-delay:-26s;}
 .lo-flock.f3{animation-duration:38s;animation-delay:-11s;}
 @keyframes loBirds{from{transform:translateX(-240px);}to{transform:translateX(2160px);}}
-.bird path{fill:none;stroke:#cfd8ea;stroke-width:2.1;stroke-linecap:round;}
+.bird path{fill:none;stroke:#eef3ff;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(220,232,255,.35));}
 .bird{animation:birdBob 2.6s ease-in-out infinite;}
 .bird.b{animation-delay:-.9s;}
 .bird.c{animation-delay:-1.7s;}
@@ -786,7 +828,42 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-vent{transform-box:fill-box;transform-origin:50% 100%;animation:loVent 7.5s ease-in-out infinite alternate;}
 .lo-vent.v2{animation-duration:9.5s;animation-delay:-4s;}
 @keyframes loVent{from{transform:scale(1) translateX(0);opacity:.5;}to{transform:scale(1.25) translateX(14px);opacity:.22;}}
-.lo-console{position:relative;z-index:4;text-align:center;padding:0 18px 84px;margin-top:-44px;}
+/* MISSION CONTROL — a glass console strip carrying the status board, the
+   countdown readout and the launch button */
+.lo-console{position:relative;z-index:4;text-align:center;padding:0 18px 64px;margin-top:-52px;}
+.lo-panel{
+  display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 22px;
+  padding:16px 26px;border-radius:22px;
+  background:rgba(10,13,20,.78);border:1px solid rgba(120,160,210,.22);
+  box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter:blur(10px);
+}
+.lo-status{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
+.lo-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(120,160,210,.28);border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.12em;color:rgba(210,226,248,.85);}
+.lo-chip i{width:7px;height:7px;border-radius:50%;background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
+.lo-count{font-family:"Orbitron",system-ui,sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:.14em;color:#dfe9fb;min-width:120px;}
+.lo-count b{color:#ff9dce;}
+#liftoff.launching .lo-chip i{background:#f6c66b;box-shadow:0 0 8px #f6c66b;}
+/* LAUNCH EXHAUST — ground effect at ignition: a blinding core, a flame
+   column and rolling smoke that bursts outward as the bird climbs */
+.lo-exhaust{position:absolute;left:63.68%;top:84%;width:0;height:0;opacity:0;pointer-events:none;}
+#liftoff.launching .lo-exhaust{opacity:1;}
+.lo-exhaust .core{position:absolute;left:-14px;top:-56px;width:28px;height:64px;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#fff,#ffd9a1 55%,rgba(255,150,80,0));filter:blur(2px);opacity:0;}
+#liftoff.launching .lo-exhaust .core{animation:loExCore 2.6s ease-out forwards;}
+@keyframes loExCore{0%{opacity:0;transform:scaleY(.2);}8%{opacity:1;transform:scaleY(1);}70%{opacity:.85;transform:scaleY(1.35) translateY(-14px);}100%{opacity:0;transform:scaleY(1.7) translateY(-40px);}}
+.lo-exhaust .puff{position:absolute;top:-16px;width:74px;height:44px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,rgba(226,234,246,.95),rgba(180,194,214,.55) 55%,rgba(150,164,186,0) 78%);opacity:0;}
+.lo-exhaust .puff.pl{left:-88px;}
+.lo-exhaust .puff.pr{left:14px;}
+.lo-exhaust .puff.pc{left:-37px;top:-8px;width:86px;height:40px;}
+#liftoff.launching .lo-exhaust .puff{animation:loExPuff 2.9s ease-out forwards;}
+#liftoff.launching .lo-exhaust .puff.pl{animation-name:loExPuffL;}
+#liftoff.launching .lo-exhaust .puff.pc{animation-delay:.1s;}
+@keyframes loExPuff{0%{opacity:0;transform:scale(.25);}10%{opacity:.95;}100%{opacity:0;transform:translateX(130px) translateY(-16px) scale(2.6);}}
+@keyframes loExPuffL{0%{opacity:0;transform:scale(.25);}10%{opacity:.95;}100%{opacity:0;transform:translateX(-130px) translateY(-16px) scale(2.6);}}
+/* sky searchlights sweeping above the complex */
+.lo-search{transform-box:fill-box;transform-origin:50% 100%;animation:loSearch 11s ease-in-out infinite alternate;}
+.lo-search.s2{animation-duration:14s;animation-delay:-6s;}
+@keyframes loSearch{from{transform:rotate(-14deg);}to{transform:rotate(16deg);}}
 .liftoff-btn{
   position:relative;display:inline-flex;align-items:center;gap:12px;cursor:pointer;
   font:800 1rem/1 "Orbitron",system-ui,sans-serif;letter-spacing:.16em;color:#fff;
@@ -803,9 +880,20 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-hint{display:block;margin-top:12px;font-size:.7rem;color:rgba(243,244,251,.45);letter-spacing:.06em;}
 @media (prefers-reduced-motion:reduce){.lo-flock,.bird,.bird .wl,.bird .wr,.lo-vent,.lo-beacon,.liftoff-btn i,.lo-tw,.lo-shooter,.lo-cloud,.lo-dish,.lo-sock,.lo-fly,.lo-grass,.lo-cone-breathe{animation:none;}.lo-shooter{opacity:0;}}
 @media (max-width:760px){
-  #liftoff{padding-top:64px;}
-  .lo-scene{min-height:300px;}
-  .lo-console{margin-top:-10px;}
+  #liftoff{padding-top:48px;}
+  /* phones get a PAD-CENTRED CROP: the art renders 2.4× the container and
+     shifts so the launch pad owns the frame — every anchored overlay
+     (slot, rocket, flash, exhaust) re-centres with it */
+  .lo-scene{max-width:none;overflow:hidden;}
+  .lo-scene svg.lo-art{width:240%;max-width:none;margin-left:-102.8%;}
+  .lo-slot,#padRocket,.lo-flash,.lo-exhaust{left:50% !important;}
+  .lo-console{margin-top:-8px;padding-bottom:48px;}
+  .lo-panel{padding:14px 16px;gap:10px;}
+  .lo-count{min-width:0;}
+  .liftoff-btn{padding:16px 24px;font-size:.9rem;}
+  /* the projections data matrix scrolls sideways instead of bursting the page */
+  .disclose-body{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .matrix{min-width:620px;}
 }
 
 @keyframes secRiseAlt{
@@ -2171,14 +2259,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </span>
       <span class="word">THE FREEDOM <span>GROUP</span></span>
     </button>
-    <nav class="nav-links" aria-label="Sections">
+    <nav class="nav-links" id="navLinks" aria-label="Sections">
       <button class="nav-btn" data-goto="system">The System</button>
       <button class="nav-btn" data-goto="journey">Journey</button>
       <button class="nav-btn" data-goto="growth">Growth</button>
       <button class="nav-btn" data-goto="projections">Projections</button>
       <button class="nav-btn" data-goto="horizon">2036</button>
       <button class="nav-btn" data-goto="team">Team</button>
+      <button class="nav-btn nav-cta" data-goto="liftoff">Liftoff</button>
     </nav>
+    <button class="nav-burger" id="navBurger" aria-label="Open the section menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -2474,35 +2566,51 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
       <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
         <span class="kicker">The raise · why we need this money</span>
-        <div style="display:grid;gap:10px;margin-top:12px;font-size:.85rem;line-height:1.5;">
-          <div><b>01 · Inventory &amp; buying power (40%)</b> — [Placeholder] deeper stock positions and supplier volume pricing.</div>
-          <div><b>02 · Warehousing &amp; fulfilment (25%)</b> — [Placeholder] automated pick-and-pack, faster dispatch, lower carriage cost.</div>
-          <div><b>03 · People &amp; compliance (20%)</b> — [Placeholder] key hires and accreditation programmes ahead of demand.</div>
-          <div><b>04 · Channel &amp; brand growth (15%)</b> — [Placeholder] marketplace expansion, DTC growth and the trade pipeline.</div>
-          <div style="opacity:.65;font-size:.75rem;">Indicative split — placeholder figures pending the formal deployment schedule.</div>
-        </div>
+        <div class="fsr"><span class="fsr-no">01</span><div class="fsr-body">
+          <div class="fsr-top"><b>Inventory &amp; buying power</b><span class="fsr-pc">40%</span></div>
+          <p>[Placeholder] deeper stock positions and supplier volume pricing.</p>
+          <span class="fsr-bar"><i style="width:40%"></i></span></div></div>
+        <div class="fsr"><span class="fsr-no">02</span><div class="fsr-body">
+          <div class="fsr-top"><b>Warehousing &amp; fulfilment</b><span class="fsr-pc">25%</span></div>
+          <p>[Placeholder] automated pick-and-pack, faster dispatch, lower carriage cost.</p>
+          <span class="fsr-bar"><i style="width:25%"></i></span></div></div>
+        <div class="fsr"><span class="fsr-no">03</span><div class="fsr-body">
+          <div class="fsr-top"><b>People &amp; compliance</b><span class="fsr-pc">20%</span></div>
+          <p>[Placeholder] key hires and accreditation programmes ahead of demand.</p>
+          <span class="fsr-bar"><i style="width:20%"></i></span></div></div>
+        <div class="fsr"><span class="fsr-no">04</span><div class="fsr-body">
+          <div class="fsr-top"><b>Channel &amp; brand growth</b><span class="fsr-pc">15%</span></div>
+          <p>[Placeholder] marketplace expansion, DTC growth and the trade pipeline.</p>
+          <span class="fsr-bar"><i style="width:15%"></i></span></div></div>
+        <p class="fsr-note">Indicative split — placeholder figures pending the formal deployment schedule.</p>
       </div>
     </div>
     <div class="lo-scene" aria-hidden="true">
       <svg class="lo-art" viewBox="0 0 1900 780" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="loGround" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#0d1511"/><stop offset="1" stop-color="#070c08"/>
+            <stop offset="0" stop-color="#141f18"/><stop offset=".45" stop-color="#0e1610"/><stop offset="1" stop-color="#080d09"/>
           </linearGradient>
           <linearGradient id="loConeL" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="rgba(224,238,255,.34)"/><stop offset="1" stop-color="rgba(224,238,255,0)"/>
+            <stop offset="0" stop-color="rgba(228,240,255,.5)"/><stop offset="1" stop-color="rgba(228,240,255,0)"/>
           </linearGradient>
           <linearGradient id="loConeR" x1="1" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="rgba(224,238,255,.30)"/><stop offset="1" stop-color="rgba(224,238,255,0)"/>
+            <stop offset="0" stop-color="rgba(228,240,255,.44)"/><stop offset="1" stop-color="rgba(228,240,255,0)"/>
           </linearGradient>
           <radialGradient id="loPadGlow" cx=".5" cy=".5" r=".5">
-            <stop offset="0" stop-color="rgba(210,228,255,.20)"/><stop offset="1" stop-color="rgba(210,228,255,0)"/>
+            <stop offset="0" stop-color="rgba(214,230,255,.32)"/><stop offset="1" stop-color="rgba(214,230,255,0)"/>
           </radialGradient>
           <radialGradient id="loMoonHalo" cx=".5" cy=".5" r=".5">
             <stop offset="0" stop-color="rgba(232,238,255,.30)"/><stop offset="1" stop-color="rgba(232,238,255,0)"/>
           </radialGradient>
           <linearGradient id="loShoot" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="rgba(255,255,255,0)"/><stop offset=".7" stop-color="rgba(235,242,255,.5)"/><stop offset="1" stop-color="#fff"/>
+          </linearGradient>
+          <linearGradient id="loHorizon" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="rgba(96,138,182,0)"/><stop offset=".72" stop-color="rgba(96,138,182,.16)"/><stop offset="1" stop-color="rgba(96,138,182,.05)"/>
+          </linearGradient>
+          <linearGradient id="loBeam" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="rgba(214,232,255,.26)"/><stop offset="1" stop-color="rgba(214,232,255,0)"/>
           </linearGradient>
         </defs>
         <!-- twinkling companions to the static starfield -->
@@ -2523,7 +2631,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <circle cx="240" cy="250" r=".9" opacity=".34"/><circle cx="530" cy="230" r="1" opacity=".4"/><circle cx="820" cy="210" r=".8" opacity=".3"/>
           <circle cx="1180" cy="235" r="1" opacity=".4"/><circle cx="1370" cy="196" r=".9" opacity=".35"/><circle cx="1590" cy="240" r="1.1" opacity=".45"/>
           <circle cx="80" cy="180" r="1" opacity=".4"/><circle cx="980" cy="168" r=".9" opacity=".36"/><circle cx="1840" cy="170" r="1" opacity=".42"/>
+          <circle cx="210" cy="46" r="1" opacity=".45"/><circle cx="540" cy="180" r=".9" opacity=".4"/><circle cx="668" cy="86" r="1.1" opacity=".5"/>
+          <circle cx="836" cy="150" r=".8" opacity=".35"/><circle cx="960" cy="250" r=".9" opacity=".32"/><circle cx="1078" cy="196" r="1" opacity=".4"/>
+          <circle cx="1240" cy="120" r="1.2" opacity=".5"/><circle cx="1418" cy="60" r=".9" opacity=".4"/><circle cx="1508" cy="196" r="1" opacity=".38"/>
+          <circle cx="1706" cy="230" r=".9" opacity=".35"/><circle cx="120" cy="320" r=".8" opacity=".3"/><circle cx="1795" cy="320" r=".8" opacity=".3"/>
         </g>
+        <!-- searchlight beams sweeping the launch sky -->
+        <g class="lo-search"><polygon points="1140,652 1180,652 1310,60 1210,60" fill="url(#loBeam)" opacity=".5"/></g>
+        <g class="lo-search s2"><polygon points="1290,656 1322,656 1490,110 1400,110" fill="url(#loBeam)" opacity=".38"/></g>
         <circle cx="1642" cy="128" r="86" fill="url(#loMoonHalo)"/>
         <circle cx="1642" cy="128" r="24" fill="#eef2fc" opacity=".92"/>
         <circle cx="1642" cy="128" r="30" fill="none" stroke="#dfe6f6" stroke-width="1" opacity=".18"/>
@@ -2540,25 +2655,29 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </g>
         <!-- BIRDS — small flocks with genuinely flapping wings, gliding by at
              different heights, speeds and depths -->
-        <g class="lo-flock f1" opacity=".55">
-          <g class="bird" transform="translate(0 184)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(34 196) scale(.85)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(64 178) scale(.75)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f1" opacity=".85">
+          <g class="bird" transform="translate(0 184) scale(1.35)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(46 198) scale(1.12)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(86 176) scale(1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(126 190) scale(.9)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f2" opacity=".4">
-          <g class="bird" transform="translate(0 262) scale(.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(30 272) scale(.65)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f2" opacity=".62">
+          <g class="bird" transform="translate(0 262) scale(1.05)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(38 274) scale(.85)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(72 258) scale(.78)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f3" opacity=".3">
-          <g class="bird b" transform="translate(0 122) scale(.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird" transform="translate(24 114) scale(.55)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(48 128) scale(.5)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f3" opacity=".48">
+          <g class="bird b" transform="translate(0 122) scale(.82)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird" transform="translate(30 112) scale(.74)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(60 128) scale(.66)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
+        <!-- moonlit horizon band -->
+        <rect x="0" y="452" width="1900" height="126" fill="url(#loHorizon)"/>
         <!-- distant ridge lines behind the treeline -->
-        <path fill="#0a0e14" opacity=".85" d="M0 560 L120 522 L260 552 L420 508 L560 548 L730 516 L900 550 L1080 512 L1260 548 L1430 520 L1600 552 L1750 526 L1900 550 L1900 580 L0 580 Z"/>
-        <path fill="#080b10" opacity=".9" d="M0 572 L180 544 L340 566 L540 538 L760 566 L980 542 L1200 566 L1420 546 L1640 566 L1900 548 L1900 590 L0 590 Z"/>
+        <path fill="#141b25" opacity=".9" d="M0 560 L120 522 L260 552 L420 508 L560 548 L730 516 L900 550 L1080 512 L1260 548 L1430 520 L1600 552 L1750 526 L1900 550 L1900 580 L0 580 Z"/>
+        <path fill="#0e1319" opacity=".95" d="M0 572 L180 544 L340 566 L540 538 L760 566 L980 542 L1200 566 L1420 546 L1640 566 L1900 548 L1900 590 L0 590 Z"/>
         <!-- distant treeline -->
-        <path fill="#0a0f12" d="M0 574 L0 556 Q40 548 70 556 L96 540 L110 556 Q170 544 215 554 L232 534 L246 552 Q320 542 380 552 Q450 540 520 552 L545 532 L560 550 Q640 540 720 552 Q800 542 870 552 L893 536 L908 552 Q970 544 1030 552 L1560 552 Q1620 542 1680 552 L1704 534 L1719 550 Q1790 542 1900 554 L1900 574 Z"/>
+        <path fill="#101820" d="M0 574 L0 556 Q40 548 70 556 L96 540 L110 556 Q170 544 215 554 L232 534 L246 552 Q320 542 380 552 Q450 540 520 552 L545 532 L560 550 Q640 540 720 552 Q800 542 870 552 L893 536 L908 552 Q970 544 1030 552 L1560 552 Q1620 542 1680 552 L1704 534 L1719 550 Q1790 542 1900 554 L1900 574 Z"/>
         <!-- ground -->
         <rect x="0" y="570" width="1900" height="210" fill="url(#loGround)"/>
         <ellipse cx="1210" cy="668" rx="430" ry="64" fill="url(#loPadGlow)"/>
@@ -2566,16 +2685,16 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <polygon class="lo-cone-breathe" points="726,548 748,556 1105,636 1010,676" fill="url(#loConeL)" opacity=".5"/>
         <polygon class="lo-cone-breathe" points="1656,548 1634,556 1315,636 1415,676" fill="url(#loConeR)" opacity=".5" style="animation-delay:-4s"/>
         <!-- launch pad -->
-        <ellipse cx="1210" cy="672" rx="300" ry="40" fill="#121920"/>
-        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="#1b232d"/>
-        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="none" stroke="#2b3745" stroke-width="2"/>
-        <ellipse cx="1210" cy="666" rx="128" ry="17" fill="none" stroke="#26313e" stroke-width="1.4" stroke-dasharray="10 8"/>
+        <ellipse cx="1210" cy="672" rx="300" ry="40" fill="#182129"/>
+        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="#242e3a"/>
+        <ellipse cx="1210" cy="666" rx="196" ry="26" fill="none" stroke="#3a4859" stroke-width="2"/>
+        <ellipse cx="1210" cy="666" rx="128" ry="17" fill="none" stroke="#33404f" stroke-width="1.4" stroke-dasharray="10 8"/>
         <rect x="1150" y="660" width="120" height="16" rx="7" fill="#04060a"/>
         <path d="M1152 636 L1170 634 L1174 648 L1156 650 Z" fill="#232d38"/>
         <path d="M1268 636 L1250 634 L1246 648 L1264 650 Z" fill="#232d38"/>
         <!-- vapour -->
-        <ellipse class="lo-vent" cx="1252" cy="652" rx="27" ry="10" fill="#b8c4d4" opacity=".26"/>
-        <ellipse class="lo-vent v2" cx="1172" cy="649" rx="21" ry="8" fill="#b8c4d4" opacity=".2"/>
+        <ellipse class="lo-vent" cx="1252" cy="652" rx="27" ry="10" fill="#c6d2e2" opacity=".34"/>
+        <ellipse class="lo-vent v2" cx="1172" cy="649" rx="21" ry="8" fill="#c6d2e2" opacity=".27"/>
         <!-- gantry tower -->
         <g>
           <rect x="1036" y="248" width="9" height="412" fill="#131b23"/>
@@ -2589,7 +2708,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <rect x="1156" y="322" width="10" height="20" rx="2" fill="#232d38"/>
           <line x1="1069" y1="240" x2="1069" y2="192" stroke="#232d38" stroke-width="3"/>
           <circle cx="1069" cy="188" r="3" fill="#3a4653"/>
+          <circle cx="1069" cy="246" r="10" fill="#ff5d5d" opacity=".16"/>
           <circle class="lo-beacon" cx="1069" cy="246" r="4.4" fill="#ff5d5d"/>
+          <circle cx="1069" cy="422" r="8" fill="#ff5d5d" opacity=".14"/>
           <circle class="lo-beacon b2" cx="1069" cy="422" r="3.6" fill="#ff5d5d"/>
           <rect x="1048" y="452" width="7" height="5" fill="#f6c66b" opacity=".8"/>
           <rect x="1082" y="500" width="7" height="5" fill="#f6c66b" opacity=".6"/>
@@ -2629,9 +2750,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <!-- wind sock, reading the night breeze -->
         <g>
           <line x1="1352" y1="664" x2="1352" y2="600" stroke="#1a2129" stroke-width="2.4"/>
-          <g class="lo-sock" transform="translate(1352 601)">
-            <path d="M0 0 L26 2 L24 7 L0 6 Z" fill="#d97843" opacity=".85"/>
-            <path d="M9 .7 L14 1.1 L13.5 6.4 L9 6 Z" fill="#f3f4fb" opacity=".8"/>
+          <g class="lo-sock" transform="translate(1352 599)">
+            <path d="M0 0 L34 2.6 L31 9.2 L0 7.8 Z" fill="#f08a4e" opacity=".95"/>
+            <path d="M11 .9 L18 1.4 L17.2 8.4 L11 8 Z" fill="#f6f7fd" opacity=".9"/>
           </g>
         </g>
         <!-- crawlerway from the bunker to the pad -->
@@ -2646,11 +2767,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <circle class="lo-beacon b2" cx="1478" cy="692" r="2" style="animation-delay:-.6s"/>
         </g>
         <!-- fireflies over the grass -->
-        <g fill="#d9e77b">
-          <circle class="lo-fly" cx="404" cy="700" r="1.8"/>
-          <circle class="lo-fly y2" cx="646" cy="688" r="1.5"/>
-          <circle class="lo-fly y3" cx="1552" cy="700" r="1.7"/>
-          <circle class="lo-fly y2" cx="238" cy="676" r="1.4" style="animation-delay:-3.1s"/>
+        <g fill="#e9f78e">
+          <circle class="lo-fly" cx="404" cy="700" r="2.3"/>
+          <circle class="lo-fly y2" cx="646" cy="688" r="2"/>
+          <circle class="lo-fly y3" cx="1552" cy="700" r="2.2"/>
+          <circle class="lo-fly y2" cx="238" cy="676" r="1.9" style="animation-delay:-3.1s"/>
+          <circle class="lo-fly y3" cx="540" cy="716" r="1.8" style="animation-delay:-5.6s"/>
         </g>
         <!-- floodlight pylons -->
         <g fill="#10161d">
@@ -2661,17 +2783,46 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <rect x="1632" y="536" width="40" height="16" rx="5" fill="#1b242e"/>
           <circle cx="1638" cy="544" r="2.2" fill="#dfeaff" opacity=".9"/>
         </g>
+        <!-- FREEDOM hangar + integration building on the west field -->
+        <g>
+          <path d="M170 664 L170 610 Q235 578 300 610 L300 664 Z" fill="#121a23" stroke="#26313d" stroke-width="1.4"/>
+          <path d="M170 612 Q235 580 300 612" fill="none" stroke="#33404f" stroke-width="2"/>
+          <rect x="216" y="632" width="38" height="32" rx="3" fill="#0a0f14"/>
+          <rect x="219" y="635" width="32" height="26" rx="2" fill="#f6c66b" opacity=".28"/>
+          <text x="235" y="626" text-anchor="middle" font-family="Orbitron,system-ui,sans-serif" font-size="9.5" letter-spacing="2.5" fill="#8fb4dd" opacity=".8">FREEDOM</text>
+          <circle class="lo-beacon b3" cx="235" cy="590" r="2.2" fill="#ff5d5d"/>
+          <rect x="306" y="636" width="44" height="28" rx="3" fill="#0e141b" stroke="#1f2933" stroke-width="1.2"/>
+          <rect x="312" y="644" width="8" height="6" fill="#f6c66b" opacity=".6"/><rect x="326" y="644" width="8" height="6" fill="#f6c66b" opacity=".4"/>
+        </g>
+        <!-- taxiway from the hangar to the pad, with blue edge lights -->
+        <path d="M302 654 C520 668, 760 676, 918 678" stroke="#0d1218" stroke-width="12" fill="none" opacity=".85"/>
+        <path d="M302 654 C520 668, 760 676, 918 678" stroke="#1a222c" stroke-width="1.2" fill="none" stroke-dasharray="9 8"/>
+        <g fill="#7cc4ff">
+          <circle cx="330" cy="646" r="1.6" opacity=".8"/><circle cx="330" cy="663" r="1.6" opacity=".6"/>
+          <circle cx="430" cy="652" r="1.6" opacity=".75"/><circle cx="430" cy="669" r="1.6" opacity=".55"/>
+          <circle cx="540" cy="658" r="1.6" opacity=".8"/><circle cx="540" cy="675" r="1.6" opacity=".6"/>
+          <circle cx="650" cy="663" r="1.6" opacity=".7"/><circle cx="650" cy="680" r="1.6" opacity=".5"/>
+          <circle cx="760" cy="667" r="1.6" opacity=".75"/><circle cx="760" cy="684" r="1.6" opacity=".55"/>
+          <circle cx="860" cy="670" r="1.6" opacity=".7"/><circle cx="860" cy="687" r="1.6" opacity=".5"/>
+        </g>
+        <!-- a sister pad far on the horizon -->
+        <g opacity=".55">
+          <rect x="1580" y="596" width="4" height="42" fill="#131b23"/>
+          <rect x="1596" y="588" width="4" height="50" fill="#10161d"/>
+          <path d="M1582 600 L1598 592 M1582 614 L1598 606 M1582 628 L1598 620" stroke="#1c2630" stroke-width="1.6"/>
+          <circle class="lo-beacon" cx="1598" cy="586" r="1.8" fill="#ff5d5d" style="animation-delay:-1.2s"/>
+        </g>
         <!-- fence -->
-        <g stroke="#1a2129" stroke-width="3">
+        <g stroke="#2a3644" stroke-width="3">
           <line x1="92" y1="618" x2="560" y2="618"/><line x1="92" y1="632" x2="560" y2="632"/>
         </g>
-        <g fill="#141b22">
+        <g fill="#222d39">
           <rect x="92" y="606" width="5" height="34"/><rect x="154" y="606" width="5" height="34"/><rect x="216" y="606" width="5" height="34"/>
           <rect x="278" y="606" width="5" height="34"/><rect x="340" y="606" width="5" height="34"/><rect x="402" y="606" width="5" height="34"/>
           <rect x="464" y="606" width="5" height="34"/><rect x="526" y="606" width="5" height="34"/>
         </g>
         <!-- trees -->
-        <g fill="#05090c">
+        <g fill="#0c141c">
           <path d="M150 640 L150 596 M150 596 L118 606 L142 576 L122 580 L146 548 L130 550 L150 512 L170 550 L154 548 L178 580 L158 576 L182 606 L150 596" stroke="#05090c" stroke-width="7" stroke-linejoin="round"/>
           <rect x="146" y="630" width="8" height="22" fill="#0a0d10"/>
           <path d="M235 648 L235 612 M235 612 L210 620 L228 596 L214 598 L232 572 L222 574 L235 546 L248 574 L238 572 L256 598 L242 596 L260 620 L235 612" stroke="#05090c" stroke-width="6" stroke-linejoin="round"/>
@@ -2697,9 +2848,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="lo-slot" id="padSlot"></div>
       <div id="padRocket"></div>
       <div class="lo-flash"></div>
+      <div class="lo-exhaust" aria-hidden="true"><span class="core"></span><span class="puff pl"></span><span class="puff pc"></span><span class="puff pr"></span></div>
     </div>
     <div class="lo-console">
-      <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff — return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
+      <div class="lo-panel">
+        <div class="lo-status" aria-hidden="true">
+          <span class="lo-chip"><i></i>GUIDANCE ALIGNED</span>
+          <span class="lo-chip"><i></i>FUEL 100%</span>
+          <span class="lo-chip"><i></i>RANGE CLEAR</span>
+          <span class="lo-chip"><i></i>WEATHER GO</span>
+        </div>
+        <span class="lo-count" id="loCount">T-<b>00:10</b></span>
+        <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff — return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
+      </div>
       <span class="lo-hint">Full burn back to the top of the story.</span>
     </div>
   </section>
@@ -3165,6 +3326,35 @@ function initChrome() {
       if (heading) { heading.setAttribute("tabindex", "-1"); heading.focus({ preventScroll: true }); }
     })
   );
+
+  // phone menu — the burger folds the section buttons into a drop-down
+  // sheet. The open state is applied inline as well as by class, so no
+  // stylesheet quirk can ever leave the menu stuck shut.
+  const burger = $("#navBurger");
+  const links = $("#navLinks");
+  if (burger && navEl && links) {
+    const setOpen = open => {
+      navEl.classList.toggle("nav-open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      burger.setAttribute("aria-label", open ? "Close the section menu" : "Open the section menu");
+      if (open && innerWidth <= 760) {
+        links.style.opacity = "1";
+        links.style.visibility = "visible";
+        links.style.transform = "none";
+      } else {
+        links.style.opacity = "";
+        links.style.visibility = "";
+        links.style.transform = "";
+      }
+    };
+    burger.addEventListener("click", () => setOpen(!navEl.classList.contains("nav-open")));
+    $$(".nav-btn", navEl).forEach(b => b.addEventListener("click", () => setOpen(false)));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+    document.addEventListener("click", e => {
+      if (navEl.classList.contains("nav-open") && !navEl.contains(e.target)) setOpen(false);
+    });
+    window.addEventListener("resize", () => { if (innerWidth > 760) setOpen(false); });
+  }
 
   if (io) {
     const spy = new IntersectionObserver(entries => {
@@ -4217,10 +4407,14 @@ function initCourier() {
   const ORBIT_REVS = 1;
   let courierSpin = 0;
   const SPIN_W = T2 / 9500;                    // one lap ≈ 9.5s while parked
-  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS + courierSpin;
+  // the spins LATCH at each circuit's entry, so the circle always BEGINS
+  // exactly where the courier arrives (nine o'clock for the planet — the
+  // side it flies in from) and the time-spin builds up only after insertion
+  let orbitSpinRel = 0, raiseSpinRel = 0;
+  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS + orbitSpinRel;
   // THE RAISE showcase lap — a slower, wider circuit around the funding
   // brief while the cloud chapter scrolls (and it keeps gliding when parked)
-  const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + courierSpin * .55;
+  const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + raiseSpinRel * .55;
   const pathRide = sels => {
     const els = sels.map(s => document.querySelector(s)).filter(e2 => e2 && e2.getTotalLength);
     if (!els.length) return null;
@@ -4331,9 +4525,18 @@ function initCourier() {
       segs.push({
         pad: true, s0: padS0, s1: Math.max(padS0 + vh * .4, S1 - 6),
         at: q => {
+          // GLIDE-SLOPE: a banked approach from high on the port side that
+          // eases through a quadratic into the vertical touchdown — the
+          // heading flare in frame() pitches the nose up over the last half
           const sr2 = slotEl.getBoundingClientRect();
-          const u = smt5(cl01(q));
-          return { x: sr2.left + Math.sin(u * Math.PI) * -36, y: sr2.top - vh * .62 * (1 - u) };
+          const u = smt(cl01(q));
+          const A = { x: sr2.left - innerWidth * .24, y: sr2.top - vh * .72 };
+          const C = { x: sr2.left - innerWidth * .05, y: sr2.top - vh * .30 };
+          const om = 1 - u;
+          return {
+            x: om * om * A.x + 2 * om * u * C.x + u * u * sr2.left,
+            y: om * om * A.y + 2 * om * u * C.y + u * u * sr2.top
+          };
         }
       });
     }
@@ -4358,22 +4561,32 @@ function initCourier() {
         const haul = s.s0 - prev.s1;
         const gxL = Math.max(52, innerWidth * .05);
         const gxR = Math.min(innerWidth - 52, innerWidth * .95);
+        // EXIT MOMENTUM — the courier leaves every landmark carrying its
+        // outward direction (a summit exit keeps climbing away from the
+        // chart before any bank), so it never snaps into a hard turn
+        const exitRight = a2.x >= innerWidth / 2;
+        const mom = {
+          x: Math.max(40, Math.min(innerWidth - 40, a2.x + (exitRight ? 96 : -96))),
+          y: a2.y + Math.max(26, (b2.y - a2.y) * .07)
+        };
         let P4;
         if (haul > innerHeight * 1.45) {
           // SERPENTINE — on the longest hauls the courier weaves the whole
           // content column, banking left and right as it descends (the
-          // screen-recorded cursor path through the channel charts)
-          const g1 = b2.x >= innerWidth / 2 ? gxL : gxR;
+          // screen-recorded cursor path through the channel charts). The
+          // first gutter is on the SIDE IT EXITS toward — momentum first.
+          const g1 = exitRight ? gxR : gxL;
           const gMid = g1 === gxL ? gxR : gxL;
-          P4 = [a2,
-            { x: g1, y: a2.y + (b2.y - a2.y) * .22 },
-            { x: gMid, y: a2.y + (b2.y - a2.y) * .5 },
+          P4 = [a2, mom,
+            { x: g1, y: a2.y + (b2.y - a2.y) * .26 },
+            { x: gMid, y: a2.y + (b2.y - a2.y) * .52 },
             { x: g1, y: a2.y + (b2.y - a2.y) * .78 },
             b2];
         } else {
-          const gx = b2.x < innerWidth / 2 ? gxL : gxR;
-          P4 = [a2,
-            { x: gx, y: a2.y + (b2.y - a2.y) * .3 },
+          // the gutter run also opens on the exit side before crossing over
+          const gx = exitRight ? gxR : gxL;
+          P4 = [a2, mom,
+            { x: gx, y: a2.y + (b2.y - a2.y) * .34 },
             { x: gx, y: a2.y + (b2.y - a2.y) * .72 },
             b2];
         }
@@ -4411,6 +4624,7 @@ function initCourier() {
   let pd = -1, angS = null, posS = null, lastT = 0, ptPrev = null, dirState = 1;
   const loSecRef = document.getElementById("liftoff");
   let dockOn = false;
+  let orbitSpin0 = null, raiseSpin0 = null, inOrbitPrev = false, inRaisePrev = false;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
   let gDotsC = [], tDotsC = [];
@@ -4488,8 +4702,14 @@ function initCourier() {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
         // the orbit's own clock — keeps the courier circling the planet even
-        // while the page is parked (deterministic under the snap hook)
+        // while the page is parked (deterministic under the snap hook). The
+        // spin RE-LATCHES until each circuit is actually entered, so insertion
+        // always happens at the arrival point.
         courierSpin = (snap ? pd * 12000 : now) * SPIN_W;
+        if (!inOrbitPrev || orbitSpin0 == null) orbitSpin0 = courierSpin;
+        if (!inRaisePrev || raiseSpin0 == null) raiseSpin0 = courierSpin;
+        orbitSpinRel = courierSpin - orbitSpin0;
+        raiseSpinRel = courierSpin - raiseSpin0;
         const k = snap ? 1 : 1 - Math.exp(-dt * 5.4);     // responsive progress with soft inertia
         // travelling direction — scrolling back up TURNS the ship around so
         // it always flies nose-first (the smoothing animates the U-turn)
@@ -4502,6 +4722,8 @@ function initCourier() {
           const yAt = pv => S0 + pv * (S1 - S0);
           const yEffNow = yAt(pd);
           const L0 = locate(segs, yEffNow);
+          inOrbitPrev = L0.oq != null;
+          inRaisePrev = L0.rq != null;
           const P = L0.p;
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
@@ -4525,7 +4747,17 @@ function initCourier() {
           // true motion even when the scroll is parked); otherwise it flies
           // nose-first along the scrubbed path
           let ta;
-          if (padQ != null) ta = -Math.PI / 2;
+          if (padQ != null) {
+            // fly the glide-slope nose-first, then FLARE: the nose pitches
+            // smoothly to skyward across the final approach — a real
+            // retro-propulsive landing, not a snap
+            const base = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+            const flare = smt(cl01((padQ - .42) / .5));
+            let dFl = -Math.PI / 2 - base;
+            while (dFl > Math.PI) dFl -= T2;
+            while (dFl < -Math.PI) dFl += T2;
+            ta = base + dFl * flare;
+          }
           else if (L0.oq != null) {
             const th = orbitTh(L0.oq);
             ta = Math.atan2(Math.cos(th) * .46, -Math.sin(th));
@@ -4572,7 +4804,7 @@ function initCourier() {
           }
           wrap.style.transform =
             `translate3d(${renderX.toFixed(1)}px,${renderY.toFixed(1)}px,0) rotate(${(angS + bank).toFixed(4)}rad) scale(${sc.toFixed(3)})`;
-        } else if (pd <= .0004) { angS = null; posS = null; }
+        } else if (pd <= .0004) { angS = null; posS = null; inOrbitPrev = false; inRaisePrev = false; }
       }
     }
     wrap.style.opacity = alpha > .003 ? alpha.toFixed(3) : "0";
@@ -4605,12 +4837,17 @@ function initLiftoff() {
     host.innerHTML = `<svg viewBox="-119 -35 156 70" width="156" height="70">${
       art.outerHTML.replace(/rk\d+-/g, "lork-")}</svg>`;
   }
-  // the rocket's LENGTH tracks the scene: 460 scene-units tall on the pad,
-  // whatever the viewport. The courier's landing leg reads the same number,
-  // so the enlarge-into handoff is pixel-true at every width.
+  // the rocket's LENGTH tracks the scene ART: 620 scene-units nose-to-trail
+  // on the pad, whatever the viewport (on phones the art is wider than its
+  // box — a pad-centred crop — so the svg's own layout width is the truth).
+  // The courier's landing leg reads the same number, keeping the enlarge-
+  // into handoff pixel-true everywhere. The anchor (70.24% down the scene)
+  // is derived so the nozzle (27 art-units below anchor) rests exactly on
+  // the pad pedestal the exhaust rig fires from (84%): 84 − 27·(620/156)/780.
+  const artSvg = scene && scene.querySelector(".lo-art");
   const padScale = () => {
-    const w = (scene && scene.clientWidth) || 1400;
-    return Math.max(1.05, (w / 1900) * 460 / 156);
+    const w = (artSvg && artSvg.clientWidth) || (scene && scene.clientWidth) || 1400;
+    return Math.max(1.05, (w / 1900) * 620 / 156);
   };
   window.__ffPadScale = padScale;
   const sync = () => { if (scene) scene.style.setProperty("--pads", padScale().toFixed(4)); };
@@ -4619,11 +4856,26 @@ function initLiftoff() {
 
   const btn = $("#liftoffBtn");
   if (!btn) return;
+  const count = $("#loCount");
+  let counting = false;
   btn.addEventListener("click", () => {
-    if (lo.classList.contains("launching")) return;
+    if (lo.classList.contains("launching") || counting) return;
     const de = document.documentElement;
     if (REDUCED) { de.style.scrollBehavior = "auto"; window.scrollTo(0, 0); de.style.scrollBehavior = ""; return; }
-    lo.classList.add("launching");
+    // T-minus three… the console counts the bird down before ignition
+    counting = true;
+    let t = 3;
+    const tick = () => {
+      if (count) count.innerHTML = t > 0 ? `T-<b>00:0${t}</b>` : "<b>LIFTOFF</b>";
+      if (t-- > 0) { setTimeout(tick, 520); return; }
+      counting = false;
+      ignite();
+    };
+    tick();
+  });
+  function ignite() {
+    const de = document.documentElement;
+    lo.classList.add("launching");      // fires the pad exhaust + the climb
     de.classList.add("launching");      // hides the courier — one rocket owns the sky
     const y0 = de.scrollTop;
     const dur = Math.min(3400, 1100 + y0 * .14);
@@ -4648,7 +4900,9 @@ function initLiftoff() {
       requestAnimationFrame(step);
     };
     setTimeout(begin, 640);             // ignition — let the bird clear the tower first
-  });
+    // restore the console readout for the next visitor to the pad
+    setTimeout(() => { if (count) count.innerHTML = "T-<b>00:10</b>"; }, dur + 3200);
+  }
 }
 
 function renderMegaLogo() {

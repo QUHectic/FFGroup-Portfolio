@@ -179,9 +179,14 @@ section#team{overflow-x:clip;}
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
 .sm-sub{position:absolute;z-index:4;width:min(280px,20vw);text-align:center;}
-.sm-sub .cap2{display:block;font-size:.52rem;font-weight:800;letter-spacing:.16em;color:var(--c,rgba(243,244,251,.5));margin-bottom:3px;}
-.sm-sub .cap2.c2b{margin-top:8px;}
-.sm-sub .fn2{display:flex;align-items:center;gap:8px;text-align:left;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 10px;background:rgba(15,17,25,.8);}
+.sm-sub .cap2{display:block;font-size:.52rem;font-weight:800;letter-spacing:.16em;color:var(--c,rgba(243,244,251,.5));margin-bottom:5px;}
+.sm-sub .subbox{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:9px 10px 10px;background:rgba(12,14,22,.78);transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
+.sm-sub .subbox + .subbox{margin-top:10px;}
+.sm-sub.hot .subbox{border-color:var(--c,#fff);box-shadow:0 0 20px -4px var(--c,#fff);}
+.sm-brands.hot .sm-vaultbox{border-color:var(--blue);box-shadow:0 0 20px -4px var(--blue);}
+.sm-card{transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out),transform .25s var(--ease-out);}
+.sm-card.hot{box-shadow:0 0 24px -4px var(--c,#fff);}
+.sm-sub .fn2{display:flex;align-items:center;gap:8px;text-align:left;border:0;border-radius:0;padding:0 2px;background:transparent;}
 .sm-sub .fn2 svg{width:16px;height:16px;flex:none;color:var(--c);}
 .sm-sub .fn2 span{font-size:.64rem;line-height:1.4;color:rgba(243,244,251,.66);}
 .sm-card .ch{color:rgba(243,244,251,.6);font-size:.76rem;line-height:1.5;margin:7px 0 0;letter-spacing:.02em;}
@@ -4271,12 +4276,21 @@ function mountStation(stage, g) {
     const nomX = svgOX + g.at[0] * scl;
     const nomY = svgOY + g.at[1] * (svg.clientHeight / ((vbB && vbB.height) || 1400));
     const beside = g.panelBeside;
+    const below = g.panelBelow;
     const besideLeft = beside
       ? ((beside.side || 1) > 0
         ? nomX + (edgeRad + (beside.gap || 40)) * scl
         : nomX - (edgeRad + (beside.gap || 40)) * scl - pw)
       : 0;
-    const desiredLeft = beside
+    // panelBelow parks the box UNDER its planet: align "end" puts the box's
+    // right edge on the planet's axis (box reaching in from the left),
+    // align "start" puts its left edge there (box reaching out to the right)
+    const belowLeft = below
+      ? (below.align === "end" ? nomX - pw : nomX)
+      : 0;
+    const desiredLeft = below
+      ? belowLeft
+      : beside
       ? besideLeft
       : g.panelPin
       ? sr.width * g.panelPin.x
@@ -4286,7 +4300,9 @@ function mountStation(stage, g) {
     const maxLeft = Math.max(8, sr.width - pw - 8);
     const left = Math.max(8, Math.min(maxLeft, desiredLeft));
     const craftHalf = rr.height / 2;
-    const desiredTop = beside
+    const desiredTop = below
+      ? nomY + (edgeRad + (below.gap || 26)) * scl
+      : beside
       ? nomY - bodyRad * scl
       : g.panelPin
       ? stageHeight * g.panelPin.y
@@ -4328,11 +4344,19 @@ function mountStation(stage, g) {
     });
     if (maxTop - cursor >= 0) slots.push([Math.min(maxTop, cursor), maxTop]);
     let top = Math.max(minTop, Math.min(maxTop, desiredTop));
-    if (!beside && slots.length) {
+    if (!beside && !below && slots.length) {
       const choices = slots.map(([lo, hi]) => Math.max(lo, Math.min(hi, desiredTop)));
       top = choices.reduce((best, n) => Math.abs(n - desiredTop) < Math.abs(best - desiredTop) ? n : best, choices[0]);
     }
-    panel.style.left = left + "px";
+    if (below && below.align === "end") {
+      // pin the RIGHT edge to the planet's axis via style.right — immune to
+      // the panel's width settling after this measurement (fonts, .show)
+      panel.style.left = "auto";
+      panel.style.right = (stage.offsetWidth - nomX) + "px";
+    } else {
+      panel.style.right = "";
+      panel.style.left = left + "px";
+    }
     panel.style.top = top + "px";
     if (g.panelDock) {
       // Match the old right-side note's visible edge even while the map is
@@ -5225,7 +5249,7 @@ function renderSystem() {
       role: "National field service operation delivering long-term recurring compliance contracts",
       cat: "COMPLIANCE &amp; FACILITIES MANAGEMENT" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(2, 1500), r: 36, side: 1,   // its OWN 2028 ring, upper-right flank, card parked on its RIGHT (sketch)
+      at: lowerShellAtX(2, 1500), r: 36, side: 1, stem: "far-low",   // its OWN 2028 ring, upper-right flank, card on its RIGHT (sketch); stem drops the far edge + elbows under the 2036+ panel
       role: "Large-scale distribution of the group's proprietary brands across the UK and international markets",
       cat: "TRADE DISTRIBUTION · B2B" },
   ];
@@ -5732,20 +5756,30 @@ function renderSystem() {
         <p class="ch">${p.role}.</p>
       </div>`).join("")}
     <div class="sm-sub" data-for="fly" style="--c:var(--blue)">
-      <span class="cap2">KEY CHANNELS</span>
-      <div class="fn2"><span>Amazon Seller Central | eBay | Shopify | TikTok Shop | OnBuy | ManoMano | Fruugo | Temu | AliExpress</span></div>
-      <span class="cap2 c2b">OPERATING STOREFRONTS</span>
-      <div class="fn2"><span>Freedom Fire | FireExtinguishersDirect | BatteryBay | PPE-Me | CleanFreak | DriveBye | Future specialist stores</span></div>
+      <div class="subbox">
+        <span class="cap2">KEY CHANNELS</span>
+        <div class="fn2"><span>Amazon Seller Central | eBay | Shopify | TikTok Shop | OnBuy | ManoMano | Fruugo | Temu | AliExpress</span></div>
+      </div>
+      <div class="subbox">
+        <span class="cap2">OPERATING STOREFRONTS</span>
+        <div class="fn2"><span>Freedom Fire | FireExtinguishersDirect | BatteryBay | PPE-Me | CleanFreak | DriveBye | Future specialist stores</span></div>
+      </div>
     </div>
     <div class="sm-sub" data-for="form" style="--c:var(--mint)">
-      <span class="cap2">CORE SERVICES</span>
-      <div class="fn2"><span>Extinguisher &amp; alarm servicing | Emergency lighting | Fire risk assessments | Installation &amp; commissioning | Compliance audits | Cleaning &amp; FM contracts</span></div>
-      <span class="cap2 c2b">PRIMARY CUSTOMERS</span>
-      <div class="fn2"><span>Schools | Universities | Warehouses | Construction | Hotels | Factories | Care homes | Councils | FM companies</span></div>
+      <div class="subbox">
+        <span class="cap2">CORE SERVICES</span>
+        <div class="fn2"><span>Extinguisher &amp; alarm servicing | Emergency lighting | Fire risk assessments | Installation &amp; commissioning | Compliance audits | Cleaning &amp; FM contracts</span></div>
+      </div>
+      <div class="subbox">
+        <span class="cap2">PRIMARY CUSTOMERS</span>
+        <div class="fn2"><span>Schools | Universities | Warehouses | Construction | Hotels | Factories | Care homes | Councils | FM companies</span></div>
+      </div>
     </div>
     <div class="sm-sub" data-for="storm" style="--c:var(--ember)">
-      <span class="cap2">PRIMARY TRADE PARTNERS</span>
-      <div class="fn2"><span>Amazon Vendor Central | Toolstation | Kingfisher | B&amp;Q | Screwfix | Costco | Wickes | The Range | Robert Dyas | Homebase | YESSS | CEF | Edmundson | WF Senate | Export partners</span></div>
+      <div class="subbox">
+        <span class="cap2">PRIMARY TRADE PARTNERS</span>
+        <div class="fn2"><span>Amazon Vendor Central | Toolstation | Kingfisher | B&amp;Q | Screwfix | Costco | Wickes | The Range | Robert Dyas | Homebase | YESSS | CEF | Edmundson | WF Senate | Export partners</span></div>
+      </div>
     </div>
     <div class="sm-head">
       <span class="kicker">The Freedom System</span>
@@ -5797,18 +5831,21 @@ function renderSystem() {
   const cardFor = key => cards.find(c => c.dataset.key === key);
   const planetFor = key => $$(".sm-planet", map).find(b => b.dataset.key === key);
   const hideTimers = {};
+  // the whole FAMILY lights as one: planet halo, main card, its shelf
+  // sub-boxes, and (for the flagship) the brand vault
+  const familyOf = key => {
+    const els = [planetFor(key), cardFor(key), map.querySelector(`.sm-sub[data-for="${key}"]`)];
+    if (key === "fly") els.push(map.querySelector(".sm-brands"));
+    return els.filter(Boolean);
+  };
   const show = key => {
     clearTimeout(hideTimers[key]);
-    const b = planetFor(key), c = cardFor(key);
-    if (b) b.classList.add("hot");
-    if (c) c.classList.add("hot");
+    familyOf(key).forEach(el => el.classList.add("hot"));
   };
   const hideSoon = key => {
     clearTimeout(hideTimers[key]);
     hideTimers[key] = setTimeout(() => {
-      const b = planetFor(key), c = cardFor(key);
-      if (b) b.classList.remove("hot");
-      if (c) c.classList.remove("hot");
+      familyOf(key).forEach(el => el.classList.remove("hot"));
     }, 220);
   };
   const pinnedKeys = new Set();
@@ -5833,6 +5870,18 @@ function renderSystem() {
     c.addEventListener("pointerenter", () => show(key));
     c.addEventListener("pointerleave", () => { if (!pinnedKeys.has(key)) hideSoon(key); });
   });
+  // the shelf sub-boxes (and the vault) are first-class hover members too —
+  // touching any of them lights the same family
+  $$(".sm-sub", map).forEach(su => {
+    const key = su.dataset.for;
+    su.addEventListener("pointerenter", () => show(key));
+    su.addEventListener("pointerleave", () => { if (!pinnedKeys.has(key)) hideSoon(key); });
+  });
+  const brandsEl = map.querySelector(".sm-brands");
+  if (brandsEl) {
+    brandsEl.addEventListener("pointerenter", () => show("fly"));
+    brandsEl.addEventListener("pointerleave", () => { if (!pinnedKeys.has("fly")) hideSoon("fly"); });
+  }
 
   // expanded portfolio — hover the vault chip (tap on touch) to meet the remaining marks
   const moreChip = $("#smMore", map), morePop = $("#smMorePop", map);
@@ -5857,7 +5906,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    panelBeside: { side: -1, gap: 40 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "end", gap: 26 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2028–2029",
     items: [
       { n: "Freedom Form Ltd", d: "2028 · Property · Development · Design", c: "var(--ember)" },
@@ -5867,7 +5916,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBeside: { side: 1, gap: 40 }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "start", gap: 26 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2036+",
     items: [
       { n: "Freedom Fuel Ltd", d: "2036+ · Forecourt &amp; energy", c: "var(--pink)" },
@@ -5933,7 +5982,7 @@ function renderSystem() {
       }
     });
     const COLS = { form: 250, fly: 950, storm: 1560 };   // shelf column centres: green left · blue centred · orange right, each under its own card
-    const SHELF_Y = 1120;
+    const SHELF_Y = 1224;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;
@@ -5958,12 +6007,16 @@ function renderSystem() {
       const cardL = (c.offsetLeft - ox) / sclX, cardRr = cardL + c.offsetWidth / sclX;
       // drop the stem from the point of the card nearest its column — a
       // straight fall whenever the column lies under the card, and a short
-      // elbow (run below the card) only when it can't
-      const cx0 = Math.max(cardL + 18, Math.min(cardRr - 18, colX));
+      // elbow (run below the card) only when it can't. "far-low" planets
+      // drop the card's FAR edge and elbow just above the shelf instead, so
+      // the run passes UNDER anything parked between card and column.
+      let cx0 = Math.max(cardL + 18, Math.min(cardRr - 18, colX));
       const yEnd = SHELF_Y - 8;
+      let midY = (yTop + yEnd) / 2;
+      if (p.stem === "far-low") { cx0 = cardRr - 18; midY = yEnd - 26; }
       st2.setAttribute("d", Math.abs(cx0 - colX) < 3
         ? `M ${f(colX)} ${f(yTop)} L ${f(colX)} ${f(yEnd)}`
-        : `M ${f(cx0)} ${f(yTop)} L ${f(cx0)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f((yTop + yEnd) / 2)} L ${f(colX)} ${f(yEnd)}`);
+        : `M ${f(cx0)} ${f(yTop)} L ${f(cx0)} ${f(midY)} L ${f(colX)} ${f(midY)} L ${f(colX)} ${f(yEnd)}`);
     });
     // the tall map overflows the 100vh pinned stage — grow the section by the
     // overflow so the shelf is never buried under the next chapter's

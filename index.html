@@ -178,7 +178,7 @@ section#team{overflow-x:clip;}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
-.sm-sub{position:absolute;z-index:4;width:min(280px,20vw);text-align:center;}
+.sm-sub{position:absolute;z-index:4;width:min(250px,18vw);text-align:center;}
 .sm-sub .cap2{display:block;font-size:.68rem;font-weight:800;letter-spacing:.12em;color:var(--c,rgba(243,244,251,.5));margin-bottom:5px;}
 .sm-sub .subbox{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:9px 10px 10px;background:rgba(12,14,22,.78);transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
 .sm-sub .subbox + .subbox{margin-top:10px;}
@@ -2088,7 +2088,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(270px,21vw,340px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
+  position:absolute;z-index:5;width:clamp(260px,19vw,300px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
   padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -4298,7 +4298,9 @@ function mountStation(stage, g) {
     // right edge on the planet's axis (box reaching in from the left),
     // align "start" puts its left edge there (box reaching out to the right)
     const belowLeft = below
-      ? (below.align === "end" ? nomX - pw : nomX - edgeRad * scl)
+      ? (below.align === "end" ? nomX - pw
+        : below.align === "center" ? nomX - pw / 2
+        : nomX - edgeRad * scl)
       : 0;
     const desiredLeft = below
       ? belowLeft
@@ -4362,15 +4364,8 @@ function mountStation(stage, g) {
       const choices = slots.map(([lo, hi]) => Math.max(lo, Math.min(hi, desiredTop)));
       top = choices.reduce((best, n) => Math.abs(n - desiredTop) < Math.abs(best - desiredTop) ? n : best, choices[0]);
     }
-    if (below && below.align === "end") {
-      // pin the RIGHT edge to the planet's axis via style.right — immune to
-      // the panel's width settling after this measurement (fonts, .show)
-      panel.style.left = "auto";
-      panel.style.right = (stage.offsetWidth - (nomX + edgeRad * scl)) + "px";
-    } else {
-      panel.style.right = "";
-      panel.style.left = left + "px";
-    }
+    panel.style.right = "";
+    panel.style.left = left + "px";
     panel.style.top = top + "px";
     if (g.panelDock) {
       // Match the old right-side note's visible edge even while the map is
@@ -4409,7 +4404,7 @@ function mountStation(stage, g) {
     }
     panelLink.setAttribute("d", `M${f(tx)} ${f(ty)} L${f(bx)} ${f(by)}`);
   };
-  const open = () => { clearTimeout(closeT); craft.classList.add("hold"); place(); panel.classList.add("show"); panelLink.classList.add("show"); };
+  const open = () => { clearTimeout(closeT); craft.classList.add("hold"); place(); panel.classList.add("show"); panelLink.classList.add("show"); requestAnimationFrame(place); };
   const shut = () => { pinned = false; craft.classList.remove("hold"); panel.classList.remove("show"); panelLink.classList.remove("show"); };
   const scheduleShut = () => { if (!pinned) closeT = setTimeout(shut, 260); };
   // family glow - the future planet and its box light together, like the trio
@@ -5180,7 +5175,7 @@ const DOCK_Y = .68;
 function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
-  const W = 1900, H = 1900, cx = 950, cy = 350, sunR = 84;   /* H covers the sketch formation: cards beside/below their planets, the boxed detail shelf and the full 12-mark vault beneath */
+  const W = 1900, H = 1700, cx = 950, cy = 350, sunR = 84;   /* H covers the sketch formation: cards beside/below their planets, the boxed detail shelf and the full 12-mark vault beneath */
   const f = n => n.toFixed(1);
   /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls].
      The three OPERATING apexes (349/328/310) tuck INSIDE the sun's disk: the
@@ -5215,8 +5210,8 @@ function renderSystem() {
      arc (box on its left); the 2036+ moon rides the outermost 2036 shell's
      LOWER-RIGHT arc (box on its right), so the futures mirror each other
      across the bottom of the system exactly as drawn. */
-  const deathStar1At = lowerShellAtAngle(3, 105);
-  const deathStar2At = lowerShellAtAngle(4, 63);
+  const deathStar1At = lowerShellAtAngle(3, 110.7);
+  const deathStar2At = lowerShellAtAngle(4, 69);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -5690,16 +5685,16 @@ function renderSystem() {
     <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 527 519, 737 454, ${f(formIn[0])} ${f(formIn[1])}"/>
     <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1471 558, 1231 443, ${f(stormIn[0])} ${f(stormIn[1])}"/>
     <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
-    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 820 540, 700 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1150 560, 1420 740, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 820 540, 700 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1150 560, 1420 740, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 714 708, 834 548, ${f(ds1In[0])} ${f(ds1In[1])}"/>
-    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 1408 750, 1138 570, ${f(ds2In[0])} ${f(ds2In[1])}"/>
+    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 632 710, 812 550, ${f(ds1In[0])} ${f(ds1In[1])}"/>
+    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 1287 759, 1107 579, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     <text class="sm-roylab rl-form" x="350" y="570" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
     <text class="sm-roylab rl-storm" x="1354" y="486" text-anchor="middle">ROYALTIES · REMITTED QUARTERLY</text>
-    <text class="sm-roylab rl-ds1" x="772" y="602" text-anchor="middle">FUTURE LICENCE · 2029</text>
-    <text class="sm-roylab rl-ds2" x="1350" y="640" text-anchor="middle">FUTURE LICENCE · 2030+</text>
+    <text class="sm-roylab rl-ds1" x="700" y="600" text-anchor="middle">FUTURE LICENCE · 2029</text>
+    <text class="sm-roylab rl-ds2" x="1290" y="650" text-anchor="middle">FUTURE LICENCE · 2030+</text>
     ${cardLinks}`;
 
   map.innerHTML = `
@@ -5743,8 +5738,8 @@ function renderSystem() {
       ${stars}
       ${SHELLS.map(shell).join("")}
       ${yearMarks}
-      <path class="sm-orbit future dock" d="${dockArc(3, 91, 119)}"/>
-      <path class="sm-orbit future outer dock" d="${dockArc(4, 49, 77)}"/>
+      <path class="sm-orbit future dock" d="${dockArc(3, 97, 125)}"/>
+      <path class="sm-orbit future outer dock" d="${dockArc(4, 55, 83)}"/>
       ${spine}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
@@ -5932,7 +5927,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    panelBelow: { align: "end", topY: 1049 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 1066 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2029",
     items: [
       { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "var(--ember)",
@@ -5943,7 +5938,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "start", topY: 1049 }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", topY: 1066 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2030+",
     items: [
       { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "var(--blue)",
@@ -6022,8 +6017,8 @@ function renderSystem() {
         ln.setAttribute("d", `M ${f(edgeX)} ${f(connY)} L ${f(sx3)} ${f(sy3)}`);
       }
     });
-    const COLS = { form: 250, fly: 950, storm: 1720 };   // shelf column centres: each column stacks directly under its own main card
-    const SHELF_Y = 1440;
+    const COLS = { form: 190, fly: 950, storm: 1710 };   // five exclusive corridors: form | gold panel | fly | violet panel | storm
+    const SHELF_Y = 1150;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;

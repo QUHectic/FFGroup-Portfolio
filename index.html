@@ -94,11 +94,9 @@ section#team{overflow-x:clip;}
 .sm-flowkey b{color:rgba(243,244,251,.86);font-weight:800;}
 .sm-stats .hint{grid-column:1 / -1;margin:2px 0 0;font-size:.66rem;text-align:center;color:rgba(243,244,251,.5);}
 .sm-stats .hint b{color:rgba(243,244,251,.85);}
-.sm-brands{position:absolute;z-index:4;width:min(280px,20vw);text-align:center;}
-.sm-brands::before{content:"";position:absolute;z-index:2;left:50%;top:-18px;width:2px;height:18px;background:rgba(255,255,255,.7);transform:translateX(-1px);}
-.sm-brands .cap2{position:absolute;z-index:3;left:50%;top:4px;transform:translateX(-50%);display:block;padding:0 9px;background:#07070d;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--blue);white-space:nowrap;}
-.sm-brands .bx{position:relative;padding:19px 0 0;background:transparent;}
-.sm-brands .bx::before{content:"";position:absolute;z-index:1;left:50%;top:0;width:150px;height:30px;transform:translateX(-50%);border:1px solid rgba(56,169,255,.72);border-bottom:0;border-radius:11px 11px 0 0;box-shadow:0 -5px 18px rgba(56,169,255,.06);}
+.sm-brands{position:absolute;z-index:4;width:min(280px,19vw);text-align:center;}
+.sm-brands .cap2{display:block;padding:2px 0 8px;font-size:.55rem;font-weight:800;letter-spacing:.12em;color:var(--blue);white-space:nowrap;}
+.sm-brands .bx{position:relative;background:transparent;}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* expanded portfolio rises above the company cards */
 .sm-brands .chips{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;align-items:center;}
 .sm-brands .brand-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;}
@@ -167,7 +165,7 @@ section#team{overflow-x:clip;}
 .sm-year.future rect{stroke:rgba(255,255,255,.38);}
 .sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:#fff;}
 .sm-card{
-  position:absolute;z-index:5;width:min(272px,18vw);background:rgba(15,17,25,.94);
+  position:absolute;z-index:5;width:min(280px,19vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
@@ -184,7 +182,7 @@ section#team{overflow-x:clip;}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
-.sm-sub{position:absolute;z-index:4;width:min(250px,18vw);text-align:center;}
+.sm-sub{position:absolute;z-index:4;width:min(280px,19vw);text-align:center;}
 .sm-sub .cap2{display:block;font-size:.68rem;font-weight:800;letter-spacing:.12em;color:var(--c,rgba(243,244,251,.5));margin-bottom:5px;}
 .sm-sub .subbox{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:9px 10px 10px;background:rgba(12,14,22,.78);transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
 .sm-sub .subbox + .subbox{margin-top:10px;}
@@ -2111,7 +2109,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(260px,19vw,300px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
+  position:absolute;z-index:5;width:clamp(236px,19vw,280px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
   padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -5628,8 +5626,8 @@ function renderSystem() {
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
-      <circle r="3.2"/><rect x="10" y="-12" width="62" height="24" rx="12"/>
-      <text x="41" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
+      <circle r="3.2"/><rect x="24" y="-12" width="62" height="24" rx="12"/>
+      <text x="55" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
     </g>`;
   }).join("");
   // each operating company rides its OWN ring — blue on the 1st, mint on the
@@ -6062,7 +6060,8 @@ function renderSystem() {
   // (self-healing — they can never gap), so the paths start empty here
   const cardLinks = PLANETS.map(p => `
     <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d=""/>
-    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("");
+    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("")
+    + `<path class="sm-colstem stem-brands" stroke="#38a9ff" d=""/>`;
   const spine = `
     <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
     <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
@@ -6121,10 +6120,10 @@ function renderSystem() {
       </defs>
       ${stars}
       ${SHELLS.map(shell).join("")}
-      ${yearMarks}
       <path class="sm-orbit future dock" d="${dockArc(3, 97, 125)}"/>
       <path class="sm-orbit future outer dock" d="${dockArc(4, 55, 83)}"/>
       ${spine}
+      ${yearMarks}
       <circle class="sm-glow" cx="${cx}" cy="${cy}" r="${sunR * 2.3}" fill="url(#smSunGlow)"/>
       <g class="sm-planet" data-key="fire" role="button" tabindex="0" aria-label="The Freedom Group Holdings Ltd — the parent. Click to open the journey.">
         <circle class="halo" cx="${cx}" cy="${cy}" r="${sunR + 22}" fill="#ff3d9a" opacity="0" style="filter:blur(16px)"/>
@@ -6215,8 +6214,8 @@ function renderSystem() {
         <b>4</b><span class="l">Future companies</span><span class="s">Planned for future growth</span>
       </div>
       <p class="sm-flowkey" aria-label="Arrow key">
-        <span style="--key-c:#52c8ff"><i class="dotted" aria-hidden="true"></i><b>Dotted arrow</b> return flow to Holdings</span>
-        <span style="--key-c:#ff5eaa"><i aria-hidden="true"></i><b>Solid arrow</b> licence and operating flow</span>
+        <span style="--key-c:#52c8ff"><i class="dotted" aria-hidden="true"></i><b>Dotted arrow</b> Return Royalties back to group</span>
+        <span style="--key-c:#ff5eaa"><i aria-hidden="true"></i><b>Solid arrow</b> Owns companies</span>
       </p>
       <p class="hint">Hover a planet — every family lights up together.</p>
     </div>
@@ -6315,7 +6314,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    panelBelow: { align: "center", topY: 1057, nudgeX: -90 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 1057, nudgeX: 15 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2029",
     items: [
       { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "#e8c15c",
@@ -6367,10 +6366,10 @@ function renderSystem() {
       const mode = cardMode(p.key);
       if (mode === "left") {
         c.style.left = (ox + (p.at[0] - p.r - FAMILY_GAP) * sclX - c.offsetWidth) + "px";
-        c.style.top = (oy + p.at[1] * sclY - c.offsetHeight / 2) + "px";
+        c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
       } else if (mode === "right") {
         c.style.left = (ox + (p.at[0] + p.r + FAMILY_GAP) * sclX) + "px";
-        c.style.top = (oy + p.at[1] * sclY - c.offsetHeight / 2) + "px";
+        c.style.top = (oy + (p.at[1] - p.r) * sclY) + "px";
       } else {
         c.style.left = (ox + p.at[0] * sclX - c.offsetWidth / 2) + "px";
         c.style.top = (oy + (p.at[1] + p.r + FAMILY_GAP) * sclY) + "px";
@@ -6390,7 +6389,7 @@ function renderSystem() {
       brands.style.left = (flySub.offsetLeft + (flySub.offsetWidth - brands.offsetWidth) / 2) + "px";
       brands.style.top = (flySub.offsetTop + flySub.offsetHeight + gapPx) + "px";
     }
-    const updateFamilyPaths = () => PLANETS.forEach(p => {
+    const updateFamilyPaths = () => { PLANETS.forEach(p => {
       const c = cardFor(p.key), su = map.querySelector(`.sm-sub[data-for="${p.key}"]`);
       const link = map.querySelector(".cl-" + p.key), stem = map.querySelector(".stem-" + p.key);
       if (!c || !su || !link || !stem) return;
@@ -6399,8 +6398,8 @@ function renderSystem() {
       const left = (c.offsetLeft - ox) / sclX, right = (c.offsetLeft + c.offsetWidth - ox) / sclX;
       const top = (c.offsetTop - oy) / sclY, bottom = (c.offsetTop + c.offsetHeight - oy) / sclY;
       let bx = p.at[0], by = top + 1;
-      if (mode === "left") { bx = right; by = Math.max(top + 14, Math.min(bottom - 14, p.at[1])); }
-      if (mode === "right") { bx = left; by = Math.max(top + 14, Math.min(bottom - 14, p.at[1])); }
+      if (mode === "left") { bx = right; by = p.at[1]; }
+      if (mode === "right") { bx = left; by = p.at[1]; }
       const dx = bx - p.at[0], dy = by - p.at[1], len = Math.hypot(dx, dy) || 1;
       const sx0 = p.at[0] + dx / len * p.r, sy0 = p.at[1] + dy / len * p.r;
       link.setAttribute("d", `M ${f(sx0)} ${f(sy0)} L ${f(bx)} ${f(by)}`);
@@ -6410,6 +6409,19 @@ function renderSystem() {
       const shelfTop = (su.offsetTop - oy) / sclY;
       stem.setAttribute("d", `M ${f(cardCX)} ${f(cardBottom)} L ${f(shelfCX)} ${f(shelfTop)}`);
     });
+    // the brands vault joins the flagship column with the same dashed stem
+    const suFly2 = map.querySelector('.sm-sub[data-for="fly"]'), brEl2 = map.querySelector(".sm-brands"), bStem = map.querySelector(".stem-brands");
+    if (suFly2 && brEl2 && bStem) {
+      if (innerWidth <= 900) { bStem.setAttribute("d", ""); }
+      else {
+        const sx1 = (suFly2.offsetLeft + suFly2.offsetWidth / 2 - ox) / sclX;
+        const sy1 = (suFly2.offsetTop + suFly2.offsetHeight - oy) / sclY;
+        const sx2 = (brEl2.offsetLeft + brEl2.offsetWidth / 2 - ox) / sclX;
+        const sy2 = (brEl2.offsetTop - oy) / sclY;
+        bStem.setAttribute("d", `M ${f(sx1)} ${f(sy1)} L ${f(sx2)} ${f(sy2)}`);
+      }
+    }
+    };
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
     // overflow so the shelf is never buried under the next chapter's
@@ -6445,8 +6457,8 @@ function renderSystem() {
         if (!face || !card) return;
         const pr = rect(face), cr = rect(card);
         const mode = cardMode(p.key);
-        if (mode === "left") nudge(card, pr.left - planetGap - cr.right, (pr.top + pr.height / 2) - (cr.top + cr.height / 2));
-        else if (mode === "right") nudge(card, pr.right + planetGap - cr.left, (pr.top + pr.height / 2) - (cr.top + cr.height / 2));
+        if (mode === "left") nudge(card, pr.left - planetGap - cr.right, pr.top - cr.top);
+        else if (mode === "right") nudge(card, pr.right + planetGap - cr.left, pr.top - cr.top);
         else nudge(card, (pr.left + pr.width / 2) - (cr.left + cr.width / 2), pr.bottom + planetGap - cr.top);
       });
       // Side cards keep a small viewport inset at laptop widths instead of

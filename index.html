@@ -95,7 +95,7 @@ section#team{overflow-x:clip;}
 .sm-brands .bx::before{content:"";position:absolute;z-index:1;left:50%;top:0;width:150px;height:30px;transform:translateX(-50%);border:1px solid rgba(56,169,255,.72);border-bottom:0;border-radius:11px 11px 0 0;box-shadow:0 -5px 18px rgba(56,169,255,.06);}
 .sm-brands:has(.sm-morepop.show){z-index:9;}   /* expanded portfolio rises above the company cards */
 .sm-brands .chips{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;align-items:center;}
-.sm-brands .brand-row{display:flex;gap:6px;justify-content:center;align-items:center;}
+.sm-brands .brand-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;}
 .sysmap{
   position:relative;margin:30px auto 0;max-width:1780px;
   padding-inline:max(10px, calc(50vw - 890px));
@@ -2997,7 +2997,7 @@ const FG_DATA = {
         { n: "T3™ hand protection", c: "var(--pink)", d: "Core · Grip · Max · Gator Grip gloves · Gorilla Grip gloves" },
         { n: "Lynxa™ ecosystem", c: "var(--blue)", d: "Cover (disposable shoe covers & overalls) · Lite · Touch · Grip · Shield (Pro / Light / Max) · Air / Air3 · Gel · Light · Clean" },
         { n: "Home & site care", c: "var(--mint)", d: "HepaFellas™ hoover bags · DustBros™ cloths" },
-        { n: "New category ventures", c: "var(--slate)", d: "RVR™ automotive products · Wired0™ (the WhatWorks concept) · Novera™ · Red Lolly Books™" }
+        { n: "New category ventures", c: "var(--slate)", d: "RVR™ automotive products · Wired™ (the WhatWorks concept) · Novera™ · Red Lolly Books™" }
       ] }
   ],
 
@@ -4613,13 +4613,18 @@ function initCourier() {
       if (yEff < s.s0) {
         const prev = segs[i - 1];
         if (!prev) return { p: s.at(0), oq: null, kind: null, q: null };
-        const g2 = smt(cl01((yEff - prev.s1) / Math.max(1, s.s0 - prev.s1)));
+        // FAST-START ease: the courier leaves a finished landmark the moment
+        // scrolling continues — no standing still at a summit — and settles
+        // gently into the next seg's start
+        const tRaw = cl01((yEff - prev.s1) / Math.max(1, s.s0 - prev.s1));
+        const g2 = 1 - Math.pow(1 - tRaw, 1.85);
         const a2 = prev.sky ? prev.at(1) : band(prev.at(1));
         const b2 = band(s.at(0));
         // between landmarks the courier NEVER loiters across the analytics:
-        // it banks out of the last landmark, dives to the page margin, cruises
-        // the gutter with a light sway, then carves back in to the next —
-        // one continuous Catmull-Rom through the gutter waypoints
+        // it banks out of the last landmark, dives to the page margin and
+        // cruises ONE gutter the whole way (never weaving across the content
+        // column — bar charts, donuts and cards are no-fly zones; only the
+        // line graphs are ever ridden), then carves in to the next landmark
         const haul = s.s0 - prev.s1;
         const gxL = Math.max(52, innerWidth * .05);
         const gxR = Math.min(innerWidth - 52, innerWidth * .95);
@@ -4631,27 +4636,17 @@ function initCourier() {
           x: Math.max(40, Math.min(innerWidth - 40, a2.x + (exitRight ? 96 : -96))),
           y: a2.y + Math.max(26, (b2.y - a2.y) * .07)
         };
-        let P4;
-        if (haul > innerHeight * 1.45) {
-          // SERPENTINE — on the longest hauls the courier weaves the whole
-          // content column, banking left and right as it descends (the
-          // screen-recorded cursor path through the channel charts). The
-          // first gutter is on the SIDE IT EXITS toward — momentum first.
-          const g1 = exitRight ? gxR : gxL;
-          const gMid = g1 === gxL ? gxR : gxL;
-          P4 = [a2, mom,
-            { x: g1, y: a2.y + (b2.y - a2.y) * .26 },
-            { x: gMid, y: a2.y + (b2.y - a2.y) * .52 },
-            { x: g1, y: a2.y + (b2.y - a2.y) * .78 },
-            b2];
-        } else {
-          // the gutter run also opens on the exit side before crossing over
-          const gx = exitRight ? gxR : gxL;
-          P4 = [a2, mom,
+        const gx = exitRight ? gxR : gxL;
+        const P4 = haul > innerHeight * 1.45
+          ? [a2, mom,
+            { x: gx, y: a2.y + (b2.y - a2.y) * .26 },
+            { x: gx, y: a2.y + (b2.y - a2.y) * .52 },
+            { x: gx, y: a2.y + (b2.y - a2.y) * .78 },
+            b2]
+          : [a2, mom,
             { x: gx, y: a2.y + (b2.y - a2.y) * .34 },
             { x: gx, y: a2.y + (b2.y - a2.y) * .72 },
             b2];
-        }
         const segN = P4.length - 1;
         const pk = k => P4[Math.max(0, Math.min(P4.length - 1, k))];
         const crm2 = (p0, p1, p2, p3, u) => ({
@@ -4662,9 +4657,10 @@ function initCourier() {
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
         const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
         pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
-        // mid-length hauls keep the signature loop-the-loop — smt() eases the
-        // sweep in and out so entry and exit tangents stay kink-free
-        if (haul > innerHeight * 1.05 && haul <= innerHeight * 1.45) {
+        // longer hauls keep the signature loop-the-loop — flown INSIDE the
+        // gutter (radius stays within the margin), smt() eases the sweep in
+        // and out so entry and exit tangents stay kink-free
+        if (haul > innerHeight * 1.05) {
           const lw = cl01((g2 - .36) / .28);
           if (lw > 0 && lw < 1) {
             const th3 = smt(lw) * T2;
@@ -5210,8 +5206,8 @@ function renderSystem() {
      arc (box on its left); the 2036+ moon rides the outermost 2036 shell's
      LOWER-RIGHT arc (box on its right), so the futures mirror each other
      across the bottom of the system exactly as drawn. */
-  const deathStar1At = lowerShellAtAngle(3, 110.7);
-  const deathStar2At = lowerShellAtAngle(4, 69);
+  const deathStar1At = lowerShellAtAngle(3, 111.4);
+  const deathStar2At = lowerShellAtAngle(4, 68.7);
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -5225,7 +5221,7 @@ function renderSystem() {
     return `<linearGradient id="smrg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${cyR}" x2="0" y2="${cyR - ry}">
       <stop offset="0" stop-color="rgb(${col})" stop-opacity="${a0}"/>
       <stop offset=".45" stop-color="rgb(${col})" stop-opacity="${(a0 * .42).toFixed(2)}"/>
-      <stop offset="1" stop-color="rgb(${col})" stop-opacity="${white ? ".16" : ".05"}"/>
+      <stop offset="1" stop-color="rgb(${col})" stop-opacity="${white ? ".03" : ".05"}"/>
     </linearGradient>`;
   }).join("");
   /* The three operating lanes advance annually; the two future lanes then
@@ -5287,7 +5283,7 @@ function renderSystem() {
     ["DustBros™", "var(--ember)", `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6h14v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M5 10h14M9 6v12" stroke="currentColor" stroke-width="1.7"/><path d="m18 3 .7 1.7L20.5 5.5l-1.8.8L18 8l-.7-1.7-1.8-.8 1.8-.8z" fill="currentColor"/></svg>`],
     ["Lynxa™", "var(--blue)", `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 4.7-2.9 8-7 10-4.1-2-7-5.3-7-10V6z" stroke="currentColor" stroke-width="1.7"/><path d="m9 12 2 2 4-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
     ["RVR™", "var(--ember)", `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 14 2-5h10l2 5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 14h16v4H4z" stroke="currentColor" stroke-width="1.7"/><circle cx="7" cy="18" r="1.5" fill="currentColor"/><circle cx="17" cy="18" r="1.5" fill="currentColor"/></svg>`],
-    ["Wired0™", "var(--blue)", `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 6h8M7 8l4 8M17 8l-4 8" stroke="currentColor" stroke-width="1.7"/></svg>`],
+    ["Wired™", "var(--blue)", `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 6h8M7 8l4 8M17 8l-4 8" stroke="currentColor" stroke-width="1.7"/></svg>`],
   ];
   // the remaining parent marks — product families stay grouped beneath their
   // umbrella mark so the vault communicates the portfolio cleanly.
@@ -5305,7 +5301,7 @@ function renderSystem() {
     ["RVR™", "var(--ember)", "Automotive",
       "Automotive products, detailing and vehicle-care ranges.",
       `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 14 2-5h10l2 5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 14h16v4H4z" stroke="currentColor" stroke-width="1.7"/><circle cx="7" cy="18" r="1.5" fill="currentColor"/><circle cx="17" cy="18" r="1.5" fill="currentColor"/></svg>`],
-    ["Wired0™", "var(--blue)", "Connected tech",
+    ["Wired™", "var(--blue)", "Connected tech",
       "The connected-product concept previously captured in the notes as WhatWorks.",
       `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="6" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 6h8M7 8l4 8M17 8l-4 8" stroke="currentColor" stroke-width="1.7"/></svg>`],
     ["Novera™", "var(--mint)", "New venture",
@@ -5927,23 +5923,23 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    panelBelow: { align: "center", topY: 1066 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 1053 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2029",
     items: [
-      { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "var(--ember)",
+      { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "2029 · First property acquisitions — buying the warehouses and fulfilment centres Global and Distribution already operate from, the start of a wider commercial portfolio." },
-      { n: "Freedom Freight Ltd", cat: "Global logistics", catC: "var(--mint)",
+      { n: "Freedom Freight Ltd", cat: "Global logistics", catC: "#57d9e8",
         d: "2029 · The in-house freight arm — importing 30&ndash;40 containers a month across the group&rsquo;s brands, with our own team managing all freight control." },
     ],
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "center", topY: 1066 }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", topY: 1053 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2030+",
     items: [
-      { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "var(--blue)",
+      { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "#b18cff",
         d: "2030 · The official launch of the drone and visual-graphics business — flying site surveys for Freedom Facilities&rsquo; compliance and construction work." },
-      { n: "Freedom Fuel Ltd", cat: "Forecourts &amp; fuel retail", catC: "var(--pink)",
+      { n: "Freedom Fuel Ltd", cat: "Forecourts &amp; fuel retail", catC: "#f2a65a",
         d: "2036+ · Extends the Freedom Form portfolio into petrol-station forecourts — buying the sites, selling the fuel, and stocking the stores with the group&rsquo;s own brands." },
     ],
   });
@@ -6017,8 +6013,8 @@ function renderSystem() {
         ln.setAttribute("d", `M ${f(edgeX)} ${f(connY)} L ${f(sx3)} ${f(sy3)}`);
       }
     });
-    const COLS = { form: 190, fly: 950, storm: 1710 };   // five exclusive corridors: form | gold panel | fly | violet panel | storm
-    const SHELF_Y = 1150;
+    const COLS = { form: 253, fly: 950, storm: 1746 };   // five corridors, columns centred under their cards, balanced gutters
+    const SHELF_Y = 1066;   // level with the aspiration panels — every corridor starts on one line
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;
@@ -6115,7 +6111,7 @@ function renderSystem() {
   chain("ds1", .94, .97, .97, .97, .97, .985);
   chain("ds2", .955, .985, .985, .985, .985, 1);
   reg(svgEl.querySelector(".mg-rocket"), .07, .12, "fade");     // the courier launches right behind the headline
-  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, .09 + idx * .015, .14 + idx * .015, "fade"));
+  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, .90 + idx * .03, .945 + idx * .03, "fade"));
   [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, .09 + idx * .015, .14 + idx * .015, "fade"));
 
   let lastMp = -1;

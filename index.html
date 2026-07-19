@@ -120,7 +120,7 @@ section#team{overflow-x:clip;}
 .sm-orbit.future.far{stroke:rgba(255,255,255,.11);}
 .sm-vaultorbit.far{stroke:rgba(255,255,255,.05);}
 .sm-vaultorbit{fill:none;stroke:rgba(255,255,255,.13);stroke-dasharray:2 6;}
-.sm-flow{fill:none;stroke-width:2.6;opacity:.85;stroke-linecap:round;}
+.sm-flow{fill:none;stroke-width:2.6;opacity:.85;stroke-linecap:round;stroke-dasharray:7 9;}
 .sm-flowglow{fill:none;stroke:rgba(255,61,154,.15);stroke-width:8;stroke-linecap:round;}
 .sm-roy{fill:none;stroke:var(--pink);stroke-width:1.7;stroke-dasharray:2.5 5;stroke-linecap:round;opacity:.8;}
 .sm-roy.ry-form{stroke:var(--mint);}
@@ -179,9 +179,7 @@ section#team{overflow-x:clip;}
    edge, and the stem dropping to the detail shelf, live in the SVG */
 .sm-cardlink{fill:none;stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:.85;}
 .sm-colstem{fill:none;stroke-width:2;stroke-dasharray:2.5 6.5;stroke-linecap:round;opacity:.85;}
-/* status treatment — planned lanes dash, future craft sit fainter */
-.sm-flow.fl-form,.sm-flow.fl-storm{stroke-dasharray:7 8;}
-.sm-flow.fl-ds1,.sm-flow.fl-ds2{stroke-dasharray:4 9;}
+/* every licence lane shares ONE dashed style — uniform arrows across the system */
 .fc-destroyer,.fc-moon{opacity:.85;}
 .sm-card .st-tag{display:inline-block;margin:7px 8px 0 0;padding:2px 10px;border:1px solid var(--c,#fff);border-radius:10px;font-size:.56rem;font-weight:800;font-style:normal;letter-spacing:.15em;color:var(--c,#fff);}
 .sm-brands .focus-p{margin:0;font-size:.78rem;line-height:1.55;color:rgba(243,244,251,.78);text-align:left;}
@@ -190,21 +188,6 @@ section#team{overflow-x:clip;}
 .hero-cta-row{margin:18px 0 4px;}
 .hero-cta{cursor:pointer;font:inherit;font-weight:800;letter-spacing:.06em;padding:12px 26px;border-radius:999px;border:1px solid rgba(255,61,154,.65);color:#fff;background:linear-gradient(90deg,rgba(255,61,154,.28),rgba(56,169,255,.24));transition:box-shadow .25s,transform .25s;}
 .hero-cta:hover{box-shadow:0 0 24px -6px var(--pink);transform:translateY(-2px);}
-/* 01 · boot experience */
-#bootScreen{position:fixed;inset:0;z-index:2000;background:#07070d;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s ease;}
-#bootScreen.done{opacity:0;pointer-events:none;}
-#bootScreen .boot-inner{text-align:center;max-width:min(600px,86vw);}
-#bootScreen .boot-kick{font-family:"Orbitron",system-ui,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;letter-spacing:.22em;color:#fff;}
-#bootScreen .boot-lines{margin-top:20px;display:flex;flex-direction:column;gap:7px;min-height:196px;justify-content:flex-start;}
-#bootScreen .bl{font-size:.9rem;letter-spacing:.08em;color:rgba(243,244,251,.6);opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease;}
-#bootScreen .bl.on{opacity:1;transform:none;}
-#bootScreen .bl.boot-final{margin-top:12px;color:#fff;font-weight:700;letter-spacing:.18em;}
-#bootScreen .bl.boot-welcome{font-family:"Orbitron",system-ui,sans-serif;margin-top:2px;font-size:1.02rem;background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent;}
-#bootScreen .boot-bar{margin:22px auto 0;width:min(320px,70vw);height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
-#bootScreen .boot-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));transition:width .45s ease;}
-#bootScreen .boot-skip{margin-top:26px;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:rgba(243,244,251,.6);font:inherit;font-size:.72rem;letter-spacing:.14em;padding:7px 18px;cursor:pointer;}
-#bootScreen .boot-skip:hover{border-color:rgba(255,255,255,.6);color:#fff;}
-html.ff-boot{overflow:hidden;}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
@@ -1026,6 +1009,7 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .kpi:nth-child(3) .num{color:var(--pink);}
 .kpi:nth-child(4) .num{color:var(--ember);}
 .kpi .lbl{color:var(--ink-dim);font-size:.86rem;font-weight:600;margin-top:6px;}
+.kpi .lbl2{color:var(--ink-dim);font-size:.7rem;font-weight:600;opacity:.72;margin-top:3px;line-height:1.5;letter-spacing:.01em;}
 .kpi .spark{margin-top:12px;height:30px;width:100%;}
 
 /* ==========================================================================
@@ -2487,7 +2471,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 <div class="intro" id="intro" aria-label="Loading The Freedom Group">
   <div class="intro-core" id="introCore">
     <pre class="intro-term" id="introTerm"></pre>
-    <div class="intro-auth" id="introAuth" hidden><span>AUTHORISATION</span><b id="introPct">0%</b></div>
+    <div class="intro-auth" id="introAuth" hidden><span>SYSTEM INITIATING</span><b id="introPct">0%</b></div>
     <div class="intro-bar"><i id="introBar"></i></div>
   </div>
   <button class="intro-skip" id="introSkip" type="button">Skip intro</button>
@@ -2498,14 +2482,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 <!-- ======================================================================
      NAV
      ====================================================================== -->
-<div id="bootScreen" role="status" aria-live="polite">
-  <div class="boot-inner">
-    <div class="boot-kick">INITIALISING THE FREEDOM SYSTEM</div>
-    <div class="boot-lines" id="bootLines" aria-live="polite"></div>
-    <div class="boot-bar"><i id="bootBar"></i></div>
-    <button class="boot-skip" id="bootSkip" type="button">SKIP</button>
-  </div>
-</div>
 <header class="nav">
   <div class="nav-inner">
     <button class="nav-logo" data-goto="top" aria-label="The Freedom Group — back to top">
@@ -3641,51 +3617,8 @@ function initChrome() {
     })
   );
 
-  // 01 · boot experience — a short initialising sweep with a skip control
-  (() => {
-    const scr = $("#bootScreen"), linesEl = $("#bootLines"), bar = $("#bootBar");
-    if (!scr) return;
-    // every line lands on the one page and STAYS — a boot log, not a carousel
-    const LINES = ["Loading the journey", "Connecting the companies", "Mapping the opportunity", "Calculating the trajectory", "Preparing for liftoff"];
-    const TOTAL = LINES.length + 2;
-    document.documentElement.classList.add("ff-boot");
-    let bi = 0, bt = null, bootDone = false;
-    const bootFinish = () => {
-      if (bootDone) return;
-      bootDone = true;
-      clearTimeout(bt);
-      scr.classList.add("done");
-      document.documentElement.classList.remove("ff-boot");
-      window.dispatchEvent(new Event("resize"));
-      setTimeout(() => scr.remove(), 700);
-    };
-    const addLine = (txt, cls) => {
-      const d = document.createElement("div");
-      d.className = "bl" + (cls ? " " + cls : "");
-      d.textContent = txt;
-      linesEl.appendChild(d);
-      setTimeout(() => d.classList.add("on"), 20);
-    };
-    const bootStep = () => {
-      if (bi < LINES.length) {
-        addLine(LINES[bi]);
-        bar.style.width = Math.round(((bi + 1) / TOTAL) * 100) + "%";
-        bi++;
-        bt = setTimeout(bootStep, 760);
-      } else if (bi === LINES.length) {
-        addLine("System Initiating", "boot-final");
-        bar.style.width = Math.round(((bi + 1) / TOTAL) * 100) + "%";
-        bi++;
-        bt = setTimeout(bootStep, 900);
-      } else {
-        addLine("Welcome to the Freedom Group", "boot-final boot-welcome");
-        bar.style.width = "100%";
-        bt = setTimeout(bootFinish, 1450);
-      }
-    };
-    $("#bootSkip").addEventListener("click", bootFinish);
-    if (REDUCED) bootFinish(); else bootStep();
-  })();
+  // the loading experience lives in the #intro boot terminal (runIntro) —
+  // one startup page, no separate overlay
 
   // phone menu — the burger folds the section buttons into a drop-down
   // sheet. The open state is applied inline as well as by class, so no
@@ -6624,10 +6557,9 @@ function renderSystem() {
   // strict one-at-a-time company chains: lane → planet → panel
   const chain = (key, l0, l1, p0, p1, c0, c1, dashed) => {
     const lane = q(".fl-" + key), glow = q(".g-" + key), roy = q(".ry-" + key);
-    // dashed (planned/future) lanes keep their CSS dash pattern, so they fade
-    // in rather than using the pathLength draw trick (which forces solid)
-    if (lane && dashed) reg(lane, l0, l1, "fade");
-    else if (lane) { lane.setAttribute("pathLength", "1"); lane.style.strokeDasharray = "1"; reg(lane, l0, l1, "draw"); }
+    // every lane shares one dashed style (uniform arrows) — all fade in;
+    // the pathLength draw trick would force them solid, so it is never used
+    reg(lane, l0, l1, "fade");
     reg(glow, l0, l1, "fade");
     reg(roy, l0, l1, "fade");
     const pl = planetFor(key);
@@ -8855,7 +8787,7 @@ function initSetpieces() {
   }
   function drawClouds(ctx, p, w, h) {
     if (!CLs) makeClouds();
-    const day = sm(ph2(p, .22, .72));
+    const day = sm(ph2(p, .34, .70));
     const gFade = 1; // the daylight flood covers the exit
     const top = [lp(7, 255, day), lp(7, 255, day), lp(13, 255, day)];
     const bot = [lp(7, 244, day), lp(7, 246, day), lp(13, 250, day)];
@@ -8864,39 +8796,58 @@ function initSetpieces() {
     bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
     ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
     // stars: fade under the deck, return above it, dim to nothing at the seam
-    const starA = (1 - sm(ph2(p, .05, .4))) * .9;
+    const starA = (1 - sm(ph2(p, .05, .30))) * .9;
     if (starA > .02) for (let i = 0; i < 70; i++) {
       const sx = ((i * 137.5) % 359) / 359, sy = ((i * 73.1) % 211) / 211 * .5;
       ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
       ctx.fillRect(sx * w, sy * h, 1.4, 1.4);
     }
-    const after = (1 - sm(ph2(p, 0, .38))) * .5;
+    const after = (1 - sm(ph2(p, 0, .22))) * .5;
     if (after > .01) {
       const ag = ctx.createRadialGradient(w * .5, h * 1.05, 0, w * .5, h * 1.05, h * .8);
       ag.addColorStop(0, `rgba(255,61,154,${after})`); ag.addColorStop(1, "rgba(255,61,154,0)");
       ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
     }
-    // the moon — rises with the climb, slips away as we clear the deck
-    const moonA = sm(ph2(p, .08, .22)) * (1 - sm(ph2(p, .3, .42)));
-    const mx = w * .72, my = h * (.2 - .05 * sm(ph2(p, .5, .9)));
-    if (moonA > .01) {
-      const mh = ctx.createRadialGradient(mx, my, 0, mx, my, h * .2);
-      mh.addColorStop(0, `rgba(235,240,255,${.4 * moonA})`);
-      mh.addColorStop(1, "rgba(235,240,255,0)");
-      ctx.fillStyle = mh; ctx.beginPath(); ctx.arc(mx, my, h * .2, 0, TAU); ctx.fill();
-      ctx.fillStyle = `rgba(248,250,255,${.95 * moonA})`;
-      ctx.beginPath(); ctx.arc(mx, my, h * .034, 0, TAU); ctx.fill();
-      ctx.fillStyle = `rgba(180,190,215,${.18 * moonA})`;
-      ctx.beginPath(); ctx.arc(mx - h * .009, my + h * .007, h * .008, 0, TAU); ctx.fill();
-      ctx.beginPath(); ctx.arc(mx + h * .011, my - h * .006, h * .006, 0, TAU); ctx.fill();
+    // THE DIVE — Freedom Global's blue planet rushes up to meet the viewer,
+    // then its atmosphere whites out and hands over to the cloud deck
+    const zoomQ = sm(ph2(p, .02, .40));
+    if (p < .55) {
+      const pr = h * (.05 + 2.55 * zoomQ * zoomQ);
+      const px2 = w * .5, py2 = h * .52;
+      const haloG = ctx.createRadialGradient(px2, py2, pr * .8, px2, py2, pr * 1.3);
+      haloG.addColorStop(0, "rgba(140,200,255,0)");
+      haloG.addColorStop(.7, `rgba(140,200,255,${.34 * (1 - zoomQ * .45)})`);
+      haloG.addColorStop(1, "rgba(140,200,255,0)");
+      ctx.fillStyle = haloG; ctx.beginPath(); ctx.arc(px2, py2, pr * 1.3, 0, TAU); ctx.fill();
+      const bodyG = ctx.createRadialGradient(px2 - pr * .35, py2 - pr * .38, pr * .08, px2, py2, pr);
+      bodyG.addColorStop(0, "#e0f7ff"); bodyG.addColorStop(.45, "#3f9ae2");
+      bodyG.addColorStop(.8, "#1c4f9c"); bodyG.addColorStop(1, "#071c52");
+      ctx.fillStyle = bodyG; ctx.beginPath(); ctx.arc(px2, py2, pr, 0, TAU); ctx.fill();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(px2, py2, pr, 0, TAU); ctx.clip();
+      ctx.strokeStyle = "rgba(224,247,255,.20)";
+      ctx.lineWidth = Math.max(1.5, pr * .045);
+      for (let bnd = -2; bnd <= 2; bnd++) {
+        ctx.beginPath();
+        ctx.ellipse(px2, py2 + bnd * pr * .30, pr * 1.06, pr * .17, 0, 0, TAU);
+        ctx.stroke();
+      }
+      const shadeG = ctx.createRadialGradient(px2 - pr * .3, py2 - pr * .35, pr * .2, px2, py2, pr);
+      shadeG.addColorStop(.72, "rgba(0,0,0,0)"); shadeG.addColorStop(1, "rgba(4,10,30,.55)");
+      ctx.fillStyle = shadeG; ctx.fillRect(px2 - pr, py2 - pr, pr * 2, pr * 2);
+      ctx.restore();
     }
-    const lightMix = sm(ph2(p, .25, .72));
-    const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
+    // atmosphere whiteout bridging the dive into the cloud deck
+    const atmo = sm(ph2(p, .32, .46)) * (1 - sm(ph2(p, .50, .64)));
+    if (atmo > .01) { ctx.fillStyle = `rgba(240,246,255,${atmo})`; ctx.fillRect(0, 0, w, h); }
+    const lightMix = sm(ph2(p, .42, .72));
+    const pc = cl((p - .30) / .70, 0, 1);   // clouds ride only the post-dive stretch
+    const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, pc, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
     for (const { c2, g } of order) {
       const { zf, k, scale, sw, sh, x, y } = g;
       let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
       al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
-      al *= gFade;
+      al *= gFade * sm(ph2(p, .42, .56));   // clouds materialise inside the whiteout
       if (al <= .015) continue;
       const spr = CLs[c2.s];
       ctx.globalAlpha = al * (1 - lightMix);
@@ -8908,7 +8859,7 @@ function initSetpieces() {
     }
     ctx.globalAlpha = 1;
     // the sea of clouds below as we break the deck
-    const sea = sm(ph2(p, .64, .86));
+    const sea = sm(ph2(p, .70, .88));
     if (sea > .01) {
       ctx.globalAlpha = sea * .55;
       for (let i = 0; i < 9; i++) {
@@ -8919,13 +8870,13 @@ function initSetpieces() {
       ctx.globalAlpha = 1;
     }
     // brief haze at the brightest point
-    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .45, .62)) * (1 - sm(ph2(p, .64, .85))) * .26})`;
+    ctx.fillStyle = `rgba(255,255,255,${sm(ph2(p, .52, .68)) * (1 - sm(ph2(p, .70, .88))) * .26})`;
     ctx.fillRect(0, 0, w, h);
     // break into the daylight of the journey chapter
     const out = sm(ph2(p, .85, .985));
     if (out > .01) { ctx.fillStyle = `rgba(238,241,248,${out})`; ctx.fillRect(0, 0, w, h); }
     // ingress from the hero's exact black
-    const inDark = 1 - sm(ph2(p, .015, .16));
+    const inDark = 1 - sm(ph2(p, .015, .08));
     if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
   }
 
@@ -9152,12 +9103,13 @@ function runIntro() {
   // padded with dots to PAD, then " OK" (3 chars): len + (34 − len) + 3 = 37
   const PAD = 34;
   const LINES = [
-    ["> FREEDOM GROUP // BOOT SEQUENCE v1.0", ""],
-    ["> orbital engine ", "OK"],
-    ["> revenue channels [8/8] ", "OK"],
-    ["> journey 2020 → 2036 ", "OK"],
-    ["> planets [3/3] aligned ", "OK"],
-    ["> STATUS: OPERATIONAL — engaging warp", ""]
+    ["> INITIALISING THE FREEDOM SYSTEM", ""],
+    ["> loading the journey ", "OK"],
+    ["> connecting the companies ", "OK"],
+    ["> mapping the opportunity ", "OK"],
+    ["> calculating the trajectory ", "OK"],
+    ["> preparing for liftoff ", "OK"],
+    ["> Welcome to the Freedom Group", ""]
   ];
 
   function finish(manifest) {

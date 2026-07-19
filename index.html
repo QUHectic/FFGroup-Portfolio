@@ -195,7 +195,11 @@ section#team{overflow-x:clip;}
 #bootScreen.done{opacity:0;pointer-events:none;}
 #bootScreen .boot-inner{text-align:center;max-width:min(600px,86vw);}
 #bootScreen .boot-kick{font-family:"Orbitron",system-ui,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;letter-spacing:.22em;color:#fff;}
-#bootScreen .boot-line{margin-top:16px;font-size:.92rem;letter-spacing:.08em;color:rgba(243,244,251,.62);min-height:1.4em;}
+#bootScreen .boot-lines{margin-top:20px;display:flex;flex-direction:column;gap:7px;min-height:196px;justify-content:flex-start;}
+#bootScreen .bl{font-size:.9rem;letter-spacing:.08em;color:rgba(243,244,251,.6);opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease;}
+#bootScreen .bl.on{opacity:1;transform:none;}
+#bootScreen .bl.boot-final{margin-top:12px;color:#fff;font-weight:700;letter-spacing:.18em;}
+#bootScreen .bl.boot-welcome{font-family:"Orbitron",system-ui,sans-serif;margin-top:2px;font-size:1.02rem;background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent;}
 #bootScreen .boot-bar{margin:22px auto 0;width:min(320px,70vw);height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
 #bootScreen .boot-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));transition:width .45s ease;}
 #bootScreen .boot-skip{margin-top:26px;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:rgba(243,244,251,.6);font:inherit;font-size:.72rem;letter-spacing:.14em;padding:7px 18px;cursor:pointer;}
@@ -2497,7 +2501,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 <div id="bootScreen" role="status" aria-live="polite">
   <div class="boot-inner">
     <div class="boot-kick">INITIALISING THE FREEDOM SYSTEM</div>
-    <div class="boot-line" id="bootLine">Loading the journey</div>
+    <div class="boot-lines" id="bootLines" aria-live="polite"></div>
     <div class="boot-bar"><i id="bootBar"></i></div>
     <button class="boot-skip" id="bootSkip" type="button">SKIP</button>
   </div>
@@ -2540,11 +2544,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <span class="word">THE FREEDOM <span>GROUP</span></span>
     </button>
     <nav class="nav-links" id="navLinks" aria-label="Sections">
-      <button class="nav-btn" data-goto="system">System</button>
+      <button class="nav-btn" data-goto="system">The System</button>
       <button class="nav-btn" data-goto="journey">Journey</button>
       <button class="nav-btn" data-goto="growth">Traction</button>
       <button class="nav-btn" data-goto="opportunity">Opportunity</button>
-      <button class="nav-btn" data-goto="projections">Plan</button>
+      <button class="nav-btn" data-goto="projections">Growth Plan</button>
       <button class="nav-btn" data-goto="investment">Investment</button>
       <button class="nav-btn" data-goto="horizon">Beyond</button>
       <button class="nav-btn nav-cta" data-goto="liftoff">Liftoff</button>
@@ -3200,9 +3204,9 @@ const FG_DATA = {
     heroBlurb: "Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — with the potential to expand into drones, property development and even food services.",
     parentBlurb: "A strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.",
     kpis: [
-      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Annual revenue already achieved", spark: [32, 444, 1000] },
-      { value: 250000, fmt: "int", suffix: "+", label: "Orders processed nationwide", spark: [8, 60, 250] },
-      { value: 12, fmt: "int", label: "Owned & developing brands", spark: [3, 8, 12] }
+      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Annual revenue already achieved", sub: "A proven commercial foundation", spark: [32, 444, 1000] },
+      { value: 250000, fmt: "int", suffix: "+", label: "Orders processed nationwide", sub: "Demand proven at scale", spark: [8, 60, 250] },
+      { value: 12, fmt: "int", label: "Owned and developing brands", sub: "Built for multi-category growth", spark: [3, 8, 12] }
     ]
   },
 
@@ -3613,9 +3617,25 @@ function initChrome() {
     btn.addEventListener("click", () => {
       const id = btn.dataset.goto;
       const el = id === "top" ? document.body : $("#" + id);
-      (id === "top" ? window : el).scrollIntoView
-        ? el.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "start" })
-        : window.scrollTo(0, 0);
+      if (!el) return;
+      // manual tween — native smooth scrolls get cancelled by the scroll
+      // choreography's per-frame work, so we write absolute positions ourselves
+      // NB: bare scrollTop writes are re-smoothed by html{scroll-behavior:smooth},
+      // so every write goes through scrollTo with behavior:"instant"
+      const y0 = window.scrollY;
+      const y1 = id === "top" ? 0 : Math.max(0, y0 + el.getBoundingClientRect().top);
+      if (REDUCED) window.scrollTo({ top: y1, behavior: "instant" });
+      else {
+        const dur = Math.min(1400, 420 + Math.abs(y1 - y0) * 0.06);
+        const t0 = performance.now();
+        const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const stepScroll = now => {
+          const q = Math.min(1, (now - t0) / dur);
+          window.scrollTo({ top: y0 + (y1 - y0) * ease(q), behavior: "instant" });
+          if (q < 1) requestAnimationFrame(stepScroll);
+        };
+        requestAnimationFrame(stepScroll);
+      }
       const heading = $("h1, h2", el);
       if (heading) { heading.setAttribute("tabindex", "-1"); heading.focus({ preventScroll: true }); }
     })
@@ -3623,9 +3643,11 @@ function initChrome() {
 
   // 01 · boot experience — a short initialising sweep with a skip control
   (() => {
-    const scr = $("#bootScreen"), line = $("#bootLine"), bar = $("#bootBar");
+    const scr = $("#bootScreen"), linesEl = $("#bootLines"), bar = $("#bootBar");
     if (!scr) return;
-    const LINES = ["Loading the journey", "Connecting the companies", "Mapping the opportunity", "Calculating the trajectory", "Preparing for liftoff", "System Initiating — Welcome to the Freedom Group"];
+    // every line lands on the one page and STAYS — a boot log, not a carousel
+    const LINES = ["Loading the journey", "Connecting the companies", "Mapping the opportunity", "Calculating the trajectory", "Preparing for liftoff"];
+    const TOTAL = LINES.length + 2;
     document.documentElement.classList.add("ff-boot");
     let bi = 0, bt = null, bootDone = false;
     const bootFinish = () => {
@@ -3637,12 +3659,29 @@ function initChrome() {
       window.dispatchEvent(new Event("resize"));
       setTimeout(() => scr.remove(), 700);
     };
+    const addLine = (txt, cls) => {
+      const d = document.createElement("div");
+      d.className = "bl" + (cls ? " " + cls : "");
+      d.textContent = txt;
+      linesEl.appendChild(d);
+      setTimeout(() => d.classList.add("on"), 20);
+    };
     const bootStep = () => {
-      if (bi >= LINES.length) return bootFinish();
-      line.textContent = LINES[bi];
-      bar.style.width = Math.round(((bi + 1) / LINES.length) * 100) + "%";
-      bi++;
-      bt = setTimeout(bootStep, bi === LINES.length ? 1150 : 880);
+      if (bi < LINES.length) {
+        addLine(LINES[bi]);
+        bar.style.width = Math.round(((bi + 1) / TOTAL) * 100) + "%";
+        bi++;
+        bt = setTimeout(bootStep, 760);
+      } else if (bi === LINES.length) {
+        addLine("System Initiating", "boot-final");
+        bar.style.width = Math.round(((bi + 1) / TOTAL) * 100) + "%";
+        bi++;
+        bt = setTimeout(bootStep, 900);
+      } else {
+        addLine("Welcome to the Freedom Group", "boot-final boot-welcome");
+        bar.style.width = "100%";
+        bt = setTimeout(bootFinish, 1450);
+      }
     };
     $("#bootSkip").addEventListener("click", bootFinish);
     if (REDUCED) bootFinish(); else bootStep();
@@ -3685,7 +3724,7 @@ function initChrome() {
         }
       });
     }, { rootMargin: "-40% 0px -55% 0px" });
-    $$("section[data-sec]").forEach(s => spy.observe(s));
+    $$("section[data-sec], #opportunity, #investment").forEach(s => spy.observe(s));
   }
 
   // gentle pointer parallax on the hero blobs
@@ -3738,6 +3777,7 @@ function renderHero() {
     <div class="kpi reveal d${i}">
       <div class="num" data-count="${k.value}" data-fmt="${k.fmt}" ${k.prefix ? `data-prefix="${k.prefix}"` : ""} ${k.suffix ? `data-suffix="${k.suffix}"` : ""}>0</div>
       <div class="lbl">${k.label}</div>
+      ${k.sub ? `<div class="lbl2">${k.sub}</div>` : ""}
       <svg class="spark" viewBox="0 0 ${W} ${H}" aria-hidden="true">
         <path d="${smoothPath(coords)}" fill="none" stroke="${colors[i % 4]}" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="${coords[coords.length - 1].x}" cy="${coords[coords.length - 1].y}" r="3" fill="${colors[i % 4]}"/>
@@ -6170,7 +6210,7 @@ function renderSystem() {
         <linearGradient id="lgD2" gradientUnits="userSpaceOnUse" x1="${f(ds2Out[0])}" y1="${f(ds2Out[1])}" x2="${f(ds2Top[0])}" y2="${f(ds2Top[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/>
         </linearGradient>
-        <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
         <marker id="smArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
         <clipPath id="smSunClip"><circle cx="${cx}" cy="${cy}" r="${sunR}"/></clipPath>
       </defs>
@@ -6223,7 +6263,7 @@ function renderSystem() {
     <div class="sm-sub" data-for="fly" style="--c:var(--blue)">
       <div class="subbox">
         <span class="cap2">COMMERCE ECOSYSTEM</span>
-        <div class="fn2"><span>Amazon · eBay · Shopify · TikTok Shop · OnBuy · Specialist storefronts</span></div>
+        <div class="fn2"><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy · Specialist storefronts</span></div>
       </div>
       <div class="subbox">
         <span class="cap2">CORE BRANDS</span>

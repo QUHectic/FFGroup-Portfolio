@@ -179,6 +179,28 @@ section#team{overflow-x:clip;}
    edge, and the stem dropping to the detail shelf, live in the SVG */
 .sm-cardlink{fill:none;stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:.85;}
 .sm-colstem{fill:none;stroke-width:2;stroke-dasharray:2.5 6.5;stroke-linecap:round;opacity:.85;}
+/* status treatment — planned lanes dash, future craft sit fainter */
+.sm-flow.fl-form,.sm-flow.fl-storm{stroke-dasharray:7 8;}
+.sm-flow.fl-ds1,.sm-flow.fl-ds2{stroke-dasharray:4 9;}
+.fc-destroyer,.fc-moon{opacity:.85;}
+.sm-card .st-tag{display:inline-block;margin:7px 8px 0 0;padding:2px 10px;border:1px solid var(--c,#fff);border-radius:10px;font-size:.56rem;font-weight:800;font-style:normal;letter-spacing:.15em;color:var(--c,#fff);}
+.sm-brands .focus-p{margin:0;font-size:.78rem;line-height:1.55;color:rgba(243,244,251,.78);text-align:left;}
+.sm-brands .bx{border-color:rgba(56,169,255,.45);}
+.hero-sub{margin:14px 0 0;max-width:560px;font-size:1.02rem;line-height:1.6;color:rgba(243,244,251,.72);}
+.hero-cta-row{margin:18px 0 4px;}
+.hero-cta{cursor:pointer;font:inherit;font-weight:800;letter-spacing:.06em;padding:12px 26px;border-radius:999px;border:1px solid rgba(255,61,154,.65);color:#fff;background:linear-gradient(90deg,rgba(255,61,154,.28),rgba(56,169,255,.24));transition:box-shadow .25s,transform .25s;}
+.hero-cta:hover{box-shadow:0 0 24px -6px var(--pink);transform:translateY(-2px);}
+/* 01 · boot experience */
+#bootScreen{position:fixed;inset:0;z-index:2000;background:#07070d;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s ease;}
+#bootScreen.done{opacity:0;pointer-events:none;}
+#bootScreen .boot-inner{text-align:center;max-width:min(600px,86vw);}
+#bootScreen .boot-kick{font-family:"Orbitron",system-ui,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;letter-spacing:.22em;color:#fff;}
+#bootScreen .boot-line{margin-top:16px;font-size:.92rem;letter-spacing:.08em;color:rgba(243,244,251,.62);min-height:1.4em;}
+#bootScreen .boot-bar{margin:22px auto 0;width:min(320px,70vw);height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+#bootScreen .boot-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));transition:width .45s ease;}
+#bootScreen .boot-skip{margin-top:26px;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:rgba(243,244,251,.6);font:inherit;font-size:.72rem;letter-spacing:.14em;padding:7px 18px;cursor:pointer;}
+#bootScreen .boot-skip:hover{border-color:rgba(255,255,255,.6);color:#fff;}
+html.ff-boot{overflow:hidden;}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
@@ -2472,6 +2494,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 <!-- ======================================================================
      NAV
      ====================================================================== -->
+<div id="bootScreen" role="status" aria-live="polite">
+  <div class="boot-inner">
+    <div class="boot-kick">INITIALISING THE FREEDOM SYSTEM</div>
+    <div class="boot-line" id="bootLine">Loading the journey</div>
+    <div class="boot-bar"><i id="bootBar"></i></div>
+    <button class="boot-skip" id="bootSkip" type="button">SKIP</button>
+  </div>
+</div>
 <header class="nav">
   <div class="nav-inner">
     <button class="nav-logo" data-goto="top" aria-label="The Freedom Group — back to top">
@@ -2510,12 +2540,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <span class="word">THE FREEDOM <span>GROUP</span></span>
     </button>
     <nav class="nav-links" id="navLinks" aria-label="Sections">
-      <button class="nav-btn" data-goto="system">The System</button>
+      <button class="nav-btn" data-goto="system">System</button>
       <button class="nav-btn" data-goto="journey">Journey</button>
-      <button class="nav-btn" data-goto="growth">Growth</button>
-      <button class="nav-btn" data-goto="projections">Projections</button>
-      <button class="nav-btn" data-goto="horizon">2036</button>
-      <button class="nav-btn" data-goto="team">Team</button>
+      <button class="nav-btn" data-goto="growth">Traction</button>
+      <button class="nav-btn" data-goto="opportunity">Opportunity</button>
+      <button class="nav-btn" data-goto="projections">Plan</button>
+      <button class="nav-btn" data-goto="investment">Investment</button>
+      <button class="nav-btn" data-goto="horizon">Beyond</button>
       <button class="nav-btn nav-cta" data-goto="liftoff">Liftoff</button>
     </nav>
     <button class="nav-burger" id="navBurger" aria-label="Open the section menu" aria-expanded="false" aria-controls="navLinks">
@@ -2538,7 +2569,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap hero-inner">
       <div class="mega-stage reveal" id="megaLogo" aria-label="The Freedom Group logo"></div>
       <div class="hero-right">
-        <h1 class="reveal d1" data-suck>From one rusty old fire extinguisher<br><span class="grad-text">to a £100 million vision.</span></h1>
+        <h1 class="reveal d1" data-suck>From one rusty old fire extinguisher<br><span class="grad-text">to a group built beyond £100 million.</span></h1>
+        <p class="hero-sub reveal d1" data-suck>Freedom Global is being built into a £100 million ecommerce business — and the first major value-creation engine within a much wider group.</p>
+        <div class="hero-cta-row reveal d1" data-suck><button class="hero-cta" data-goto="system" type="button">Explore the System</button></div>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -2712,7 +2745,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        TEAM
        ==================================================================== -->
-  <div class="tr2 tr2-planet" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
+  <div class="tr2 tr2-planet" id="opportunity" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
     <div class="rw-over" id="rwOver">
       <h3>The market runway</h3>
       <div class="rw-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — scroll, drag the track or tap a year</div>
@@ -2769,12 +2802,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        past, the "why we need this money" brief unfolds card by card, then
        the sky settles back to night for the launch pad below.
        ==================================================================== -->
-  <div class="tr2 tr2-funding"><div class="tr2-stage"><canvas></canvas>
+  <div class="tr2 tr2-funding" id="investment"><div class="tr2-stage"><canvas></canvas>
     <div class="fund-over" id="fundOver" aria-hidden="true">
       <div class="fund-inner">
         <div class="fund-kick">THE RAISE · USE OF FUNDS</div>
         <h3 class="fund-h">Why we need this money.</h3>
-        <p class="fund-sub">Four deployments, one engine — every pound is put to work inside the licence structure that returns royalties to Holdings each quarter.</p>
+        <p class="fund-sub">Four deployments, one engine — every pound is put to work inside the group's licence structure.</p>
         <div class="fund-cards">
           <article class="fund-card"><span class="no">01</span><div class="fc-body">
             <h4>Inventory &amp; buying power <em class="pct">40%</em></h4>
@@ -3167,9 +3200,9 @@ const FG_DATA = {
     heroBlurb: "Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — with the potential to expand into drones, property development and even food services.",
     parentBlurb: "A strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.",
     kpis: [
-      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Revenue in year one", spark: [32, 444, 1000] },
-      { value: 250000, fmt: "int", prefix: "~", label: "Orders processed in year one", spark: [8, 60, 250] },
-      { value: 25000, fmt: "int", suffix: "+", label: "Units refurbished in a single year", spark: [4, 12, 25] }
+      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Annual revenue already achieved", spark: [32, 444, 1000] },
+      { value: 250000, fmt: "int", suffix: "+", label: "Orders processed nationwide", spark: [8, 60, 250] },
+      { value: 12, fmt: "int", label: "Owned & developing brands", spark: [3, 8, 12] }
     ]
   },
 
@@ -3588,6 +3621,33 @@ function initChrome() {
     })
   );
 
+  // 01 · boot experience — a short initialising sweep with a skip control
+  (() => {
+    const scr = $("#bootScreen"), line = $("#bootLine"), bar = $("#bootBar");
+    if (!scr) return;
+    const LINES = ["Loading the journey", "Connecting the companies", "Mapping the opportunity", "Calculating the trajectory", "Preparing for liftoff", "System Initiating — Welcome to the Freedom Group"];
+    document.documentElement.classList.add("ff-boot");
+    let bi = 0, bt = null, bootDone = false;
+    const bootFinish = () => {
+      if (bootDone) return;
+      bootDone = true;
+      clearTimeout(bt);
+      scr.classList.add("done");
+      document.documentElement.classList.remove("ff-boot");
+      window.dispatchEvent(new Event("resize"));
+      setTimeout(() => scr.remove(), 700);
+    };
+    const bootStep = () => {
+      if (bi >= LINES.length) return bootFinish();
+      line.textContent = LINES[bi];
+      bar.style.width = Math.round(((bi + 1) / LINES.length) * 100) + "%";
+      bi++;
+      bt = setTimeout(bootStep, bi === LINES.length ? 1150 : 880);
+    };
+    $("#bootSkip").addEventListener("click", bootFinish);
+    if (REDUCED) bootFinish(); else bootStep();
+  })();
+
   // phone menu — the burger folds the section buttons into a drop-down
   // sheet. The open state is applied inline as well as by class, so no
   // stylesheet quirk can ever leave the menu stuck shut.
@@ -3745,8 +3805,8 @@ const SYSTEM = {
   core: { key: "fire", name: "The Freedom Group Holdings Ltd", short: "Group Holdings", role: "The parent — owns every brand & all IP",
     c: "var(--pink)", cHex: "#ff3d9a",
     goto: "journey", gotoLabel: "The journey — where it started", stat: "100% of brands & IP",
-    body: "The registered holding company above it all — owns every brand, trademark and piece of IP, licenses them to the operating Ltds, and collects royalties back every quarter.",
-    facts: ["Holding company", "Owns all IP & brands", "Royalties · quarterly"] },
+    body: "The registered holding company above it all — owns every brand, trademark and piece of IP, licensing them to the specialist operating companies.",
+    facts: ["Holding company", "Owns all brands & IP", "Sets group strategy"] },
   planets: [
     { key: "form", name: "Freedom Facilities Ltd", short: "Facilities", role: "Facilities management & servicing",
       cls: "b-green", c: "var(--mint)", cHex: "#2fe0a0", t: -90, r: 42,
@@ -5640,17 +5700,17 @@ function renderSystem() {
   const PLANETS = [
     { key: "fly", name: "Freedom Global Ltd", c: "var(--blue)", cHex: "#38a9ff", grad: ["#e0f7ff", "#328fda", "#071c52"],
       at: lowerShellAtX(0, 950), r: 48, centered: true,   // the flagship hangs dead-centre under Holdings, card below
-      role: "Managing the Group\u2019s direct-to-consumer division across multiple ecommerce channels, marketplaces, and online storefronts to build brand awareness and deliver products nationwide",
-      ta: "(Currently Trading As Freedom Fire &amp; Safety Ltd)",
-      cat: "CONSUMER COMMERCE · D2C" },
+      role: "The group\u2019s established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts",
+      ta: "(Currently trading as Freedom Fire &amp; Safety Ltd)",
+      cat: "CONSUMER ECOMMERCE · D2C", status: "ACTIVE" },
     { key: "form", name: "Freedom Facilities Ltd", c: "var(--mint)", cHex: "#2fe0a0", grad: ["#d9ffea", "#2abf8d", "#063d3b"],
       at: lowerShellAtX(1, 480), r: 42, centered: true,
-      role: "National field service operation delivering long-term recurring compliance contracts",
-      cat: "COMPLIANCE &amp; FACILITIES MANAGEMENT" },
+      role: "A recurring-revenue operation delivering fire safety servicing, installation, compliance and facilities support",
+      cat: "COMPLIANCE · SERVICING · FACILITIES", status: "PLANNED" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
       at: lowerShellAtX(2, 1500), r: 36, centered: true,
-      role: "Large-scale distribution of the group's proprietary brands across the UK and international markets",
-      cat: "TRADE DISTRIBUTION · B2B" },
+      role: "A wholesale operation supplying the group’s owned brands to national retailers, trade partners and commercial distributors",
+      cat: "TRADE DISTRIBUTION · B2B", status: "PLANNED" },
   ];
   // the brand vault: a dedicated block beneath the flagship's panel
   const BRAND_ICONS = {
@@ -6070,15 +6130,10 @@ function renderSystem() {
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
     <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-roy ry-form" marker-end="url(#smArrP)" d="M ${f(formRoyalStart[0])} ${f(formRoyalStart[1])} C 527 519, 737 454, ${f(formIn[0])} ${f(formIn[1])}"/>
-    <path class="sm-roy ry-storm" marker-end="url(#smArrP)" d="M ${f(stormRoyalStart[0])} ${f(stormRoyalStart[1])} C 1471 558, 1231 443, ${f(stormIn[0])} ${f(stormIn[1])}"/>
-    <path class="sm-roy ry-fly" marker-end="url(#smArrP)" d="M ${f(flyRoyalStart[0])} ${f(flyRoyalStart[1])} L ${f(flyIn[0])} ${f(flyIn[1])}"/>
     <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-roy ry-ds1" marker-end="url(#smArrP)" d="M ${f(ds1RoyalStart[0])} ${f(ds1RoyalStart[1])} C 632 710, 812 550, ${f(ds1In[0])} ${f(ds1In[1])}"/>
-    <path class="sm-roy ry-ds2" marker-end="url(#smArrP)" d="M ${f(ds2RoyalStart[0])} ${f(ds2RoyalStart[1])} C 1287 759, 1107 579, ${f(ds2In[0])} ${f(ds2In[1])}"/>
     ${cardLinks}`;
 
   map.innerHTML = `
@@ -6141,89 +6196,84 @@ function renderSystem() {
       <g class="sm-mast">
         <line x1="40" y1="50" x2="66" y2="50" stroke="url(#lgMast)" stroke-width="3" stroke-linecap="round"/>
         <text class="mh-kick" x="76" y="54">THE FREEDOM SYSTEM</text>
-        <text class="mh-h2" x="40" y="104">One Group. Three Companies.</text>
-        <text class="mh-h2" x="40" y="146" style="fill:url(#lgMast)">One Orbit Around Holdings.</text>
-        <text class="mh-p" x="40" y="182">One registered holding company owns every brand, trademark and piece of IP —</text>
-        <text class="mh-p" x="40" y="205">licensing them to three operating companies, with royalties returning every quarter.</text>
+        <text class="mh-h2" x="40" y="104">One Group. One Commercial Engine.</text>
+        <text class="mh-h2" x="40" y="146" style="fill:url(#lgMast)">Multiple Paths to Growth.</text>
+        <text class="mh-p" x="40" y="182">Freedom Group Holdings sits at the centre — owning the group&rsquo;s brands, trademarks</text>
+        <text class="mh-p" x="40" y="205">and intellectual property, and licensing them to each specialist operating company.</text>
+        <text class="mh-p" x="40" y="234" style="fill:rgba(56,169,255,.92)">TODAY&rsquo;S INVESTMENT FOCUS — Freedom Global Ltd (trading as Freedom Fire &amp; Safety Ltd).</text>
       </g>
       <text class="sm-suntitle" x="${cx}" y="186" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
-      <g class="sm-mini" transform="translate(${cx - 210} 206)">
-        <rect width="106" height="24" rx="12"/><text x="53" y="16" text-anchor="middle">MANUFACTURE</text>
-        <rect x="116" width="114" height="24" rx="12"/><text x="173" y="16" text-anchor="middle">DISTRIBUTION</text>
-        <rect x="240" width="70" height="24" rx="12"/><text x="275" y="16" text-anchor="middle">RETAIL</text>
-        <rect x="320" width="100" height="24" rx="12"/><text x="370" y="16" text-anchor="middle">FACILITIES</text>
+      <g class="sm-mini" transform="translate(${cx - 163} 206)">
+        <rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">BRANDS</text>
+        <rect x="86" width="44" height="24" rx="12"/><text x="108" y="16" text-anchor="middle">IP</text>
+        <rect x="140" width="92" height="24" rx="12"/><text x="186" y="16" text-anchor="middle">STRATEGY</text>
+        <rect x="242" width="84" height="24" rx="12"/><text x="284" y="16" text-anchor="middle">CAPITAL</text>
       </g>
+      <text class="mh-p" x="${cx}" y="252" text-anchor="middle" style="opacity:.85">Owner of the group&rsquo;s brands, intellectual property and long-term strategic platform.</text>
       ${planets}
     </svg>
     ${PLANETS.map(p => `
       <div class="sm-card" data-key="${p.key}" style="--c:${p.c}">
         <h3><i></i>${p.name}</h3>
+        ${p.status ? `<em class="st-tag">${p.status}</em>` : ""}
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="cat">${p.cat}</p>
         <p class="ch">${p.role}.</p>
       </div>`).join("")}
     <div class="sm-sub" data-for="fly" style="--c:var(--blue)">
       <div class="subbox">
-        <span class="cap2">KEY CHANNELS</span>
-        <div class="fn2"><span>Amazon Seller Central | eBay | Shopify | TikTok Shop | OnBuy | ManoMano | Fruugo | Temu | AliExpress</span></div>
+        <span class="cap2">COMMERCE ECOSYSTEM</span>
+        <div class="fn2"><span>Amazon · eBay · Shopify · TikTok Shop · OnBuy · Specialist storefronts</span></div>
       </div>
       <div class="subbox">
-        <span class="cap2">OPERATING STOREFRONTS</span>
-        <div class="fn2"><span>Freedom Fire | FireExtinguishersDirect | BatteryBay | PPE-Me | CleanFreak | DriveBye | Future specialist stores</span></div>
+        <span class="cap2">CORE BRANDS</span>
+        <div class="fn2"><span>Firestorm™ · Voltz™ · Kunergy™ · T3™ · Crystal Cleaning Solutions™ · Emerging brands</span></div>
       </div>
     </div>
     <div class="sm-sub" data-for="form" style="--c:var(--mint)">
       <div class="subbox">
-        <span class="cap2">CORE SERVICES</span>
-        <div class="fn2"><span>Extinguisher &amp; alarm servicing | Emergency lighting | Fire risk assessments | Installation &amp; commissioning | Compliance audits | Cleaning &amp; FM contracts</span></div>
-      </div>
-      <div class="subbox">
-        <span class="cap2">PRIMARY CUSTOMERS</span>
-        <div class="fn2"><span>Schools | Universities | Warehouses | Construction | Hotels | Factories | Care homes | Councils | FM companies</span></div>
+        <span class="cap2">CORE MARKET</span>
+        <div class="fn2"><span>Commercial premises · Education · Warehousing · Construction · Hospitality · Public sector</span></div>
       </div>
     </div>
     <div class="sm-sub" data-for="storm" style="--c:var(--ember)">
       <div class="subbox">
-        <span class="cap2">BRANDS DISTRIBUTED</span>
-        <div class="fn2"><span>FireStorm™ Core · Pro · Infinity | Lynxa™ Cover · Shield · Air · Grip · Gel | Voltz™ Alkaline · Lithium · Rechargeable | T3™ Grip · Flex · Thermal | Crystal Cleaning Multi-Surface · Glass · Degreaser | HepaFellas™ Bags · HEPA Filters | DustBros™ Cloths · Site Care | RVR™ Detailing · Vehicle Care</span></div>
+        <span class="cap2">CORE CATEGORIES</span>
+        <div class="fn2"><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
       </div>
       <div class="subbox">
-        <span class="cap2">PRIMARY TRADE PARTNERS</span>
-        <div class="fn2"><span>Amazon Vendor Central | Toolstation | B&amp;Q | Screwfix | Costco | Wickes | The Range | Robert Dyas | Homebase | YESSS | CEF | Edmundson | WF Senate | Export partners</span></div>
+        <span class="cap2">TARGET CHANNELS</span>
+        <div class="fn2"><span>National retailers · Trade merchants · Electrical wholesalers · Commercial distributors · Export partners</span></div>
       </div>
     </div>
     <div class="sm-head">
       <span class="kicker">The Freedom System</span>
-      <h2>One Group. Three Companies.<br><span class="grad-text">One Orbit Around Holdings.</span></h2>
-      <p>Holdings owns the three operating companies — and every brand, trademark and piece of IP. Each licences the marks to its own market, royalties return every quarter, and new ventures plug into the same engine. Hover a planet to explore.</p>
+      <h2>One Group. One Commercial Engine.<br><span class="grad-text">Multiple Paths to Growth.</span></h2>
+      <p>Freedom Group Holdings owns the group&rsquo;s brands, trademarks and intellectual property, licensing them to specialist operating companies. Freedom Global is the established operating company today — the immediate investment focus — with further businesses planned as the group develops. Hover a planet to explore.</p>
     </div>
     <div class="sm-stats" role="list">
       <div role="listitem" style="--c:var(--pink)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3.4 2.5 3.4 15.5 0 18M12 3c-3.4 2.5-3.4 15.5 0 18"/></svg>
-        <b>1</b><span class="l">Holding company</span><span class="s">The centre of the system</span>
+        <b>1</b><span class="l">Holding company</span><span class="s">Owns the brands, IP and strategy</span>
       </div>
       <div role="listitem" style="--c:var(--blue)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.4"/><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="19.4" cy="7.6" r="1.3" fill="currentColor" stroke="none"/></svg>
-        <b>1</b><span class="l">Operating companies</span><span class="s">Licensed to operate and scale</span>
+        <b>1</b><span class="l">Active operating company</span><span class="s">The commercial engine trading today</span>
       </div>
       <div role="listitem" style="--c:var(--ember)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.4c0 5-3.2 8.3-7.5 10.1C7.7 19.7 4.5 16.4 4.5 11.4V6z"/><path d="M8.7 12l2.3 2.3 4.4-4.6"/></svg>
-        <b>2</b><span class="l">Marks in the vault</span><span class="s">Owned by Holdings, used by all</span>
+        <b>2</b><span class="l">Planned companies</span><span class="s">Next specialist businesses in development</span>
       </div>
       <div role="listitem" style="--c:var(--mint)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8c2.7 2 4.1 5 4.1 8.2 0 1.5-.3 3-.8 4.3H8.7a11.7 11.7 0 0 1-.8-4.3c0-3.2 1.4-6.2 4.1-8.2z"/><circle cx="12" cy="9.8" r="1.7"/><path d="M8.8 15.3L7.2 18.9l3.1-1.1M15.2 15.3l1.6 3.6-3.1-1.1"/></svg>
-        <b>4</b><span class="l">Future companies</span><span class="s">Planned for future growth</span>
+        <b>4</b><span class="l">Future ventures</span><span class="s">Long-term wider group vision</span>
       </div>
       <p class="hint">Hover a planet — every family lights up together.</p>
     </div>
     <div class="sm-brands">
       <div class="bx">
-      <span class="cap2">KEY BRANDS</span>
-      <div class="chips">
-        ${[BRANDS.slice(0, 3), BRANDS.slice(3, 6), BRANDS.slice(6, 9), BRANDS.slice(9, 12)].map(row => `
-          <div class="brand-row">${row.map(([n, c, ico]) =>
-            `<span class="sm-brand" style="--c:${c}"><span class="brand-ico">${ico}</span>${n}</span>`).join("")}</div>`).join("")}
-      </div>
+      <span class="cap2">CURRENT INVESTMENT FOCUS</span>
+      <p class="focus-p">Freedom Global Ltd is the established ecommerce business being scaled today. The wider group represents the long-term strategic opportunity created around it.</p>
       </div>
     </div>
   `;
@@ -6312,23 +6362,23 @@ function renderSystem() {
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
     panelBelow: { align: "center", topY: 1057, nudgeX: 15 }, panelColor: "#d7b35f", autoOpen: true,
-    title: "Future Ltd aspirations · 2029",
+    title: "Future Ventures · 2029",
     items: [
-      { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "#e8c15c",
-        d: "2029 · First property acquisitions — buying the warehouses and fulfilment centres Global and Distribution already operate from, the start of a wider commercial portfolio." },
-      { n: "Freedom Freight Ltd", cat: "Global logistics", catC: "#e8c15c",
-        d: "2029 · The in-house freight arm — importing 30&ndash;40 containers a month across the group&rsquo;s brands, with our own team managing all freight control." },
+      { n: "Freedom Form Ltd", cat: "Future · 2029 — Property · Development · Design", catC: "#e8c15c",
+        d: "A future commercial-property platform supporting the group&rsquo;s premises, acquisitions and long-term asset growth." },
+      { n: "Freedom Freight Ltd", cat: "Future · 2029 — Freight · Imports · Logistics", catC: "#e8c15c",
+        d: "A future logistics arm supporting international imports, group-wide freight control and supply-chain efficiency." },
     ],
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
     panelBelow: { align: "center", topY: 1057, nudgeX: -30 }, panelColor: "#a487df", autoOpen: true,
-    title: "Future Ltd aspirations · 2030+",
+    title: "Future Ventures · 2030+",
     items: [
-      { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "#b18cff",
-        d: "2030 · The official launch of the drone and visual-graphics business — flying site surveys for Freedom Facilities&rsquo; compliance and construction work." },
-      { n: "Freedom Fuel Ltd", cat: "Forecourts &amp; fuel retail", catC: "#b18cff",
-        d: "2036+ · Extends the Freedom Form portfolio into petrol-station forecourts — buying the sites, selling the fuel, and stocking the stores with the group&rsquo;s own brands." },
+      { n: "Freedom Fly Ltd", cat: "Future · 2030+ — Drone Technology · Aerial Services", catC: "#b18cff",
+        d: "A future specialist business focused on surveying, inspection and aerial visual services." },
+      { n: "Freedom Fuel Ltd", cat: "Future · 2036+ — Forecourts · Energy · Retail", catC: "#b18cff",
+        d: "A long-term ambition to develop or acquire forecourt and convenience-retail locations." },
     ],
   });
 
@@ -6532,9 +6582,12 @@ function renderSystem() {
     reg(mark, a, a + .03, "fade");
   });
   // strict one-at-a-time company chains: lane → planet → panel
-  const chain = (key, l0, l1, p0, p1, c0, c1) => {
+  const chain = (key, l0, l1, p0, p1, c0, c1, dashed) => {
     const lane = q(".fl-" + key), glow = q(".g-" + key), roy = q(".ry-" + key);
-    if (lane) { lane.setAttribute("pathLength", "1"); lane.style.strokeDasharray = "1"; reg(lane, l0, l1, "draw"); }
+    // dashed (planned/future) lanes keep their CSS dash pattern, so they fade
+    // in rather than using the pathLength draw trick (which forces solid)
+    if (lane && dashed) reg(lane, l0, l1, "fade");
+    else if (lane) { lane.setAttribute("pathLength", "1"); lane.style.strokeDasharray = "1"; reg(lane, l0, l1, "draw"); }
     reg(glow, l0, l1, "fade");
     reg(roy, l0, l1, "fade");
     const pl = planetFor(key);
@@ -6547,12 +6600,12 @@ function renderSystem() {
   chain("fly", .19, .23, .23, .27, .265, .296);
   reg(map.querySelector(".sm-brands"), .27, .296, "rise");   // the vault completes the flagship column inside its own year
   reg(q(".stem-brands"), .27, .296, "fade");
-  chain("form", .366, .406, .406, .446, .441, .472);
-  chain("storm", .542, .582, .582, .622, .617, .648);
+  chain("form", .366, .406, .406, .446, .441, .472, true);
+  chain("storm", .542, .582, .582, .622, .617, .648, true);
   // the future stations' lanes ride inside their own year blocks — planet/card
   // lookups no-op for these keys, so only lane + glow + royalty register
-  chain("ds1", .718, .758, .758, .758, .758, .77);
-  chain("ds2", .894, .934, .934, .934, .934, .946);
+  chain("ds1", .718, .758, .758, .758, .758, .77, true);
+  chain("ds2", .894, .934, .934, .934, .934, .946, true);
   reg(svgEl.querySelector(".mg-rocket"), .07, .115, "fade");     // the courier launches right behind the headline
   [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, idx ? .934 : .758, idx ? .974 : .798, "fade"));
   [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, idx ? .969 : .793, idx ? 1 : .824, "rise"));

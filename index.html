@@ -4493,6 +4493,35 @@ function initCourier() {
   // THE RAISE showcase lap — a slower, wider circuit around the funding
   // brief while the cloud chapter scrolls (and it keeps gliding when parked)
   const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + raiseSpinRel * .55;
+  /* A small Catmull-Rom flight sampler used by the two authored hand-offs.
+     Keeping these corridors viewport-anchored prevents the route moving under
+     the rocket while the surrounding sections are themselves scrolling. */
+  const flightSpline = (points, t) => {
+    const n = points.length - 1;
+    const z = cl01(t) * n;
+    const i = Math.min(n - 1, Math.floor(z)), u = z - i;
+    const p = k => points[Math.max(0, Math.min(n, k))];
+    const p0 = p(i - 1), p1 = p(i), p2 = p(i + 1), p3 = p(i + 2);
+    return {
+      x: p1.x + .5 * u * (p2.x - p0.x + u * (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x + u * (3 * (p1.x - p2.x) + p3.x - p0.x))),
+      y: p1.y + .5 * u * (p2.y - p0.y + u * (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y + u * (3 * (p1.y - p2.y) + p3.y - p0.y)))
+    };
+  };
+  // Same curve with authored progress keys. The recording's upper sweep is
+  // fast, while the gutter descent occupies most of the remaining scroll;
+  // equal point spacing would let the projection cards rise into the route.
+  const flightSplineKeyed = (points, t) => {
+    const z = cl01(t);
+    let i = 0;
+    while (i < points.length - 2 && z > points[i + 1].t) i++;
+    const p = k => points[Math.max(0, Math.min(points.length - 1, k))];
+    const p0 = p(i - 1), p1 = p(i), p2 = p(i + 1), p3 = p(i + 2);
+    const u = cl01((z - p1.t) / Math.max(.0001, p2.t - p1.t));
+    return {
+      x: p1.x + .5 * u * (p2.x - p0.x + u * (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x + u * (3 * (p1.x - p2.x) + p3.x - p0.x))),
+      y: p1.y + .5 * u * (p2.y - p0.y + u * (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y + u * (3 * (p1.y - p2.y) + p3.y - p0.y)))
+    };
+  };
   const pathRide = sels => {
     const els = sels.map(s => document.querySelector(s)).filter(e2 => e2 && e2.getTotalLength);
     if (!els.length) return null;
@@ -4514,6 +4543,10 @@ function initCourier() {
       // line is segment-built) so the ride flows instead of kinking
       const eased = t => {
         const s3 = .022;
+        // Preserve the true endpoints. Averaging at t=0 moved the hand-off
+        // one year along the line (2024 instead of the cursor-marked 2023).
+        if (t <= 0) return ptAt(0);
+        if (t >= 1) return ptAt(1);
         const A3 = ptAt(Math.max(0, t - s3)), B3 = ptAt(t), C3 = ptAt(Math.min(1, t + s3));
         return (A3 && B3 && C3)
           ? { x: (A3.x + B3.x + C3.x) / 3, y: (A3.y + B3.y + C3.y) / 3 }
@@ -4542,6 +4575,37 @@ function initCourier() {
     if (g2 && g2.s1 - g2.s0 > 60) { g2.kind = "growth"; segs.push(g2); }
     const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
     if (t3 && t3.s1 - t3.s0 > 60) { t3.kind = "traj"; segs.push(t3); }
+    /* GROWTH → 2036 TRANSFER
+       Cursor-traced route from the supplied recording: dive into the right
+       whitespace, sweep left through the clear inter-section band, make the
+       cursor's small port-side hook, descend the outside gutter, dip low and
+       curl nose-first into the REAL 2023 trajectory point. */
+    if (g2 && t3 && t3.s0 - g2.s1 > 80) {
+      segs.push({
+        transfer: true, s0: g2.s1, s1: t3.s0,
+        at: q => {
+          const a = g2.at(1), b = t3.at(0);
+          const gx = Math.max(54, innerWidth * .046);
+          return flightSplineKeyed([
+            { t: 0,   x: Math.min(innerWidth - 48, a.x), y: vh * .23 },
+            { t: .05, x: innerWidth * .84, y: vh * .29 },
+            { t: .11, x: innerWidth * .89, y: vh * .45 },
+            { t: .17, x: innerWidth * .865, y: vh * .565 },
+            { t: .22, x: innerWidth * .65, y: vh * .585 },
+            { t: .25, x: innerWidth * .565, y: vh * .545 },
+            { t: .265, x: Math.max(gx, innerWidth * .07), y: vh * .50 },
+            { t: .275, x: innerWidth * .205, y: vh * .412 },
+            { t: .283, x: innerWidth * .116, y: vh * .42 },
+            { t: .295, x: gx, y: vh * .675 },
+            { t: .38, x: gx, y: vh * .726 },
+            { t: .58, x: innerWidth * .081, y: vh * .81 },
+            { t: .68, x: innerWidth * .061, y: vh * .84 },
+            { t: .82, x: innerWidth * .122, y: vh * .907 },
+            { t: 1,   x: Math.max(gx, b.x), y: vh * .88 }
+          ], q);
+        }
+      });
+    }
     // orbit-insertion at the destination planet — held for the FULL planet
     // scrub — followed by an uninterrupted long-range descent to the pad.
     const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
@@ -4665,23 +4729,29 @@ function initCourier() {
           // off the first line graph's summit: sink fluidly, CURL LEFT, then
           // drop straight back down into the second line graph's first point
           const iw = innerWidth;
-          // bend AROUND the section title: swing across the top band above
-          // it, drop down the page's left side, then curve smoothly into the
-          // next line graph's first point
+          // off the first graph's summit: DROP first (clear on the right of
+          // the stat tiles), reach the low centre while the chart scrolls
+          // away, curve LEFT to the margin, then rise INTO the second line
+          // graph exactly where its line begins
+          const vhB = innerHeight;
           P4 = [a2,
-            { x: Math.min(iw - 60, a2.x + 110), y: a2.y + Math.max(24, (b2.y - a2.y) * .05) },
-            { x: iw * .52, y: Math.max(a2.y + 40, 112) },
-            { x: gxL + 22, y: Math.max(a2.y + 66, 132) },
-            { x: gxL, y: a2.y + (b2.y - a2.y) * .58 },
-            { x: gxL, y: a2.y + (b2.y - a2.y) * .80 },
+            { x: Math.min(iw - 50, a2.x + 90), y: a2.y + 30 },
+            { x: iw * .80, y: Math.max(a2.y + 70, vhB * .36) },
+            { x: iw * .46, y: vhB * .56 },
+            { x: iw * .16, y: vhB * .67 },
+            { x: gxL + 12, y: vhB * .75 },
+            { x: Math.max(gxL, b2.x - 130), y: Math.min(vhB * .93, b2.y + 55) },
             b2];
         } else if (toOrbit) {
           // viewport-anchored: bank left off the summit, take the screen's
           // centre line (the grid's column seam scrolls along it), hold it
-          // through the middle of the view, then peel to orbit entry
+          // through the middle of the view, then sweep BELOW the two cards,
+          // get outside the planet's port limb and approach orbit nose-first
           const cxV = innerWidth / 2 - 6;   // dead centre of the grid's column gap
           const seamTop = Math.max(a2.y + 40, innerHeight * .42);
           const seamBot = Math.max(seamTop + 60, innerHeight * .7);
+          const portX = Math.max(gxL, b2.x - Math.min(150, innerWidth * .13));
+          const approachY = Math.min(innerHeight * .9, Math.max(seamBot + 54, b2.y + 26));
           // three colinear seam points stiffen the spline — no lateral
           // overshoot into either panel flanking the gap
           P4 = [a2,
@@ -4689,8 +4759,10 @@ function initCourier() {
             { x: cxV, y: seamTop },
             { x: cxV, y: (seamTop + seamBot) / 2 },
             { x: cxV, y: seamBot },
+            { x: gxL, y: approachY },
+            { x: portX, y: approachY },
             b2];
-          seamBand = { y0: seamTop + 8, y1: seamBot, x: cxV };
+          seamBand = { y0: seamTop + 8, y1: seamBot - 8, x: cxV };
         } else {
           P4 = haul > innerHeight * 1.45
             ? [a2, mom,
@@ -4849,7 +4921,7 @@ function initCourier() {
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
           // preserving the authored flight path.
-          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.q == null ? 16 : 7.8));   // blends ride the authored route tightly — no corner-cutting across panels
+          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.q == null ? 16 : 12.5));  // stay close to the cursor-authored bends without snapping
           if (!posS || snap) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
@@ -4860,8 +4932,12 @@ function initCourier() {
           revealGraph(segs, "traj", yEffNow);
           lightDots(segs, "growth", gDotsC, yEffNow, P.x);
           lightDots(segs, "traj", tDotsC, yEffNow, P.x);
-          const A2 = locate(segs, yAt(Math.min(1, pd + .007))).p;
-          const B2 = locate(segs, yAt(Math.max(0, pd - .007))).p;
+          // Read a genuinely local tangent.  A wider sample looked fine on
+          // the long diagonals, but it straddled both bends of the narrow
+          // centre-seam descent and made the ship point sideways there.
+          const headingStep = .0024;
+          const A2 = locate(segs, yAt(Math.min(1, pd + headingStep))).p;
+          const B2 = locate(segs, yAt(Math.max(0, pd - headingStep))).p;
           const padQ = L0.pq != null ? L0.pq : null;
           // heading: landing burn = nose skyward; in orbit it follows the
           // ellipse tangent analytically (so the time-driven spin reads as

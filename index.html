@@ -4580,18 +4580,14 @@ function initCourier() {
       finale: true, s0: orbitEnd,
       s1: Math.min(padS0 != null ? padS0 - vh * .22 : S1, raiseSpan ? raiseSpan.s0 - vh * .25 : S1, S1),
       at: q => {
-        const u = smt5(cl01(q)), R = Math.min(innerWidth, vh) * .33;
-        const a = { x: innerWidth / 2 - R * 1.12, y: vh * .52 };
-        const b = { x: Math.min(innerWidth - 60, innerWidth * .86), y: vh * .945 };
-        const c1 = { x: Math.max(58, innerWidth * .08), y: vh * .64 };
-        const c2 = { x: Math.min(innerWidth - 64, innerWidth * .93), y: vh * .82 };
-        const om = 1 - u;
-        const p2 = {
-          x: om * om * om * a.x + 3 * om * om * u * c1.x + 3 * om * u * u * c2.x + u * u * u * b.x,
-          y: om * om * om * a.y + 3 * om * om * u * c1.y + 3 * om * u * u * c2.y + u * u * u * b.y
+        // the team chapter reads underneath — the courier keeps to the page's
+        // left margin, descending with a light living sway
+        const u = smt(cl01(q));
+        const gx2 = Math.max(52, innerWidth * .05);
+        return {
+          x: gx2 + Math.sin(u * Math.PI * 2.2) * 14,
+          y: vh * (.30 + u * .62)
         };
-        p2.x += Math.sin(u * Math.PI * 5.2) * innerWidth * .035 * Math.sin(Math.PI * u);
-        return p2;
       }
     });
     if (raiseSpan) {
@@ -4674,8 +4670,8 @@ function initCourier() {
           // next line graph's first point
           P4 = [a2,
             { x: Math.min(iw - 60, a2.x + 110), y: a2.y + Math.max(24, (b2.y - a2.y) * .05) },
-            { x: iw * .52, y: a2.y + 42 },
-            { x: gxL + 22, y: a2.y + 70 },
+            { x: iw * .52, y: Math.max(a2.y + 40, 112) },
+            { x: gxL + 22, y: Math.max(a2.y + 66, 132) },
             { x: gxL, y: a2.y + (b2.y - a2.y) * .58 },
             { x: gxL, y: a2.y + (b2.y - a2.y) * .80 },
             b2];

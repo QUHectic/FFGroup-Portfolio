@@ -4477,19 +4477,19 @@ function initCourier() {
   // sky exit → the journey timeline's rail → the growth line → the
   // trajectory line → 360° orbit-insertion at the destination planet.
   // Smooth blends bridge the gaps, so the whole flight is one seamless path.
-  // The courier holds orbit for the WHOLE planet chapter — and the spin is
-  // TIME-DRIVEN, so it keeps circling the globe even while the visitor
-  // parks mid-chapter (one extra scroll-driven revolution keeps the scrub
-  // feeling connected). courierSpin is set every frame; deterministic in
-  // the snap-verification hook.
+  // The courier holds orbit for the whole planet chapter. Its orbit is
+  // deliberately scroll-driven: when scrolling stops, the rocket stops.
   const ORBIT_REVS = 1;
   let courierSpin = 0;
   const SPIN_W = T2 / 9500;                    // one lap ≈ 9.5s while parked
-  // the spins LATCH at each circuit's entry, so the circle always BEGINS
-  // exactly where the courier arrives (nine o'clock for the planet — the
-  // side it flies in from) and the time-spin builds up only after insertion
+  // The funding showcase can keep its ambient lap, but the globe must stay
+  // locked to the visitor's scroll position.
   let orbitSpinRel = 0, raiseSpinRel = 0;
-  const orbitTh = q => Math.PI + smt5(cl01(q)) * T2 * ORBIT_REVS + orbitSpinRel;
+  // Insert on the globe's right-hand limb. The approach now remains in the
+  // clear right gutter after the 2036 graph instead of crossing the cards.
+  // Linear angular progress preserves the incoming downward tangent at the
+  // right limb and avoids an ease-in pause or acceleration kink on entry.
+  const orbitTh = q => cl01(q) * T2 * ORBIT_REVS;
   // THE RAISE showcase lap — a slower, wider circuit around the funding
   // brief while the cloud chapter scrolls (and it keeps gliding when parked)
   const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + raiseSpinRel * .55;
@@ -4586,22 +4586,36 @@ function initCourier() {
         at: q => {
           const a = g2.at(1), b = t3.at(0);
           const gx = Math.max(54, innerWidth * .046);
+          const statR = document.querySelector("#growth .stat-row")?.getBoundingClientRect();
+          const headR = document.querySelector("#projections .sec-head")?.getBoundingClientRect();
+          // Follow the real whitespace between the two sections. This keeps
+          // the crossing inside the large empty band at every viewport height
+          // instead of guessing a fixed y-coordinate.
+          const openBandY = statR && headR ? (statR.bottom + headR.top) / 2 : vh * .34;
+          const laneY = Math.max(vh * .22, Math.min(vh * .56, openBandY));
           return flightSplineKeyed([
-            { t: 0,   x: Math.min(innerWidth - 48, a.x), y: vh * .23 },
-            { t: .05, x: innerWidth * .84, y: vh * .29 },
-            { t: .11, x: innerWidth * .89, y: vh * .45 },
-            { t: .17, x: innerWidth * .865, y: vh * .565 },
-            { t: .22, x: innerWidth * .65, y: vh * .585 },
-            { t: .25, x: innerWidth * .565, y: vh * .545 },
-            { t: .265, x: Math.max(gx, innerWidth * .07), y: vh * .50 },
-            { t: .275, x: innerWidth * .205, y: vh * .412 },
-            { t: .283, x: innerWidth * .116, y: vh * .42 },
-            { t: .295, x: gx, y: vh * .675 },
-            { t: .38, x: gx, y: vh * .726 },
-            { t: .58, x: innerWidth * .081, y: vh * .81 },
-            { t: .68, x: innerWidth * .061, y: vh * .84 },
-            { t: .82, x: innerWidth * .122, y: vh * .907 },
-            { t: 1,   x: Math.max(gx, b.x), y: vh * .88 }
+            // Exact endpoints remove the graph/transfer boundary hops. The
+            // broad sweep now receives real scroll time: the former .250 to
+            // .265 keys crossed almost the entire viewport in one frame.
+            { t: 0,   x: a.x, y: a.y },
+            { t: .05, x: innerWidth * .84, y: a.y + 30 },
+            { t: .10, x: innerWidth * .89, y: laneY },
+            { t: .14, x: innerWidth * .86, y: laneY },
+            // A genuinely straight leftward pass through the open band.
+            { t: .18, x: innerWidth * .68, y: laneY },
+            { t: .22, x: innerWidth * .48, y: laneY },
+            { t: .26, x: innerWidth * .29, y: laneY },
+            { t: .30, x: innerWidth * .13, y: laneY },
+            { t: .34, x: gx, y: laneY },
+            { t: .38, x: gx, y: laneY },
+            // Only after the left edge is reached does the descent begin.
+            { t: .44, x: gx, y: vh * .55 },
+            { t: .53, x: gx, y: vh * .70 },
+            { t: .64, x: gx, y: vh * .79 },
+            { t: .74, x: innerWidth * .07, y: vh * .84 },
+            { t: .84, x: innerWidth * .11, y: vh * .90 },
+            { t: .94, x: innerWidth * .18, y: vh * .90 },
+            { t: 1,   x: b.x, y: b.y }
           ], q);
         }
       });
@@ -4644,14 +4658,28 @@ function initCourier() {
       finale: true, s0: orbitEnd,
       s1: Math.min(padS0 != null ? padS0 - vh * .22 : S1, raiseSpan ? raiseSpan.s0 - vh * .25 : S1, S1),
       at: q => {
-        // the team chapter reads underneath — the courier keeps to the page's
-        // left margin, descending with a light living sway
-        const u = smt(cl01(q));
-        const gx2 = Math.max(52, innerWidth * .05);
-        return {
-          x: gx2 + Math.sin(u * Math.PI * 2.2) * 14,
-          y: vh * (.30 + u * .62)
-        };
+        // Exit from the exact point and tangent where the orbit finishes:
+        // right limb, travelling downward. Compensating for scroll freezes the
+        // boundary anchor after the sticky globe releases, preventing the old
+        // planet-to-page jump.
+        const z = cl01(q);
+        const liveExit = orbitAt(1);
+        const start = { x: liveExit.x, y: liveExit.y + (scrollY - orbitEnd) };
+        const rightLane = Math.min(innerWidth - 56, innerWidth * .93);
+        const p4 = flightSplineKeyed([
+          { t: 0,   x: start.x, y: start.y },
+          { t: .08, x: start.x, y: start.y + 58 },
+          { t: .18, x: Math.min(rightLane - 80, start.x + 92), y: Math.max(start.y + 112, vh * .64) },
+          { t: .30, x: rightLane - 24, y: vh * .72 },
+          { t: .42, x: rightLane, y: vh * .78 },
+          { t: .70, x: rightLane, y: vh * .85 },
+          { t: 1,   x: rightLane, y: vh * .92 }
+        ], z);
+        // A restrained bank after the exit keeps the long right-gutter run
+        // alive without moving autonomously while scrolling is parked.
+        const sway = smt(cl01((z - .35) / .35)) * (1 - smt(cl01((z - .72) / .28)));
+        p4.x += Math.sin(z * Math.PI * 2) * 7 * sway;
+        return p4;
       }
     });
     if (raiseSpan) {
@@ -4716,11 +4744,9 @@ function initCourier() {
           x: Math.max(40, Math.min(innerWidth - 40, a2.x + (exitRight ? 96 : -96))),
           y: a2.y + Math.max(26, (b2.y - a2.y) * .07)
         };
-        // the planet sits dead-centre and the 2036 grid's column gap runs
-        // straight down the middle — the orbit approach banks OVER the grid,
-        // drops through that centre seam, and exits beneath it to the planet
-        // (the screen-recorded cursor route); every other haul rides a page
-        // gutter on its exit side
+        // The 2036 analytics occupy the middle of the page. The globe approach
+        // therefore holds the open right gutter until the cards have cleared,
+        // then rolls inward to a right-hand orbital insertion point.
         const toOrbit = !!s.orbit;
         const toTraj = s.kind === "traj";
         const gx = exitRight ? gxR : gxL;
@@ -4743,26 +4769,23 @@ function initCourier() {
             { x: Math.max(gxL, b2.x - 130), y: Math.min(vhB * .93, b2.y + 55) },
             b2];
         } else if (toOrbit) {
-          // viewport-anchored: bank left off the summit, take the screen's
-          // centre line (the grid's column seam scrolls along it), hold it
-          // through the middle of the view, then sweep BELOW the two cards,
-          // get outside the planet's port limb and approach orbit nose-first
-          const cxV = innerWidth / 2 - 6;   // dead centre of the grid's column gap
-          const seamTop = Math.max(a2.y + 40, innerHeight * .42);
-          const seamBot = Math.max(seamTop + 60, innerHeight * .7);
-          const portX = Math.max(gxL, b2.x - Math.min(150, innerWidth * .13));
-          const approachY = Math.min(innerHeight * .9, Math.max(seamBot + 54, b2.y + 26));
-          // three colinear seam points stiffen the spline — no lateral
-          // overshoot into either panel flanking the gap
+          const iw = innerWidth, ih = innerHeight;
+          const rightLane = Math.min(iw - 58, iw * .93);
+          const shoulderX = Math.min(rightLane, Math.max(a2.x + 105, iw * .82));
+          const approachX = Math.min(rightLane - 24, Math.max(b2.x + 120, iw * .76));
+          const approachY = Math.min(ih * .84, Math.max(b2.y - 84, ih * .66));
+          // Carry the graph's summit tangent to the right, settle into one
+          // continuous vertical lane, then use progressively tighter bends to
+          // meet the globe tangent without a positional or heading snap.
           P4 = [a2,
-            { x: Math.max(40, a2.x - 96), y: a2.y + Math.max(20, (seamTop - a2.y) * .3) },
-            { x: cxV, y: seamTop },
-            { x: cxV, y: (seamTop + seamBot) / 2 },
-            { x: cxV, y: seamBot },
-            { x: gxL, y: approachY },
-            { x: portX, y: approachY },
+            { x: shoulderX, y: a2.y + 34 },
+            { x: rightLane, y: Math.max(a2.y + 82, ih * .36) },
+            { x: rightLane, y: ih * .54 },
+            { x: rightLane, y: ih * .72 },
+            { x: approachX, y: approachY },
+            { x: b2.x + 76, y: b2.y - 62 },
+            { x: b2.x, y: b2.y - 42 },
             b2];
-          seamBand = { y0: seamTop + 8, y1: seamBot - 8, x: cxV };
         } else {
           P4 = haul > innerHeight * 1.45
             ? [a2, mom,
@@ -4894,14 +4917,12 @@ function initCourier() {
       if (S1 - S0 > vh) {
         const pt = cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
-        // the orbit's own clock — keeps the courier circling the planet even
-        // while the page is parked (deterministic under the snap hook). The
-        // spin RE-LATCHES until each circuit is actually entered, so insertion
-        // always happens at the arrival point.
+        // The globe orbit is cursor/scroll controlled; only the later funding
+        // showcase retains an ambient clock.
         courierSpin = (snap ? pd * 12000 : now) * SPIN_W;
         if (!inOrbitPrev || orbitSpin0 == null) orbitSpin0 = courierSpin;
         if (!inRaisePrev || raiseSpin0 == null) raiseSpin0 = courierSpin;
-        orbitSpinRel = courierSpin - orbitSpin0;
+        orbitSpinRel = 0;
         raiseSpinRel = courierSpin - raiseSpin0;
         const k = snap ? 1 : 1 - Math.exp(-dt * (5.4 + Math.abs(pt - pd) * 260));   // adaptive: big gaps close fast — no summit lag — small ones stay soft
         // travelling direction — scrolling back up TURNS the ship around so
@@ -4912,6 +4933,17 @@ function initCourier() {
         if (Math.abs(pt - pd) < .0005) pd = pt;
         if (pd > .0004) {
           const segs = buildSegs(S0, S1, pT, vh);
+          const orbitSeg = segs.find(s2 => s2.orbit);
+          // From the final analytics hand-off through the globe exit, the
+          // visitor's scroll is the one and only clock.  Using the globally
+          // eased progress here made the courier continue catching up after
+          // the cursor stopped and was the source of the entry/exit "jump".
+          // Start the lock well inside the clear right-gutter approach and
+          // keep it through the first part of the departure corridor.
+          const globeLocked = !!orbitSeg
+            && scrollY >= orbitSeg.s0 - vh * .9
+            && scrollY <= orbitSeg.s1 + vh * .75;
+          if (globeLocked) pd = pt;
           const yAt = pv => S0 + pv * (S1 - S0);
           const yEffNow = yAt(pd);
           const L0 = locate(segs, yEffNow);
@@ -4921,8 +4953,8 @@ function initCourier() {
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
           // preserving the authored flight path.
-          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.q == null ? 16 : 12.5));  // stay close to the cursor-authored bends without snapping
-          if (!posS || snap) posS = { x: P.x, y: P.y };
+          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 20 : (L0.q == null ? 16 : 12.5)));  // orbit responds tightly to scroll and settles immediately
+          if (!posS || snap || L0.oq != null || globeLocked) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
             posS.y += (P.y - posS.y) * posK;
@@ -4966,19 +4998,22 @@ function initCourier() {
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
           while (dA < -Math.PI) dA += T2;
-          const angK = snap ? 1 : 1 - Math.exp(-dt * 7);
-          angS += dA * angK;
+          const angK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 14 : 7));
+          if (L0.oq != null || globeLocked) { angS = ta; dA = 0; }
+          else angS += dA * angK;
           // Layered time-based drift moves perpendicular to the flight path:
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
           const lifeT = snap ? pd * 10000 : now;           // deterministic in the verification hook
           const drift = (Math.sin(lifeT * .00165 + pd * 17) * 2.5
-            + Math.sin(lifeT * .00061 + 1.2) * 1.15) * (L0.oq == null ? 1 : .55)
+            + Math.sin(lifeT * .00061 + 1.2) * 1.15) * (L0.oq == null && !globeLocked ? 1 : 0)
             * (padQ == null ? 1 : 1 - smt(cl01(padQ)));   // the wobble dies at touchdown
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
           const bank = Math.max(-.075, Math.min(.075, dA * .22));
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
-          let sc = 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
+          // No autonomous breathing while orbiting: the globe rocket's
+          // position, heading and scale are all dictated by scroll.
+          let sc = (L0.oq != null || globeLocked) ? 1 : 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
           if (padQ != null) {
             // the courier ENLARGES into the pad rocket as it settles on the slot
             const ps = window.__ffPadScale ? window.__ffPadScale() : 2.2;

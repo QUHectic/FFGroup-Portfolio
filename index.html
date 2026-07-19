@@ -801,7 +801,7 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-flock.f3{animation-duration:38s;animation-delay:-11s;}
 .lo-flock.f4{animation-duration:52s;animation-delay:-37s;}
 @keyframes loBirds{from{transform:translateX(-240px);}to{transform:translateX(2160px);}}
-.bird path{fill:none;stroke:#f4f8ff;stroke-width:3.4;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(226,238,255,.65));}
+.bird path{fill:none;stroke:#ffffff;stroke-width:4.2;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(230,240,255,.85));}
 .bird{animation:birdBob 2.6s ease-in-out infinite;}
 .bird.b{animation-delay:-.9s;}
 .bird.c{animation-delay:-1.7s;}
@@ -838,6 +838,21 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-vent{transform-box:fill-box;transform-origin:50% 100%;animation:loVent 7.5s ease-in-out infinite alternate;}
 .lo-vent.v2{animation-duration:9.5s;animation-delay:-4s;}
 @keyframes loVent{from{transform:scale(1) translateX(0);opacity:.5;}to{transform:scale(1.25) translateX(14px);opacity:.22;}}
+/* DEPTH RIG — scroll-parallax fog, foreground silhouette and vignette give
+   the complex real depth; each layer rides --lopar at its own rate */
+.lo-fog{position:absolute;left:-4%;width:108%;height:10%;top:56%;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0,rgba(186,212,252,.075) 260px,transparent 620px);
+  filter:blur(7px);animation:loFogShift 84s linear infinite;
+  transform:translateX(calc(var(--lopar,0)*-46px));}
+.lo-fog.fg2{top:62.5%;height:8%;opacity:.8;animation-duration:118s;animation-delay:-52s;
+  transform:translateX(calc(var(--lopar,0)*-84px));}
+@keyframes loFogShift{to{background-position:1240px 0;}}
+.lo-fore{position:absolute;left:0;bottom:-2px;width:100%;height:12%;pointer-events:none;
+  transform:translateY(calc((1 - var(--lopar,0))*30px));}
+.lo-vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(118% 96% at 50% 58%,transparent 58%,rgba(2,3,6,.5) 100%);}
+@media (max-width:760px){.lo-fog,.lo-fore,.lo-vig{display:none;}}
+
 /* MISSION CONTROL — a glass console strip carrying the status board, the
    countdown readout and the launch button */
 /* mission control mans the LOWER-LEFT corner so the bird on the pad is never
@@ -891,7 +906,7 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .liftoff-btn:active{transform:translateY(1px) scale(.99);}
 #liftoff.launching .liftoff-btn{pointer-events:none;filter:saturate(.6) brightness(.8);}
 .lo-hint{display:block;margin-top:12px;font-size:.7rem;color:rgba(243,244,251,.45);letter-spacing:.06em;}
-@media (prefers-reduced-motion:reduce){.lo-flock,.bird,.bird .wl,.bird .wr,.lo-vent,.lo-beacon,.liftoff-btn i,.lo-tw,.lo-shooter,.lo-cloud,.lo-dish,.lo-sock,.lo-fly,.lo-grass,.lo-cone-breathe{animation:none;}.lo-shooter{opacity:0;}}
+@media (prefers-reduced-motion:reduce){.lo-flock,.bird,.bird .wl,.bird .wr,.lo-vent,.lo-beacon,.liftoff-btn i,.lo-tw,.lo-shooter,.lo-cloud,.lo-dish,.lo-sock,.lo-fly,.lo-grass,.lo-cone-breathe,.lo-fog{animation:none;}.lo-shooter{opacity:0;}}
 @media (max-width:760px){
   #liftoff{padding-top:48px;}
   /* phones get a PAD-CENTRED CROP: the art renders 2.4× the container and
@@ -2686,24 +2701,24 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <!-- BIRDS — small flocks with genuinely flapping wings, gliding by at
              different heights, speeds and depths -->
         <g class="lo-flock f1" opacity="1">
-          <g class="bird" transform="translate(0 184) scale(2.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(72 206) scale(2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(136 172) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(200 194) scale(1.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird" transform="translate(0 296) scale(3.2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(84 318) scale(2.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(158 284) scale(2.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(232 306) scale(2.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f2" opacity=".8">
-          <g class="bird" transform="translate(0 262) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(58 278) scale(1.5)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(112 256) scale(1.35)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f2" opacity=".92">
+          <g class="bird" transform="translate(0 388) scale(2.3)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(66 404) scale(1.9)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird b" transform="translate(128 380) scale(1.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
-        <g class="lo-flock f3" opacity=".65">
-          <g class="bird b" transform="translate(0 122) scale(1.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird" transform="translate(46 110) scale(1.25)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(92 130) scale(1.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+        <g class="lo-flock f3" opacity=".8">
+          <g class="bird b" transform="translate(0 232) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird" transform="translate(52 220) scale(1.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(104 240) scale(1.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
         <g class="lo-flock f4" opacity=".9">
-          <g class="bird" transform="translate(0 330) scale(2.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(66 348) scale(1.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird" transform="translate(0 452) scale(2.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
+          <g class="bird c" transform="translate(76 470) scale(2.2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
         </g>
         <!-- moonlit horizon band -->
         <rect x="0" y="452" width="1900" height="126" fill="url(#loHorizon)"/>
@@ -2879,6 +2894,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <path d="M560 726 l4 -11 M568 726 l-3 -10 M860 734 l4 -12 M868 734 l-3 -10 M1180 738 l4 -11 M1188 738 l-2 -10 M1700 716 l4 -11 M1708 716 l-3 -10"/>
         </g>
       </svg>
+      <div class="lo-fog fg1"></div>
+      <div class="lo-fog fg2"></div>
+      <svg class="lo-fore" viewBox="0 0 1900 120" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="#04060a" d="M0 78 Q60 58 130 72 Q180 46 240 66 Q330 40 420 64 Q500 50 560 68 Q660 44 760 66 Q850 52 950 70 Q1060 46 1170 68 Q1260 52 1340 70 Q1440 44 1540 66 Q1640 54 1720 70 Q1810 50 1900 72 L1900 120 L0 120 Z"/>
+        <path fill="#070b12" opacity=".85" d="M0 96 Q120 82 260 92 Q420 78 600 92 Q800 80 1000 94 Q1220 80 1420 92 Q1620 82 1900 94 L1900 120 L0 120 Z"/>
+      </svg>
+      <div class="lo-vig"></div>
       <div class="lo-slot" id="padSlot"></div>
       <div id="padRocket"></div>
       <div class="lo-flash"></div>
@@ -4543,9 +4565,7 @@ function initCourier() {
       // page ends — a 100vh liftoff section leaves only .35vh after the
       // section top, and an unreachable window would strand the courier
       // hovering short of the pad forever
-      padS0 = Math.min(
-        Math.max(orbitEnd + vh * .6, scrollY + loEl.getBoundingClientRect().top - vh * .35),
-        S1 - vh * .52);
+      padS0 = Math.max(orbitEnd + vh * .3, S1 - vh * .3);
     }
     // THE RAISE — while the funding brief unfolds mid-chapter, the courier
     // flies a wide showcase circuit around the cards
@@ -4636,17 +4656,57 @@ function initCourier() {
           x: Math.max(40, Math.min(innerWidth - 40, a2.x + (exitRight ? 96 : -96))),
           y: a2.y + Math.max(26, (b2.y - a2.y) * .07)
         };
+        // the planet sits dead-centre and the 2036 grid's column gap runs
+        // straight down the middle — the orbit approach banks OVER the grid,
+        // drops through that centre seam, and exits beneath it to the planet
+        // (the screen-recorded cursor route); every other haul rides a page
+        // gutter on its exit side
+        const toOrbit = !!s.orbit;
+        const toTraj = s.kind === "traj";
         const gx = exitRight ? gxR : gxL;
-        const P4 = haul > innerHeight * 1.45
-          ? [a2, mom,
-            { x: gx, y: a2.y + (b2.y - a2.y) * .26 },
-            { x: gx, y: a2.y + (b2.y - a2.y) * .52 },
-            { x: gx, y: a2.y + (b2.y - a2.y) * .78 },
-            b2]
-          : [a2, mom,
-            { x: gx, y: a2.y + (b2.y - a2.y) * .34 },
-            { x: gx, y: a2.y + (b2.y - a2.y) * .72 },
+        let P4, seamBand = null;
+        if (toTraj) {
+          // off the first line graph's summit: sink fluidly, CURL LEFT, then
+          // drop straight back down into the second line graph's first point
+          const iw = innerWidth;
+          // bend AROUND the section title: swing across the top band above
+          // it, drop down the page's left side, then curve smoothly into the
+          // next line graph's first point
+          P4 = [a2,
+            { x: Math.min(iw - 60, a2.x + 110), y: a2.y + Math.max(24, (b2.y - a2.y) * .05) },
+            { x: iw * .52, y: a2.y + 42 },
+            { x: gxL + 22, y: a2.y + 70 },
+            { x: gxL, y: a2.y + (b2.y - a2.y) * .58 },
+            { x: gxL, y: a2.y + (b2.y - a2.y) * .80 },
             b2];
+        } else if (toOrbit) {
+          // viewport-anchored: bank left off the summit, take the screen's
+          // centre line (the grid's column seam scrolls along it), hold it
+          // through the middle of the view, then peel to orbit entry
+          const cxV = innerWidth / 2 - 6;   // dead centre of the grid's column gap
+          const seamTop = Math.max(a2.y + 40, innerHeight * .42);
+          const seamBot = Math.max(seamTop + 60, innerHeight * .7);
+          // three colinear seam points stiffen the spline — no lateral
+          // overshoot into either panel flanking the gap
+          P4 = [a2,
+            { x: Math.max(40, a2.x - 96), y: a2.y + Math.max(20, (seamTop - a2.y) * .3) },
+            { x: cxV, y: seamTop },
+            { x: cxV, y: (seamTop + seamBot) / 2 },
+            { x: cxV, y: seamBot },
+            b2];
+          seamBand = { y0: seamTop + 8, y1: seamBot, x: cxV };
+        } else {
+          P4 = haul > innerHeight * 1.45
+            ? [a2, mom,
+              { x: gx, y: a2.y + (b2.y - a2.y) * .26 },
+              { x: gx, y: a2.y + (b2.y - a2.y) * .52 },
+              { x: gx, y: a2.y + (b2.y - a2.y) * .78 },
+              b2]
+            : [a2, mom,
+              { x: gx, y: a2.y + (b2.y - a2.y) * .34 },
+              { x: gx, y: a2.y + (b2.y - a2.y) * .72 },
+              b2];
+        }
         const segN = P4.length - 1;
         const pk = k => P4[Math.max(0, Math.min(P4.length - 1, k))];
         const crm2 = (p0, p1, p2, p3, u) => ({
@@ -4657,10 +4717,16 @@ function initCourier() {
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
         const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
         pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
+        // hard rail through the grid's column gap — spline bow and sway both
+        // yield to the seam (the flanking panels are no-fly)
+        if (seamBand && pos3.y > seamBand.y0 && pos3.y < seamBand.y1) {
+          pos3.x = Math.max(seamBand.x - 9, Math.min(seamBand.x + 9, pos3.x));
+        }
+
         // longer hauls keep the signature loop-the-loop — flown INSIDE the
         // gutter (radius stays within the margin), smt() eases the sweep in
         // and out so entry and exit tangents stay kink-free
-        if (haul > innerHeight * 1.05) {
+        if (haul > innerHeight * 1.05 && !toOrbit && !toTraj) {   // no loop in the centre seam or on the around-the-title curl
           const lw = cl01((g2 - .36) / .28);
           if (lw > 0 && lw < 1) {
             const th3 = smt(lw) * T2;
@@ -4669,6 +4735,7 @@ function initCourier() {
             pos3.y -= (1 - Math.cos(th3)) * rL * .85;
           }
         }
+        pos3.x = Math.max(26, Math.min(innerWidth - 26, pos3.x));   // never off the page edge
         return { p: pos3, oq: null, kind: null, q: null };
       }
       if (yEff <= s.s1) {
@@ -4768,7 +4835,7 @@ function initCourier() {
         if (!inRaisePrev || raiseSpin0 == null) raiseSpin0 = courierSpin;
         orbitSpinRel = courierSpin - orbitSpin0;
         raiseSpinRel = courierSpin - raiseSpin0;
-        const k = snap ? 1 : 1 - Math.exp(-dt * 5.4);     // responsive progress with soft inertia
+        const k = snap ? 1 : 1 - Math.exp(-dt * (5.4 + Math.abs(pt - pd) * 260));   // adaptive: big gaps close fast — no summit lag — small ones stay soft
         // travelling direction — scrolling back up TURNS the ship around so
         // it always flies nose-first (the smoothing animates the U-turn)
         if (ptPrev != null && Math.abs(pt - ptPrev) > .0004) dirState = pt > ptPrev ? 1 : -1;
@@ -4786,7 +4853,7 @@ function initCourier() {
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
           // preserving the authored flight path.
-          const posK = snap ? 1 : 1 - Math.exp(-dt * 7.8);
+          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.q == null ? 16 : 7.8));   // blends ride the authored route tightly — no corner-cutting across panels
           if (!posS || snap) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
@@ -4911,6 +4978,15 @@ function initLiftoff() {
   const sync = () => { if (scene) scene.style.setProperty("--pads", padScale().toFixed(4)); };
   window.addEventListener("resize", sync);
   sync();
+  // scroll-parallax: 0 when the complex first peeks in, 1 at full arrival —
+  // fog slides laterally, the foreground rises, depth reads instantly
+  const par = () => {
+    const r2 = lo.getBoundingClientRect();
+    const q = Math.max(0, Math.min(1, (innerHeight - r2.top) / (innerHeight + r2.height)));
+    lo.style.setProperty("--lopar", q.toFixed(3));
+  };
+  window.addEventListener("scroll", par, { passive: true });
+  par();
 
   const btn = $("#liftoffBtn");
   if (!btn) return;
@@ -5928,7 +6004,7 @@ function renderSystem() {
     items: [
       { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "2029 · First property acquisitions — buying the warehouses and fulfilment centres Global and Distribution already operate from, the start of a wider commercial portfolio." },
-      { n: "Freedom Freight Ltd", cat: "Global logistics", catC: "#57d9e8",
+      { n: "Freedom Freight Ltd", cat: "Global logistics", catC: "#e8c15c",
         d: "2029 · The in-house freight arm — importing 30&ndash;40 containers a month across the group&rsquo;s brands, with our own team managing all freight control." },
     ],
   });
@@ -5939,7 +6015,7 @@ function renderSystem() {
     items: [
       { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "#b18cff",
         d: "2030 · The official launch of the drone and visual-graphics business — flying site surveys for Freedom Facilities&rsquo; compliance and construction work." },
-      { n: "Freedom Fuel Ltd", cat: "Forecourts &amp; fuel retail", catC: "#f2a65a",
+      { n: "Freedom Fuel Ltd", cat: "Forecourts &amp; fuel retail", catC: "#b18cff",
         d: "2036+ · Extends the Freedom Form portfolio into petrol-station forecourts — buying the sites, selling the fuel, and stocking the stores with the group&rsquo;s own brands." },
     ],
   });
@@ -8102,20 +8178,19 @@ function initSetpieces() {
     // rise into place. Two passes also keep every connector visually behind
     // every box instead of painting lines over already-manifested content.
     const pvBase = 1 - sm(ph2(p, .93, .985));
-    if (sm(ph2(p, .48, .58)) * pvBase > .02) {
+    if (sm(ph2(p, .58, .68)) * pvBase > .02) {
       const rot2 = (p * 1.55) % 1;
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map((pin, i) => {
-        const leadP = sm(ph2(p, .48 + i * .05, .55 + i * .05)) * pvBase;
+        const leadP = sm(ph2(p, .58 + i * .05, .65 + i * .05)) * pvBase;
         // pin, tether and card share ONE clock — they manifest together in
         // every frame, never pin-first-box-later
         const boxP = leadP;
         const du = ((pin.u - rot2) % 1 + 1) % 1;
         // Soft face visibility replaces a hard on/off edge as the country
-        // rotates onto the globe. A LIMB pin ignores rotation entirely — it
-        // is planted on the planet's bright white rim and never sets.
-        const face = pin.limb ? 1
-          : sm(cl((du - .08) / .04, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
+        // rotates onto the globe — LIMB pins keep their rim anchor but only
+        // manifest while their country is actually on the visible side.
+        const face = sm(cl((du - .08) / .04, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
         const bw = 212, bh = 56;
         const sx = pin.side < 0 ? cx - R * 1.58 : cx + R * 1.58;
         let bx = pin.side < 0 ? sx - bw : sx;

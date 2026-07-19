@@ -4313,7 +4313,9 @@ function mountStation(stage, g) {
     const left = Math.max(8, Math.min(maxLeft, desiredLeft));
     const craftHalf = rr.height / 2;
     const desiredTop = below
-      ? nomY + (edgeRad + (below.gap || 26)) * scl
+      ? (below.topY != null
+        ? svgOY + below.topY * (svg.clientHeight / ((vbB && vbB.height) || 1400))
+        : nomY + (edgeRad + (below.gap || 26)) * scl)
       : beside
       ? nomY - bodyRad * scl
       : g.panelPin
@@ -5178,7 +5180,7 @@ const DOCK_Y = .68;
 function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
-  const W = 1900, H = 1870, cx = 950, cy = 350, sunR = 84;   /* H covers the sketch formation: cards beside/below their planets, the boxed detail shelf and the full 12-mark vault beneath */
+  const W = 1900, H = 1900, cx = 950, cy = 350, sunR = 84;   /* H covers the sketch formation: cards beside/below their planets, the boxed detail shelf and the full 12-mark vault beneath */
   const f = n => n.toFixed(1);
   /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls].
      The three OPERATING apexes (349/328/310) tuck INSIDE the sun's disk: the
@@ -5804,7 +5806,7 @@ function renderSystem() {
     <div class="sm-sub" data-for="storm" style="--c:var(--ember)">
       <div class="subbox">
         <span class="cap2">BRANDS DISTRIBUTED</span>
-        <div class="fn2"><span>FireStorm™ | Skyline™ | FXL™ | Voltz™ | Kunergy™ | T3™ | Crystal Cleaning Solutions™ | HepaFellas™ | DustBros™ | Lynxa™ | RVR™</span></div>
+        <div class="fn2"><span>FireStorm™ Core · Pro · Infinity | Lynxa™ Cover · Shield · Air · Grip · Gel | Voltz™ Alkaline · Lithium · Rechargeable | T3™ Grip · Flex · Thermal | Crystal Cleaning Multi-Surface · Glass · Degreaser | HepaFellas™ Bags · HEPA Filters | DustBros™ Cloths · Site Care | RVR™ Detailing · Vehicle Care</span></div>
       </div>
       <div class="subbox">
         <span class="cap2">PRIMARY TRADE PARTNERS</span>
@@ -5930,7 +5932,7 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    panelBelow: { align: "end", gap: 26 }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "end", topY: 1049 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ltd aspirations · 2029",
     items: [
       { n: "Freedom Form Ltd", cat: "Property · Development · Design", catC: "var(--ember)",
@@ -5941,7 +5943,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "start", gap: 26 }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "start", topY: 1049 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ltd aspirations · 2030+",
     items: [
       { n: "Freedom Fly Ltd", cat: "Aerial technology", catC: "var(--blue)",
@@ -6021,7 +6023,7 @@ function renderSystem() {
       }
     });
     const COLS = { form: 250, fly: 950, storm: 1720 };   // shelf column centres: each column stacks directly under its own main card
-    const SHELF_Y = 1410;
+    const SHELF_Y = 1440;
     $$(".sm-sub", map).forEach(su => {
       const cx2 = COLS[su.dataset.for];
       if (cx2 == null) return;

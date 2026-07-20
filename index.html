@@ -1318,6 +1318,11 @@ section.tint{background:var(--bg-soft);}
 .ch-ph .ph-kick{position:absolute;left:20px;top:18px;font-size:.66rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(243,244,251,.55);}
 .ch-ph b{position:absolute;right:14px;bottom:-12px;font-family:"Orbitron",system-ui,sans-serif;font-size:6.2rem;font-weight:700;
   color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--acc,var(--pink)) 55%,#3a3d52);opacity:.85;}
+.ch-summary{position:absolute;z-index:1;left:20px;right:20px;bottom:22px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;}
+.ch-summary i{font-style:normal;font-size:.58rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--mint-ink);}
+.ch-summary strong{font-size:1.15rem;line-height:1.25;color:#fff;}
+.ch-highlight{margin-top:14px;}
+.ch-highlight p{font-size:1rem;}
 .ch-next{display:flex;align-items:center;gap:14px;margin-top:18px;padding:15px 18px;text-align:left;width:100%;
   border:1px dashed var(--line-strong);border-radius:16px;background:var(--bg-soft);color:inherit;}
 .ch-next.as-btn{cursor:pointer;font:inherit;transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
@@ -2795,7 +2800,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The journey</span>
-        <h2>From a £400 pallet in Bolton<br>to a <span class="grad-text">trademarked global brand</span></h2>
+        <h2>From one rusty fire extinguisher<br>to a <span class="grad-text">£100 million vision</span></h2>
         <p class="section-sub">No degrees. No investors. Just belief, hustle, and the right people. Scroll the story.</p>
       </div>
       <div class="journey">
@@ -3413,6 +3418,25 @@ const FG_DATA = {
   ],
 
   milestones: [
+    { year: "2019", kick: "Where It All Began",
+      q: "Could one overlooked product become something more?",
+      title: "Before the \u00a3100 Million Vision, There Was One Rusty Fire Extinguisher",
+      subtitle: "No master plan. No investors. No ecommerce business. Just one overlooked product and the willingness to start.",
+      body: [
+        "There was no Freedom Group. No portfolio of brands. No international supply chain. No team, projections or \u00a3100 million ambition.",
+        "There was simply one second-hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value.",
+        "At the time, it did not feel like the beginning of anything remarkable. It was one product, one local customer and one small decision to start.",
+        "But that sale changed the direction of everything.",
+        "Every order, employee, brand and company that followed can be traced back to that one extinguisher."
+      ],
+      highlight: "It was not simply the first product we sold. It was the first step towards everything Freedom would become.",
+      statItems: [
+        { value: "1", label: "Second-hand extinguisher", icon: "ext" },
+        { value: "\u00a30", label: "External investment", icon: "pound" },
+        { value: "Facebook Marketplace", label: "The first sales channel", icon: "tag" }
+      ],
+      summary: "The starting point",
+      nextQuestion: "But could one sale become a genuine opportunity?" },
     { year: "2020", kick: "The Spark", q: "Where does a group begin?",
       title: "One second-hand extinguisher and an eBay login",
       body: "We started in the back of a small unit with a 2nd-hand fire extinguisher, an eBay login, zero capital, and a vision. Our first ever bulk order: 400 mixed units in Bolton — for £400.",
@@ -7144,27 +7168,32 @@ function renderJourney() {
   const arrow = `<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>`;
   $("#jlist").innerHTML = FG_DATA.milestones.map((m, i) => {
     const acc = ACC[i % 3];
-    const sents = m.body.split(/(?<=[.!?])\s+/);
-    const lede = sents[0] || "";
-    const closing = sents.length > 2 ? sents[sents.length - 1] : null;
-    const middle = sents.slice(1, closing ? -1 : undefined);
-    const stats = (m.facts || []).slice(0, 3).map(([t]) => {
-      const [v, l] = chSplit(t);
-      return `<div class="ch-stat">${icoFor(t)}<div>${v ? `<b>${v}</b>` : ""}<span>${l}</span></div></div>`;
-    }).join("");
+    const isStructured = Array.isArray(m.body);
+    const sents = isStructured ? m.body : m.body.split(/(?<=[.!?])\s+/);
+    const lede = m.subtitle || sents[0] || "";
+    const closing = !isStructured && sents.length > 2 ? sents[sents.length - 1] : null;
+    const middle = isStructured ? sents : sents.slice(1, closing ? -1 : undefined);
+    const stats = m.statItems
+      ? m.statItems.slice(0, 3).map(s => `<div class="ch-stat">${ICO[s.icon] || icoFor(`${s.value} ${s.label}`)}<div><b>${s.value}</b><span>${s.label}</span></div></div>`).join("")
+      : (m.facts || []).slice(0, 3).map(([t]) => {
+          const [v, l] = chSplit(t);
+          return `<div class="ch-stat">${icoFor(t)}<div>${v ? `<b>${v}</b>` : ""}<span>${l}</span></div></div>`;
+        }).join("");
     const nxt = FG_DATA.milestones[i + 1];
     const teaser = nxt
-      ? `<div class="ch-next"><span class="qm">?</span><div><i>Next chapter</i><p>${nxt.q || nxt.title}</p></div>${arrow}</div>`
+      ? `<div class="ch-next"><span class="qm">?</span><div><i>Next chapter</i><p>${m.nextQuestion || nxt.q || nxt.title}</p></div>${arrow}</div>`
       : `<button class="ch-next as-btn" type="button" data-goto="system"><span class="qm">&rarr;</span><div><i>Keep exploring</i><p>One group. One engine. See the Freedom System.</p></div>${arrow}</button>`;
     let quote = "";
-    if (m.photo && m.cap) {
+    if (m.highlight) {
+      quote = `<div class="ch-quote ch-highlight"><span class="qg">&ldquo;</span><p>${m.highlight}</p></div>`;
+    } else if (m.photo && m.cap) {
       const di = m.cap.indexOf(" — ");
       quote = `<div class="ch-quote"><span class="qg">&ldquo;</span><p>${
         di > 0 ? `${m.cap.slice(0, di)} —<span class="qa"> ${m.cap.slice(di + 3)}</span>` : m.cap}</p></div>`;
     }
     const side = m.photo
       ? `<figure class="ch-fig"><img loading="lazy" decoding="async" src="${m.photo}" alt="${m.alt || ""}"></figure>${quote}`
-      : `<div class="ch-ph" aria-hidden="true"><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b></div>`;
+      : `<div class="ch-ph" aria-hidden="true"><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b>${m.summary ? `<span class="ch-summary"><i>Timeline summary</i><strong>${m.summary}</strong></span>` : ""}</div>${quote}`;
     return `
     <article class="jcard chapter reveal" data-ji="${i}" style="--acc:${acc}">
       <div class="ch-main">

@@ -706,6 +706,10 @@ html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 html.spx .tr2-clouds{background:#fff;}
+/* the SECOND cloud pass — focus screen → journey. It runs entirely in
+   daylight (no blue dive to open it), so it needs no visibility gating and
+   sits in normal flow between the two light chapters. */
+html.spx .tr2-clouds2{height:170vh;background:#eef1f8;}
 html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market runway, the NIGHT half the export routes */
 
 /* One-screen handoff from the Group system into the operating-company story. */
@@ -716,15 +720,55 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 }
 .focus-handoff::before,.focus-handoff::after{content:"";position:absolute;z-index:-1;pointer-events:none;}
 .focus-handoff::before{inset:0;background:#EEF1F8;}
-.focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.10);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 110px rgba(56,169,255,.08),inset 0 0 90px rgba(255,61,154,.04);}
+.focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.18);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 130px rgba(56,169,255,.16),inset 0 0 90px rgba(255,61,154,.04);}
+/* The flagship's planet lands INSIDE the ring the section already draws — the
+   dive ends here. Rendered in daylight blues (not the map's deep-space
+   gradient) so the near-black copy still reads straight over it. */
+.focus-orb{
+  position:absolute;left:50%;top:42%;z-index:-1;pointer-events:none;
+  width:min(520px,52vw);aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:
+    radial-gradient(circle at 33% 27%,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 38% 32%,#eaf7ff 0%,#a9d8f7 38%,#66b3ea 68%,#2f86ce 100%);
+  box-shadow:
+    0 0 0 1px rgba(56,169,255,.45),
+    0 0 70px rgba(56,169,255,.45),
+    0 0 170px rgba(56,169,255,.28),
+    inset -26px -30px 70px rgba(23,79,150,.34);
+  opacity:.8;
+}
+/* a soft wash over the body only — the rim stays solid so the sphere reads,
+   while the copy that sits across its middle keeps its contrast */
+.focus-orb::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 50% 46%,rgba(238,241,248,.72) 0%,rgba(238,241,248,.46) 42%,rgba(238,241,248,0) 76%);
+}
 .focus-handoff-inner{width:min(930px,100%);margin:auto;text-align:center;}
 .focus-handoff .focus-label{display:inline-flex;align-items:center;gap:10px;margin:0 0 15px;color:#52c8ff;font-size:.7rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
 .focus-handoff .focus-label::before{content:"";width:27px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--blue));box-shadow:0 0 12px rgba(56,169,255,.5);}
 .focus-handoff h2{max-width:900px;margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);line-height:1.02;letter-spacing:-.045em;text-wrap:balance;}
 .focus-handoff .focus-subtitle{max-width:780px;margin:18px auto 0;color:#5d6677;font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;}
-.focus-summary{width:min(790px,100%);margin:28px auto 0;padding:22px 24px;border:1px solid rgba(56,169,255,.28);border-radius:20px;background:#fff;box-shadow:0 24px 70px rgba(34,48,78,.12),0 0 35px rgba(56,169,255,.05);}
+/* the summary card carries the blue essence of the planet it describes —
+   a lit rim, an outer bloom and a cool inner wash, all on top of white */
+.focus-summary{
+  position:relative;width:min(790px,100%);margin:28px auto 0;padding:22px 24px;
+  border:1px solid rgba(56,169,255,.50);border-radius:20px;
+  background:linear-gradient(180deg,#fff 0%,#f5fbff 100%);
+  box-shadow:
+    0 24px 70px rgba(34,48,78,.14),
+    0 0 0 4px rgba(56,169,255,.07),
+    0 0 40px rgba(56,169,255,.34),
+    0 0 120px rgba(56,169,255,.20),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+.focus-summary::before{
+  content:"";position:absolute;left:12%;right:12%;top:-1px;height:2px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(56,169,255,0),#52c8ff,rgba(56,169,255,0));
+  box-shadow:0 0 16px rgba(56,169,255,.75);
+}
 .focus-summary-head{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;}
-.focus-summary-head i{width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 13px var(--blue);}
+.focus-summary-head i{width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue),0 0 22px rgba(56,169,255,.85);}
 .focus-summary-head strong{font-size:clamp(1.18rem,2vw,1.48rem);letter-spacing:-.025em;}
 .focus-summary-type{margin:6px 0 18px;color:#52c8ff;font-size:.72rem;font-weight:850;letter-spacing:.11em;text-transform:uppercase;}
 .focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#dfe4ed;border:1px solid #dfe4ed;border-radius:13px;overflow:hidden;text-align:left;}
@@ -2078,7 +2122,7 @@ input[type="range"]::-moz-range-thumb{
 .intro-term{
   margin:0;width:100%;max-width:400px;min-height:140px;
   font:600 11.5px/1.8 ui-monospace,"Cascadia Mono",Consolas,monospace;
-  color:#DC94BC;text-align:left;white-space:pre-wrap;
+  color:#DC94BC;text-align:left;white-space:pre;
 }
 .intro-term .ok{color:var(--mint);}
 .intro-term .auth{color:var(--mint);font-weight:800;letter-spacing:.06em;}
@@ -2778,6 +2822,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <div class="tr2 tr2-clouds" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
 
   <section class="focus-handoff" id="investment-focus" aria-labelledby="investment-focus-title">
+    <div class="focus-orb" aria-hidden="true"></div>
     <div class="focus-handoff-inner">
       <p class="focus-label">Current Investment Focus</p>
       <h2 id="investment-focus-title">Now Zoom Into the Company Already Building the Future</h2>
@@ -2795,6 +2840,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <a class="focus-begin" href="#journey">Begin the Journey</a>
     </div>
   </section>
+
+  <!-- second cloud ride: the focus screen breaks into the journey chapter -->
+  <div class="tr2 tr2-clouds2" aria-hidden="true"><div class="tr2-stage"><canvas></canvas></div></div>
 
   <section data-sec="journey" id="journey" class="sec-light alt" aria-label="The journey">
     <div class="wrap">
@@ -3958,12 +4006,12 @@ function renderHero() {
     return `
     <div class="kpi reveal d${i}">
       <div class="num" data-count="${k.value}" data-fmt="${k.fmt}" ${k.prefix ? `data-prefix="${k.prefix}"` : ""} ${k.suffix ? `data-suffix="${k.suffix}"` : ""}>0</div>
+      <div class="lbl">${k.label}</div>
+      ${k.sub ? `<div class="lbl2">${k.sub}</div>` : ""}
       <svg class="spark" viewBox="0 0 ${W} ${H}" aria-hidden="true">
         <path d="${smoothPath(coords)}" fill="none" stroke="${colors[i % 4]}" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="${coords[coords.length - 1].x}" cy="${coords[coords.length - 1].y}" r="3" fill="${colors[i % 4]}"/>
       </svg>
-      <div class="lbl">${k.label}</div>
-      ${k.sub ? `<div class="lbl2">${k.sub}</div>` : ""}
     </div>`;
   }).join("");
 
@@ -6448,15 +6496,26 @@ function renderSystem() {
   const ds2Out = sunAt(62), ds2In = sunAt(62 + sunGap);
   // the box↔planet links are drawn at layout time from MEASURED card edges
   // (self-healing — they can never gap), so the paths start empty here
+  /* The two side lanes now CREST above their chord: the arrow climbs out of
+     Holdings, bows UPWARD across the open sky and drops onto the planet's
+     crown, instead of sagging beneath it. Derived from the measured endpoints
+     so it self-heals if either planet moves along its shell. */
+  const arcUp = (a, b) => {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    return `M ${f(a[0])} ${f(a[1])} C ${f(a[0] + dx * .45)} ${f(a[1] + dy * .45 - 130)}, `
+         + `${f(a[0] + dx * .88)} ${f(a[1] + dy * .88 - 40)}, ${f(b[0])} ${f(b[1])}`;
+  };
+  const formLane = arcUp(formOut, formTop);
+  const stormLane = arcUp(stormOut, stormTop);
   const cardLinks = PLANETS.map(p => `
     <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d=""/>
     <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("");
   const spine = `
-    <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 805 335, 590 515, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1095 335, 1390 540, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flowglow g-form" d="${formLane}"/>
+    <path class="sm-flowglow g-storm" d="${stormLane}"/>
     <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 805 335, 590 515, ${f(formTop[0])} ${f(formTop[1])}"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1095 335, 1390 540, ${f(stormTop[0])} ${f(stormTop[1])}"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="${formLane}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="${stormLane}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
     <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
@@ -9397,6 +9456,65 @@ function initSetpieces() {
     // the opening wash above continues seamlessly
   }
 
+  /* SECOND CLOUD PASS — the investment-focus screen climbs through a daylight
+     deck and comes out over the journey chapter. Same sprites and the same
+     fly-through, but the arc runs LIGHT → LIGHT: no blue dive to open it and
+     no whiteout to close it, so the clouds are drawn from the grey `mid` coat
+     (white-on-white would be invisible here) with the lit tops on top. */
+  function drawClouds2(ctx, p, w, h) {
+    if (!CLs) makeClouds();
+    // the sky deepens mid-flight so the deck has something to read against,
+    // then settles back onto the journey chapter's own #eef1f8 at both ends
+    const lift = sm(ph2(p, .05, .42)) * (1 - sm(ph2(p, .68, .97)));
+    const top = [lp(238, 222, lift), lp(241, 231, lift), lp(248, 245, lift)];
+    const bot = [lp(238, 205, lift), lp(241, 218, lift), lp(248, 238, lift)];
+    const bg2 = ctx.createLinearGradient(0, 0, 0, h);
+    bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
+    bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
+    ctx.fillStyle = bg2; ctx.fillRect(0, 0, w, h);
+    // the flagship's blue stays in the air as a high wash — the essence of the
+    // planet we just left, never a curtain
+    const wash = sm(ph2(p, .04, .28)) * (1 - sm(ph2(p, .55, .86))) * .34;
+    if (wash > .01) {
+      const wg = ctx.createRadialGradient(w * .5, h * .16, 0, w * .5, h * .16, Math.hypot(w, h) * .75);
+      wg.addColorStop(0, `rgba(56,169,255,${wash})`); wg.addColorStop(1, "rgba(56,169,255,0)");
+      ctx.fillStyle = wg; ctx.fillRect(0, 0, w, h);
+    }
+    const gate = sm(ph2(p, .06, .24)) * (1 - sm(ph2(p, .74, .96)));
+    if (gate > .01) {
+      const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
+      for (const { c2, g } of order) {
+        const { zf, k, scale, sw, sh, x, y } = g;
+        let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.20 + .55 * Math.min(1, k * 3));
+        al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
+        al *= gate;
+        if (al <= .015) continue;
+        const spr = CLs[c2.s];
+        // the grey coat only shades the deck — the lit coat carries it, so the
+        // sky stays visible between the shapes instead of going overcast
+        ctx.globalAlpha = al * .62;
+        ctx.drawImage(spr.mid, x, y, sw, sh);
+        ctx.globalAlpha = al;
+        ctx.drawImage(spr.light, x, y, sw, sh);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // the deck below opens out as we break into the journey
+    const sea = sm(ph2(p, .56, .80)) * (1 - sm(ph2(p, .86, .99)));
+    if (sea > .01) {
+      ctx.globalAlpha = sea * .5;
+      for (let i = 0; i < 9; i++) {
+        const sx2 = (i / 9) * w * 1.2 - w * .1 + ((i * 53) % 40);
+        const sw2 = w * .3, sh2 = sw2 * .5;
+        ctx.drawImage(CLs[i % 4].light, sx2, h * (.86 + ((i * 31) % 8) / 100), sw2, sh2);
+      }
+      ctx.globalAlpha = 1;
+    }
+    // hand off cleanly to the journey chapter's background
+    const out = sm(ph2(p, .84, .995));
+    if (out > .01) { ctx.fillStyle = `rgba(238,241,248,${out})`; ctx.fillRect(0, 0, w, h); }
+  }
+
   /* ---------- FUNDING CLIMB: the second, LONG cloud ride (team → liftoff).
      Same cloud machinery, different arc — night → bright cruise → night, so
      both ends hand off to dark chapters. The funding brief rides the bright
@@ -9556,7 +9674,7 @@ function initSetpieces() {
   }
 
   /* ---------- controller -------------------------------------------------- */
-  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-funding": drawFunding, "tr2-clouds": drawClouds };
+  const TYPES = { "tr2-hyper": drawHyper, "tr2-nova": drawNova, "tr2-planet": drawPlanet, "tr2-funding": drawFunding, "tr2-clouds": drawClouds, "tr2-clouds2": drawClouds2 };
   const items = [];
   els.forEach(el => {
     const key = Object.keys(TYPES).find(k => el.classList.contains(k));

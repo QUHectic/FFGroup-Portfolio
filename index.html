@@ -170,7 +170,8 @@ section#team{overflow-x:clip;}
 .sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.1;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,255,255,.22));}
 .sm-surface-line{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1;stroke-linecap:round;}
 .sm-crater{fill:rgba(71,25,19,.16);stroke:rgba(90,35,24,.38);stroke-width:1;}
-.sm-world-country{fill:#fff;stroke:rgba(214,8,126,.72);stroke-width:.38;stroke-linejoin:round;vector-effect:non-scaling-stroke;paint-order:stroke;}   /* stroke UNDER fill — the atlas's antimeridian cut edges (Russia/Antarctica) would otherwise paint a vertical seam line across the globe */
+.sm-world-country{fill:#fff;stroke:none;} /* clean land silhouettes: no political-border grid or antimeridian seams */
+.sm-world-polar{display:none;} /* suppress the source atlas's rectangular dateline closure */
 @keyframes smSurfaceSpin{to{transform:translateX(var(--travel,-96px));}}
 @media (prefers-reduced-motion:reduce){.sm-bob,.sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:none;}}
 .sm-ghost circle.body2{fill:rgba(255,255,255,.04);stroke-width:1.6;stroke-dasharray:5 6;}
@@ -2267,7 +2268,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(248px,15vw,292px);
+  position:absolute;z-index:5;width:clamp(270px,16vw,310px);
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
   padding:7px 11px;box-shadow:0 18px 50px rgba(0,0,0,.5);text-align:center;
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -2277,19 +2278,19 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-panel.show{opacity:1;transform:none;pointer-events:auto;}
 .rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.6;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
 .rk-panel-link.show{opacity:.76;}
-.rk-panel h4{margin:0 0 6px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
-.rk-row{position:relative;display:block;padding:4px 8px;text-align:center;}
+.rk-panel h4{margin:0 0 3px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
+.rk-row{position:relative;display:block;padding:3px 8px;text-align:center;}
 .rk-row + .rk-row{border-top:1px solid rgba(255,255,255,.07);}
 .rk-row i{position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.55);margin:0;}
 /* the future rows read at EXACTLY the planned cards' type scale:
    name = .sm-card h3, category = .sm-card .cat, body = .sm-card .ch */
-.rk-row .rk-cat{display:block;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:2px 0 3px;}
-.rk-row b{display:flex;align-items:center;justify-content:center;gap:8px;row-gap:3px;flex-wrap:wrap;font-size:.92rem;color:#f3f4fb;letter-spacing:-.01em;}
-.rk-row span{font-size:.74rem;color:rgba(243,244,251,.62);line-height:1.38;}
+.rk-row .rk-cat{display:block;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:1px 0 2px;}
+.rk-row b{display:flex;align-items:center;justify-content:center;gap:8px;row-gap:1px;flex-wrap:wrap;font-size:.92rem;color:#f3f4fb;letter-spacing:-.01em;}
+.rk-row span{font-size:.74rem;color:rgba(243,244,251,.62);line-height:1.22;}
 @media (max-width:1500px){
   .rk-row b{font-size:.84rem;}
   .rk-row .rk-cat{font-size:.62rem;}
-  .rk-row span{font-size:.7rem;line-height:1.42;}
+  .rk-row span{font-size:.7rem;line-height:1.24;}
 }
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
@@ -5854,7 +5855,7 @@ function renderSystem() {
     [618, 145, 473, "sm-orbit"],
     [800, 195, 505, "sm-orbit"],
     [950, 238, 496, "sm-orbit future"],
-    [1060, 280, 506, "sm-orbit future outer"],
+    [1060, 325, 516, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -5907,13 +5908,14 @@ function renderSystem() {
      dictate the exact curve), and every pill hangs a uniform 24 units off
      its dot so the chain reads as a single aligned rail. All five clear the
      lanes, the Distribution planet + its parked column, and the 2030+ moon. */
-  const YEAR_ANGLES = [20, 50, 56, 59, 60];
-  const YEAR_XOFF = [36, 36, 36, 36, 36];   // keep one clean label rail, with the years clear of their orbit dots
+  const yearStart = lowerShellAtAngle(0, 30);
+  const YEAR_STEP = 102;
+  const YEAR_XOFF = 10;
   const yearMarks = SHELLS.map((shell2, i) => {
-    const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
+    const p = [yearStart[0] + i * YEAR_STEP, yearStart[1]], future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
-      <circle r="3.2"/><rect x="${YEAR_XOFF[i]}" y="-12" width="62" height="24" rx="12"/>
-      <text x="${YEAR_XOFF[i] + 31}" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
+      <circle r="3.2"/><rect x="${YEAR_XOFF}" y="-12" width="62" height="24" rx="12"/>
+      <text x="${YEAR_XOFF + 31}" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
     </g>`;
   }).join("");
   // each operating company rides its OWN ring — blue on the 1st, mint on the
@@ -6084,7 +6086,6 @@ function renderSystem() {
          aria-label="${p.name} — ${p.role}."
          transform="translate(${f(pp.x)} ${f(pp.y)})">
         <g class="mf"><g class="sm-bob" style="animation-delay:${(-i * 2.3).toFixed(1)}s">
-          <circle r="${p.r + 12}" fill="#07070d" opacity=".985" pointer-events="none"/>
           <circle class="halo" r="${p.r + 18}" fill="${p.cHex}" opacity="0" style="filter:blur(14px)"/>
           <circle r="${p.r}" fill="url(#smp-${p.key})"/>
           <g clip-path="url(#smclip-${p.key})">
@@ -6294,8 +6295,8 @@ function renderSystem() {
     <path class="sm-world-country" fill-rule="evenodd" d="M-57.6 -10.0L-57.0 -10.2L-56.8 -10.1L-56.9 -9.4L-57.7 -9.3L-57.8 -9.4L-57.5 -9.7L-57.6 -10.0Z"/>
     <path class="sm-world-country" fill-rule="evenodd" d="M28.8 -3.3L28.0 -3.9L27.7 -4.3L27.2 -4.1L26.8 -4.2L26.5 -4.0L26.1 -4.1L25.5 -4.9L25.4 -5.2L24.7 -5.6L24.5 -6.1L24.1 -6.5L23.4 -7.0L23.4 -7.3L22.9 -7.7L22.3 -8.0L22.6 -8.1L22.9 -8.3L23.1 -9.2L23.4 -9.6L24.1 -9.7L24.2 -9.5L24.7 -8.9L25.0 -8.8L25.3 -9.0L26.0 -9.0L26.1 -8.8L27.0 -8.8L27.1 -9.0L27.5 -9.1L27.6 -9.4L28.0 -9.6L28.8 -9.1L29.3 -9.2L29.7 -9.8L30.2 -10.3L30.2 -10.9L29.9 -11.2L30.5 -11.2L30.6 -11.4L31.0 -11.4L30.9 -10.7L31.0 -10.0L31.5 -9.6L31.6 -9.3L31.6 -8.9L31.7 -8.8L31.7 -8.1L31.6 -7.8L31.1 -7.8L30.8 -7.3L31.3 -7.2L31.8 -6.7L32.0 -6.4L32.4 -6.2L32.9 -5.1L32.3 -4.5L31.7 -4.0L31.2 -3.5L30.5 -3.5L29.8 -3.3L29.2 -3.5L28.8 -3.3Z"/>`;
   const worldBelt = `
-    <g>${worldAtlas}</g>
-    <g transform="translate(${worldTextureW} 0)">${worldAtlas}</g>`;
+    <g>${worldAtlas.replace('class="sm-world-country" fill-rule="evenodd" d="M-45.4 72.8', 'class="sm-world-country sm-world-polar" fill-rule="evenodd" d="M-45.4 72.8')}</g>
+    <g transform="translate(${worldTextureW} 0)">${worldAtlas.replace('class="sm-world-country" fill-rule="evenodd" d="M-45.4 72.8', 'class="sm-world-country sm-world-polar" fill-rule="evenodd" d="M-45.4 72.8')}</g>`;
 
   const formPlanet = PLANETS.find(p => p.key === "form");
   const stormPlanet = PLANETS.find(p => p.key === "storm");
@@ -6589,7 +6590,7 @@ function renderSystem() {
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
     // Both future panels share one top line below their newly separated lanes.
-    panelBelow: { align: "center", topY: 777, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 829, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
     items: [
       { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "A future commercial-property platform for the group&rsquo;s premises, acquisitions and growth." },
@@ -6599,9 +6600,9 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "center", topY: 777, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", topY: 829, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
     items: [
-      { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech", catC: "#b18cff",
+      { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
       { n: "Freedom Fuel Ltd", pill: "FUTURE · 2036+", cat: "Forecourts · Energy · Retail", catC: "#b18cff",
         d: "A long-term ambition to develop or acquire forecourt and convenience-retail locations." },
@@ -8901,23 +8902,24 @@ function initSetpieces() {
     const traceAll = dy => {
       c.beginPath();
       for (const ring of LAND) for (const off of [0, -GTW, GTW]) {
+        const ys = ring.filter((_, idx) => idx % 2 === 1);
+        if (Math.min(...ys) > .92 || Math.max(...ys) < .08) continue;
+        let prevU = null, wrap = 0;
         for (let i = 0; i < ring.length; i += 2) {
-          const px = ring[i] * GTW + off, py = ring[i + 1] * GTH + dy;
+          const u = ring[i];
+          if (prevU !== null) {
+            const jump = u - prevU;
+            if (jump > .5) wrap -= 1;
+            else if (jump < -.5) wrap += 1;
+          }
+          const px = (u + wrap) * GTW + off, py = ring[i + 1] * GTH + dy;
           i ? c.lineTo(px, py) : c.moveTo(px, py);
+          prevU = u;
         }
         c.closePath();
       }
     };
     // faint graticule under everything — reads as cartography, not grid
-    const latY = la => (1 - Math.sin(la * Math.PI / 180)) / 2 * GTH;
-    c.strokeStyle = "rgba(255,255,255,.05)"; c.lineWidth = 2;
-    for (let lo = 0; lo < 24; lo++) {
-      c.beginPath(); c.moveTo(lo * GTW / 24 + .5, 0); c.lineTo(lo * GTW / 24 + .5, GTH); c.stroke();
-    }
-    for (let la = -75; la <= 75; la += 15) {
-      const y = latY(la);
-      c.beginPath(); c.moveTo(0, y); c.lineTo(GTW, y); c.stroke();
-    }
     // land: soft southern drop-shade, the white mass, then a crisp coast line
     traceAll(6); c.fillStyle = "rgba(150,8,80,.34)"; c.fill();
     traceAll(0); c.fillStyle = "#ffffff"; c.fill();
@@ -8932,11 +8934,9 @@ function initSetpieces() {
     c.restore();
     // polar ice caps — soft-edged white bands at the projected poles
     const capN = c.createLinearGradient(0, 0, 0, GTH * .085);
-    capN.addColorStop(0, "rgba(255,255,255,.95)"); capN.addColorStop(.7, "rgba(255,255,255,.45)"); capN.addColorStop(1, "rgba(255,255,255,0)");
-    c.fillStyle = capN; c.fillRect(0, 0, GTW, GTH * .085);
+    capN.addColorStop(0, "rgba(255,255,255,0)"); capN.addColorStop(1, "rgba(255,255,255,0)");
     const capS = c.createLinearGradient(0, GTH, 0, GTH * .93);
-    capS.addColorStop(0, "rgba(255,255,255,.9)"); capS.addColorStop(.7, "rgba(255,255,255,.4)"); capS.addColorStop(1, "rgba(255,255,255,0)");
-    c.fillStyle = capS; c.fillRect(0, GTH * .93, GTW, GTH * .07);
+    capS.addColorStop(0, "rgba(255,255,255,0)"); capS.addColorStop(1, "rgba(255,255,255,0)");
     // cloud deck: more, softer, two-lobed cumulus + broad faint swirls
     GLcloud = document.createElement("canvas"); GLcloud.width = GTW; GLcloud.height = GTH;
     const cc = GLcloud.getContext("2d"); const r2 = rng(606);
@@ -8958,7 +8958,7 @@ function initSetpieces() {
     }
   }
   function sphereStrips(ctx, tex, cx, cy, R, rot, alpha) {
-    const K = 72;
+    const K = 256;
     ctx.globalAlpha = alpha;
     const su = GTW * .5 / K;
     for (let i = 0; i < K; i++) {
@@ -8966,7 +8966,7 @@ function initSetpieces() {
       const sx0 = cx + Math.sin((f0 - .5) * Math.PI) * R;
       const sx1 = cx + Math.sin((f1 - .5) * Math.PI) * R;
       const u = ((rot + f0 * .5) % 1 + 1) % 1;
-      ctx.drawImage(tex, u * GTW, 0, su, GTH, sx0, cy - R, Math.max(.6, sx1 - sx0 + .5), R * 2);
+      ctx.drawImage(tex, u * GTW, 0, su, GTH, sx0, cy - R, Math.max(1.2, sx1 - sx0 + 1.1), R * 2);
     }
     ctx.globalAlpha = 1;
   }
@@ -8997,7 +8997,8 @@ function initSetpieces() {
     ob.addColorStop(0, "#ff9dcd"); ob.addColorStop(.35, "#ff5fae"); ob.addColorStop(.7, "#ee2288"); ob.addColorStop(1, "#a90a58");
     ctx.fillStyle = ob; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
     sphereStrips(ctx, GLland, cx, cy, R, (p * 1.55) % 1, 1);
-    sphereStrips(ctx, GLcloud, cx, cy, R, (p * 2.0) % 1, .8);
+    /* Keep the 360° ocean surface clean. The old wide cloud ellipses became
+       rectangular horizontal bands after spherical strip projection. */
     const sweep = sm(ph2(p, .40, .62));
     const edge = lp(R * 1.3, -R * 1.4, sweep);
     const sg = ctx.createLinearGradient(cx + edge - R * .55, 0, cx + edge + R * .55, 0);

@@ -737,10 +737,30 @@ html.spx .tr2-planet{background:#0f1018;}
 @media (max-width:900px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
-html.spx .sys-build{height:calc(340vh + 510px);} /* lower runway keeps the full 2036 panel visible before the section hands off */
+html.spx .sys-build{height:calc(340vh + 1500px);} /* extra runway = dwell at the finished map, the glide down the system, then the dive into the blue planet */
+/* the cloud descent PINS at the exact scroll pixel the dive completes — it
+   rides up hidden behind the last viewport of the pin (nova-style overlap),
+   so there is never a black gap or a sliding blue sheet between the planet
+   filling the screen and the clouds beginning */
+html.spx section#system{padding-bottom:0;}
+html.spx .tr2-clouds{margin-top:-100vh;}
+/* THE DIVE — while the zoom runs, everything that is not the blue planet
+   melts away (the 10×-scaled lanes/arrows/pills would otherwise smear the
+   frame). !important outguns the manifest's inline opacities. */
+.sysmap.diving .sm-flow,.sysmap.diving .sm-flowglow,.sysmap.diving .sm-orbit,.sysmap.diving .sm-glow,
+.sysmap.diving .sm-star2,.sysmap.diving .sm-mast,.sysmap.diving .sm-mini,.sysmap.diving .sm-suntitle,
+.sysmap.diving .sun-owner,.sysmap.diving .sm-year,.sysmap.diving .sm-cardlink,.sysmap.diving .sm-colstem,
+.sysmap.diving .mg-rocket,.sysmap.diving .mg-station,.sysmap.diving .rk-panel-link,
+.sysmap.diving .sm-planet:not([data-key="fly"]),
+.sysmap.diving .sm-card,.sysmap.diving .sm-sub,.sysmap.diving .sm-stats,.sysmap.diving .sm-head,
+.sysmap.diving .rk-panel{opacity:0 !important;transition:opacity .25s var(--ease-out);}
 .sys-nova{display:none;}
 html.spx .sys-nova{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:9;pointer-events:none;}
 html.spx .sys-build-stage{position:sticky;top:0;height:100vh;overflow:visible;display:flex;align-items:flex-start;}
+/* while the dive runs, the stage clips to its own viewport-sized box — the
+   zoomed planet fills exactly that box, and it can never bleed behind the
+   chapters that follow once the section scrolls away */
+html.spx .sys-build-stage.dive-clip{overflow:hidden;}
 html.spx .sys-build-stage .sysmap{width:100%;margin-top:0;}
 /* the nova crossfade IS the map's reveal — no offset may shift the globe */
 html.spx .sys-build .sysmap.reveal{transform:perspective(1600px) rotateX(7deg);opacity:1;transition:none;}
@@ -810,13 +830,14 @@ html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
 #liftoff.launching #padRocket .rk-plume,#liftoff.launching #padRocket .rk-plume2,
 #liftoff.launching #padRocket .rk-nozGlow,#liftoff.launching #padRocket .rk-trailline{opacity:1;}
 #liftoff.launching #padRocket{opacity:1;transition:transform 2.6s cubic-bezier(.58,.02,.86,.36),opacity .2s;transform:translateY(-128vh) rotate(-90deg) scale(var(--pads,2.2));}
-/* BOOSTER SEPARATION — the strap-ons ride the first second of the climb,
-   then peel aft-and-outward, tumbling and fading as the core stage pulls
-   ahead (in the rocket's frame the jettisoned pair falls behind it). Art
-   space: −x is aft (screen-down once the pad's −90° roll is applied). */
+/* BOOSTER SEPARATION — fires WITH the liftoff press: the instant the
+   .launching transition begins the strap-ons ignite, then peel aft-and-
+   outward over the first stretch of the climb, tumbling and fading while
+   the rocket is still low enough to watch it happen. Art space: −x is aft
+   (screen-down once the pad's −90° roll is applied). */
 .lo-boost{transform-box:fill-box;transform-origin:center;}
-#liftoff.launching .lo-boost.b1{animation:loSepA 1.5s 1.05s cubic-bezier(.5,.05,.8,.4) forwards;}
-#liftoff.launching .lo-boost.b2{animation:loSepB 1.5s 1.05s cubic-bezier(.5,.05,.8,.4) forwards;}
+#liftoff.launching .lo-boost.b1{animation:loSepA 1.4s .3s cubic-bezier(.5,.05,.8,.4) forwards;}
+#liftoff.launching .lo-boost.b2{animation:loSepB 1.4s .3s cubic-bezier(.5,.05,.8,.4) forwards;}
 @keyframes loSepA{0%{transform:none;opacity:1;}14%{transform:translate(-2px,2.5px) rotate(2.5deg);}100%{transform:translate(-64px,40px) rotate(42deg);opacity:0;}}
 @keyframes loSepB{0%{transform:none;opacity:1;}14%{transform:translate(-2px,-2.5px) rotate(-2.5deg);}100%{transform:translate(-64px,-40px) rotate(-42deg);opacity:0;}}
 html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during the ascent */
@@ -6333,8 +6354,8 @@ function renderSystem() {
         <text class="mh-h2" x="40" y="146" style="fill:url(#lgMast)">Multiple Paths to Growth.</text>
         <text class="mh-p" x="40" y="182">Freedom Group Holdings sits at the centre — owning the group&rsquo;s brands, trademarks</text>
         <text class="mh-p" x="40" y="205">and intellectual property, and licensing them to each specialist operating company.</text>
-        <rect class="mh-focus-pill" x="40" y="217" width="700" height="30" rx="15"/>
-        <text class="mh-p mh-focus-txt" x="56" y="237" style="fill:rgba(56,169,255,.92)"><tspan class="fk">TODAY&rsquo;S INVESTMENT FOCUS</tspan> — Freedom Global Ltd (trading as Freedom Fire &amp; Safety Ltd).</text>
+        <rect class="mh-focus-pill" x="40" y="217" width="712" height="30" rx="15"/>
+        <text class="mh-p mh-focus-txt" x="68" y="237" style="fill:rgba(56,169,255,.92)"><tspan class="fk">TODAY&rsquo;S INVESTMENT FOCUS</tspan> — Freedom Global Ltd (trading as Freedom Fire &amp; Safety Ltd).</text>
       </g>
       <text class="sm-suntitle" x="${cx}" y="186" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
       <text class="mh-p sun-owner" x="${cx}" y="207" text-anchor="middle" style="opacity:.85">Owner of the group&rsquo;s brands, intellectual property</text>
@@ -6407,10 +6428,12 @@ function renderSystem() {
   `;
 
   // the focus pill hugs its caption exactly — measured from the rendered text
-  // so a font swap can never leave the border short or baggy
+  // so a font swap can never leave the border short or baggy. The text sits
+  // 28 past the rect's x (cap radius 15 + 13 breathing room), so the width
+  // mirrors that on the right: advance + 2×28.
   const fitFocusPill = () => {
     const ftxt = map.querySelector(".mh-focus-txt"), fpill = map.querySelector(".mh-focus-pill");
-    if (ftxt && fpill && ftxt.getComputedTextLength) fpill.setAttribute("width", f(ftxt.getComputedTextLength() + 32));
+    if (ftxt && fpill && ftxt.getComputedTextLength) fpill.setAttribute("width", f(ftxt.getComputedTextLength() + 56));
   };
   fitFocusPill();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitFocusPill);
@@ -6600,7 +6623,12 @@ function renderSystem() {
     const stageEl = map.closest(".sys-build-stage");
     const buildEl = map.closest(".sys-build");
     if (stageEl && buildEl) {
-      buildEl.style.marginBottom = Math.max(0, map.offsetTop + map.offsetHeight - stageEl.clientHeight) + "px";
+      // spx: no overflow margin — the pin now ENDS inside the dive (the map's
+      // tail is shown by the lift phase, never by post-pin scrolling), and the
+      // clouds must pin at the very next scroll pixel. The margin remains for
+      // the non-cinematic fallback, where the map scrolls by as a plain section.
+      buildEl.style.marginBottom = (document.documentElement.classList.contains("spx")
+        ? 0 : Math.max(0, map.offsetTop + map.offsetHeight - stageEl.clientHeight)) + "px";
     }
     map.style.transform = keepT;
     // Perspective changes the apparent x/y scale slightly as content moves
@@ -6789,16 +6817,68 @@ function renderSystem() {
       const top = statsEl.offsetTop;
       rest = Math.max(0, (sh - (bot - top)) / 2 - top);
     }
-    const g2 = 1 - _win(sp2, .72, .97);
+    const g2 = 1 - _win(sp2, .64, .84);
     const drop = rest + (Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) - rest) * g2;
-    map.style.transform = drop > .5
-      ? `translateY(${drop.toFixed(1)}px) perspective(1600px) rotateX(${(7 * g2).toFixed(2)}deg)`
-      : "";
+    /* THE DIVE — the manifest completes at sp2 .86 and the finished frame
+       DWELLS (static, flat) until .92; the remaining scroll zooms straight
+       into Freedom Global's blue planet until its atmosphere fills the
+       viewport, where the cloud descent takes over in the same blue.
+       Hard-learned rules baked in here:
+       · the base transform is ALWAYS an explicit translate — writing ""
+         lets the stylesheet's .reveal transform re-apply mid-measure and
+         the landing point skews by hundreds of px;
+       · the planet face is measured UNDER that base transform (rotateX is
+         already 0 by .84), and only then is the zoom appended;
+       · the zoom itself is pure 2D — translate + scale about the map's own
+         transform-origin — never a new origin, never a 3D component. */
+    /* the tail of the pin is THREE beats:
+       dwell .86-.895  — the finished frame holds (all information readable);
+       lift  .895-.94  — the map glides UP like normal scrolling, revealing
+                         the lower half of the system (the framing the dive
+                         launches from — sun off the top, panels in view);
+       zoom  .94-1     — the dive itself. */
+    const lq = _win(sp2, .895, .94);
+    const zq = _win(sp2, .94, 1);
+    let dropF = drop;
+    if (lq > 0) dropF = drop + ((sh * .28 - 585 * (svgW / 1900)) - drop) * lq;
+    let tf = `translateY(${dropF.toFixed(1)}px)`;
+    if (g2 > .001) tf += ` perspective(1600px) rotateX(${(7 * g2).toFixed(2)}deg)`;
+    map.style.transform = tf;
+    if ((zq > 0) !== map.classList.contains("diving")) {
+      map.classList.toggle("diving", zq > 0);
+      // the ×~29 planet paints tens of thousands of px past the stage — while
+      // diving, the stage CLIPS to its own 100vh box, so the instant the
+      // section scrolls on, the planet leaves with it instead of ghosting
+      // behind every later chapter
+      if (stage) stage.classList.toggle("dive-clip", zq > 0);
+    }
+    if (zq > 0) {
+      const face = map.querySelector('.sm-planet[data-key="fly"] circle[fill^="url(#smp-"]');
+      if (face) {
+        const fr = face.getBoundingClientRect();
+        const mrect = map.getBoundingClientRect();
+        // scale pivots on the map's transform-origin (50% 22%) — under the
+        // pure-translate base the rect is undistorted, so the origin's
+        // screen position is plain arithmetic
+        const obx = mrect.left + mrect.width * .5, oby = mrect.top + mrect.height * .22;
+        const fx2 = fr.left + fr.width / 2, fy2 = fr.top + fr.height / 2;
+        const K = Math.max(2, Math.hypot(innerWidth, innerHeight) * 1.06 / Math.max(2, fr.width));
+        const s = 1 + (K - 1) * zq * zq;
+        // the steer RAMPS with an ease-out of zq: at the zoom's first frame
+        // the map is exactly where the lift left it (no snap), the swing
+        // toward the planet LEADS the growth (so it never slides off-frame
+        // mid-dive), and at zq=1 the face is landed dead-centre
+        const sq = 1 - (1 - zq) * (1 - zq);
+        const dx2 = (innerWidth * .5 - (obx + s * (fx2 - obx))) * sq;
+        const dy2 = (innerHeight * .52 - (oby + s * (fy2 - oby))) * sq;
+        map.style.transform = tf + ` translate(${dx2.toFixed(1)}px, ${dy2.toFixed(1)}px) scale(${s.toFixed(4)})`;
+      }
+    }
     alignProjectedCards();
     // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
     // scrolling on builds it, scrolling back up deconstructs it again,
     // frame-exact in both directions.
-    applyManifest(_cl((sp2 - .615) / .335, 0, 1));
+    applyManifest(_cl((sp2 - .615) / .245, 0, 1));
   };
   window.__ffBuild = driveBuild;
   if (build) {
@@ -6806,6 +6886,8 @@ function renderSystem() {
       if (!document.documentElement.classList.contains("spx")) {
         if (nvCv) nvCv.style.opacity = "0";
         map.style.transform = "";
+        map.classList.remove("diving");
+        stage.classList.remove("dive-clip");
         stage.style.opacity = ""; stage.style.visibility = "";
         applyManifest(1);
         return;
@@ -8977,7 +9059,7 @@ function initSetpieces() {
   }
   function drawClouds(ctx, p, w, h) {
     if (!CLs) makeClouds();
-    const day = sm(ph2(p, .34, .70));
+    const day = sm(ph2(p, .16, .52));
     const gFade = 1; // the daylight flood covers the exit
     const top = [lp(7, 255, day), lp(7, 255, day), lp(13, 255, day)];
     const bot = [lp(7, 244, day), lp(7, 246, day), lp(13, 250, day)];
@@ -8998,46 +9080,34 @@ function initSetpieces() {
       ag.addColorStop(0, `rgba(255,61,154,${after})`); ag.addColorStop(1, "rgba(255,61,154,0)");
       ctx.fillStyle = ag; ctx.fillRect(0, 0, w, h);
     }
-    // THE DIVE — Freedom Global's blue planet rushes up to meet the viewer,
-    // then its atmosphere whites out and hands over to the cloud deck
-    const zoomQ = sm(ph2(p, .02, .40));
-    if (p < .55) {
-      const pr = h * (.05 + 2.55 * zoomQ * zoomQ);
-      const px2 = w * .5, py2 = h * .52;
-      const haloG = ctx.createRadialGradient(px2, py2, pr * .8, px2, py2, pr * 1.3);
-      haloG.addColorStop(0, "rgba(140,200,255,0)");
-      haloG.addColorStop(.7, `rgba(140,200,255,${.34 * (1 - zoomQ * .45)})`);
-      haloG.addColorStop(1, "rgba(140,200,255,0)");
-      ctx.fillStyle = haloG; ctx.beginPath(); ctx.arc(px2, py2, pr * 1.3, 0, TAU); ctx.fill();
-      const bodyG = ctx.createRadialGradient(px2 - pr * .35, py2 - pr * .38, pr * .08, px2, py2, pr);
-      bodyG.addColorStop(0, "#e0f7ff"); bodyG.addColorStop(.45, "#3f9ae2");
-      bodyG.addColorStop(.8, "#1c4f9c"); bodyG.addColorStop(1, "#071c52");
-      ctx.fillStyle = bodyG; ctx.beginPath(); ctx.arc(px2, py2, pr, 0, TAU); ctx.fill();
-      ctx.save();
-      ctx.beginPath(); ctx.arc(px2, py2, pr, 0, TAU); ctx.clip();
-      ctx.strokeStyle = "rgba(224,247,255,.20)";
-      ctx.lineWidth = Math.max(1.5, pr * .045);
-      for (let bnd = -2; bnd <= 2; bnd++) {
-        ctx.beginPath();
-        ctx.ellipse(px2, py2 + bnd * pr * .30, pr * 1.06, pr * .17, 0, 0, TAU);
-        ctx.stroke();
-      }
-      const shadeG = ctx.createRadialGradient(px2 - pr * .3, py2 - pr * .35, pr * .2, px2, py2, pr);
-      shadeG.addColorStop(.72, "rgba(0,0,0,0)"); shadeG.addColorStop(1, "rgba(4,10,30,.55)");
-      ctx.fillStyle = shadeG; ctx.fillRect(px2 - pr, py2 - pr, pr * 2, pr * 2);
-      ctx.restore();
+    // THE HANDOFF — the system map has already zoomed into Freedom Global's
+    // planet, so this scene OPENS inside its atmosphere: a full-screen blue
+    // matching the planet's own gradient family, no second canvas planet.
+    // The blue holds, whites out, and the cloud deck materialises in the glow.
+    const blueA = 1 - sm(ph2(p, .02, .14));
+    if (blueA > .01) {
+      const bgB = ctx.createRadialGradient(w * .32, h * .30, 0, w * .32, h * .30, Math.hypot(w, h) * .9);
+      bgB.addColorStop(0, "#e0f7ff"); bgB.addColorStop(.4, "#3f9ae2");
+      bgB.addColorStop(.75, "#1c4f9c"); bgB.addColorStop(1, "#071c52");
+      ctx.globalAlpha = blueA;
+      ctx.fillStyle = bgB; ctx.fillRect(0, 0, w, h);
+      ctx.globalAlpha = 1;
     }
-    // atmosphere whiteout bridging the dive into the cloud deck
-    const atmo = sm(ph2(p, .32, .46)) * (1 - sm(ph2(p, .50, .64)));
+    // the scene PINS on the dive's final blue frame, so the transition starts
+    // with the very first scrolled pixel: the whiteout blooms while the blue
+    // is still up and the screen brightens straight through — no blue hold
+    const atmo = sm(ph2(p, .04, .18)) * (1 - sm(ph2(p, .30, .44)));
     if (atmo > .01) { ctx.fillStyle = `rgba(240,246,255,${atmo})`; ctx.fillRect(0, 0, w, h); }
-    const lightMix = sm(ph2(p, .42, .72));
-    const pc = cl((p - .30) / .70, 0, 1);   // clouds ride only the post-dive stretch
+    // clouds arrive ALREADY LIT (lightMix leads the alpha gate below), so the
+    // emergence reads as pale shapes inside the glow — never a dark curtain
+    const lightMix = sm(ph2(p, .18, .36));
+    const pc = cl((p - .02) / .98, 0, 1);   // clouds ride everything after the handoff
     const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, pc, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
     for (const { c2, g } of order) {
       const { zf, k, scale, sw, sh, x, y } = g;
       let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.28 + .72 * Math.min(1, k * 3));
       al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
-      al *= gFade * sm(ph2(p, .42, .56));   // clouds materialise inside the whiteout
+      al *= gFade * sm(ph2(p, .22, .38));   // clouds materialise as the whiteout releases
       if (al <= .015) continue;
       const spr = CLs[c2.s];
       ctx.globalAlpha = al * (1 - lightMix);
@@ -9065,9 +9135,8 @@ function initSetpieces() {
     // break into the daylight of the journey chapter
     const out = sm(ph2(p, .85, .985));
     if (out > .01) { ctx.fillStyle = `rgba(238,241,248,${out})`; ctx.fillRect(0, 0, w, h); }
-    // ingress from the hero's exact black
-    const inDark = 1 - sm(ph2(p, .015, .08));
-    if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
+    // no dark ingress — the scene is entered THROUGH the planet's blue, which
+    // the opening wash above continues seamlessly
   }
 
   /* ---------- FUNDING CLIMB: the second, LONG cloud ride (team → liftoff).
@@ -9258,9 +9327,17 @@ function initSetpieces() {
   const paint = force => {
     // self-heal the gate: some environments miss resize events
     if (eligible() !== document.documentElement.classList.contains("spx")) gate();
-    if (!eligible()) return;
+    if (!eligible()) {
+      // leaving cinematic mode must never strand the clouds hidden
+      items.forEach(it => { if (it.draw === drawClouds) it.el.style.visibility = ""; });
+      return;
+    }
     items.forEach(it => {
       const r = it.el.getBoundingClientRect();
+      // the clouds ride up INVISIBLY behind the system pin's final viewport
+      // (they overlap it via the -100vh pull) and materialise the instant
+      // they pin — exactly when the dive's planet fills the screen
+      if (it.draw === drawClouds) it.el.style.visibility = r.top > 1 ? "hidden" : "";
       if (!force && (r.bottom < -80 || r.top > innerHeight + 80)) return;
       size(it);
       const p = progress(it);

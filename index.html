@@ -737,7 +737,7 @@ html.spx .tr2-planet{background:#0f1018;}
 @media (max-width:900px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
-html.spx .sys-build{height:calc(340vh + 1500px);} /* extra runway = dwell at the finished map, the glide down the system, then the dive into the blue planet */
+html.spx .sys-build{height:calc(340vh + 2400px);} /* extra runway = dwell at the finished map, the glide down the system, the long READ hold (one extra scroll), then the dive into the blue planet */
 /* the cloud descent PINS at the exact scroll pixel the dive completes — it
    rides up hidden behind the last viewport of the pin (nova-style overlap),
    so there is never a black gap or a sliding blue sheet between the planet
@@ -4969,45 +4969,26 @@ function initCourier() {
     const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
     if (t3 && t3.s1 - t3.s0 > 60) { t3.kind = "traj"; segs.push(t3); }
     /* GROWTH → 2036 TRANSFER
-       Cursor-traced route from the supplied recording: dive into the right
-       whitespace, sweep left through the clear inter-section band, make the
-       cursor's small port-side hook, descend the outside gutter, dip low and
-       curl nose-first into the REAL 2023 trajectory point. */
+       Cursor-traced route (recording 2026-07-20 10:12): off the summit the
+       ship pushes OUT to the right edge and rides it down to mid-height,
+       then flies ONE long, shallow left-sweeping diagonal across the whole
+       section — gently sinking the entire way — to reach the left margin
+       low, finishing on the REAL 2023 trajectory point. */
     if (g2 && t3 && t3.s0 - g2.s1 > 80) {
       segs.push({
         transfer: true, s0: g2.s1, s1: t3.s0,
         at: q => {
           const a = g2.at(1), b = t3.at(0);
-          const gx = Math.max(54, innerWidth * .046);
-          const statR = document.querySelector("#growth .stat-row")?.getBoundingClientRect();
-          const headR = document.querySelector("#projections .sec-head")?.getBoundingClientRect();
-          // Follow the real whitespace between the two sections. This keeps
-          // the crossing inside the large empty band at every viewport height
-          // instead of guessing a fixed y-coordinate.
-          const openBandY = statR && headR ? (statR.bottom + headR.top) / 2 : vh * .34;
-          const laneY = Math.max(vh * .22, Math.min(vh * .56, openBandY));
+          const iw = innerWidth;
           return flightSplineKeyed([
-            // Exact endpoints remove the graph/transfer boundary hops. The
-            // broad sweep now receives real scroll time: the former .250 to
-            // .265 keys crossed almost the entire viewport in one frame.
             { t: 0,   x: a.x, y: a.y },
-            { t: .05, x: innerWidth * .84, y: a.y + 30 },
-            { t: .10, x: innerWidth * .89, y: laneY },
-            { t: .14, x: innerWidth * .86, y: laneY },
-            // A genuinely straight leftward pass through the open band.
-            { t: .18, x: innerWidth * .68, y: laneY },
-            { t: .22, x: innerWidth * .48, y: laneY },
-            { t: .26, x: innerWidth * .29, y: laneY },
-            { t: .30, x: innerWidth * .13, y: laneY },
-            { t: .34, x: gx, y: laneY },
-            { t: .38, x: gx, y: laneY },
-            // Only after the left edge is reached does the descent begin.
-            { t: .44, x: gx, y: vh * .55 },
-            { t: .53, x: gx, y: vh * .70 },
-            { t: .64, x: gx, y: vh * .79 },
-            { t: .74, x: innerWidth * .07, y: vh * .84 },
-            { t: .84, x: innerWidth * .11, y: vh * .90 },
-            { t: .94, x: innerWidth * .18, y: vh * .90 },
+            { t: .07, x: Math.min(iw - 60, Math.max(a.x + 60, iw * .86)), y: a.y + 40 },
+            { t: .16, x: iw * .90, y: vh * .50 },
+            { t: .30, x: iw * .74, y: vh * .60 },
+            { t: .46, x: iw * .58, y: vh * .66 },
+            { t: .62, x: iw * .42, y: vh * .72 },
+            { t: .78, x: iw * .26, y: vh * .78 },
+            { t: .90, x: iw * .12, y: vh * .82 },
             { t: 1,   x: b.x, y: b.y }
           ], q);
         }
@@ -5068,10 +5049,9 @@ function initCourier() {
           { t: .70, x: rightLane, y: vh * .85 },
           { t: 1,   x: rightLane, y: vh * .92 }
         ], z);
-        // A restrained bank after the exit keeps the long right-gutter run
-        // alive without moving autonomously while scrolling is parked.
-        const sway = smt(cl01((z - .35) / .35)) * (1 - smt(cl01((z - .72) / .28)));
-        p4.x += Math.sin(z * Math.PI * 2) * 7 * sway;
+        // No lateral wave here: the long right-gutter run reads cleanest as a
+        // dead-straight rail (the slow perpendicular drift in frame() already
+        // keeps the ship feeling alive).
         return p4;
       }
     });
@@ -5168,16 +5148,17 @@ function initCourier() {
           const approachX = Math.min(rightLane - 24, Math.max(b2.x + 120, iw * .76));
           const approachY = Math.min(ih * .84, Math.max(b2.y - 84, ih * .66));
           // Carry the graph's summit tangent to the right, settle into one
-          // continuous vertical lane, then use progressively tighter bends to
-          // meet the globe tangent without a positional or heading snap.
+          // continuous vertical lane, then flow down the planet's right-hand
+          // side in ONE widening arc that lands on the limb travelling
+          // straight down — the exact tangent the orbit ellipse departs with,
+          // so entry-to-wrap is a single unbroken motion.
           P4 = [a2,
             { x: shoulderX, y: a2.y + 34 },
             { x: rightLane, y: Math.max(a2.y + 82, ih * .36) },
-            { x: rightLane, y: ih * .54 },
-            { x: rightLane, y: ih * .72 },
-            { x: approachX, y: approachY },
-            { x: b2.x + 76, y: b2.y - 62 },
-            { x: b2.x, y: b2.y - 42 },
+            { x: rightLane, y: ih * .56 },
+            { x: Math.max(b2.x + 130, Math.min(rightLane, approachX)), y: Math.max(approachY - 40, ih * .70) },
+            { x: b2.x + 48, y: b2.y - 118 },
+            { x: b2.x, y: b2.y - 50 },
             b2];
         } else {
           P4 = haul > innerHeight * 1.45
@@ -5199,8 +5180,12 @@ function initCourier() {
         });
         const s3 = Math.min(segN - 1, Math.floor(g2 * segN)), u3 = g2 * segN - s3;
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
-        const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
-        pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
+        // the near-vertical globe approach flies a DEAD-STRAIGHT rail — any
+        // lateral wave on that leg reads as stutter, not life
+        if (!toOrbit) {
+          const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
+          pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
+        }
         // hard rail through the grid's column gap — spline bow and sway both
         // yield to the seam (the flanking panels are no-fly)
         if (seamBand && pos3.y > seamBand.y0 && pos3.y < seamBand.y1) {
@@ -6817,7 +6802,7 @@ function renderSystem() {
       const top = statsEl.offsetTop;
       rest = Math.max(0, (sh - (bot - top)) / 2 - top);
     }
-    const g2 = 1 - _win(sp2, .64, .84);
+    const g2 = 1 - _win(sp2, .62, .80);
     const drop = rest + (Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) - rest) * g2;
     /* THE DIVE — the manifest completes at sp2 .86 and the finished frame
        DWELLS (static, flat) until .92; the remaining scroll zooms straight
@@ -6831,16 +6816,30 @@ function renderSystem() {
          already 0 by .84), and only then is the zoom appended;
        · the zoom itself is pure 2D — translate + scale about the map's own
          transform-origin — never a new origin, never a 3D component. */
-    /* the tail of the pin is THREE beats:
-       dwell .86-.895  — the finished frame holds (all information readable);
-       lift  .895-.94  — the map glides UP like normal scrolling, revealing
-                         the lower half of the system (the framing the dive
-                         launches from — sun off the top, panels in view);
-       zoom  .94-1     — the dive itself. */
-    const lq = _win(sp2, .895, .94);
-    const zq = _win(sp2, .94, 1);
+    /* the tail of the pin is FOUR beats:
+       dwell .82-.84   — the finished frame holds (headline framing);
+       lift  .84-.87   — the map glides UP like normal scrolling until the
+                         future panels' LAST LINE of text clears the fold
+                         (content-derived, so no viewport can crop it);
+       HOLD  .87-.952  — a long dead-zone (~3-4 wheel scrolls) where nothing
+                         moves at all, so every box can actually be read;
+       zoom  .952-1    — the dive itself. */
+    const lq = _win(sp2, .84, .87);
+    const zq = _win(sp2, .952, 1);
     let dropF = drop;
-    if (lq > 0) dropF = drop + ((sh * .28 - 585 * (svgW / 1900)) - drop) * lq;
+    if (lq > 0) {
+      // the lift target is measured, not guessed: rise until the lowest
+      // future panel's text sits above the viewport bottom (the panels carry
+      // ~40px of inner padding below their last line), with a small floor so
+      // preposterously short viewports still keep the sun sliver on screen
+      let mapBot = 0;
+      for (const pn of map.querySelectorAll(".rk-panel"))
+        mapBot = Math.max(mapBot, pn.offsetTop + pn.offsetHeight);
+      let liftT = sh * .28 - 585 * (svgW / 1900);
+      if (mapBot) liftT = Math.min(liftT, sh - mapBot + 16);
+      liftT = Math.max(liftT, sh * .02 - 585 * (svgW / 1900) - 260);
+      dropF = drop + (liftT - drop) * lq;
+    }
     let tf = `translateY(${dropF.toFixed(1)}px)`;
     if (g2 > .001) tf += ` perspective(1600px) rotateX(${(7 * g2).toFixed(2)}deg)`;
     map.style.transform = tf;
@@ -6878,7 +6877,7 @@ function renderSystem() {
     // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
     // scrolling on builds it, scrolling back up deconstructs it again,
     // frame-exact in both directions.
-    applyManifest(_cl((sp2 - .615) / .245, 0, 1));
+    applyManifest(_cl((sp2 - .615) / .205, 0, 1));
   };
   window.__ffBuild = driveBuild;
   if (build) {
@@ -7002,7 +7001,9 @@ function renderJourney() {
 
   const onScroll = rafScroll(() => {
     const r = rail.getBoundingClientRect();
-    const focus = window.innerHeight * 0.55;
+    // .61 keeps the fill's leading edge right at the courier's nose while it
+    // rides the rail (the rocket holds .55-.59vh + its own nose length)
+    const focus = window.innerHeight * 0.61;
     const progress = Math.max(0, Math.min(1, (focus - r.top) / r.height));
     fill.style.height = (progress * 100) + "%";
     const railTop = r.top;

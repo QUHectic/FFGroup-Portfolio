@@ -5908,7 +5908,7 @@ function renderSystem() {
      its dot so the chain reads as a single aligned rail. All five clear the
      lanes, the Distribution planet + its parked column, and the 2030+ moon. */
   const YEAR_ANGLES = [35, 54.5, 58.5, 61, 61.6];
-  const YEAR_XOFF = [24, 24, 24, 24, 24];   // ONE offset for the whole rail — dots step right in a smoothly-shrinking rhythm (x deltas ≈ 89/59/46/47, the last two EQUAL) so 2029/2030+ continue the 2026-28 flow and clear the clamped Distribution column on laptops
+  const YEAR_XOFF = [36, 36, 36, 36, 36];   // keep one clean label rail, with the years clear of their orbit dots
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -6805,9 +6805,9 @@ function renderSystem() {
     reg(pth, a, b, "draw");
   });
   /* per-year blocks: arrow → planet + year marker → boxes */
-  const YB = i => .36 + i * .128;
+  const YB = i => .32 + i * .11;
   [...svgEl.querySelectorAll(".sm-year")].forEach((mark, idx) => {
-    reg(mark, YB(idx) + .048, YB(idx) + .088, "fade");
+    reg(mark, YB(idx) + .055, YB(idx) + .14, "fade");
   });
   // strict one-at-a-time company chains: lane → planet → panel
   const chain = (key, l0, l1, p0, p1, c0, c1) => {
@@ -6822,40 +6822,42 @@ function renderSystem() {
     reg(q(".cl-" + key), c0, c1, "fade");     // the dash-dot box↔planet link
     reg(q(".stem-" + key), c0, c1, "fade");   // the stem down to the shelf
   };
-  chain("fly",   YB(0), YB(0) + .048, YB(0) + .048, YB(0) + .088, YB(0) + .082, YB(0) + .128);
-  chain("form",  YB(1), YB(1) + .048, YB(1) + .048, YB(1) + .088, YB(1) + .082, YB(1) + .128);
-  chain("storm", YB(2), YB(2) + .048, YB(2) + .048, YB(2) + .088, YB(2) + .082, YB(2) + .128);
+  chain("fly",   YB(0), YB(0) + .12, YB(0) + .035, YB(0) + .14, YB(0) + .085, YB(0) + .18);
+  chain("form",  YB(1), YB(1) + .12, YB(1) + .035, YB(1) + .14, YB(1) + .085, YB(1) + .18);
+  chain("storm", YB(2), YB(2) + .12, YB(2) + .035, YB(2) + .14, YB(2) + .085, YB(2) + .18);
   // the future stations' lanes ride inside their own year blocks — planet/card
   // lookups no-op for these keys, so only lane + glow register
-  chain("ds1", YB(3), YB(3) + .048, YB(3) + .048, YB(3) + .088, YB(3) + .082, YB(3) + .1);
-  chain("ds2", YB(4), YB(4) + .048, YB(4) + .048, YB(4) + .088, YB(4) + .082, YB(4) + .1);
+  chain("ds1", YB(3), YB(3) + .12, YB(3) + .035, YB(3) + .14, YB(3) + .085, YB(3) + .18);
+  chain("ds2", YB(4), YB(4) + .12, YB(4) + .035, YB(4) + .14, YB(4) + .085, YB(4) + .18);
   reg(svgEl.querySelector(".mg-rocket"), .32, .36, "fade");      // the courier launches once the rings are up
-  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, YB(3 + idx) + .048, YB(3 + idx) + .088, "fade"));
-  [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, YB(3 + idx) + .082, YB(3 + idx) + .128, "rise"));
-  [...svgEl.querySelectorAll(".rk-panel-link")].forEach((pl2, idx) => reg(pl2, YB(3 + idx) + .082, YB(3 + idx) + .128, "dim"));
+  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, YB(3 + idx) + .035, YB(3 + idx) + .14, "fade"));
+  [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, YB(3 + idx) + .085, YB(3 + idx) + .18, "rise"));
+  [...svgEl.querySelectorAll(".rk-panel-link")].forEach((pl2, idx) => reg(pl2, YB(3 + idx) + .085, YB(3 + idx) + .18, "dim"));
 
   let lastMp = -1;
+  const mfEase = t => t * t * t * (t * (t * 6 - 15) + 10);
   const applyManifest = mp => {
     mp = _cl(mp, 0, 1);
     if (mp === lastMp) return;
     lastMp = mp;
     for (const r2 of REG) {
-      const t = _win(mp, r2.a, r2.b);
+      const u = _cl((mp - r2.a) / Math.max(.0001, r2.b - r2.a), 0, 1);
+      const t = mfEase(u);
       const st = r2.el.style;
       if (r2.fx === "fade") st.opacity = t >= 1 ? "" : String(t.toFixed(3));
       else if (r2.fx === "dim") st.opacity = t >= 1 ? "" : String((t * .76).toFixed(3));   // tethers settle at the .show class's .76
       else if (r2.fx === "rise") {
         st.opacity = t >= 1 ? "" : String(t.toFixed(3));
-        st.transform = t >= 1 ? "" : `translateY(${((1 - t) * 20).toFixed(1)}px)`;
+        st.transform = t >= 1 ? "" : `translateY(${((1 - t) * 12).toFixed(1)}px)`;
       } else if (r2.fx === "riseC") {
         st.opacity = t >= 1 ? "" : String(t.toFixed(3));
         st.transform = t >= 1 ? "" : `translateX(-50%) translateY(${((1 - t) * 26).toFixed(1)}px)`;
       } else if (r2.fx === "bloom") {
-        st.opacity = t >= 1 ? "" : String(Math.min(1, t * 1.7).toFixed(3));
-        st.transform = t >= 1 ? "" : `scale(${(.06 + .94 * t).toFixed(4)})`;
+        st.opacity = t >= 1 ? "" : String(t.toFixed(3));
+        st.transform = t >= 1 ? "" : `scale(${(.72 + .28 * t).toFixed(4)})`;
       } else {
         st.strokeDashoffset = t >= 1 ? "" : String((1 - t).toFixed(4));
-        st.opacity = t <= 0 ? "0" : (t >= 1 ? "" : "1");
+        st.opacity = t <= 0 ? "0" : (t >= 1 ? "" : String(t.toFixed(3)));
       }
     }
   };
@@ -6901,7 +6903,24 @@ function renderSystem() {
       const top = statsEl.offsetTop;
       rest = Math.max(0, (sh - (bot - top)) / 2 - top);
     }
+    // On desktop the sticky stage shares the viewport with the fixed nav.
+    // Fit the complete masthead-to-panel composition inside that safe area,
+    // rather than letting the nav hide the copy above the pink globe or the
+    // fold clip the future panels below it.
+    let fitScale = 1, fitRest = rest;
+    if (innerWidth > 900) {
+      const navH = document.querySelector("header")?.getBoundingClientRect().height || 0;
+      const safeTop = Math.min(sh * .12, navH + 8);
+      const safeBottom = 10;
+      const naturalH = Math.max(1, map.offsetHeight);
+      fitScale = Math.max(.84, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
+      const originY = naturalH * .22;
+      const stageTop = Math.max(0, stage?.getBoundingClientRect().top || 0);
+      fitRest = safeTop - stageTop - originY * (1 - fitScale);
+      rest = fitRest;
+    }
     const g2 = 1 - _win(sp2, .62, .80);
+    const fitNow = fitScale + (1 - fitScale) * g2;
     const drop = rest + (Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) - rest) * g2;
     /* THE DIVE — the manifest completes at sp2 .86 and the finished frame
        DWELLS (static, flat) until .92; the remaining scroll zooms straight
@@ -6937,12 +6956,13 @@ function renderSystem() {
       // purely content-derived: lift ONLY as far as needed to float the
       // panel bottoms above the fold — the compressed map fits most
       // viewports outright, so this is usually a few px or nothing at all
-      let liftT = mapBot ? Math.min(0, sh - mapBot - 12) : 0;
-      liftT = Math.max(liftT, -sh * .6);
+      let liftT = fitScale < .999 ? fitRest : (mapBot ? Math.min(0, sh - mapBot - 12) : 0);
+      if (fitScale >= .999) liftT = Math.max(liftT, -sh * .6);
       dropF = drop + (liftT - drop) * lq;
     }
     let tf = `translateY(${dropF.toFixed(1)}px)`;
     if (g2 > .001) tf += ` perspective(1600px) rotateX(${(7 * g2).toFixed(2)}deg)`;
+    if (fitNow < .9995) tf += ` scale(${fitNow.toFixed(4)})`;
     map.style.transform = tf;
     if ((zq > 0) !== map.classList.contains("diving")) {
       map.classList.toggle("diving", zq > 0);
@@ -6978,7 +6998,7 @@ function renderSystem() {
     // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
     // scrolling on builds it, scrolling back up deconstructs it again,
     // frame-exact in both directions.
-    applyManifest(_cl((sp2 - .615) / .205, 0, 1));
+    applyManifest(_win(sp2, .585, .785));
   };
   window.__ffBuild = driveBuild;
   if (build) {

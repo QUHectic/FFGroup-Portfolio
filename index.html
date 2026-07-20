@@ -196,8 +196,8 @@ section#team{overflow-x:clip;}
 .sm-card .cat{color:var(--c);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:6px 0 0;line-height:1.4;}
 /* sketch formation — the dash-dot line from each MAIN BOX to its planet's
    edge, and the stem dropping to the detail shelf, live in the SVG */
-.sm-cardlink{fill:none;stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:.85;}
-.sm-colstem{fill:none;stroke-width:2;stroke-dasharray:2.5 6.5;stroke-linecap:round;opacity:.85;}
+.sm-cardlink{fill:none;stroke-width:1.6;stroke-linecap:round;opacity:.88;}
+.sm-colstem{fill:none;stroke-width:1.6;stroke-linecap:round;opacity:.88;}
 /* every licence lane is a SOLID stroke — Holdings connects to its companies directly */
 .fc-destroyer,.fc-moon{opacity:.85;}
 /* status pill — rides right beside the company/venture name (cards AND the
@@ -750,7 +750,7 @@ html.spx .tr2-planet{background:#0f1018;}
 @media (max-width:900px){.ff-courier{display:none !important;}}
 html.spx section#system{background:#07070d;}
 html.spx section#system{margin-top:-100vh;} /* nova pins the instant the warp completes — zero gap */
-html.spx .sys-build{height:calc(340vh + 2400px);} /* extra runway = dwell at the finished map, the glide down the system, the long READ hold (one extra scroll), then the dive into the blue planet */
+html.spx .sys-build{height:calc(100vh + 9200px);} /* 28 deliberate build beats plus a full-scroll blue-planet dive */
 /* the cloud descent PINS at the exact scroll pixel the dive completes — it
    rides up hidden behind the last viewport of the pin (nova-style overlap),
    so there is never a black gap or a sliding blue sheet between the planet
@@ -2267,25 +2267,25 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(250px,16vw,320px);
+  position:absolute;z-index:5;width:clamp(248px,15vw,292px);
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
-  padding:9px 14px;box-shadow:0 18px 50px rgba(0,0,0,.5);text-align:center;
+  padding:7px 11px;box-shadow:0 18px 50px rgba(0,0,0,.5);text-align:center;
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
   opacity:0;transform:translateY(6px) scale(.97);pointer-events:none;
   transition:opacity .25s var(--ease-out), transform .25s var(--ease-out);
 }
 .rk-panel.show{opacity:1;transform:none;pointer-events:auto;}
-.rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
+.rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.6;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
 .rk-panel-link.show{opacity:.76;}
 .rk-panel h4{margin:0 0 6px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
-.rk-row{position:relative;display:block;padding:5px 12px;text-align:center;}
+.rk-row{position:relative;display:block;padding:4px 8px;text-align:center;}
 .rk-row + .rk-row{border-top:1px solid rgba(255,255,255,.07);}
 .rk-row i{position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.55);margin:0;}
 /* the future rows read at EXACTLY the planned cards' type scale:
    name = .sm-card h3, category = .sm-card .cat, body = .sm-card .ch */
 .rk-row .rk-cat{display:block;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:2px 0 3px;}
 .rk-row b{display:flex;align-items:center;justify-content:center;gap:8px;row-gap:3px;flex-wrap:wrap;font-size:.92rem;color:#f3f4fb;letter-spacing:-.01em;}
-.rk-row span{font-size:.76rem;color:rgba(243,244,251,.62);line-height:1.5;}
+.rk-row span{font-size:.74rem;color:rgba(243,244,251,.62);line-height:1.38;}
 @media (max-width:1500px){
   .rk-row b{font-size:.84rem;}
   .rk-row .rk-cat{font-size:.62rem;}
@@ -5854,7 +5854,7 @@ function renderSystem() {
     [618, 145, 473, "sm-orbit"],
     [800, 195, 505, "sm-orbit"],
     [950, 238, 496, "sm-orbit future"],
-    [1060, 270, 506, "sm-orbit future outer"],
+    [1060, 280, 506, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -5907,7 +5907,7 @@ function renderSystem() {
      dictate the exact curve), and every pill hangs a uniform 24 units off
      its dot so the chain reads as a single aligned rail. All five clear the
      lanes, the Distribution planet + its parked column, and the 2030+ moon. */
-  const YEAR_ANGLES = [35, 54.5, 58.5, 61, 61.6];
+  const YEAR_ANGLES = [20, 50, 56, 59, 60];
   const YEAR_XOFF = [36, 36, 36, 36, 36];   // keep one clean label rail, with the years clear of their orbit dots
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
@@ -6467,7 +6467,7 @@ function renderSystem() {
         <span class="cap2">CORE CATEGORIES</span>
         <div class="fn2"><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
         <span class="cap2">TARGET CHANNELS</span>
-        <div class="fn2"><span>National retailers · Trade merchants · Electrical wholesalers · Commercial distributors · Export partners</span></div>
+        <div class="fn2"><span>National retailers · Electrical wholesalers · Commercial distributors · Export partners</span></div>
       </div>
     </div>
     <div class="sm-head">
@@ -6601,7 +6601,7 @@ function renderSystem() {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
     panelBelow: { align: "center", topY: 777, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
     items: [
-      { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Technology · Aerial Services", catC: "#b18cff",
+      { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
       { n: "Freedom Fuel Ltd", pill: "FUTURE · 2036+", cat: "Forecourts · Energy · Retail", catC: "#b18cff",
         d: "A long-term ambition to develop or acquire forecourt and convenience-retail locations." },
@@ -6630,7 +6630,7 @@ function renderSystem() {
     // map's padding, so the padding IS the offset.
     const mcs = getComputedStyle(map);
     const ox = parseFloat(mcs.paddingLeft) || 0, oy = parseFloat(mcs.paddingTop) || 0;
-    const FAMILY_GAP = 26;                    // one gap rhythm in every direction
+    const FAMILY_GAP = 16;                    // short, solid edge-to-edge tethers
     const gapPx = FAMILY_GAP * sclY;
     const cardMode = key => key === "form" ? "left" : key === "storm" ? "right" : "below";
     PLANETS.forEach(p => {
@@ -6774,65 +6774,81 @@ function renderSystem() {
     setTimeout(layoutSubs, 800);
   });
 
-  /* ---- SCROLL-MANIFEST v2: the globe is NEVER hidden — it is already there
-     the instant the section arrives (it IS the settled star). Everything
-     else assembles strictly in rank order, and each company must finish
-     completely (lane → planet → panel) before the next begins. */
+  /* ---- SCROLL-MANIFEST v3: every visible action owns one equal scroll beat.
+     Holdings lands first; each orbit gets a beat; the three masthead groups
+     follow; then every family repeats arrow → planet+year → one beat per box. */
   const _cl = (v, a, b) => Math.min(b, Math.max(a, v));
   const _win = (p2, a, b) => { const t = _cl((p2 - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const svgEl = map.querySelector("svg");
   const REG = [];
   const reg = (el, a, b, fx) => { if (el) REG.push({ el, a, b, fx }); };
   const q = sel => svgEl.querySelector(sel);
-  /* MANIFEST ORDER v2 — the pink planet is already there (it IS the settled
-     star); then the header band manifests LEFT → RIGHT (mast block →
-     holdings column → stat tiles); then EVERY orbit ring sweeps in,
-     innermost outward; and only then do the years land, one at a time, each
-     as its own complete family: licence arrow → planet + year marker on the
-     ring → that year's boxes. */
-  reg(q(".sm-mast"), .02, .08, "rise");                      // LEFT — the headline block
-  reg(q(".sm-suntitle"), .06, .11, "rise");                  // MIDDLE — the holdings column…
-  [...svgEl.querySelectorAll(".sun-owner")].forEach(t2 => reg(t2, .07, .12, "fade"));
-  reg(q(".sm-mini"), .08, .13, "fade");
-  reg(statsEl, .11, .17, "rise");                            // RIGHT — the stat tiles
-  let dockIdx = 0;
-  [...svgEl.querySelectorAll("path.sm-orbit")].forEach((pth, idx) => {
-    if (pth.classList.contains("dock")) { reg(pth, .30 + dockIdx * .02, .35 + dockIdx * .02, "fade"); dockIdx++; return; }
-    const ring = Math.floor(idx / 2);
-    const a = .17 + ring * .03, b = a + .06;
-    if (pth.classList.contains("future")) { reg(pth, a, b, "fade"); return; }
-    pth.setAttribute("pathLength", "1"); pth.style.strokeDasharray = "1";
-    reg(pth, a, b, "draw");
+  const TOTAL_BEATS = 28;
+  const beatWindow = n => [(n + .08) / TOTAL_BEATS, (n + .92) / TOTAL_BEATS];
+  const atBeat = (el, n, fx) => { const [a, b] = beatWindow(n); reg(el, a, b, fx); };
+
+  // 0: Holdings itself; 1–5: exactly one complete orbit per beat.
+  atBeat(q('.sm-planet[data-key="fire"]'), 0, "bloom");
+  atBeat(q(".sm-glow"), 0, "fade");
+  const orbitPaths = [...svgEl.querySelectorAll("path.sm-orbit:not(.dock)")];
+  orbitPaths.forEach((pth, idx) => {
+    const ring = Math.floor(idx / 2), beatNo = 1 + ring;
+    if (pth.classList.contains("future")) atBeat(pth, beatNo, "fade");
+    else {
+      pth.setAttribute("pathLength", "1");
+      pth.style.strokeDasharray = "1";
+      atBeat(pth, beatNo, "draw");
+    }
   });
-  /* per-year blocks: arrow → planet + year marker → boxes */
-  const YB = i => .32 + i * .11;
-  [...svgEl.querySelectorAll(".sm-year")].forEach((mark, idx) => {
-    reg(mark, YB(idx) + .055, YB(idx) + .14, "fade");
-  });
-  // strict one-at-a-time company chains: lane → planet → panel
-  const chain = (key, l0, l1, p0, p1, c0, c1) => {
+  [...svgEl.querySelectorAll("path.sm-orbit.dock")].forEach((pth, idx) => atBeat(pth, 4 + idx, "fade"));
+
+  // 6–8: the three groups above the planet, left to right.
+  atBeat(q(".sm-mast"), 6, "rise");
+  atBeat(q(".sm-suntitle"), 7, "rise");
+  [...svgEl.querySelectorAll(".sun-owner")].forEach(t2 => atBeat(t2, 7, "fade"));
+  atBeat(q(".sm-mini"), 7, "fade");
+  atBeat(statsEl, 8, "rise");
+  atBeat(svgEl.querySelector(".mg-rocket"), 8, "fade");
+
+  const years = [...svgEl.querySelectorAll(".sm-year")];
+  const drawArrowAt = (key, beatNo) => {
     const lane = q(".fl-" + key), glow = q(".g-" + key);
-    // solid lanes DRAW themselves out of Holdings, arrowhead leading
-    if (lane) { lane.setAttribute("pathLength", "1"); lane.style.strokeDasharray = "1"; reg(lane, l0, l1, "draw"); }
-    reg(glow, l0, l1, "fade");
-    const pl = planetFor(key);
-    reg(pl && pl.querySelector(".mf"), p0, p1, "bloom");
-    reg(cardFor(key), c0, c1, "rise");
-    reg(map.querySelector(`.sm-sub[data-for="${key}"]`), c0, c1, "rise");
-    reg(q(".cl-" + key), c0, c1, "fade");     // the dash-dot box↔planet link
-    reg(q(".stem-" + key), c0, c1, "fade");   // the stem down to the shelf
+    if (lane) {
+      lane.setAttribute("pathLength", "1");
+      lane.style.strokeDasharray = "1";
+      atBeat(lane, beatNo, "draw");
+    }
+    atBeat(glow, beatNo, "fade");
   };
-  chain("fly",   YB(0), YB(0) + .12, YB(0) + .035, YB(0) + .14, YB(0) + .085, YB(0) + .18);
-  chain("form",  YB(1), YB(1) + .12, YB(1) + .035, YB(1) + .14, YB(1) + .085, YB(1) + .18);
-  chain("storm", YB(2), YB(2) + .12, YB(2) + .035, YB(2) + .14, YB(2) + .085, YB(2) + .18);
-  // the future stations' lanes ride inside their own year blocks — planet/card
-  // lookups no-op for these keys, so only lane + glow register
-  chain("ds1", YB(3), YB(3) + .12, YB(3) + .035, YB(3) + .14, YB(3) + .085, YB(3) + .18);
-  chain("ds2", YB(4), YB(4) + .12, YB(4) + .035, YB(4) + .14, YB(4) + .085, YB(4) + .18);
-  reg(svgEl.querySelector(".mg-rocket"), .32, .36, "fade");      // the courier launches once the rings are up
-  [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, YB(3 + idx) + .035, YB(3 + idx) + .14, "fade"));
-  [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, YB(3 + idx) + .085, YB(3 + idx) + .18, "rise"));
-  [...svgEl.querySelectorAll(".rk-panel-link")].forEach((pl2, idx) => reg(pl2, YB(3 + idx) + .085, YB(3 + idx) + .18, "dim"));
+  const addOperatingFamily = (key, yearIdx, firstBeat) => {
+    drawArrowAt(key, firstBeat);
+    const pl = planetFor(key);
+    atBeat(pl && pl.querySelector(".mf"), firstBeat + 1, "bloom");
+    atBeat(years[yearIdx], firstBeat + 1, "fade");
+    atBeat(cardFor(key), firstBeat + 2, "rise");
+    atBeat(q(".cl-" + key), firstBeat + 2, "fade");
+    const boxes = [...map.querySelectorAll(`.sm-sub[data-for="${key}"] .subbox`)];
+    boxes.forEach((box, idx) => atBeat(box, firstBeat + 3 + idx, "rise"));
+    if (boxes.length) atBeat(q(".stem-" + key), firstBeat + 3, "fade");
+    return firstBeat + 3 + boxes.length;
+  };
+  let nextBeat = 9;
+  nextBeat = addOperatingFamily("fly", 0, nextBeat);
+  nextBeat = addOperatingFamily("form", 1, nextBeat);
+  nextBeat = addOperatingFamily("storm", 2, nextBeat);
+
+  // The two aspiration families use the same three-beat grammar.
+  const stations = [...svgEl.querySelectorAll(".mg-station")];
+  const futurePanels = [...map.querySelectorAll(".rk-panel")];
+  const futureLinks = [...svgEl.querySelectorAll(".rk-panel-link")];
+  ["ds1", "ds2"].forEach((key, idx) => {
+    drawArrowAt(key, nextBeat);
+    atBeat(stations[idx], nextBeat + 1, "fade");
+    atBeat(years[3 + idx], nextBeat + 1, "fade");
+    atBeat(futurePanels[idx], nextBeat + 2, "rise");
+    atBeat(futureLinks[idx], nextBeat + 2, "dim");
+    nextBeat += 3;
+  });
 
   let lastMp = -1;
   const mfEase = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -6869,8 +6885,11 @@ function renderSystem() {
   let bw = 0, bh = 0;
   const driveBuild = sp2 => {
     sp2 = _cl(sp2, 0, 1);
-    const np = _cl(sp2 / .6, 0, 1);
-    const fade = 1 - _win(sp2, .605, .645);
+    const np = _cl(sp2 / .06, 0, 1);
+    const fade = 1 - _win(sp2, .055, .095);
+    // Linear master progress keeps every beat the same physical scroll
+    // distance; each beat still uses mfEase internally for a polished reveal.
+    const manifestP = _cl((sp2 - .055) / .765, 0, 1);
     // measure the REAL on-screen map width so the canvas planet and the SVG
     // sun dock on the exact same pixel (padding/scrollbar-proof)
     const sw = Math.max(2, stage.clientWidth), sh = Math.max(2, stage.clientHeight);
@@ -6919,11 +6938,13 @@ function renderSystem() {
       fitRest = safeTop - stageTop - originY * (1 - fitScale);
       rest = fitRest;
     }
-    const g2 = 1 - _win(sp2, .62, .80);
+    // The formation glides into its finished framing while the five rings
+    // arrive—not later while the company planets are trying to be read.
+    const g2 = 1 - _win(manifestP, 1 / TOTAL_BEATS, 6 / TOTAL_BEATS);
     const fitNow = fitScale + (1 - fitScale) * g2;
     const drop = rest + (Math.max(0, sh * DOCK_Y - 350 * svgW / 1900) - rest) * g2;
-    /* THE DIVE — the manifest completes at sp2 .86 and the finished frame
-       DWELLS (static, flat) until .92; the remaining scroll zooms straight
+    /* THE DIVE — the manifest completes at sp2 .82 and the finished frame
+       DWELLS (static, flat) until .90; the remaining full scroll zooms straight
        into Freedom Global's blue planet until its atmosphere fills the
        viewport, where the cloud descent takes over in the same blue.
        Hard-learned rules baked in here:
@@ -6935,15 +6956,15 @@ function renderSystem() {
        · the zoom itself is pure 2D — translate + scale about the map's own
          transform-origin — never a new origin, never a 3D component. */
     /* the tail of the pin is FOUR beats:
-       dwell .82-.84   — the finished frame holds (headline framing);
-       lift  .84-.87   — the map glides UP like normal scrolling until the
+       dwell .82-.83   — the finished frame holds (headline framing);
+       lift  .83-.86   — the map glides UP like normal scrolling until the
                          future panels' LAST LINE of text clears the fold
                          (content-derived, so no viewport can crop it);
-       HOLD  .87-.952  — a long dead-zone (~3-4 wheel scrolls) where nothing
+       HOLD  .86-.90   — a clear dead-zone where nothing
                          moves at all, so every box can actually be read;
-       zoom  .952-1    — the dive itself. */
-    const lq = _win(sp2, .84, .87);
-    const zq = _win(sp2, .952, 1);
+       zoom  .90-1     — the deliberately slower blue-planet dive. */
+    const lq = _win(sp2, .83, .86);
+    const zq = _win(sp2, .90, 1);
     let dropF = drop;
     if (lq > 0) {
       // the lift target is measured, not guessed: rise until the lowest
@@ -6998,7 +7019,7 @@ function renderSystem() {
     // SCROLL-SCRUBBED manifest: the system assembles under your thumb —
     // scrolling on builds it, scrolling back up deconstructs it again,
     // frame-exact in both directions.
-    applyManifest(_win(sp2, .585, .785));
+    applyManifest(manifestP);
   };
   window.__ffBuild = driveBuild;
   if (build) {

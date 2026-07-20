@@ -70,6 +70,7 @@ section#team{overflow-x:clip;}
 .mh-kick{font-size:12px;font-weight:800;letter-spacing:.22em;fill:rgba(243,244,251,.5);}
 .mh-h2{font-size:34px;font-weight:800;letter-spacing:-.02em;fill:#fff;}
 .mh-p{font-size:17px;fill:rgba(243,244,251,.68);}
+.mh-focus-pill{fill:rgba(56,169,255,.07);stroke:rgba(56,169,255,.55);stroke-width:1;}
 .sm-head{display:none;}
 .sm-head h2{margin:0 0 8px;line-height:1.16;color:#fff;}
 .sm-head p{margin:0;font-size:.85rem;line-height:1.55;color:rgba(243,244,251,.62);}
@@ -120,7 +121,7 @@ section#team{overflow-x:clip;}
 .sm-orbit.future.far{stroke:rgba(255,255,255,.11);}
 .sm-vaultorbit.far{stroke:rgba(255,255,255,.05);}
 .sm-vaultorbit{fill:none;stroke:rgba(255,255,255,.13);stroke-dasharray:2 6;}
-.sm-flow{fill:none;stroke-width:2.6;opacity:.85;stroke-linecap:round;stroke-dasharray:7 9;}
+.sm-flow{fill:none;stroke-width:2.6;opacity:.85;stroke-linecap:round;}
 .sm-flowglow{fill:none;stroke:rgba(255,61,154,.15);stroke-width:8;stroke-linecap:round;}
 .sm-roy{fill:none;stroke:var(--pink);stroke-width:1.7;stroke-dasharray:2.5 5;stroke-linecap:round;opacity:.8;}
 .sm-roy.ry-form{stroke:var(--mint);}
@@ -165,13 +166,13 @@ section#team{overflow-x:clip;}
 .sm-year.future rect{stroke:rgba(255,255,255,.38);}
 .sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:#fff;}
 .sm-card{
-  position:absolute;z-index:5;width:min(280px,19vw);background:rgba(15,17,25,.94);
+  position:absolute;z-index:5;width:min(348px,19vw);background:rgba(15,17,25,.94);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
   backdrop-filter:blur(6px);
   transition:border-color .3s, transform .3s var(--ease-out);
 }
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
-.sm-card h3{margin:0;font-size:.92rem;display:flex;align-items:center;gap:8px;color:#fff;white-space:nowrap;}
+.sm-card h3{margin:0;font-size:.92rem;display:flex;align-items:center;gap:8px;row-gap:4px;color:#fff;white-space:nowrap;flex-wrap:wrap;}
 .sm-card h3 i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
 .sm-card .ta{color:var(--pink);font-size:.66rem;font-style:italic;margin:4px 0 0;}
 .sm-card .cat{color:var(--c);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:6px 0 0;line-height:1.4;}
@@ -179,9 +180,11 @@ section#team{overflow-x:clip;}
    edge, and the stem dropping to the detail shelf, live in the SVG */
 .sm-cardlink{fill:none;stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:.85;}
 .sm-colstem{fill:none;stroke-width:2;stroke-dasharray:2.5 6.5;stroke-linecap:round;opacity:.85;}
-/* every licence lane shares ONE dashed style — uniform arrows across the system */
+/* every licence lane is a SOLID stroke — Holdings connects to its companies directly */
 .fc-destroyer,.fc-moon{opacity:.85;}
-.sm-card .st-tag{display:inline-block;margin:7px 8px 0 0;padding:2px 10px;border:1px solid var(--c,#fff);border-radius:10px;font-size:.56rem;font-weight:800;font-style:normal;letter-spacing:.15em;color:var(--c,#fff);}
+/* status pill — rides right beside the company/venture name (cards AND the
+   future-venture panel rows share this one style) */
+.st-tag{display:inline-block;padding:2px 10px;border:1px solid var(--c,#fff);border-radius:10px;font-size:.56rem;font-weight:800;font-style:normal;letter-spacing:.15em;color:var(--c,#fff);white-space:nowrap;line-height:1.6;}
 .sm-brands .focus-p{margin:0;font-size:.78rem;line-height:1.55;color:rgba(243,244,251,.78);text-align:left;}
 .sm-brands .bx{border-color:rgba(56,169,255,.45);}
 .hero-sub{margin:14px 0 0;max-width:560px;font-size:1.02rem;line-height:1.6;color:rgba(243,244,251,.72);}
@@ -191,7 +194,7 @@ section#team{overflow-x:clip;}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
-.sm-sub{position:absolute;z-index:4;width:min(280px,19vw);text-align:center;}
+.sm-sub{position:absolute;z-index:4;width:min(348px,19vw);text-align:center;}
 .sm-sub .cap2{display:block;font-size:.68rem;font-weight:800;letter-spacing:.12em;color:var(--c,rgba(243,244,251,.5));margin-bottom:5px;}
 .sm-sub .subbox{border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:9px 10px 10px;background:rgba(12,14,22,.78);transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
 .sm-sub .subbox + .subbox{margin-top:22px;}
@@ -2119,7 +2122,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(236px,19vw,280px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets */
+  position:absolute;z-index:5;width:clamp(236px,19vw,400px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets; wide panes let the rows breathe on one or two lines */
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
   padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -2134,7 +2137,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-row + .rk-row{border-top:1px solid rgba(255,255,255,.07);}
 .rk-row i{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.55);margin-top:5px;flex:none;}
 .rk-row .rk-cat{display:block;font-style:normal;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:2px 0 3px;}
-.rk-row b{display:block;font-size:.85rem;color:#f3f4fb;letter-spacing:-.01em;}
+.rk-row b{display:flex;align-items:center;gap:8px;row-gap:3px;flex-wrap:wrap;font-size:.85rem;color:#f3f4fb;letter-spacing:-.01em;}
 .rk-row span{font-size:.72rem;color:rgba(243,244,251,.62);line-height:1.42;}
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
@@ -4518,7 +4521,8 @@ function mountStation(stage, g) {
   panel.dataset.craft = kind;
   panel.style.setProperty("--panel-c", panelColor);
   panel.innerHTML = `<h4>${g.title || "Future Ltd aspirations"}</h4>` + (g.items || []).map(x =>
-    `<div class="rk-row" style="--c:${x.catC || x.c || "#fff"}"><i></i><div><b>${x.n}</b>${
+    `<div class="rk-row" style="--c:${x.catC || x.c || "#fff"}"><i></i><div><b>${x.n}${
+      x.pill ? `<em class="st-tag">${x.pill}</em>` : ""}</b>${
       x.cat ? `<em class="rk-cat">${x.cat}</em>` : ""}<span>${x.d}</span></div></div>`).join("");
   stage.appendChild(panel);
 
@@ -5648,15 +5652,13 @@ function renderSystem() {
   /* The three operating lanes advance annually; the two future lanes then
      land on the dates stated in their aspiration cards. */
   const RING_YEARS = [2026, 2027, 2028, 2029, "2030+"];
-  // per-ring pill angles: 2028/2029 tuck into the gap between the fly card
-  // and the storm planet, 2036 rides out right of the storm card — all four
-  // stay clear of the 2028–29 panel parked beside its planet
-  /* the TIMELINE reads as one cascade down the right flank: 2026 → 2036,
-     each pill at its own ring, x stepping outward, y stepping down */
-  // Keep the dates in one readable right-side column. The innermost 2026
-  // marker moves right, while the outer dates step only slightly outward.
-  const YEAR_ANGLES = [50.5, 67.7, 72.3, 73.5, 74.1];
-  const YEAR_XOFF = [24, 56, 24, 24, 24];   // per-ring pill offset from its anchor dot — solver-tuned so no licence/royalty lane touches a dot or pill
+  /* the TIMELINE cascades down the WEDGE between the two right-flank lanes —
+     the ember lane to Distribution above it, the violet lane to the 2030+
+     moon below it — one pill per ring, stepping outward with the rings.
+     Angles are solver-tuned: every dot and pill clears both lanes, the
+     Distribution planet + its parked column, and the 2030+ moon. */
+  const YEAR_ANGLES = [35, 55, 60, 61, 62];
+  const YEAR_XOFF = [24, 24, 24, 24, 14];   // per-ring pill offset from its anchor dot — 2030+ tucks tighter so it clears the Distribution shelf on laptop widths
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -6094,8 +6096,7 @@ function renderSystem() {
   // (self-healing — they can never gap), so the paths start empty here
   const cardLinks = PLANETS.map(p => `
     <path class="sm-cardlink cl-${p.key}" stroke="${p.cHex}" d=""/>
-    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("")
-    + `<path class="sm-colstem stem-brands" stroke="#38a9ff" d=""/>`;
+    <path class="sm-colstem stem-${p.key}" stroke="${p.cHex}" d=""/>`).join("");
   const spine = `
     <path class="sm-flowglow g-form" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
     <path class="sm-flowglow g-storm" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
@@ -6173,22 +6174,22 @@ function renderSystem() {
         <text class="mh-h2" x="40" y="146" style="fill:url(#lgMast)">Multiple Paths to Growth.</text>
         <text class="mh-p" x="40" y="182">Freedom Group Holdings sits at the centre — owning the group&rsquo;s brands, trademarks</text>
         <text class="mh-p" x="40" y="205">and intellectual property, and licensing them to each specialist operating company.</text>
-        <text class="mh-p" x="40" y="234" style="fill:rgba(56,169,255,.92)">TODAY&rsquo;S INVESTMENT FOCUS — Freedom Global Ltd (trading as Freedom Fire &amp; Safety Ltd).</text>
+        <rect class="mh-focus-pill" x="40" y="217" width="770" height="30" rx="15"/>
+        <text class="mh-p mh-focus-txt" x="56" y="238" style="fill:rgba(56,169,255,.92)">TODAY&rsquo;S INVESTMENT FOCUS — Freedom Global Ltd (trading as Freedom Fire &amp; Safety Ltd).</text>
       </g>
       <text class="sm-suntitle" x="${cx}" y="186" text-anchor="middle">FREEDOM GROUP HOLDINGS LTD</text>
-      <g class="sm-mini" transform="translate(${cx - 163} 206)">
+      <text class="mh-p" x="${cx}" y="210" text-anchor="middle" style="opacity:.85">Owner of the group&rsquo;s brands, intellectual property and long-term strategic platform.</text>
+      <g class="sm-mini" transform="translate(${cx - 163} 222)">
         <rect width="76" height="24" rx="12"/><text x="38" y="16" text-anchor="middle">BRANDS</text>
         <rect x="86" width="44" height="24" rx="12"/><text x="108" y="16" text-anchor="middle">IP</text>
         <rect x="140" width="92" height="24" rx="12"/><text x="186" y="16" text-anchor="middle">STRATEGY</text>
         <rect x="242" width="84" height="24" rx="12"/><text x="284" y="16" text-anchor="middle">CAPITAL</text>
       </g>
-      <text class="mh-p" x="${cx}" y="252" text-anchor="middle" style="opacity:.85">Owner of the group&rsquo;s brands, intellectual property and long-term strategic platform.</text>
       ${planets}
     </svg>
     ${PLANETS.map(p => `
       <div class="sm-card" data-key="${p.key}" style="--c:${p.c}">
-        <h3><i></i>${p.name}</h3>
-        ${p.status ? `<em class="st-tag">${p.status}</em>` : ""}
+        <h3><i></i>${p.name}${p.status ? `<em class="st-tag">${p.status}</em>` : ""}</h3>
         ${p.ta ? `<p class="ta">${p.ta}</p>` : ""}
         <p class="cat">${p.cat}</p>
         <p class="ch">${p.role}.</p>
@@ -6243,13 +6244,16 @@ function renderSystem() {
       </div>
       <p class="hint">Hover a planet — every family lights up together.</p>
     </div>
-    <div class="sm-brands">
-      <div class="bx">
-      <span class="cap2">CURRENT INVESTMENT FOCUS</span>
-      <p class="focus-p">Freedom Global Ltd is the established ecommerce business being scaled today. The wider group represents the long-term strategic opportunity created around it.</p>
-      </div>
-    </div>
   `;
+
+  // the focus pill hugs its caption exactly — measured from the rendered text
+  // so a font swap can never leave the border short or baggy
+  const fitFocusPill = () => {
+    const ftxt = map.querySelector(".mh-focus-txt"), fpill = map.querySelector(".mh-focus-pill");
+    if (ftxt && fpill && ftxt.getComputedTextLength) fpill.setAttribute("width", f(ftxt.getComputedTextLength() + 32));
+  };
+  fitFocusPill();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitFocusPill);
 
   // spotlight wiring: hover pairs planet+panel; clicking a company keeps the
   // pair lit (click again to release) — never navigates away
@@ -6258,12 +6262,10 @@ function renderSystem() {
   const cardFor = key => cards.find(c => c.dataset.key === key);
   const planetFor = key => $$(".sm-planet", map).find(b => b.dataset.key === key);
   const hideTimers = {};
-  // the whole FAMILY lights as one: planet halo, main card, its shelf
-  // sub-boxes, and (for the flagship) the brand vault
+  // the whole FAMILY lights as one: planet halo, main card, its shelf sub-boxes
   const familyOf = key => {
     const els = [planetFor(key), cardFor(key), map.querySelector(`.sm-sub[data-for="${key}"]`),
       map.querySelector(".cl-" + key), map.querySelector(".stem-" + key)];
-    if (key === "fly") els.push(map.querySelector(".sm-brands"));
     return els.filter(Boolean);
   };
   const show = key => {
@@ -6337,9 +6339,9 @@ function renderSystem() {
     panelBelow: { align: "center", topY: 1057, nudgeX: 15 }, panelColor: "#d7b35f", autoOpen: true,
     title: "Future Ventures · 2029",
     items: [
-      { n: "Freedom Form Ltd", cat: "Future · 2029 — Property · Development · Design", catC: "#e8c15c",
+      { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "A future commercial-property platform supporting the group&rsquo;s premises, acquisitions and long-term asset growth." },
-      { n: "Freedom Freight Ltd", cat: "Future · 2029 — Freight · Imports · Logistics", catC: "#e8c15c",
+      { n: "Freedom Freight Ltd", pill: "FUTURE · 2029", cat: "Freight · Imports · Logistics", catC: "#e8c15c",
         d: "A future logistics arm supporting international imports, group-wide freight control and supply-chain efficiency." },
     ],
   });
@@ -6348,9 +6350,9 @@ function renderSystem() {
     panelBelow: { align: "center", topY: 1057, nudgeX: -30 }, panelColor: "#a487df", autoOpen: true,
     title: "Future Ventures · 2030+",
     items: [
-      { n: "Freedom Fly Ltd", cat: "Future · 2030+ — Drone Technology · Aerial Services", catC: "#b18cff",
+      { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Technology · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
-      { n: "Freedom Fuel Ltd", cat: "Future · 2036+ — Forecourts · Energy · Retail", catC: "#b18cff",
+      { n: "Freedom Fuel Ltd", pill: "FUTURE · 2036+", cat: "Forecourts · Energy · Retail", catC: "#b18cff",
         d: "A long-term ambition to develop or acquire forecourt and convenience-retail locations." },
     ],
   });
@@ -6402,13 +6404,6 @@ function renderSystem() {
       su.style.left = (c.offsetLeft + (c.offsetWidth - su.offsetWidth) / 2) + "px";
       su.style.top = (c.offsetTop + c.offsetHeight + gapPx) + "px";
     });
-    const brands = map.querySelector(".sm-brands");
-    const flySub = map.querySelector('.sm-sub[data-for="fly"]');
-    if (brands && flySub) {
-      const fly = PLANETS.find(p => p.key === "fly");
-      brands.style.left = (flySub.offsetLeft + (flySub.offsetWidth - brands.offsetWidth) / 2) + "px";
-      brands.style.top = (flySub.offsetTop + flySub.offsetHeight + gapPx) + "px";
-    }
     const updateFamilyPaths = () => { PLANETS.forEach(p => {
       const c = cardFor(p.key), su = map.querySelector(`.sm-sub[data-for="${p.key}"]`);
       const link = map.querySelector(".cl-" + p.key), stem = map.querySelector(".stem-" + p.key);
@@ -6437,18 +6432,6 @@ function renderSystem() {
       }
       stem.setAttribute("d", dStem);
     });
-    // the brands vault joins the flagship column with the same dashed stem
-    const suFly2 = map.querySelector('.sm-sub[data-for="fly"]'), brEl2 = map.querySelector(".sm-brands"), bStem = map.querySelector(".stem-brands");
-    if (suFly2 && brEl2 && bStem) {
-      if (innerWidth <= 900) { bStem.setAttribute("d", ""); }
-      else {
-        const sx1 = (suFly2.offsetLeft + suFly2.offsetWidth / 2 - ox) / sclX;
-        const sy1 = (suFly2.offsetTop + suFly2.offsetHeight - oy) / sclY;
-        const sx2 = (brEl2.offsetLeft + brEl2.offsetWidth / 2 - ox) / sclX;
-        const sy2 = (brEl2.offsetTop - oy) / sclY;
-        bStem.setAttribute("d", `M ${f(sx1)} ${f(sy1)} L ${f(sx2)} ${f(sy2)}`);
-      }
-    }
     };
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
@@ -6505,11 +6488,6 @@ function renderSystem() {
         shelf.style.left = (card.offsetLeft + (card.offsetWidth - shelf.offsetWidth) / 2) + "px";
         nudge(shelf, 0, cr.bottom + detailGap - sr.top);
       });
-      if (brands && flyFace && flyShelf) {
-        const pr = rect(flyFace), sr = rect(flyShelf), br = rect(brands);
-        brands.style.left = (flyShelf.offsetLeft + (flyShelf.offsetWidth - brands.offsetWidth) / 2) + "px";
-        nudge(brands, 0, sr.bottom + detailGap - br.top);
-      }
       // Recalculate every endpoint after the projection-correction nudges.
       updateFamilyPaths();
     }
@@ -6555,13 +6533,11 @@ function renderSystem() {
     reg(mark, a, a + .03, "fade");
   });
   // strict one-at-a-time company chains: lane → planet → panel
-  const chain = (key, l0, l1, p0, p1, c0, c1, dashed) => {
-    const lane = q(".fl-" + key), glow = q(".g-" + key), roy = q(".ry-" + key);
-    // every lane shares one dashed style (uniform arrows) — all fade in;
-    // the pathLength draw trick would force them solid, so it is never used
-    reg(lane, l0, l1, "fade");
+  const chain = (key, l0, l1, p0, p1, c0, c1) => {
+    const lane = q(".fl-" + key), glow = q(".g-" + key);
+    // solid lanes DRAW themselves out of Holdings, arrowhead leading
+    if (lane) { lane.setAttribute("pathLength", "1"); lane.style.strokeDasharray = "1"; reg(lane, l0, l1, "draw"); }
     reg(glow, l0, l1, "fade");
-    reg(roy, l0, l1, "fade");
     const pl = planetFor(key);
     reg(pl && pl.querySelector(".mf"), p0, p1, "bloom");
     reg(cardFor(key), c0, c1, "rise");
@@ -6570,14 +6546,12 @@ function renderSystem() {
     reg(q(".stem-" + key), c0, c1, "fade");   // the stem down to the shelf
   };
   chain("fly", .19, .23, .23, .27, .265, .296);
-  reg(map.querySelector(".sm-brands"), .27, .296, "rise");   // the vault completes the flagship column inside its own year
-  reg(q(".stem-brands"), .27, .296, "fade");
-  chain("form", .366, .406, .406, .446, .441, .472, true);
-  chain("storm", .542, .582, .582, .622, .617, .648, true);
+  chain("form", .366, .406, .406, .446, .441, .472);
+  chain("storm", .542, .582, .582, .622, .617, .648);
   // the future stations' lanes ride inside their own year blocks — planet/card
-  // lookups no-op for these keys, so only lane + glow + royalty register
-  chain("ds1", .718, .758, .758, .758, .758, .77, true);
-  chain("ds2", .894, .934, .934, .934, .934, .946, true);
+  // lookups no-op for these keys, so only lane + glow register
+  chain("ds1", .718, .758, .758, .758, .758, .77);
+  chain("ds2", .894, .934, .934, .934, .934, .946);
   reg(svgEl.querySelector(".mg-rocket"), .07, .115, "fade");     // the courier launches right behind the headline
   [...svgEl.querySelectorAll(".mg-station")].forEach((craft, idx) => reg(craft, idx ? .934 : .758, idx ? .974 : .798, "fade"));
   [...map.querySelectorAll(".rk-panel")].forEach((panel, idx) => reg(panel, idx ? .969 : .793, idx ? 1 : .824, "rise"));

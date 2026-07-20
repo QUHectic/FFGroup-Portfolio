@@ -746,29 +746,36 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 /* the summary card carries the blue essence of the planet it describes —
    a lit rim, an outer bloom and a cool inner wash, all on top of white */
 .focus-summary{
-  position:relative;width:min(790px,100%);margin:28px auto 0;padding:22px 24px;
-  border:1px solid rgba(56,169,255,.50);border-radius:20px;
-  background:linear-gradient(180deg,#fff 0%,#f5fbff 100%);
+  position:relative;width:min(800px,100%);margin:30px auto 0;padding:26px 28px;
+  border:1px solid rgba(56,169,255,.55);border-radius:24px;
+  background:
+    radial-gradient(120% 90% at 50% -10%,rgba(56,169,255,.10),rgba(56,169,255,0) 60%),
+    linear-gradient(180deg,#ffffff 0%,#eaf5ff 100%);
   box-shadow:
-    0 24px 70px rgba(34,48,78,.14),
-    0 0 0 4px rgba(56,169,255,.07),
-    0 0 40px rgba(56,169,255,.34),
-    0 0 120px rgba(56,169,255,.20),
-    inset 0 1px 0 rgba(255,255,255,.9);
+    0 34px 90px rgba(20,58,112,.22),
+    0 0 0 6px rgba(56,169,255,.08),
+    0 0 55px rgba(56,169,255,.42),
+    0 0 150px rgba(56,169,255,.26),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -22px 44px rgba(56,169,255,.06);
 }
 .focus-summary::before{
-  content:"";position:absolute;left:12%;right:12%;top:-1px;height:2px;border-radius:99px;
-  background:linear-gradient(90deg,rgba(56,169,255,0),#52c8ff,rgba(56,169,255,0));
-  box-shadow:0 0 16px rgba(56,169,255,.75);
+  content:"";position:absolute;left:9%;right:9%;top:-1.5px;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(255,61,154,0),#ff4fb0 22%,#7c5cff 50%,#52c8ff 78%,rgba(56,169,255,0));
+  box-shadow:0 0 20px rgba(56,169,255,.9),0 0 8px rgba(255,79,176,.6);
 }
-.focus-summary-head{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;}
-.focus-summary-head i{width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue),0 0 22px rgba(56,169,255,.85);}
-.focus-summary-head strong{font-size:clamp(1.18rem,2vw,1.48rem);letter-spacing:-.025em;}
-.focus-summary-type{margin:6px 0 18px;color:#52c8ff;font-size:.72rem;font-weight:850;letter-spacing:.11em;text-transform:uppercase;}
-.focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#dfe4ed;border:1px solid #dfe4ed;border-radius:13px;overflow:hidden;text-align:left;}
-.focus-summary-grid p{margin:0;padding:11px 14px;background:#f8f9fc;color:#475164;font-size:.8rem;line-height:1.45;}
+.focus-summary-head{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+.focus-summary-head i{width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a6e0ff,var(--blue));box-shadow:0 0 10px var(--blue),0 0 26px rgba(56,169,255,.9);}
+.focus-summary-head strong{font-size:clamp(1.24rem,2.1vw,1.56rem);letter-spacing:-.025em;}
+.focus-summary-type{margin:7px 0 20px;font-size:.72rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase;
+  background:linear-gradient(90deg,#ff4fb0,#52c8ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  background:linear-gradient(180deg,#d3e5f7,#c6dcf1);border:1px solid #cfe1f4;border-radius:16px;overflow:hidden;text-align:left;
+  box-shadow:0 10px 26px rgba(30,70,130,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+.focus-summary-grid p{margin:0;padding:13px 16px;background:linear-gradient(180deg,#ffffff,#f3f9ff);color:#33445a;font-size:.82rem;line-height:1.46;transition:background .25s var(--ease);}
+.focus-summary-grid p:hover{background:linear-gradient(180deg,#ffffff,#e7f3ff);}
 .focus-summary-grid p.wide{grid-column:1/-1;}
-.focus-summary-grid b{display:block;margin-bottom:2px;color:#778195;font-size:.59rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+.focus-summary-grid b{display:block;margin-bottom:3px;color:#2f8fd4;font-size:.6rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
 .focus-begin{display:inline-flex;align-items:center;gap:11px;margin-top:22px;color:#111626;text-decoration:none;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
 .focus-begin::after{content:"";width:9px;height:9px;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);transform:rotate(45deg) translateY(-3px);animation:focusPrompt 1.4s ease-in-out infinite;}
 @keyframes focusPrompt{50%{transform:rotate(45deg) translate(4px,1px);opacity:.55;}}
@@ -854,7 +861,6 @@ html.spx .sys-build-stage .sysmap{width:100%;margin-top:0;}
 /* the nova crossfade IS the map's reveal — no offset may shift the globe */
 html.spx .sys-build .sysmap.reveal{transform:perspective(1600px) rotateX(7deg);opacity:1;transition:none;}
 section#system{padding-top:16px;} /* the map emerges from the blast — no dead band */
-html.spx #runwayPanel{display:none;} /* desktop: the runway rides the planet set-piece instead */
 #system .wrap{margin-top:34px;}
 section#system{overflow-x:clip;}
 html.spx section#journey{background:var(--bg);}
@@ -1138,8 +1144,8 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
 .kpi{
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:22px 16px 18px;box-shadow:var(--shadow);transition:var(--t);
-  will-change:transform;container-type:inline-size;
+  padding:22px 20px 18px;box-shadow:var(--shadow);transition:var(--t);
+  will-change:transform;
 }
 .kpi:hover{border-color:var(--line-strong);}
 .kpi .num{font-size:clamp(1.7rem,2.6vw,2.3rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;}
@@ -1148,9 +1154,8 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .kpi:nth-child(3) .num{color:var(--pink);}
 .kpi:nth-child(4) .num{color:var(--ember);}
 .kpi .lbl{color:var(--ink-dim);font-size:.86rem;font-weight:600;margin-top:6px;}
-/* each sub-line stays on ONE line: it breaks a little into the card padding
-   and its size tracks the card width (container query) so it never wraps */
-.kpi .lbl2{color:var(--ink-dim);font-size:min(.72rem,5.6cqi);font-weight:600;opacity:.72;margin:4px -12px 0;line-height:1.4;letter-spacing:0;white-space:nowrap;}
+/* the sub-line reads as a centred caption at the foot of the card */
+.kpi .lbl2{color:var(--ink-dim);font-size:.72rem;font-weight:600;opacity:.8;margin-top:9px;line-height:1.42;letter-spacing:.005em;text-align:center;}
 .kpi .spark{display:block;margin:10px 0 8px;height:30px;width:100%;}
 
 /* ==========================================================================
@@ -3472,9 +3477,9 @@ const FG_DATA = {
     heroBlurb: "Freedom Group Holdings is the parent company overseeing a diverse portfolio across e-commerce, trade distribution and product design — with the potential to expand into drones, property development and even food services.",
     parentBlurb: "A strong, adaptable foundation spanning consumer-facing and trade-facing businesses, continuously exploring new sectors that align with the group's capabilities and expertise.",
     kpis: [
-      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Annual revenue already achieved", sub: "A proven commercial foundation", spark: [32, 444, 1000] },
+      { value: 1000000, fmt: "gbp-compact", suffix: "+", label: "Annual revenue already achieved", sub: "A proven foundation", spark: [32, 444, 1000] },
       { value: 250000, fmt: "int", suffix: "+", label: "Orders processed nationwide", sub: "Demand proven at scale", spark: [8, 60, 250] },
-      { value: 12, fmt: "int", label: "Owned and developing brands", sub: "Built for multi-category growth", spark: [3, 8, 12] }
+      { value: 12, fmt: "int", label: "Owned and developing brands", sub: "Built for growth", spark: [3, 8, 12] }
     ]
   },
 
@@ -6052,7 +6057,13 @@ function renderSystem() {
   // the far (back) half of the WHITE future rings tucks its apex down inside
   // the sun's disk (like the pink lanes) so the ring reads as connecting INTO
   // the planet — emerging from its flanks — rather than arcing over the top.
-  const farRyOf = (ry, cyR, cls) => cls.indexOf("future") !== -1 ? Math.max(60, cyR - 330) : ry;
+  const farRyOf = (ry, cyR, cls) => {
+    if (cls.indexOf("future") === -1) return ry;
+    // continue the pink rings' rising back-arc apex (349 → 328 → 310) so each
+    // white ring tucks a little HIGHER again — a nested, concentric finish
+    const apex = cls.indexOf("outer") !== -1 ? 283 : 297;
+    return cyR - apex;
+  };
   const shell = ([rx, ry, cyR, cls], i) => {
     const fry = farRyOf(ry, cyR, cls);
     return `

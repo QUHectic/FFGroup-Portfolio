@@ -2257,7 +2257,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-panel{
   position:absolute;z-index:5;width:clamp(236px,17vw,400px);   /* 17vw: both future boxes (kept equal-width) thread the flagship↔Distribution corridor even where the laptop clamp pulls that column inward */
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
-  padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+  padding:9px 14px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
   opacity:0;transform:translateY(6px) scale(.97);pointer-events:none;
   transition:opacity .25s var(--ease-out), transform .25s var(--ease-out);
@@ -2266,12 +2266,19 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
 .rk-panel-link.show{opacity:.76;}
 .rk-panel h4{margin:0 0 6px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
-.rk-row{display:flex;gap:10px;padding:5px 0;align-items:flex-start;}
+.rk-row{display:flex;gap:10px;padding:3px 0;align-items:flex-start;}
 .rk-row + .rk-row{border-top:1px solid rgba(255,255,255,.07);}
 .rk-row i{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.55);margin-top:5px;flex:none;}
-.rk-row .rk-cat{display:block;font-style:normal;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:2px 0 3px;}
-.rk-row b{display:flex;align-items:center;gap:8px;row-gap:3px;flex-wrap:wrap;font-size:.85rem;color:#f3f4fb;letter-spacing:-.01em;}
-.rk-row span{font-size:.72rem;color:rgba(243,244,251,.62);line-height:1.42;}
+/* the future rows read at EXACTLY the planned cards' type scale:
+   name = .sm-card h3, category = .sm-card .cat, body = .sm-card .ch */
+.rk-row .rk-cat{display:block;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--c,#fff);margin:2px 0 3px;}
+.rk-row b{display:flex;align-items:center;gap:8px;row-gap:3px;flex-wrap:wrap;font-size:.92rem;color:#f3f4fb;letter-spacing:-.01em;}
+.rk-row span{font-size:.76rem;color:rgba(243,244,251,.62);line-height:1.5;}
+@media (max-width:1500px){
+  .rk-row b{font-size:.84rem;}
+  .rk-row .rk-cat{font-size:.62rem;}
+  .rk-row span{font-size:.7rem;line-height:1.42;}
+}
 
 /* hero starfield — three twinkling drift layers + a periodic shooting star */
 .star-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -5823,7 +5830,7 @@ const DOCK_Y = .68;
 function renderSystem() {
   const map = $("#sysMap");
   if (!map) return;
-  const W = 1900, H = 1520, cx = 950, cy = 350, sunR = 84;   /* both future panels tuck right under their planets now, so the canvas ends just below them */
+  const W = 1900, H = 1020, cx = 950, cy = 350, sunR = 84;   /* the WHOLE system — mast to panel bottoms — fits one ~945px viewport: the shells are vertically squashed (apexes untouched, lower arcs raised) and the canvas ends right under the future boxes */
   const f = n => n.toFixed(1);
   /* THE SKETCH GEOMETRY — every ring carries its own centre [rx, ry, cy, cls].
      The three OPERATING apexes (349/328/310) tuck INSIDE the sun's disk: the
@@ -5833,12 +5840,15 @@ function renderSystem() {
      visibly wrap AROUND the dome, the full-saucer look of the sketch. The
      lower arcs still run exactly through the three planets' coordinates, so
      every lane, arrow and card keeps its anchor untouched. */
+  /* VERTICALLY COMPRESSED shells — every apex (cy−ry) keeps its original
+     height so the rings still thread the sun exactly as before, while the
+     lower arcs pull up hard: the whole system now lives above ~y1000. */
   const SHELLS = [
-    [330, 118, 467, "sm-orbit o1"],
-    [618, 188, 516, "sm-orbit"],
-    [800, 255, 565, "sm-orbit"],
-    [950, 324, 582, "sm-orbit future"],
-    [1060, 394, 630, "sm-orbit future outer"],
+    [330, 86, 435, "sm-orbit o1"],
+    [618, 135, 463, "sm-orbit"],
+    [800, 180, 490, "sm-orbit"],
+    [950, 221, 479, "sm-orbit future"],
+    [1060, 248, 484, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -6338,10 +6348,10 @@ function renderSystem() {
     <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="M ${f(formOut[0])} ${f(formOut[1])} C 730 440, 520 505, ${f(formTop[0])} ${f(formTop[1])}"/>
     <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="M ${f(stormOut[0])} ${f(stormOut[1])} C 1240 430, 1480 545, ${f(stormTop[0])} ${f(stormTop[1])}"/>
     <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 540, 620 700, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 570, 1300 750, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     ${cardLinks}`;
 
   map.innerHTML = `
@@ -6568,18 +6578,18 @@ function renderSystem() {
     document.addEventListener("keydown", e => { if (e.key === "Escape") shutMore(); });
   }
 
-  mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
+  mountRocket(map, { cx: 950, cy: 470, rx: 880, ry: 250, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    // topY 1055 === the violet panel's planet-gap top (moon 987.1 + body 41.8
+    // topY 777 === the violet panel's planet-gap top (moon 708.8 + body 41.8
     // + 26), so BOTH future boxes share one aligned top line at full width —
     // down here they sit below the side columns, so nothing crowds them
-    panelBelow: { align: "center", topY: 1055, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 777, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
     items: [
       { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
-        d: "A future commercial-property platform supporting the group&rsquo;s premises, acquisitions and long-term asset growth." },
+        d: "A future commercial-property platform for the group&rsquo;s premises, acquisitions and growth." },
       { n: "Freedom Freight Ltd", pill: "FUTURE · 2029", cat: "Freight · Imports · Logistics", catC: "#e8c15c",
-        d: "A future logistics arm supporting international imports, group-wide freight control and supply-chain efficiency." },
+        d: "A future logistics arm for imports, freight control and supply-chain efficiency." },
     ],
   });
   mountStation(map, {
@@ -6907,9 +6917,11 @@ function renderSystem() {
       let mapBot = 0;
       for (const pn of map.querySelectorAll(".rk-panel"))
         mapBot = Math.max(mapBot, pn.offsetTop + pn.offsetHeight);
-      let liftT = sh * .28 - 585 * (svgW / 1900);
-      if (mapBot) liftT = Math.min(liftT, sh - mapBot - 12);   // the whole panel box, border and all, sits above the fold with a sliver of margin
-      liftT = Math.max(liftT, sh * .02 - 585 * (svgW / 1900) - 260);
+      // purely content-derived: lift ONLY as far as needed to float the
+      // panel bottoms above the fold — the compressed map fits most
+      // viewports outright, so this is usually a few px or nothing at all
+      let liftT = mapBot ? Math.min(0, sh - mapBot - 12) : 0;
+      liftT = Math.max(liftT, -sh * .6);
       dropF = drop + (liftT - drop) * lq;
     }
     let tf = `translateY(${dropF.toFixed(1)}px)`;

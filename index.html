@@ -2255,7 +2255,7 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 
 /* the rocket's manifest — dark chart-tooltip aesthetic, anchored mid-flight */
 .rk-panel{
-  position:absolute;z-index:5;width:clamp(236px,19vw,400px);   /* scales down on narrow panes so the beside-parked boxes never reach their neighbour planets; wide panes let the rows breathe on one or two lines */
+  position:absolute;z-index:5;width:clamp(236px,17vw,400px);   /* 17vw: both future boxes (kept equal-width) thread the flagship↔Distribution corridor even where the laptop clamp pulls that column inward */
   background:#0f1119;border:1px solid rgba(255,255,255,.16);border-radius:16px;
   padding:11px 15px;box-shadow:0 18px 50px rgba(0,0,0,.5);
   max-height:calc(100vh - 16px);overflow-y:auto;   /* 8px viewport clearance; scroll only on exceptionally short screens */
@@ -2263,7 +2263,6 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
   transition:opacity .25s var(--ease-out), transform .25s var(--ease-out);
 }
 .rk-panel.show{opacity:1;transform:none;pointer-events:auto;}
-@media (min-width:901px){.rk-panel.rk-slim{width:min(252px,16.6vw);}}   /* the gold panel threads the Facilities↔flagship corridor; phones keep the stacked full width */
 .rk-panel-link{fill:none;stroke:var(--panel-c,#fff);stroke-width:1.45;stroke-dasharray:10 5 1.5 5;stroke-linecap:round;opacity:0;transition:opacity .25s var(--ease-out);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--panel-c,#fff) 55%,transparent));pointer-events:none;}
 .rk-panel-link.show{opacity:.76;}
 .rk-panel h4{margin:0 0 6px;font-size:.74rem;letter-spacing:.14em;font-weight:700;color:rgba(243,244,251,.55);}
@@ -5001,7 +5000,7 @@ function initCourier() {
              left by mid-transfer, so while the projections chart holds the
              screen it is flying down the left margin (the cursor-marked
              direction) rather than hovering over the bars */
-          return flightSplineKeyed([
+          const K = [
             { t: 0,   x: a.x, y: a.y },
             { t: .05, x: Math.min(iw - 60, Math.max(a.x + 60, iw * .86)), y: a.y + 38 },
             { t: .12, x: iw * .905, y: vh * .40 },
@@ -5011,7 +5010,19 @@ function initCourier() {
             { t: .66, x: iw * .10,  y: vh * .72 },
             { t: .84, x: iw * .055, y: vh * .80 },
             { t: 1,   x: b.x, y: b.y }
-          ], q);
+          ];
+          const p2 = flightSplineKeyed(K, q);
+          /* SERPENTINE LIFE — a slow, wide weave perpendicular to the route
+             (1.5 gentle S-periods, faded at both ends) so the crossing reads
+             as FLYING rather than a bead sliding on a wire. Low frequency,
+             so it can never re-introduce jitter; endpoints stay exact. */
+          const A5 = flightSplineKeyed(K, cl01(q + .03)), B5 = flightSplineKeyed(K, cl01(q - .03));
+          const dx5 = A5.x - B5.x, dy5 = A5.y - B5.y, L5 = Math.hypot(dx5, dy5) || 1;
+          const amp = 44 * Math.pow(Math.sin(Math.PI * cl01(q)), .9);
+          const w5 = Math.sin(q * Math.PI * 3);
+          p2.x += (-dy5 / L5) * w5 * amp;
+          p2.y += (dx5 / L5) * w5 * amp;
+          return p2;
         }
       });
     }
@@ -5853,7 +5864,7 @@ function renderSystem() {
      (59° is the limit: further right its body meets the shelf at laptop
      widths, further up the year rail). */
   const deathStar1At = lowerShellAtAngle(3, 117);   // 120 grazed the Facilities column with the RING art (it reaches ~64 past the body)
-  const deathStar2At = lowerShellAtAngle(4, 67);    // the moon rides LEFT of the 2030+ marker, which takes over its old right-hand berth
+  const deathStar2At = lowerShellAtAngle(4, 65);    // left of the 2030+ marker, nudged right so its panel clears the flagship column's CORE BRANDS box
   const shell = ([rx, ry, cyR, cls], i) => `
     <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
@@ -5880,8 +5891,8 @@ function renderSystem() {
      dictate the exact curve), and every pill hangs a uniform 24 units off
      its dot so the chain reads as a single aligned rail. All five clear the
      lanes, the Distribution planet + its parked column, and the 2030+ moon. */
-  const YEAR_ANGLES = [37, 56.5, 60.5, 61.5, 58];
-  const YEAR_XOFF = [24, 24, 24, 24, -86];   // uniform 24 down the rail; the LAST marker sits in the moon's old right-hand berth with its pill on the inside (outside would run into the Distribution shelf on laptop widths)
+  const YEAR_ANGLES = [35, 54.5, 58.5, 61, 61.6];
+  const YEAR_XOFF = [24, 24, 24, 24, 24];   // ONE offset for the whole rail — dots step right in a smoothly-shrinking rhythm (x deltas ≈ 89/59/46/47, the last two EQUAL) so 2029/2030+ continue the 2026-28 flow and clear the clamped Distribution column on laptops
   const yearMarks = SHELLS.map((shell2, i) => {
     const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
@@ -5906,7 +5917,7 @@ function renderSystem() {
       role: "A recurring-revenue operation delivering fire safety servicing, installation, compliance and facilities support",
       cat: "COMPLIANCE · SERVICING · FACILITIES", status: "PLANNED" },
     { key: "storm", name: "Freedom Distribution Ltd", c: "var(--ember)", cHex: "#ff6a3d", grad: ["#ffe2bd", "#c96a3e", "#4d1d27"],
-      at: lowerShellAtX(2, 1500), r: 36, centered: true,
+      at: lowerShellAtX(2, 1552), r: 36, centered: true,   // higher on the 2028 ring; the laptop-width card clamp in layoutSubs absorbs the extra reach
       role: "A wholesale operation supplying the group’s owned brands to national retailers, trade partners and commercial distributors",
       cat: "TRADE DISTRIBUTION · B2B", status: "PLANNED" },
   ];
@@ -6560,10 +6571,10 @@ function renderSystem() {
   mountRocket(map, { cx: 950, cy: 520, rx: 880, ry: 380, rotDeg: 0, out: 1, dur: 36, art: 1, tStatic: 300 });
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
-    // gap 26 = the SAME planet-to-box rhythm as the flagship's card; nudged
-    // right so the box clears the Facilities column at laptop widths
-    panelBelow: { align: "center", gap: 26, nudgeX: 72, free: true }, panelColor: "#d7b35f", autoOpen: true,
-    panelClass: "rk-slim",   // threads the Facilities↔flagship corridor at every desktop width
+    // topY 1055 === the violet panel's planet-gap top (moon 987.1 + body 41.8
+    // + 26), so BOTH future boxes share one aligned top line at full width —
+    // down here they sit below the side columns, so nothing crowds them
+    panelBelow: { align: "center", topY: 1055, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
     items: [
       { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "A future commercial-property platform supporting the group&rsquo;s premises, acquisitions and long-term asset growth." },
@@ -6573,7 +6584,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "center", gap: 26, nudgeX: -30, free: true }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", gap: 26, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
     items: [
       { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Technology · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },

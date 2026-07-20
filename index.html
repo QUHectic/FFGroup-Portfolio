@@ -720,7 +720,7 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 }
 .focus-handoff::before,.focus-handoff::after{content:"";position:absolute;z-index:-1;pointer-events:none;}
 .focus-handoff::before{inset:0;background:#EEF1F8;}
-.focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.18);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 130px rgba(56,169,255,.16),inset 0 0 90px rgba(255,61,154,.04);}
+.focus-handoff::after{left:50%;top:42%;width:min(900px,88vw);aspect-ratio:1;border:0;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(56,169,255,.06),rgba(56,169,255,0) 62%);}
 /* The flagship's planet lands INSIDE the ring the section already draws — the
    dive ends here. It is the SAME sphere as the map's blue "fly" planet: a
    clone of that live SVG is injected at runtime (see initFocusPlanet) so it
@@ -1138,8 +1138,8 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
 .kpi{
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:24px 24px 20px;box-shadow:var(--shadow);transition:var(--t);
-  will-change:transform;
+  padding:22px 16px 18px;box-shadow:var(--shadow);transition:var(--t);
+  will-change:transform;container-type:inline-size;
 }
 .kpi:hover{border-color:var(--line-strong);}
 .kpi .num{font-size:clamp(1.7rem,2.6vw,2.3rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;}
@@ -1148,7 +1148,9 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .kpi:nth-child(3) .num{color:var(--pink);}
 .kpi:nth-child(4) .num{color:var(--ember);}
 .kpi .lbl{color:var(--ink-dim);font-size:.86rem;font-weight:600;margin-top:6px;}
-.kpi .lbl2{color:var(--ink-dim);font-size:.7rem;font-weight:600;opacity:.72;margin-top:3px;line-height:1.5;letter-spacing:.01em;}
+/* each sub-line stays on ONE line: it breaks a little into the card padding
+   and its size tracks the card width (container query) so it never wraps */
+.kpi .lbl2{color:var(--ink-dim);font-size:min(.72rem,5.6cqi);font-weight:600;opacity:.72;margin:4px -12px 0;line-height:1.4;letter-spacing:0;white-space:nowrap;}
 .kpi .spark{display:block;margin:10px 0 8px;height:30px;width:100%;}
 
 /* ==========================================================================
@@ -2905,6 +2907,36 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   </section>
 
   <!-- ====================================================================
+       MARKET RUNWAY (standalone — moved out of the 360° planet)
+       ==================================================================== -->
+  <section data-sec="market" id="market" class="sec-light" aria-label="The market runway">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker">The market research</span>
+        <h2>A rising share of a <span class="grad-text">£6bn market</span></h2>
+        <p class="section-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030. Drag the timeline to watch Freedom's share of it climb.</p>
+      </div>
+      <div class="panel reveal" id="runwayPanel">
+        <div class="runway">
+          <div>
+            <input type="range" class="runway-slider" id="runwaySlider" min="0" max="8" step="1" value="2" aria-label="Select year">
+            <div class="runway-years" id="runwayYears"></div>
+            <div class="runway-note">Market size interpolated to the deck's £6bn → £8.5bn (2030) projection; beyond 2030 we hold the 2030 estimate — the real number will be bigger.</div>
+          </div>
+          <div class="readouts">
+            <div class="ro"><span class="lbl">Freedom revenue <span id="roKind"></span></span><span class="val" id="roRev">£1M</span></div>
+            <div class="ro"><span class="lbl">UK market size (est.)</span><span class="val" id="roMkt">£6bn</span></div>
+            <div class="ro share">
+              <span class="lbl">Our share of the market</span><span class="val" id="roShare">0.017%</span>
+              <div class="share-track"><div class="share-fill" id="shareFill"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
        PROJECTIONS (5-YEAR CHANNELS MAP)
        ==================================================================== -->
   <section data-sec="projections" id="projections" class="sec-light alt" aria-label="Multi-channel projections">
@@ -2990,45 +3022,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </div>
       </div>
 
-      <div class="panel reveal" id="runwayPanel" style="margin-top:22px;">
-        <h3>The market runway</h3>
-        <div class="psub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — drag the timeline</div>
-        <div class="runway">
-          <div>
-            <input type="range" class="runway-slider" id="runwaySlider" min="0" max="8" step="1" value="2" aria-label="Select year">
-            <div class="runway-years" id="runwayYears"></div>
-            <div class="runway-note">Market size interpolated to the deck's £6bn → £8.5bn (2030) projection; beyond 2030 we hold the 2030 estimate — the real number will be bigger.</div>
-          </div>
-          <div class="readouts">
-            <div class="ro"><span class="lbl">Freedom revenue <span id="roKind"></span></span><span class="val" id="roRev">£1M</span></div>
-            <div class="ro"><span class="lbl">UK market size (est.)</span><span class="val" id="roMkt">£6bn</span></div>
-            <div class="ro share">
-              <span class="lbl">Our share of the market</span><span class="val" id="roShare">0.017%</span>
-              <div class="share-track"><div class="share-fill" id="shareFill"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- ====================================================================
        TEAM
        ==================================================================== -->
+  <!-- the 360° planet is now a pure cinematic globe; the market research it
+       used to carry has moved to its own standalone section before the map -->
   <div class="tr2 tr2-planet" id="opportunity" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
-    <div class="rw-over" id="rwOver">
-      <h3>The market runway</h3>
-      <div class="rw-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030 — scroll, drag the track or tap a year</div>
-      <div class="rw-track"><div class="rw-knob" id="rwKnob"></div></div>
-      <div class="rw-years" id="rwYears"></div>
-      <div class="rw-ros">
-        <div class="rw-ro"><span>Freedom revenue <i id="rwKind">(target)</i></span><b id="rwRev">£1M</b></div>
-        <div class="rw-ro"><span>UK market size (est.)</span><b id="rwMkt">£6bn</b></div>
-        <div class="rw-ro"><span>Our share of the market</span><b id="rwShare">0.02%</b>
-          <div class="rw-sharetrack"><div class="rw-sharefill" id="rwShareFill"></div></div>
-        </div>
-      </div>
-    </div>
   </div></div>
 
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
@@ -6047,9 +6049,16 @@ function renderSystem() {
      widths, further up the year rail). */
   const deathStar1At = lowerShellAtAngle(3, 117);   // 120 grazed the Facilities column with the RING art (it reaches ~64 past the body)
   const deathStar2At = lowerShellAtAngle(4, 65);    // left of the 2030+ marker, nudged right so its panel clears the flagship column's CORE BRANDS box
-  const shell = ([rx, ry, cyR, cls], i) => `
-    <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 1 ${cx + rx} ${cyR}"/>
+  // the far (back) half of the WHITE future rings tucks its apex down inside
+  // the sun's disk (like the pink lanes) so the ring reads as connecting INTO
+  // the planet — emerging from its flanks — rather than arcing over the top.
+  const farRyOf = (ry, cyR, cls) => cls.indexOf("future") !== -1 ? Math.max(60, cyR - 330) : ry;
+  const shell = ([rx, ry, cyR, cls], i) => {
+    const fry = farRyOf(ry, cyR, cls);
+    return `
+    <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${fry} 0 0 1 ${cx + rx} ${cyR}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
+  };
   // the behind-the-globe arcs fade out smoothly: each ring's far half wears a
   // vertical gradient that starts at the bright lower-arc opacity right at
   // the endpoints and melts to almost nothing at the apex behind the planet
@@ -6057,7 +6066,7 @@ function renderSystem() {
     const white = cls.indexOf("future") !== -1;
     const col = white ? "255,255,255" : "255,61,154";
     const a0 = cls.indexOf("o1") !== -1 ? .66 : white ? .34 : .45;
-    return `<linearGradient id="smrg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${cyR}" x2="0" y2="${cyR - ry}">
+    return `<linearGradient id="smrg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${cyR}" x2="0" y2="${cyR - farRyOf(ry, cyR, cls)}">
       <stop offset="0" stop-color="rgb(${col})" stop-opacity="${a0}"/>
       <stop offset=".5" stop-color="rgb(${col})" stop-opacity="${white ? a0 : (a0 * .42).toFixed(2)}"/>
       <stop offset="1" stop-color="rgb(${col})" stop-opacity="${white ? ".03" : ".05"}"/>
@@ -6076,16 +6085,16 @@ function renderSystem() {
   /* One horizontal chronology whose anchor dot genuinely belongs to its own
      orbit. Intersect every ellipse with the same y-coordinate; the two outer
      pills face left so the complete row remains inside the system canvas. */
-  const YEAR_ROW_Y = 360;
+  /* The chronology now runs DOWN the right-hand wedge that opens between the
+     orange Distribution lane (above) and the violet 2036 lane (below) —
+     2026 at the top, 2030+ at the foot — a vertical column instead of a row. */
+  const YEAR_COL = [[1168, 452], [1258, 520], [1352, 588], [1444, 656], [1520, 724]];
   const yearMarks = SHELLS.map((shell2, i) => {
-    const [rx, ry, ringCy] = shell2;
-    const sy = Math.max(-1, Math.min(1, (YEAR_ROW_Y - ringCy) / ry));
-    const p = [cx + rx * Math.sqrt(Math.max(0, 1 - sy * sy)), YEAR_ROW_Y];
-    const pillX = i >= 3 ? -72 : 10;
+    const [px, py] = YEAR_COL[i];
     const future = shell2[3].includes("future") ? " future" : "";
-    return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
-      <circle r="3.2"/><rect x="${pillX}" y="-12" width="62" height="24" rx="12"/>
-      <text x="${pillX + 31}" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
+    return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(px)} ${f(py)})">
+      <rect x="-31" y="-12" width="62" height="24" rx="12"/>
+      <text x="0" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
     </g>`;
   }).join("");
   // each operating company rides its OWN ring — blue on the 1st, mint on the
@@ -6523,8 +6532,8 @@ function renderSystem() {
      so it self-heals if either planet moves along its shell. */
   const arcUp = (a, b) => {
     const dx = b[0] - a[0], dy = b[1] - a[1];
-    return `M ${f(a[0])} ${f(a[1])} C ${f(a[0] + dx * .45)} ${f(a[1] + dy * .45 - 130)}, `
-         + `${f(a[0] + dx * .88)} ${f(a[1] + dy * .88 - 40)}, ${f(b[0])} ${f(b[1])}`;
+    return `M ${f(a[0])} ${f(a[1])} C ${f(a[0] + dx * .45)} ${f(a[1] + dy * .45 - 62)}, `
+         + `${f(a[0] + dx * .88)} ${f(a[1] + dy * .88 - 18)}, ${f(b[0])} ${f(b[1])}`;
   };
   const formLane = arcUp(formOut, formTop);
   const stormLane = arcUp(stormOut, stormTop);
@@ -9486,9 +9495,11 @@ function initSetpieces() {
     if (!CLs) makeClouds();
     // the sky deepens mid-flight so the deck has something to read against,
     // then settles back onto the journey chapter's own #eef1f8 at both ends
+    // a whisper-gentle deepening only — the two sections must read as one
+    // continuous light field, never a grey band dividing them
     const lift = sm(ph2(p, .05, .42)) * (1 - sm(ph2(p, .68, .97)));
-    const top = [lp(238, 222, lift), lp(241, 231, lift), lp(248, 245, lift)];
-    const bot = [lp(238, 205, lift), lp(241, 218, lift), lp(248, 238, lift)];
+    const top = [lp(238, 232, lift), lp(241, 236, lift), lp(248, 247, lift)];
+    const bot = [lp(238, 226, lift), lp(241, 231, lift), lp(248, 243, lift)];
     const bg2 = ctx.createLinearGradient(0, 0, 0, h);
     bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
     bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
@@ -9506,14 +9517,14 @@ function initSetpieces() {
       const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
       for (const { c2, g } of order) {
         const { zf, k, scale, sw, sh, x, y } = g;
-        let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.20 + .55 * Math.min(1, k * 3));
+        let al = Math.min(1, (zf < .93 ? 1 : (1 - zf) / .07)) * (.16 + .42 * Math.min(1, k * 3));
         al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
         al *= gate;
         if (al <= .015) continue;
         const spr = CLs[c2.s];
-        // the grey coat only shades the deck — the lit coat carries it, so the
-        // sky stays visible between the shapes instead of going overcast
-        ctx.globalAlpha = al * .62;
+        // mostly the lit coat — the faintest grey shading only, so the drift
+        // reads as soft light on light, never an overcast divider
+        ctx.globalAlpha = al * .34;
         ctx.drawImage(spr.mid, x, y, sw, sh);
         ctx.globalAlpha = al;
         ctx.drawImage(spr.light, x, y, sw, sh);

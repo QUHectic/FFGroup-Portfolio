@@ -705,37 +705,36 @@ h1:focus,h2:focus{outline:none;}
 html.spx .tr2{display:block;position:relative;height:190vh;pointer-events:none;}
 html.spx .tr2-stage{position:sticky;top:0;height:100vh;overflow:hidden;}
 html.spx .tr2 canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
-html.spx .tr2-clouds{background:#eef1f8;}
+html.spx .tr2-clouds{background:#fff;}
 html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market runway, the NIGHT half the export routes */
 
 /* One-screen handoff from the Group system into the operating-company story. */
 .focus-handoff{
   position:relative;isolation:isolate;min-height:100svh;box-sizing:border-box;
   display:grid;place-items:center;overflow:hidden;padding:clamp(82px,9vh,112px) 24px 46px;
-  color:#f7f8ff;background:
-    radial-gradient(circle at 50% 34%,rgba(56,169,255,.14),transparent 31%),
-    radial-gradient(circle at 50% 46%,rgba(255,61,154,.10),transparent 46%),#07080e;
+  color:#111626;background:#fff;
 }
 .focus-handoff::before,.focus-handoff::after{content:"";position:absolute;z-index:-1;pointer-events:none;}
-.focus-handoff::before{inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.55) 0 1px,transparent 1.35px);background-size:73px 67px;opacity:.18;mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);}
-.focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.10);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 110px rgba(56,169,255,.08),inset 0 0 90px rgba(255,61,154,.05);}
+.focus-handoff::before{inset:0;background:linear-gradient(to bottom,#f4f6fb 0,#fff 18%,#fff 100%);}
+.focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.10);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 110px rgba(56,169,255,.08),inset 0 0 90px rgba(255,61,154,.04);}
 .focus-handoff-inner{width:min(930px,100%);margin:auto;text-align:center;}
 .focus-handoff .focus-label{display:inline-flex;align-items:center;gap:10px;margin:0 0 15px;color:#52c8ff;font-size:.7rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
 .focus-handoff .focus-label::before{content:"";width:27px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--blue));box-shadow:0 0 12px rgba(56,169,255,.5);}
 .focus-handoff h2{max-width:900px;margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);line-height:1.02;letter-spacing:-.045em;text-wrap:balance;}
-.focus-handoff .focus-subtitle{max-width:780px;margin:18px auto 0;color:rgba(243,244,251,.72);font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;}
-.focus-summary{width:min(790px,100%);margin:28px auto 0;padding:22px 24px;border:1px solid rgba(56,169,255,.3);border-radius:20px;background:linear-gradient(145deg,rgba(18,22,34,.92),rgba(10,12,20,.9));box-shadow:0 24px 80px rgba(0,0,0,.35),0 0 35px rgba(56,169,255,.05);backdrop-filter:blur(10px);}
+.focus-handoff .focus-subtitle{max-width:780px;margin:18px auto 0;color:#5d6677;font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;}
+.focus-summary{width:min(790px,100%);margin:28px auto 0;padding:22px 24px;border:1px solid rgba(56,169,255,.28);border-radius:20px;background:#fff;box-shadow:0 24px 70px rgba(34,48,78,.12),0 0 35px rgba(56,169,255,.05);}
 .focus-summary-head{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;}
 .focus-summary-head i{width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 13px var(--blue);}
 .focus-summary-head strong{font-size:clamp(1.18rem,2vw,1.48rem);letter-spacing:-.025em;}
 .focus-summary-type{margin:6px 0 18px;color:#52c8ff;font-size:.72rem;font-weight:850;letter-spacing:.11em;text-transform:uppercase;}
-.focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);border-radius:13px;overflow:hidden;text-align:left;}
-.focus-summary-grid p{margin:0;padding:11px 14px;background:rgba(8,10,17,.92);color:rgba(243,244,251,.76);font-size:.8rem;line-height:1.45;}
+.focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#dfe4ed;border:1px solid #dfe4ed;border-radius:13px;overflow:hidden;text-align:left;}
+.focus-summary-grid p{margin:0;padding:11px 14px;background:#f8f9fc;color:#475164;font-size:.8rem;line-height:1.45;}
 .focus-summary-grid p.wide{grid-column:1/-1;}
-.focus-summary-grid b{display:block;margin-bottom:2px;color:rgba(243,244,251,.48);font-size:.59rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
-.focus-begin{display:inline-flex;align-items:center;gap:11px;margin-top:22px;color:#fff;text-decoration:none;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
+.focus-summary-grid b{display:block;margin-bottom:2px;color:#778195;font-size:.59rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+.focus-begin{display:inline-flex;align-items:center;gap:11px;margin-top:22px;color:#111626;text-decoration:none;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
 .focus-begin::after{content:"";width:9px;height:9px;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);transform:rotate(45deg) translateY(-3px);animation:focusPrompt 1.4s ease-in-out infinite;}
 @keyframes focusPrompt{50%{transform:rotate(45deg) translate(4px,1px);opacity:.55;}}
+.focus-handoff-inner{will-change:opacity,transform;}
 @media (max-width:700px){
   .focus-handoff{min-height:100svh;padding:82px 16px 36px;overflow:visible;}
   .focus-handoff h2{font-size:clamp(1.9rem,10vw,3rem);}
@@ -5969,12 +5968,13 @@ function renderSystem() {
      dictate the exact curve), and every pill hangs a uniform 24 units off
      its dot so the chain reads as a single aligned rail. All five clear the
      lanes, the Distribution planet + its parked column, and the 2030+ moon. */
-  /* Each date is anchored to its OWN orbit. The angles keep the labels moving
-     progressively right while the y-coordinate is dictated by that ring. */
-  const YEAR_ANGLES = [20, 24, 22, 25, 34];
+  /* One horizontal chronology: it starts midway along the inner ring's
+     right-hand arc, then advances by the same distance toward each next ring. */
+  const yearStart = lowerShellAtAngle(0, 30);
+  const YEAR_STEP = 124;
   const YEAR_XOFF = 10;
   const yearMarks = SHELLS.map((shell2, i) => {
-    const p = lowerShellAtAngle(i, YEAR_ANGLES[i]), future = shell2[3].includes("future") ? " future" : "";
+    const p = [yearStart[0] + i * YEAR_STEP, yearStart[1]], future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(p[0])} ${f(p[1])})">
       <circle r="3.2"/><rect x="${YEAR_XOFF}" y="-12" width="62" height="24" rx="12"/>
       <text x="${YEAR_XOFF + 31}" y="4" text-anchor="middle">${RING_YEARS[i]}</text>
@@ -6651,7 +6651,7 @@ function renderSystem() {
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
     // Both future panels share one top line below their newly separated lanes.
-    panelBelow: { align: "center", topY: 829, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 880, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
     items: [
       { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "A future commercial-property platform for the group&rsquo;s premises, acquisitions and growth." },
@@ -6661,7 +6661,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "center", topY: 829, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", topY: 880, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
     items: [
       { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
@@ -6994,7 +6994,7 @@ function renderSystem() {
       const safeTop = Math.min(sh * .12, navH + 8);
       const safeBottom = 10;
       const naturalH = Math.max(1, map.offsetHeight);
-      fitScale = Math.max(.84, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
+      fitScale = Math.max(.72, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
       const originY = naturalH * .22;
       const stageTop = Math.max(0, stage?.getBoundingClientRect().top || 0);
       fitRest = safeTop - stageTop - originY * (1 - fitScale);
@@ -9560,6 +9560,29 @@ function initSetpieces() {
   window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); else if (it.draw === drawFunding) updateFunding(p); it.last = p; return { w: it.w, h: it.h }; };
 }
 
+/* The investment-focus screen eases into the white cloud field continuously.
+   Its progress is tied directly to scroll position, so there is no threshold
+   where the whole screen suddenly appears like a slide. */
+function initFocusHandoff() {
+  const section = document.querySelector("#investment-focus");
+  const inner = section && section.querySelector(".focus-handoff-inner");
+  if (!section || !inner || REDUCED) return;
+  let raf = 0;
+  const paint = () => {
+    raf = 0;
+    const r = section.getBoundingClientRect();
+    const vh = Math.max(1, innerHeight);
+    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .72)));
+    const eased = 1 - Math.pow(1 - p, 3);
+    inner.style.opacity = eased.toFixed(3);
+    inner.style.transform = `translate3d(0,${((1 - eased) * 58).toFixed(2)}px,0) scale(${(.985 + eased * .015).toFixed(4)})`;
+  };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(paint); };
+  addEventListener("scroll", queue, { passive: true });
+  addEventListener("resize", queue, { passive: true });
+  paint();
+}
+
 /* =========================================================================
    INTRO SEQUENCE — pink boot log → the system assembles → warp to the page
    ========================================================================= */
@@ -9656,6 +9679,7 @@ safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
 safeBoot("courier", initCourier); // after system — it clones the mounted rocket's art
 safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones the same art
+safeBoot("focusHandoff", initFocusHandoff);
 safeBoot("journey", renderJourney);
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);

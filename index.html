@@ -722,27 +722,21 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 .focus-handoff::before{inset:0;background:#EEF1F8;}
 .focus-handoff::after{left:50%;top:42%;width:min(820px,84vw);aspect-ratio:1;border:1px solid rgba(56,169,255,.18);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 130px rgba(56,169,255,.16),inset 0 0 90px rgba(255,61,154,.04);}
 /* The flagship's planet lands INSIDE the ring the section already draws — the
-   dive ends here. Rendered in daylight blues (not the map's deep-space
-   gradient) so the near-black copy still reads straight over it. */
+   dive ends here. It is the SAME sphere as the map's blue "fly" planet: a
+   clone of that live SVG is injected at runtime (see initFocusPlanet) so it
+   matches exactly, bands, clouds, rotation and all. */
 .focus-orb{
   position:absolute;left:50%;top:42%;z-index:-1;pointer-events:none;
-  width:min(520px,52vw);aspect-ratio:1;border-radius:50%;
+  width:min(500px,52vw);aspect-ratio:1;
   transform:translate(-50%,-50%);
-  background:
-    radial-gradient(circle at 33% 27%,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 42%),
-    radial-gradient(circle at 38% 32%,#eaf7ff 0%,#a9d8f7 38%,#66b3ea 68%,#2f86ce 100%);
-  box-shadow:
-    0 0 0 1px rgba(56,169,255,.45),
-    0 0 70px rgba(56,169,255,.45),
-    0 0 170px rgba(56,169,255,.28),
-    inset -26px -30px 70px rgba(23,79,150,.34);
-  opacity:.8;
+  filter:drop-shadow(0 0 46px rgba(56,169,255,.42)) drop-shadow(0 0 120px rgba(56,169,255,.24));
 }
-/* a soft wash over the body only — the rim stays solid so the sphere reads,
-   while the copy that sits across its middle keeps its contrast */
+.focus-orb svg{display:block;width:100%;height:100%;overflow:visible;}
+/* a soft wash over the body only — the rim stays vivid so the sphere reads,
+   while the near-black copy that sits across its middle keeps its contrast */
 .focus-orb::after{
   content:"";position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 50% 46%,rgba(238,241,248,.72) 0%,rgba(238,241,248,.46) 42%,rgba(238,241,248,0) 76%);
+  background:radial-gradient(circle at 50% 44%,rgba(238,241,248,.72) 0%,rgba(238,241,248,.4) 44%,rgba(238,241,248,0) 74%);
 }
 .focus-handoff-inner{width:min(930px,100%);margin:auto;text-align:center;}
 .focus-handoff .focus-label{display:inline-flex;align-items:center;gap:10px;margin:0 0 15px;color:#52c8ff;font-size:.7rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
@@ -2092,12 +2086,37 @@ input[type="range"]::-moz-range-thumb{
   display:grid;place-items:center;overflow:hidden;
   transition:opacity .5s var(--ease) .15s;
 }
+/* deep space behind the boot log — a still starfield, then the registration
+   crosses that mark out the system's grid. Both are painted layers rather
+   than a canvas: the intro must be up on the very first frame. */
+.intro::before,.intro::after{content:"";position:absolute;inset:0;pointer-events:none;}
+.intro::before{
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='620'><g fill='rgb(226,236,255)'><circle cx='42' cy='96' r='1' opacity='.55'/><circle cx='118' cy='34' r='.7' opacity='.35'/><circle cx='196' cy='214' r='.9' opacity='.45'/><circle cx='264' cy='128' r='.6' opacity='.3'/><circle cx='330' cy='58' r='1.1' opacity='.6'/><circle cx='392' cy='300' r='.8' opacity='.4'/><circle cx='455' cy='166' r='.7' opacity='.32'/><circle cx='520' cy='88' r='1' opacity='.5'/><circle cx='590' cy='246' r='.6' opacity='.28'/><circle cx='655' cy='140' r='.9' opacity='.42'/><circle cx='722' cy='52' r='.8' opacity='.38'/><circle cx='768' cy='206' r='1' opacity='.5'/><circle cx='36' cy='300' r='.7' opacity='.33'/><circle cx='100' cy='398' r='1' opacity='.52'/><circle cx='170' cy='470' r='.8' opacity='.4'/><circle cx='238' cy='354' r='.6' opacity='.3'/><circle cx='300' cy='530' r='.9' opacity='.45'/><circle cx='368' cy='430' r='.7' opacity='.35'/><circle cx='430' cy='566' r='1' opacity='.5'/><circle cx='496' cy='392' r='.8' opacity='.38'/><circle cx='560' cy='486' r='.6' opacity='.28'/><circle cx='628' cy='340' r='1' opacity='.48'/><circle cx='690' cy='452' r='.7' opacity='.34'/><circle cx='752' cy='574' r='.9' opacity='.44'/><circle cx='20' cy='540' r='.8' opacity='.36'/><circle cx='150' cy='180' r='.5' opacity='.25'/><circle cx='280' cy='250' r='.5' opacity='.22'/><circle cx='410' cy='110' r='.5' opacity='.24'/><circle cx='540' cy='180' r='.5' opacity='.23'/><circle cx='610' cy='600' r='.6' opacity='.3'/><circle cx='80' cy='610' r='.5' opacity='.25'/><circle cx='340' cy='600' r='.5' opacity='.22'/><circle cx='470' cy='240' r='.6' opacity='.28'/><circle cx='700' cy='290' r='.5' opacity='.26'/></g></svg>");
+  background-size:800px 620px;
+}
+.intro::after{
+  background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='396' height='450'><path d='M198 192v14M191 199h14' stroke='rgb(255,255,255)' stroke-opacity='.2' stroke-width='1' stroke-linecap='round'/></svg>");
+  background-size:396px 450px;background-position:50% 50%;
+}
 .intro.gone{display:none;}
 .intro.warp{opacity:0;}
+/* the boot log sits in a console panel — the frame the whole system boots in */
 .intro-core{
-  display:grid;justify-items:center;gap:20px;width:min(560px,92vw);
+  position:relative;
+  display:grid;justify-items:center;gap:22px;
+  width:fit-content;max-width:92vw;
+  padding:clamp(30px,4.4vh,48px) clamp(26px,4.4vw,54px) clamp(26px,3.8vh,42px);
+  border:1px solid rgba(255,255,255,.10);border-radius:26px;
+  background:rgba(9,10,18,.55);
+  box-shadow:0 34px 100px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.045);
   transform-origin:50% 42%;
   transition:transform .7s cubic-bezier(.7,0,.84,0),opacity .6s var(--ease),filter .6s var(--ease);
+}
+/* the bar's bloom pooling in the base of the console */
+.intro-core::after{
+  content:"";position:absolute;left:6%;right:6%;bottom:8px;height:132px;z-index:-1;
+  pointer-events:none;filter:blur(16px);
+  background:radial-gradient(62% 100% at 50% 100%,rgba(255,61,154,.22),rgba(45,226,197,.13) 46%,transparent 74%);
 }
 .intro.warp .intro-core{transform:scale(9);opacity:0;filter:blur(3px);}
 .intro-sys{width:min(240px,52vw);height:auto;overflow:visible;opacity:0;transition:opacity .5s var(--ease);}
@@ -2120,30 +2139,32 @@ input[type="range"]::-moz-range-thumb{
 }
 .intro.build .intro-word{opacity:1;transform:none;}
 .intro-term{
-  margin:0;width:100%;max-width:400px;min-height:140px;
-  font:600 11.5px/1.8 ui-monospace,"Cascadia Mono",Consolas,monospace;
-  color:#DC94BC;text-align:left;white-space:pre;
+  margin:0;width:100%;max-width:460px;min-height:150px;
+  font:600 13px/1.85 ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color:#d98cb8;text-align:left;white-space:pre;
 }
 .intro-term .ok{color:var(--mint);}
+/* the boot HEADER burns brighter than the log lines beneath it */
+.intro-term .hd{color:#ff5cae;font-weight:800;text-shadow:0 0 18px rgba(255,92,174,.5);}
 .intro-term .auth{color:var(--mint);font-weight:800;letter-spacing:.06em;}
 .intro-term .caret{
-  display:inline-block;width:8px;height:13px;background:#DC94BC;
-  vertical-align:-2px;animation:caretBlink .7s steps(1) infinite;
-}
+  display:inline-block;width:9px;height:15px;background:#ff5cae;
+  vertical-align:-2px;animation:caretBlink .7s steps(1) infinite;box-shadow:0 0 10px rgba(255,92,174,.6);}
 @keyframes caretBlink{50%{opacity:0;}}
 /* AUTHORISATION readout — a dedicated row that hugs the bar it authorises
    (the grid gap stays for the terminal above; -13px pulls the bar tight) */
 .intro-auth{
   display:flex;justify-content:space-between;align-items:baseline;
-  width:100%;max-width:400px;margin-bottom:-13px;
-  font:800 11.5px/1 ui-monospace,"Cascadia Mono",Consolas,monospace;
+  width:100%;max-width:460px;margin-bottom:-13px;
+  font:800 13px/1 ui-monospace,"Cascadia Mono",Consolas,monospace;
   color:var(--mint);letter-spacing:.08em;
 }
 .intro-auth[hidden]{display:none;}
-.intro-bar{width:100%;max-width:300px;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
+.intro-bar{width:100%;max-width:460px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
 .intro-bar i{
   display:block;height:100%;width:0;border-radius:99px;
-  background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));
+  background:linear-gradient(90deg,#ff2f8e,#c94fd6 34%,#4f9ee8 62%,#2de2c5);
+  box-shadow:0 0 12px rgba(255,61,154,.5),0 0 20px rgba(45,226,197,.35);
   transition:width .45s var(--ease);
 }
 .intro-skip{
@@ -4007,11 +4028,11 @@ function renderHero() {
     <div class="kpi reveal d${i}">
       <div class="num" data-count="${k.value}" data-fmt="${k.fmt}" ${k.prefix ? `data-prefix="${k.prefix}"` : ""} ${k.suffix ? `data-suffix="${k.suffix}"` : ""}>0</div>
       <div class="lbl">${k.label}</div>
-      ${k.sub ? `<div class="lbl2">${k.sub}</div>` : ""}
       <svg class="spark" viewBox="0 0 ${W} ${H}" aria-hidden="true">
         <path d="${smoothPath(coords)}" fill="none" stroke="${colors[i % 4]}" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="${coords[coords.length - 1].x}" cy="${coords[coords.length - 1].y}" r="3" fill="${colors[i % 4]}"/>
       </svg>
+      ${k.sub ? `<div class="lbl2">${k.sub}</div>` : ""}
     </div>`;
   }).join("");
 
@@ -9755,6 +9776,26 @@ function initFocusHandoff() {
   paint();
 }
 
+/* The sphere behind the focus screen IS the map's blue flagship planet — not a
+   look-alike. We clone that live SVG group into the section so the bands,
+   cloud belt, shading and rotation match it exactly. The gradient / clip /
+   grain defs it references stay in the map's <defs>; SVG url(#id) references
+   resolve document-wide, so the clone renders identically. */
+function initFocusPlanet() {
+  const host = document.querySelector(".focus-orb");
+  const src = document.querySelector('#sysMap .sm-planet[data-key="fly"] .mf');
+  if (!host || !src) return;
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "-64 -64 128 128");
+  svg.setAttribute("aria-hidden", "true");
+  const clone = src.cloneNode(true);
+  const halo = clone.querySelector(".halo");       // map-only hover glow — drop it
+  if (halo) halo.remove();
+  svg.appendChild(clone);
+  host.appendChild(svg);
+}
+
 /* =========================================================================
    INTRO SEQUENCE — pink boot log → the system assembles → warp to the page
    ========================================================================= */
@@ -9820,8 +9861,9 @@ function runIntro() {
   bar.style.width = "100%";
   LINES.forEach((_, i) => {
     t(220 + i * STEP, () => {
-      term.innerHTML = LINES.slice(0, i + 1).map(([l, o]) =>
-        l + (o ? `<span class="ok">${"·".repeat(Math.max(2, PAD - l.length))} ${o}</span>` : "")
+      term.innerHTML = LINES.slice(0, i + 1).map(([l, o], j) =>
+        (j === 0 ? `<b class="hd">${l}</b>` : l) +
+        (o ? `<span class="ok">${"·".repeat(Math.max(2, PAD - l.length))} ${o}</span>` : "")
       ).join("\n") + '<span class="caret"></span>';
     });
   });
@@ -9830,7 +9872,8 @@ function runIntro() {
     const pct = Math.round(k * 100 / SEG);
     t(authAt + k * 75, () => { auth.hidden = false; pctEl.textContent = pct + "%"; });
   }
-  t(authAt + SEG * 75 + 380, () => finish(true));
+  // #bootfreeze holds the completed boot log on screen for inspection
+  if (location.hash.indexOf("bootfreeze") < 0) t(authAt + SEG * 75 + 380, () => finish(true));
 }
 
 /* =========================================================================
@@ -9852,6 +9895,7 @@ safeBoot("system", renderSystem);
 safeBoot("courier", initCourier); // after system — it clones the mounted rocket's art
 safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones the same art
 safeBoot("focusHandoff", initFocusHandoff);
+safeBoot("focusPlanet", initFocusPlanet); // clones the map's blue planet behind the focus screen
 safeBoot("journey", renderJourney);
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);

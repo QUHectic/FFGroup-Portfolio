@@ -158,7 +158,7 @@ section#team{overflow-x:clip;}
 .sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.1;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,255,255,.22));}
 .sm-surface-line{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1;stroke-linecap:round;}
 .sm-crater{fill:rgba(71,25,19,.16);stroke:rgba(90,35,24,.38);stroke-width:1;}
-.sm-world-country{fill:#fff;stroke:rgba(214,8,126,.72);stroke-width:.38;stroke-linejoin:round;vector-effect:non-scaling-stroke;}
+.sm-world-country{fill:#fff;stroke:rgba(214,8,126,.72);stroke-width:.38;stroke-linejoin:round;vector-effect:non-scaling-stroke;paint-order:stroke;}   /* stroke UNDER fill — the atlas's antimeridian cut edges (Russia/Antarctica) would otherwise paint a vertical seam line across the globe */
 @keyframes smSurfaceSpin{to{transform:translateX(var(--travel,-96px));}}
 @media (prefers-reduced-motion:reduce){.sm-bob,.sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:none;}}
 .sm-ghost circle.body2{fill:rgba(255,255,255,.04);stroke-width:1.6;stroke-dasharray:5 6;}
@@ -824,6 +824,12 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
 #padRocket{position:absolute;left:63.68%;top:70.9%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
 html.spx.has-courier #padRocket{opacity:0;transition:opacity .35s var(--ease-out);}
 html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
+/* BOOSTER MANIFEST — after touchdown the pad bird solidifies first, then the
+   strap-on boosters fade themselves on a beat later (they detach at launch
+   via loSepA/B, so during .launching they are simply present). */
+html.spx.has-courier #padRocket .lo-boost{opacity:0;transition:opacity .8s var(--ease-out) .5s;}
+html.spx.has-courier #liftoff.docked #padRocket .lo-boost,
+html.spx.has-courier #liftoff.launching #padRocket .lo-boost{opacity:1;}
 #padRocket svg{position:absolute;left:-78px;top:-35px;width:156px;height:70px;max-width:none;display:block;overflow:visible;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
 /* parked = engines cold: the courier's flight effects stay dark until launch */
 #padRocket .rk-trailline,#padRocket .rk-plume,#padRocket .rk-plume2,#padRocket .rk-nozGlow{opacity:0;transition:opacity .3s ease;}
@@ -4969,11 +4975,12 @@ function initCourier() {
     const t3 = pathRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"]);
     if (t3 && t3.s1 - t3.s0 > 60) { t3.kind = "traj"; segs.push(t3); }
     /* GROWTH → 2036 TRANSFER
-       Cursor-traced route (recording 2026-07-20 10:12): off the summit the
-       ship pushes OUT to the right edge and rides it down to mid-height,
-       then flies ONE long, shallow left-sweeping diagonal across the whole
-       section — gently sinking the entire way — to reach the left margin
-       low, finishing on the REAL 2023 trajectory point. */
+       Cursor-traced route (recording 2026-07-20 10:34): off the summit the
+       ship pushes OUT to the right edge and drops only to the UPPER-middle
+       (~.40vh), then flies ONE straight, steady diagonal across the whole
+       viewport — clearing the chart panel's upper whitespace — all the way
+       to the FAR-LEFT margin (~5% width), settles briefly down that edge,
+       and finishes on the REAL 2023 trajectory point. */
     if (g2 && t3 && t3.s0 - g2.s1 > 80) {
       segs.push({
         transfer: true, s0: g2.s1, s1: t3.s0,
@@ -4982,13 +4989,13 @@ function initCourier() {
           const iw = innerWidth;
           return flightSplineKeyed([
             { t: 0,   x: a.x, y: a.y },
-            { t: .07, x: Math.min(iw - 60, Math.max(a.x + 60, iw * .86)), y: a.y + 40 },
-            { t: .16, x: iw * .90, y: vh * .50 },
-            { t: .30, x: iw * .74, y: vh * .60 },
-            { t: .46, x: iw * .58, y: vh * .66 },
-            { t: .62, x: iw * .42, y: vh * .72 },
-            { t: .78, x: iw * .26, y: vh * .78 },
-            { t: .90, x: iw * .12, y: vh * .82 },
+            { t: .06, x: Math.min(iw - 60, Math.max(a.x + 60, iw * .86)), y: a.y + 38 },
+            { t: .14, x: iw * .905, y: vh * .40 },
+            { t: .30, x: iw * .70,  y: vh * .47 },
+            { t: .46, x: iw * .50,  y: vh * .56 },
+            { t: .62, x: iw * .28,  y: vh * .65 },
+            { t: .76, x: iw * .10,  y: vh * .72 },
+            { t: .88, x: iw * .055, y: vh * .80 },
             { t: 1,   x: b.x, y: b.y }
           ], q);
         }
@@ -5218,6 +5225,11 @@ function initCourier() {
   let pd = -1, angS = null, posS = null, lastT = 0, ptPrev = null, dirState = 1;
   const loSecRef = document.getElementById("liftoff");
   let dockOn = false;
+  // LANDING AUTOPILOT state — once the ship reaches the pad approach the
+  // touchdown is TIME-eased, not scroll-scrubbed: landT glides 0→1 by itself
+  // (and back to 0 if the visitor scrolls away), while the engine burn dims
+  const plumeEls = [...wrap.querySelectorAll(".rk-plume,.rk-plume2,.rk-nozGlow,.rk-trailline")];
+  let landT = 0, lastBurn = -1;
   let orbitSpin0 = null, raiseSpin0 = null, inOrbitPrev = false, inRaisePrev = false;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
@@ -5325,14 +5337,28 @@ function initCourier() {
           const yAt = pv => S0 + pv * (S1 - S0);
           const yEffNow = yAt(pd);
           const L0 = locate(segs, yEffNow);
+          // LANDING AUTOPILOT — the moment the scroll enters the pad leg the
+          // ship flies itself down the glide-slope on its own clock: no
+          // further scrolling required, fully reversed if the visitor leaves
+          const padSeg = segs.find(s2 => s2.pad);
+          if (padSeg) {
+            const tgt = yEffNow >= padSeg.s0 ? 1 : 0;
+            const rate = snap ? 1 : 1 - Math.exp(-dt * (tgt ? 1.35 : 2.4));
+            landT += (tgt - landT) * rate;
+            if (Math.abs(tgt - landT) < .0015) landT = tgt;
+            if (landT > .002) {
+              L0.p = padSeg.at(landT);
+              L0.pq = landT; L0.oq = null; L0.rq = null; L0.kind = null; L0.q = landT;
+            }
+          } else landT = 0;
           inOrbitPrev = L0.oq != null;
           inRaisePrev = L0.rq != null;
           const P = L0.p;
           // A second, spatial spring absorbs live layout/scroll movement at
           // section boundaries, eliminating the last positional snaps while
           // preserving the authored flight path.
-          const posK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 20 : (L0.q == null ? 16 : 12.5)));  // orbit responds tightly to scroll and settles immediately
-          if (!posS || snap || L0.oq != null || globeLocked) posS = { x: P.x, y: P.y };
+          const posK = snap ? 1 : 1 - Math.exp(-dt * ((L0.oq != null || L0.pq != null) ? 20 : (L0.q == null ? 16 : 12.5)));  // orbit + landing respond tightly and settle immediately
+          if (!posS || snap || L0.oq != null || L0.pq != null || globeLocked) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
             posS.y += (P.y - posS.y) * posK;
@@ -5357,8 +5383,12 @@ function initCourier() {
           if (padQ != null) {
             // fly the glide-slope nose-first, then FLARE: the nose pitches
             // smoothly to skyward across the final approach — a real
-            // retro-propulsive landing, not a snap
-            const base = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+            // retro-propulsive landing, not a snap. The base heading reads
+            // the glide-slope's OWN tangent (the autopilot has decoupled the
+            // position from scroll, so a scroll-space diff would be stale).
+            const e3 = .02;
+            const Aq = padSeg.at(cl01(padQ + e3)), Bq = padSeg.at(cl01(padQ - e3));
+            const base = Math.atan2(Aq.y - Bq.y, Aq.x - Bq.x);
             const flare = smt(cl01((padQ - .42) / .5));
             let dFl = -Math.PI / 2 - base;
             while (dFl > Math.PI) dFl -= T2;
@@ -5411,6 +5441,13 @@ function initCourier() {
             alpha *= 1 - occult;
             sc *= 1 - .08 * occult;
             wrap.style.zIndex = occult > .55 ? "1" : "70";
+          }
+          // the burn dims through the landing flare and is fully OUT at
+          // touchdown — and relights on its own if the visitor scrolls away
+          const burn = padQ == null ? 1 : 1 - smt(cl01((padQ - .5) / .42));
+          if (Math.abs(burn - lastBurn) > .003) {
+            plumeEls.forEach(el2 => { el2.style.opacity = burn >= .997 ? "" : burn.toFixed(3); });
+            lastBurn = burn;
           }
           wrap.style.transform =
             `translate3d(${renderX.toFixed(1)}px,${renderY.toFixed(1)}px,0) rotate(${(angS + bank).toFixed(4)}rad) scale(${sc.toFixed(3)})`;

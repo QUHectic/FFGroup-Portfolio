@@ -1366,6 +1366,20 @@ section.tint{background:var(--bg-soft);}
 .ch-lede{font-size:1.03rem;font-weight:600;line-height:1.5;color:var(--ink);max-width:50ch;margin:0 0 12px;}
 .ch-body p{font-size:.92rem;line-height:1.62;color:var(--ink-dim);margin:0 0 7px;max-width:56ch;}
 .ch-body .ch-close{color:var(--mint-ink);font-weight:600;}
+/* THE £100M AMBITION — what Freedom Global becomes, and what it assumes */
+.becomes{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:-6px 0 26px;}
+.becomes span{
+  padding:8px 15px;border:1px solid var(--line);border-radius:99px;background:var(--bg-soft);
+  color:var(--ink-dim);font-size:.76rem;font-weight:800;letter-spacing:.01em;
+}
+.assume{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px;}
+.assume > div{padding:14px 15px;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:13px;background:var(--bg-soft);}
+.assume b{display:block;font-size:.86rem;letter-spacing:-.01em;}
+.assume span{display:block;margin-top:4px;color:var(--ink-dim);font-size:.74rem;line-height:1.45;}
+.assume-note{margin:16px 0 0;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px;
+  color:var(--ink-dim);font-size:.74rem;line-height:1.5;}
+.assume-note b{color:var(--ink);}
+
 /* THE MARKET BLUEPRINT — three levels on one slider */
 .bp-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
 .bp-tabs{display:flex;gap:8px;flex-wrap:wrap;}
@@ -2881,13 +2895,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <span class="word">THE FREEDOM <span>GROUP</span></span>
     </button>
     <nav class="nav-links" id="navLinks" aria-label="Sections">
-      <button class="nav-btn" data-goto="system">The System</button>
+      <button class="nav-btn" data-goto="system" data-goto-at="0.86">The System</button>
       <button class="nav-btn" data-goto="journey">Journey</button>
       <button class="nav-btn" data-goto="growth">Traction</button>
       <button class="nav-btn" data-goto="opportunity">Opportunity</button>
       <button class="nav-btn" data-goto="projections">Growth Plan</button>
-      <button class="nav-btn" data-goto="investment">Investment</button>
       <button class="nav-btn" data-goto="horizon">Beyond</button>
+      <button class="nav-btn" data-goto="investment" data-goto-at="0.70">Investment</button>
       <button class="nav-btn nav-cta" data-goto="liftoff">Liftoff</button>
     </nav>
     <button class="nav-burger" id="navBurger" aria-label="Open the section menu" aria-expanded="false" aria-controls="navLinks">
@@ -3160,9 +3174,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <section data-sec="horizon" id="horizon" class="sec-light" aria-label="2036 horizon">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">The 2036 horizon</span>
-        <h2>The full trajectory — <span class="grad-text">£42k to £72m</span></h2>
-        <p class="section-sub">Year totals, actuals in solid and targets dashed. Flip to log scale to see the consistency of the compounding.</p>
+        <span class="kicker">The £100 Million Freedom Global Ambition</span>
+        <h2>From ecommerce business to <span class="grad-text">global brand platform</span></h2>
+        <p class="section-sub">The ten-year vision is not simply to sell more fire extinguishers. It is to build the infrastructure capable of launching, owning and scaling multiple consumer brands.</p>
+      </div>
+
+      <!-- what Freedom Global becomes over the ten years -->
+      <div class="becomes reveal">
+        <span>Multi-brand</span><span>Multi-category</span><span>Multi-channel</span>
+        <span>International</span><span>Technology-enabled</span><span>Operationally scalable</span>
       </div>
 
       <div class="panel reveal">
@@ -3171,14 +3191,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <button data-scale="linear" aria-pressed="true">Linear</button>
             <button data-scale="log" aria-pressed="false">Log scale</button>
           </div>
-          <div class="right"><span class="chip" style="border-style:dashed;cursor:default;">2031 → 2036 implies ~23% a year</span></div>
+          <div class="right"><span class="chip" style="border-style:dashed;cursor:default;">2031 → 2036 implies ~31% a year</span></div>
         </div>
-        <figure class="chart" id="trajChart" aria-label="Trajectory chart from £42,000 in 2023 to £71.85 million in 2036, actuals solid and targets dashed."></figure>
+        <figure class="chart" id="trajChart" aria-label="Trajectory chart from £42,000 in 2023 to £100.59 million in 2036, actuals solid and targets dashed."></figure>
       </div>
 
       <div class="h35-grid">
         <div class="panel reveal">
-          <h3>2036 revenue mix — £71.85m</h3>
+          <h3>2036 revenue mix — £100.59m</h3>
           <div class="psub">Hover or tap a segment or legend row</div>
           <div class="donut-wrap">
             <figure class="chart" id="donut35" style="width:230px;"></figure>
@@ -3191,6 +3211,22 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <div class="shift-rows" id="shiftRows"></div>
           <div class="yd-hint">eBay: ~60% of 2026 revenue → 22% by 2030 → 10% by 2036, while absolute eBay revenue still grows ~4.7× — that's diversification, not decline.</div>
         </div>
+      </div>
+
+      <!-- THE ASSUMPTIONS — the £100m figure is only credible if what it
+           depends on is stated plainly alongside it -->
+      <div class="panel reveal" id="ambition" style="margin-top:22px;">
+        <h3>What the £100 million ambition assumes</h3>
+        <div class="psub">A long-term value-creation target — not a current valuation. Reaching it depends on all of the following holding true.</div>
+        <div class="assume">
+          <div><b>Channel execution</b><span>Amazon, Shopify, OnBuy and TikTok Shop all launch and scale on plan, alongside eBay and Temu.</span></div>
+          <div><b>Working capital</b><span>Stock funding keeps pace with demand, so availability and marketplace ranking are never the constraint.</span></div>
+          <div><b>Brand portfolio</b><span>The owned brands repeat the Firestorm model across batteries, PPE, aerosols, cleaning and automotive.</span></div>
+          <div><b>Margin discipline</b><span>Direct-from-manufacturer sourcing holds gross margin as volume grows.</span></div>
+          <div><b>Operational capacity</b><span>Warehousing, fulfilment and headcount scale ahead of order volume, not behind it.</span></div>
+          <div><b>Market conditions</b><span>The continued migration of regulated safety and consumable categories online.</span></div>
+        </div>
+        <p class="assume-note">£100 million is a <b>target enterprise value</b> — an illustrative future figure based on successful execution of the plan above. It is not a professional valuation and should not be read as one.</p>
       </div>
 
     </div>
@@ -4099,14 +4135,14 @@ const FG_DATA = {
   projection2036: {
     year: 2036,
     channels: [
-      { name: "Amazon",            hex: "#ffb020", value: 25000000 },
-      { name: "Shopify",           hex: "#2fe0a0", value: 15000000 },
-      { name: "B2B",               hex: "#9aa6bd", value: 10000000 },
-      { name: "Temu",              hex: "#ff6a3d", value: 8000000 },
-      { name: "eBay",              hex: "#38a9ff", value: 7000000 },
-      { name: "On-Site Servicing", hex: "#ff4fa3", value: 3000000 },
-      { name: "TikTok +",          hex: "#22d3ee", value: 3000000 },
-      { name: "OnBuy",             hex: "#b79bff", value: 850000 }
+      { name: "Amazon",            hex: "#ffb020", value: 35000000 },
+      { name: "Shopify",           hex: "#2fe0a0", value: 21000000 },
+      { name: "B2B",               hex: "#9aa6bd", value: 14000000 },
+      { name: "Temu",              hex: "#ff6a3d", value: 11200000 },
+      { name: "eBay",              hex: "#38a9ff", value: 9800000 },
+      { name: "On-Site Servicing", hex: "#ff4fa3", value: 4200000 },
+      { name: "TikTok +",          hex: "#22d3ee", value: 4200000 },
+      { name: "OnBuy",             hex: "#b79bff", value: 1190000 }
     ]
   },
 
@@ -4124,7 +4160,7 @@ const FG_DATA = {
     { year: 2029, value: 11150000, kind: "target" },
     { year: 2030, value: 20000000, kind: "target", note: "£20m" },
     { year: 2031, value: 26000000, kind: "target", note: "£26m · 6-channel map lands" },
-    { year: 2036, value: 71850000, kind: "target", note: "The 2036 horizon" }
+    { year: 2036, value: 100590000, kind: "target", note: "The 2036 horizon" }
   ],
 
   // UK fire & safety market context (~£6bn now, £8.5bn by 2030, held beyond)
@@ -4418,7 +4454,17 @@ function initChrome() {
       // NB: bare scrollTop writes are re-smoothed by html{scroll-behavior:smooth},
       // so every write goes through scrollTo with behavior:"instant"
       const y0 = window.scrollY;
-      const y1 = id === "top" ? 0 : Math.max(0, y0 + el.getBoundingClientRect().top);
+      // Tall scroll set-pieces (the system build, the funding climb) have to
+      // land WHERE THEIR CONTENT IS, not on their first pixel — data-goto-at
+      // is the fraction of the piece's own scrub to stop at.
+      const at = parseFloat(btn.dataset.gotoAt);
+      // the piece that actually owns the scrub may be a child (the system's
+      // build stage), so measure THAT — otherwise the fraction lands wrong
+      const scrub = el.querySelector(".sys-build") || el;
+      const top = y0 + (isNaN(at) ? el : scrub).getBoundingClientRect().top;
+      const y1 = id === "top" ? 0
+        : !isNaN(at) ? Math.max(0, top + Math.max(0, scrub.offsetHeight - innerHeight) * at)
+        : Math.max(0, top);
       if (REDUCED) window.scrollTo({ top: y1, behavior: "instant" });
       else {
         const dur = Math.min(1400, 420 + Math.abs(y1 - y0) * 0.06);
@@ -7487,6 +7533,24 @@ function renderSystem() {
   };
   window.addEventListener("resize", layoutSubs);
   layoutSubs(); setTimeout(layoutSubs, 350);
+  /* THE JUMBLE FIX — the placement is measured from real card heights, so any
+     size change AFTER the first pass (a webfont swapping in, a label rewrapping)
+     leaves every box on stale coordinates. On a warm cache the fonts are ready
+     before layout and it looks right; on a cold refresh they are not, which is
+     exactly why it only jumbled sometimes. Re-run when the fonts land, and keep
+     a ResizeObserver on the boxes so nothing can silently desync again. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { layoutSubs(); setTimeout(layoutSubs, 120); });
+  }
+  if (window.ResizeObserver) {
+    let roQ = 0;
+    const ro = new ResizeObserver(() => {
+      if (roQ) return;
+      roQ = requestAnimationFrame(() => { roQ = 0; layoutSubs(); });
+    });
+    ro.observe(map);
+    map.querySelectorAll(".sm-card,.sm-sub,.sm-stats,.sm-brands,.rk-panel").forEach(el => ro.observe(el));
+  }
   // The reveal state removes the map's introductory translate/scale. Re-run
   // once in that final transform so the rendered centres and gaps stay exact.
   (map.__onin = map.__onin || []).push(() => {

@@ -746,36 +746,51 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 /* the summary card carries the blue essence of the planet it describes —
    a lit rim, an outer bloom and a cool inner wash, all on top of white */
 .focus-summary{
-  position:relative;width:min(800px,100%);margin:30px auto 0;padding:26px 28px;
-  border:1px solid rgba(56,169,255,.55);border-radius:24px;
-  background:
-    radial-gradient(120% 90% at 50% -10%,rgba(56,169,255,.10),rgba(56,169,255,0) 60%),
-    linear-gradient(180deg,#ffffff 0%,#eaf5ff 100%);
+  position:relative;width:min(820px,100%);margin:32px auto 0;padding:0;overflow:hidden;
+  border:1px solid rgba(56,169,255,.4);border-radius:24px;isolation:isolate;
+  background:linear-gradient(180deg,#ffffff 0%,#eef6ff 62%,#e4f0ff 100%);
   box-shadow:
-    0 34px 90px rgba(20,58,112,.22),
-    0 0 0 6px rgba(56,169,255,.08),
-    0 0 55px rgba(56,169,255,.42),
-    0 0 150px rgba(56,169,255,.26),
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 -22px 44px rgba(56,169,255,.06);
+    0 34px 90px rgba(20,58,112,.24),
+    0 0 0 6px rgba(56,169,255,.07),
+    0 0 60px rgba(56,169,255,.34),
+    inset 0 1px 0 rgba(255,255,255,1);
+}
+/* a soft light source raking across the card so it reads as a lit surface */
+.focus-summary::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(80% 120% at 12% -10%,rgba(255,255,255,.95),rgba(255,255,255,0) 55%),
+    radial-gradient(70% 100% at 100% 0%,rgba(255,79,176,.10),rgba(255,79,176,0) 60%),
+    radial-gradient(90% 120% at 50% 115%,rgba(56,169,255,.16),rgba(56,169,255,0) 62%);
 }
 .focus-summary::before{
-  content:"";position:absolute;left:9%;right:9%;top:-1.5px;height:3px;border-radius:99px;
-  background:linear-gradient(90deg,rgba(255,61,154,0),#ff4fb0 22%,#7c5cff 50%,#52c8ff 78%,rgba(56,169,255,0));
-  box-shadow:0 0 20px rgba(56,169,255,.9),0 0 8px rgba(255,79,176,.6);
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;z-index:2;
+  background:linear-gradient(90deg,rgba(255,61,154,0),#ff4fb0 18%,#7c5cff 50%,#52c8ff 82%,rgba(56,169,255,0));
+  box-shadow:0 0 22px rgba(56,169,255,.9);
 }
-.focus-summary-head{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
-.focus-summary-head i{width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a6e0ff,var(--blue));box-shadow:0 0 10px var(--blue),0 0 26px rgba(56,169,255,.9);}
-.focus-summary-head strong{font-size:clamp(1.24rem,2.1vw,1.56rem);letter-spacing:-.025em;}
-.focus-summary-type{margin:7px 0 20px;font-size:.72rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase;
-  background:linear-gradient(90deg,#ff4fb0,#52c8ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.focus-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
-  background:linear-gradient(180deg,#d3e5f7,#c6dcf1);border:1px solid #cfe1f4;border-radius:16px;overflow:hidden;text-align:left;
-  box-shadow:0 10px 26px rgba(30,70,130,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-.focus-summary-grid p{margin:0;padding:13px 16px;background:linear-gradient(180deg,#ffffff,#f3f9ff);color:#33445a;font-size:.82rem;line-height:1.46;transition:background .25s var(--ease);}
-.focus-summary-grid p:hover{background:linear-gradient(180deg,#ffffff,#e7f3ff);}
+/* the header sits on its own darker plate so the card has real structure */
+.focus-summary-head{
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  padding:22px 26px 0;
+}
+.focus-summary-head i{width:11px;height:11px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#a6e0ff,var(--blue));
+  box-shadow:0 0 10px var(--blue),0 0 26px rgba(56,169,255,.9);}
+.focus-summary-head strong{font-size:clamp(1.3rem,2.2vw,1.62rem);letter-spacing:-.03em;}
+.focus-summary-type{margin:8px 0 0;padding:0 26px 20px;font-size:.7rem;font-weight:900;
+  letter-spacing:.16em;text-transform:uppercase;
+  background:linear-gradient(90deg,#ff4fb0,#7c5cff,#52c8ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.focus-summary-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;text-align:left;
+  background:rgba(56,169,255,.22);border-top:1px solid rgba(56,169,255,.22);
+}
+.focus-summary-grid p{margin:0;padding:15px 26px;color:#28374d;font-size:.84rem;line-height:1.5;
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,252,255,.96));transition:background .25s var(--ease);}
+.focus-summary-grid p:hover{background:linear-gradient(180deg,#ffffff,#e8f4ff);}
 .focus-summary-grid p.wide{grid-column:1/-1;}
-.focus-summary-grid b{display:block;margin-bottom:3px;color:#2f8fd4;font-size:.6rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+.focus-summary-grid b{display:block;margin-bottom:4px;font-size:.6rem;font-weight:900;
+  letter-spacing:.15em;text-transform:uppercase;color:#2f8fd4;}
 .focus-begin{display:inline-flex;align-items:center;gap:11px;margin-top:22px;color:#111626;text-decoration:none;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
 .focus-begin::after{content:"";width:9px;height:9px;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);transform:rotate(45deg) translateY(-3px);animation:focusPrompt 1.4s ease-in-out infinite;}
 @keyframes focusPrompt{50%{transform:rotate(45deg) translate(4px,1px);opacity:.55;}}
@@ -1000,17 +1015,43 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 .lo-flock.f3{animation-duration:38s;animation-delay:-11s;}
 .lo-flock.f4{animation-duration:52s;animation-delay:-37s;}
 @keyframes loBirds{from{transform:translateX(-240px);}to{transform:translateX(2160px);}}
-.bird path{fill:none;stroke:#ffffff;stroke-width:4.2;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(230,240,255,.85));}
+/* Filled tapered silhouettes, not uniform strokes: each wing is thick at the
+   shoulder, carries a gull curve out to the wrist, then sweeps its primaries
+   back and down to a point — which is what actually reads as "bird" at this
+   distance. A slim body with a forked tail sits between them. The old 4-unit
+   round-capped stroke was the same weight tip to root and bled 2 units past
+   each wingtip, which is why they looked like glowing chevrons. */
+.bird path{fill:#dce6f7;stroke:none;filter:drop-shadow(0 0 1.6px rgba(190,205,230,.32));}
+.bird .bd{fill:#cfdcf0;}
 .bird{animation:birdBob 2.6s ease-in-out infinite;}
 .bird.b{animation-delay:-.9s;}
 .bird.c{animation-delay:-1.7s;}
-@keyframes birdBob{0%,100%{transform:translate(var(--tx,0),0);}50%{transform:translate(var(--tx,0),-7px);}}
-.bird .wl,.bird .wr{transform-box:fill-box;transform-origin:100% 100%;animation:wingL .46s ease-in-out infinite alternate;}
+.bird.d{animation-delay:-2.2s;}
+.bird.g{animation-delay:-1.3s;animation-duration:3.4s;}
+/* Animate the INDIVIDUAL translate property, never `transform`. Each bird
+   carries its position as an SVG transform="translate(x y) scale(s)"
+   attribute, which maps to the CSS transform property — so animating
+   `transform` here overwrote it and collapsed every bird to y=0, above
+   the artwork's top edge where overflow:hidden clipped them in half.
+   `translate` composes with the attribute instead of replacing it. */
+@keyframes birdBob{0%,100%{translate:0 0;}50%{translate:0 -4px;}}
+.bird .wl,.bird .wr{transform-box:fill-box;transform-origin:100% 100%;animation:wingL .52s ease-in-out infinite;}
 .bird .wr{transform-origin:0% 100%;animation-name:wingR;}
-.bird.b .wl,.bird.b .wr{animation-delay:-.15s;}
-.bird.c .wl,.bird.c .wr{animation-delay:-.28s;}
-@keyframes wingL{from{transform:rotate(26deg);}to{transform:rotate(-24deg);}}
-@keyframes wingR{from{transform:rotate(-26deg);}to{transform:rotate(24deg);}}
+.bird.b .wl,.bird.b .wr{animation-delay:-.17s;animation-duration:.47s;}
+.bird.c .wl,.bird.c .wr{animation-delay:-.31s;animation-duration:.56s;}
+.bird.d .wl,.bird.d .wr{animation-delay:-.09s;animation-duration:.43s;}
+/* gliders: wings held near level, barely working */
+.bird.g .wl,.bird.g .wr{animation-duration:2.1s;animation-delay:-.6s;}
+.bird.g .wl{animation-name:glideL;}
+.bird.g .wr{animation-name:glideR;}
+/* A real flap is not a symmetric sweep: the downstroke is the fast power
+   stroke, then the wing pauses at the bottom and recovers more slowly. */
+@keyframes wingL{0%{transform:rotate(30deg);}34%{transform:rotate(-26deg);}
+  52%{transform:rotate(-19deg);}100%{transform:rotate(30deg);}}
+@keyframes wingR{0%{transform:rotate(-30deg);}34%{transform:rotate(26deg);}
+  52%{transform:rotate(19deg);}100%{transform:rotate(-30deg);}}
+@keyframes glideL{0%,100%{transform:rotate(7deg);}50%{transform:rotate(-5deg);}}
+@keyframes glideR{0%,100%{transform:rotate(-7deg);}50%{transform:rotate(5deg);}}
 /* the rest of the living scenery */
 .lo-tw{animation:loTw 3.4s ease-in-out infinite;}
 .lo-tw.t2{animation-delay:-1.2s;}.lo-tw.t3{animation-delay:-2.1s;}.lo-tw.t4{animation-delay:-.6s;}.lo-tw.t5{animation-delay:-2.8s;}
@@ -1204,6 +1245,87 @@ section[data-sec]{padding:86px 0;scroll-margin-top:calc(var(--nav-h) + 10px);}
 section.tint{background:var(--bg-soft);}
 
 /* ==========================================================================
+   RESPONSIVE HARDENING — measured fixes, not guesses.
+   Phones were carrying 9–10px labels, 8px-tall sliders you cannot hit with a
+   thumb, and three-across stat strips at ~100px per cell. Laptops between
+   901–1200px were being served the full desktop grid with no room for it.
+   ========================================================================== */
+
+/* --- tablets & small laptops: stop 3–4 column grids collapsing into slivers */
+@media (max-width:1200px){
+  .pillars{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .scen-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .globe-legend{grid-template-columns:repeat(2,1fr);}
+  .assume{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:1024px){
+  .bp-pair{grid-template-columns:1fr;}
+  .beyond-grid{grid-template-columns:1fr;}
+  .proj-grid,.h35-grid{grid-template-columns:1fr;}
+}
+
+/* --- phones: legibility, touch and density ------------------------------- */
+@media (max-width:760px){
+  /* nothing below ~11px: the deck is read at arm's length on a phone */
+  .st-tag,.st-lvl,.st-status,.st-role,.st-focus,.bp-lvtag,.scen-tag,
+  .kicker,.psub,.assume b,.st-meta b,.pillar .p-row span,.bp-vals span,
+  .st-future i,.st-note,.fly-loop,.assume-note,.scen-warn,.grp-val i{
+    font-size:.72rem !important;letter-spacing:.06em;line-height:1.45;
+  }
+  .pillar .p-scope,.st-future span,.by-tags span,.becomes span{font-size:.75rem !important;}
+  /* the remaining sub-10px labels, found by measuring rather than guessing */
+  .ch-badge i,.ch-badge b,.fsr-no,.fsr .fsr-pc,.st-chips span,
+  .focus-summary-grid b,.nav-logo .word span,.ch-summary i,
+  .ch-next i,.jcard i,.ph-kick{font-size:.7rem !important;letter-spacing:.08em;}
+  .st-co p,.st-meta span,.pillar .p-row b,.assume span,.scen p{font-size:.85rem !important;}
+
+  /* sliders were an 8px hairline — give the thumb a real target */
+  .bp-slider,.runway-slider{height:44px;min-height:44px;padding:0;background:transparent;}
+  .bp-slider::-webkit-slider-thumb,.runway-slider::-webkit-slider-thumb{width:26px;height:26px;}
+  .bp-slider::-moz-range-thumb,.runway-slider::-moz-range-thumb{width:26px;height:26px;}
+  .nav-logo{min-height:44px;}
+
+  /* stat strips: three across at ~100px is unreadable — stack them */
+  .bp-vals{grid-template-columns:1fr;gap:7px;}
+  .bp-vals > div{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+  .bp-vals b{font-size:1.05rem;flex:none;}
+  .bp-vals span{margin-top:0;flex:1 1 60%;min-width:0;}
+
+  /* Charts keep their real width and scroll inside their own frame — squashing
+     a 960-unit axis into 360px makes it unreadable, which is worse. */
+  .chart{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .chart > svg{min-width:520px;}
+  .disclose-body{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .matrix{min-width:520px;}
+  .panel{overflow:hidden;}
+
+  /* one column everywhere it still matters */
+  .pillars,.scen-grid,.assume,.globe-legend,.bp-points,
+  .beyond-grid,.bp-pair,.st-future{grid-template-columns:1fr !important;}
+  #heroKpis{grid-template-columns:1fr !important;}
+
+  /* trim the vertical padding — 20 chapters is a long enough scroll already */
+  section[data-sec]{padding:52px 0;}
+  .panel{padding:18px 15px;}
+  .sec-head h2{font-size:clamp(1.5rem,7.6vw,2.1rem);line-height:1.1;}
+  .section-sub{font-size:.88rem;line-height:1.55;}
+
+  /* heavy blur/shadow is what makes this deck stutter on a phone */
+  .pillar,.scen,.st-co,.panel{box-shadow:0 6px 18px rgba(20,30,60,.08);}
+  .globe-legend > div{backdrop-filter:none;}
+  .blob{display:none;}
+}
+
+/* --- very narrow (≤380px): the last few things that still crowd ----------- */
+@media (max-width:380px){
+  .wrap{padding-inline:13px;}
+  .ch-stats{padding:12px 10px;}
+  .fm-chain{gap:6px;padding:12px 12px;}
+  .fm-chain b,.fm-chain span{font-size:.74rem;}
+  .grp-val b{font-size:1.6rem;}
+}
+
+/* ==========================================================================
    MOBILE SYSTEM TREE — the orbital map is desktop-only; phones get the same
    structure as a readable hierarchy. Exactly one of the two ever shows.
    ========================================================================== */
@@ -1271,7 +1393,10 @@ section.tint{background:var(--bg-soft);}
 /* dark chapter → light chapter */
 #beyond::before{background:linear-gradient(180deg,#07070d 0%,rgba(7,7,13,.5) 42%,rgba(7,7,13,0) 100%);}
 /* keep the content above its own seam */
-#team > .wrap,#beyond > .wrap,#liftoff > .wrap,#liftoff .lo-scene,#liftoff .lo-head{position:relative;z-index:1;}
+/* NB: .lo-head is deliberately NOT listed — it already carries its own
+   position/z-index, and forcing position:relative here re-activated its
+   desktop left:50% on mobile and threw the whole block off-screen. */
+#team > .wrap,#beyond > .wrap,#liftoff > .wrap:not(.lo-head),#liftoff .lo-scene{position:relative;z-index:1;}
 
 /* ==========================================================================
    LIGHT SECTIONS — informational blocks flip to a white canvas.
@@ -3665,26 +3790,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </g>
         <!-- BIRDS — small flocks with genuinely flapping wings, gliding by at
              different heights, speeds and depths -->
-        <g class="lo-flock f1" opacity="1">
-          <g class="bird" transform="translate(0 296) scale(3.2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(84 318) scale(2.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(158 284) scale(2.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(232 306) scale(2.1)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-        </g>
-        <g class="lo-flock f2" opacity=".92">
-          <g class="bird" transform="translate(0 388) scale(2.3)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(66 404) scale(1.9)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird b" transform="translate(128 380) scale(1.7)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-        </g>
-        <g class="lo-flock f3" opacity=".8">
-          <g class="bird b" transform="translate(0 232) scale(1.8)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird" transform="translate(52 220) scale(1.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(104 240) scale(1.4)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-        </g>
-        <g class="lo-flock f4" opacity=".9">
-          <g class="bird" transform="translate(0 452) scale(2.6)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-          <g class="bird c" transform="translate(76 470) scale(2.2)"><path class="wl" d="M0 0 Q-8 -7 -15 -2"/><path class="wr" d="M0 0 Q8 -7 15 -2"/></g>
-        </g>
         <!-- moonlit horizon band -->
         <rect x="0" y="452" width="1900" height="126" fill="url(#loHorizon)"/>
         <!-- distant ridge lines behind the treeline -->
@@ -3694,6 +3799,28 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <path fill="#101820" d="M0 574 L0 556 Q40 548 70 556 L96 540 L110 556 Q170 544 215 554 L232 534 L246 552 Q320 542 380 552 Q450 540 520 552 L545 532 L560 550 Q640 540 720 552 Q800 542 870 552 L893 536 L908 552 Q970 544 1030 552 L1560 552 Q1620 542 1680 552 L1704 534 L1719 550 Q1790 542 1900 554 L1900 574 Z"/>
         <!-- ground -->
         <rect x="0" y="570" width="1900" height="210" fill="url(#loGround)"/>
+        <g class="lo-flock f1" opacity=".72">
+          <g class="bird" transform="translate(0 296) scale(2.05)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird b" transform="translate(84 318) scale(1.75)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird g" transform="translate(158 284) scale(1.55)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird c" transform="translate(232 306) scale(1.35)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird d" transform="translate(298 292) scale(1.2)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+        </g>
+        <g class="lo-flock f2" opacity=".66">
+          <g class="bird" transform="translate(0 388) scale(1.5)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird c" transform="translate(66 404) scale(1.25)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird d" transform="translate(128 380) scale(1.1)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+        </g>
+        <g class="lo-flock f3" opacity=".6">
+          <g class="bird b" transform="translate(0 232) scale(1.15)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird g" transform="translate(52 220) scale(1.05)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird d" transform="translate(104 240) scale(.9)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+        </g>
+        <g class="lo-flock f4" opacity=".68">
+          <g class="bird" transform="translate(0 452) scale(1.7)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird c" transform="translate(76 470) scale(1.45)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird b" transform="translate(140 444) scale(1.15)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+        </g>
         <ellipse cx="1210" cy="668" rx="430" ry="64" fill="url(#loPadGlow)"/>
         <!-- floodlight cones (behind the pad hardware) -->
         <polygon class="lo-cone-breathe" points="726,548 748,556 1105,636 1010,676" fill="url(#loConeL)" opacity=".5"/>
@@ -6388,7 +6515,10 @@ function initCourier() {
           inOrbitPrev = L0.oq != null;
           inRaisePrev = L0.rq != null;
           const P = L0.p;
-          const posK = snap ? 1 : 1 - Math.exp(-dt * ((L0.oq != null || L0.pq != null) ? 20 : (L0.q == null ? 16 : 12.5)));
+          /* Looser springs read as flight rather than tracking: the ship is allowed to
+             run a little wide through a bend and settle back, instead of being nailed
+             to the path sample every frame (which is what made it feel stiff). */
+          const posK = snap ? 1 : 1 - Math.exp(-dt * ((L0.oq != null || L0.pq != null) ? 14 : (L0.q == null ? 9 : 7)));
           if (!posS || snap || L0.oq != null || L0.pq != null || globeLocked) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
@@ -6437,7 +6567,7 @@ function initCourier() {
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
           while (dA < -Math.PI) dA += T2;
-          const angK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 14 : 7));
+          const angK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 10 : 4.2));
           if (L0.oq != null || globeLocked) { angS = ta; dA = 0; }
           else angS += dA * angK;
           // Layered time-based drift moves perpendicular to the flight path:
@@ -6448,7 +6578,7 @@ function initCourier() {
             * (padQ == null ? 1 : 1 - smt(cl01(padQ)));   // the wobble dies at touchdown
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
-          const bank = Math.max(-.075, Math.min(.075, dA * .22));
+          const bank = Math.max(-.16, Math.min(.16, dA * .42));
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
           // No autonomous breathing while orbiting: the globe rocket's
           // position, heading and scale are all dictated by scroll.
@@ -7352,10 +7482,39 @@ function renderSystem() {
   // the side AWAY from the parked panel. The inbound endpoints sit several
   // pixels inside each rendered sphere so the planet mask trims the line at
   // its true edge instead of leaving a visible gap before the arrowhead.
-  const ds1Top = circleAt(deathStar1At[0], deathStar1At[1], 34, -90);
-  const ds1RoyalStart = circleAt(deathStar1At[0], deathStar1At[1], 42, -90 + gapDeg(42));
-  const ds2Top = circleAt(deathStar2At[0], deathStar2At[1], 36, -90);
-  const ds2RoyalStart = circleAt(deathStar2At[0], deathStar2At[1], 44, -90 - gapDeg(44));
+  /* THE FUTURE STATIONS' BODIES.
+     Each station's art paints its sphere ~28.7 units ABOVE its shell anchor,
+     and ~40 units across — measured off the rendered circles. The old radii
+     (34 / 36) were struck from the anchor instead, so both lanes finished
+     only ~8 units from the sphere centre: buried inside the planet rather
+     than piercing its limb. Working from the real body makes these behave
+     exactly like the operating lanes. The green lane finishes 7.5 units
+     INSIDE its edge — that overlap is what reads as a pierce — so match it. */
+  const ds1Body = [deathStar1At[0] + 6.3, deathStar1At[1] - 28.8], ds1R = 40.3;
+  const ds2Body = [deathStar2At[0] - 5.0, deathStar2At[1] - 28.6], ds2R = 42.3;
+  /* MEET THE LIMB WHERE THE CURVE ACTUALLY ARRIVES.
+     Ending at the sphere's TOP (-90) is right for the operating lanes because
+     they drop in from directly above. These two arrive from the side, so a
+     top-anchored end forced the curve to bend round and the head sat at an
+     odd angle. Landing on the circle along the incoming control direction
+     makes the arrow touch the edge exactly — piercing it, not burying in it
+     and not stopping short. `bite` is how far the head overlaps the limb. */
+  const meetLimb = (body, R, ctrl, bite) => {
+    const dx = ctrl[0] - body[0], dy = ctrl[1] - body[1];
+    const d = Math.hypot(dx, dy) || 1;
+    return [body[0] + (dx / d) * (R - bite), body[1] + (dy / d) * (R - bite)];
+  };
+  const ds1Ctrl = [620, 560], ds2Ctrl = [1300, 590];
+  /* These are only the pre-layout placeholders — fitFutureLanes() re-lands both
+     lanes on the measured limb as soon as the map is laid out. Aim them at the
+     sphere centre rather than the estimated limb: the estimate drifts by up to
+     ~25 units across viewports, and an arrow that ends slightly too deep is
+     hidden behind the planet, whereas one that ends slightly too short shows
+     as the gap this whole routine exists to kill. */
+  const ds1Top = meetLimb(ds1Body, ds1R, ds1Ctrl, ds1R);
+  const ds2Top = meetLimb(ds2Body, ds2R, ds2Ctrl, ds2R);
+  const ds1RoyalStart = circleAt(ds1Body[0], ds1Body[1], ds1R + 2, -90 + gapDeg(ds1R + 2));
+  const ds2RoyalStart = circleAt(ds2Body[0], ds2Body[1], ds2R + 2, -90 - gapDeg(ds2R + 2));
   const ds1Out = sunAt(118), ds1In = sunAt(118 - sunGap);
   const ds2Out = sunAt(62), ds2In = sunAt(62 + sunGap);
   // the box↔planet links are drawn at layout time from MEASURED card edges
@@ -7647,7 +7806,12 @@ function renderSystem() {
     const keepT = map.style.transform;
     map.style.transform = "none";
     const svg2 = map.querySelector("svg");
-    if (!svg2 || !svg2.clientWidth) { map.style.transform = keepT; return; }
+    /* A zero-width SVG means the browser has not laid this out yet — which is
+       exactly what happens in a BACKGROUNDED tab (layout is deferred) or on a
+       bfcache restore. Silently returning here is what left every card stacked
+       in the centre of the map. Flag it so the watchdog below keeps trying. */
+    if (!svg2 || !svg2.clientWidth) { map.style.transform = keepT; map.__ffUnlaid = true; return; }
+    map.__ffUnlaid = false;
     const sclX = svg2.clientWidth / W, sclY = svg2.clientHeight / H;
     // CRITICAL: SVG elements have no offsetLeft/offsetTop — reading them
     // yields 0 and silently shifts every HTML overlay left by the map's
@@ -7709,6 +7873,49 @@ function renderSystem() {
       stem.setAttribute("d", dStem);
     });
     };
+    /* FUTURE LANES — measured in true SVG user space, never assumed.
+       Two traps here, both of which made a "correct" arrow render short:
+       1. The station art offsets its sphere by an amount that does NOT scale
+          with the map, so a hard-coded radius is only right at one viewport.
+       2. #sysMap carries `perspective(1600px) rotateX(7deg)`, so
+          getBoundingClientRect() returns the PROJECTED box — it disagrees with
+          real geometry by an amount that varies with width and y position.
+          At 1440 that flattered the numbers (4 units inside the limb); at 1100
+          the same code left a 25-unit gap.
+       getBBox() + getCTM() are immune to both: they read the painted circle in
+       the lane's own coordinate system. The lane then lands on the limb along
+       its incoming direction, so the head pierces the edge like the green one. */
+    const fitFutureLanes = () => {
+      [["ds1", "fc-destroyer", [620, 560]], ["ds2", "fc-moon", [1300, 590]]].forEach(([key, cls, ctrl]) => {
+        const st = map.querySelector(".mg-station." + cls);
+        const lane = map.querySelector(".fl-" + key);
+        if (!st || !lane) return;
+        const body = [...st.querySelectorAll("circle")]
+          .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)[0];
+        if (!body) return;
+        let bb, mb, ml;
+        try { bb = body.getBBox(); mb = body.getCTM(); ml = lane.getCTM(); } catch (e) { return; }
+        if (!bb || !bb.width || !mb || !ml) return;
+        const m = ml.inverse().multiply(mb);           // sphere space -> lane space
+        const pt = svg2.createSVGPoint();
+        pt.x = bb.x + bb.width / 2; pt.y = bb.y + bb.height / 2;
+        const c = pt.matrixTransform(m);
+        const bR = (bb.width / 2) * Math.hypot(m.a, m.b);
+        const dxq = ctrl[0] - c.x, dyq = ctrl[1] - c.y;
+        const dq = Math.hypot(dxq, dyq) || 1;
+        // stop just short of the limb; the marker's 3.4-unit overshoot then
+        // buries the head in the planet edge instead of floating off it
+        const bite = bR - 7;
+        const ex = c.x + dxq / dq * bite, ey = c.y + dyq / dq * bite;
+        [".fl-" + key, ".g-" + key].forEach(sel => {
+          const pth = map.querySelector(sel);
+          if (!pth) return;
+          const dAttr = pth.getAttribute("d") || "";
+          pth.setAttribute("d", dAttr.replace(/,\s*[-\d.]+\s+[-\d.]+\s*$/, `, ${ex.toFixed(1)} ${ey.toFixed(1)}`));
+        });
+      });
+    };
+    fitFutureLanes();
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
     // overflow so the shelf is never buried under the next chapter's
@@ -7810,6 +8017,18 @@ function renderSystem() {
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => { layoutSubs(); setTimeout(layoutSubs, 120); });
   }
+  /* WATCHDOG — keep retrying until the map has genuinely been laid out, and
+     re-run whenever the page comes back into view. Between them these cover
+     the three ways the stacked-cards bug was reachable: a backgrounded tab at
+     load, a bfcache restore (back/forward), and a slow first paint. */
+  (function ensureLaid(tries) {
+    layoutSubs();
+    if (map.__ffUnlaid && tries < 40) setTimeout(() => ensureLaid(tries + 1), 100 + tries * 40);
+  })(0);
+  const relayout = () => { if (!document.hidden) { layoutSubs(); requestAnimationFrame(layoutSubs); } };
+  document.addEventListener("visibilitychange", relayout);
+  addEventListener("pageshow", relayout);
+  addEventListener("load", relayout);
   if (window.ResizeObserver) {
     let roQ = 0;
     const ro = new ResizeObserver(() => {
@@ -10243,7 +10462,7 @@ function initSetpieces() {
         // every frame, never pin-first-box-later
         const boxP = leadP;
         const du = ((pin.u - rot2) % 1 + 1) % 1;
-        const rawCountryFace = sm(cl((du - .08) / .04, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
+        const rawCountryFace = sm(cl((du - .005) / .045, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
         // A rear-hemisphere route is absent, not merely translucent. This
         // hard floor removes the ghost card/tether (especially China) while
         // preserving the opening frame on the bright white rim.
@@ -10271,7 +10490,15 @@ function initSetpieces() {
         const rimX = cx + pin.side * Math.cos(thL) * R * .996;
         const rimY = cy + Math.sin(thL) * R * .996;
         const lam = (du / .5 - .5) * Math.PI;
-        const x0 = cx + Math.sin(lam) * R, y0 = cy - R + pin.v * 2 * R;
+        /* SPHERICAL, not rectangular. The old maths swung every pin across the
+           FULL radius regardless of latitude, so northern pins (UK, Belgium,
+           Poland) were thrown clear of the white limb. On a sphere the visible
+           half-width at latitude dy is sqrt(R² - dy²) — applying it guarantees
+           sin²·halfW² + dy² <= 1, i.e. a pin can never leave the disc, and a
+           country entering view now lands exactly ON the limb. */
+        const dyN = pin.v * 2 - 1;                       // -1 (north) .. +1 (south)
+        const halfW = Math.sqrt(Math.max(0, 1 - dyN * dyN));
+        const x0 = cx + Math.sin(lam) * R * halfW, y0 = cy + dyN * R;
         const dxr = x0 - cx, dyr = y0 - cy;
         const mapX = cx + dxr * ct - dyr * st2, mapY = cy + dxr * st2 + dyr * ct;
         const px2 = lp(rimX, mapX, settle), py2 = lp(rimY, mapY, settle);
@@ -10809,6 +11036,30 @@ function initFocusPlanet() {
 /* =========================================================================
    INTRO SEQUENCE — pink boot log → the system assembles → warp to the page
    ========================================================================= */
+/* Guarantees main ends the intro with NO transform. A transform here would
+   otherwise become the containing block for every position:sticky descendant
+   and silently break the pinned map stage and the globe's orbit anchor. */
+function clearIntroZoom(force) {
+  const m = document.querySelector("main");
+  if (!m) return;
+  const done = instant => {
+    // Setting the target alone is not enough: a transition frozen by a hidden
+    // tab keeps REPORTING the old value, so sticky stays broken. Cut the
+    // transition first so the cleared state is real immediately.
+    if (instant) m.style.transition = "none";
+    m.style.transform = "none";
+    m.style.opacity = "1";
+    if (instant) { void m.offsetWidth; m.style.transition = ""; }
+  };
+  if (force || REDUCED || document.hidden) done(true);
+  else setTimeout(() => done(false), 900);   // after the un-zoom has visibly played
+}
+// a tab restored from the background may have frozen mid-transition — settle it
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && window.__ffIntroDone) clearIntroZoom(true);
+});
+addEventListener("pageshow", () => { if (window.__ffIntroDone) clearIntroZoom(true); });
+
 function runIntro() {
   const intro = $("#intro");
   if (!intro) return;
@@ -10844,6 +11095,16 @@ function runIntro() {
     const kill = () => { intro.classList.add("gone"); intro.remove(); };
     if (REDUCED || document.hidden) kill(); else setTimeout(kill, 750);
     window.__ffIntroDone = true;
+    /* THE UN-ZOOM MUST NOT DEPEND ON A CSS TRANSITION FINISHING.
+       Removing .intro-lock only *starts* a 0.8s transition on main — and a
+       BACKGROUNDED tab freezes transitions, so main stayed at scale(.955)
+       opacity .5 indefinitely. That single stuck transform is what broke the
+       page after "leaving it too long": a transform on main becomes the
+       containing block for every position:sticky inside it, which unpinned
+       the system map's stage (cards collapsing into a jumbled heap) and threw
+       the globe's orbit anchor ~1800px off-screen (the courier popping in).
+       Clearing it explicitly makes the finished state unconditional. */
+    clearIntroZoom();
   }
   window.__ffSkipIntro = finish;
   $("#introSkip").addEventListener("click", () => finish());

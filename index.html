@@ -817,6 +817,33 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 .rw-years span{pointer-events:auto;cursor:pointer;}
 .rw-years span:hover{color:#fff;}
 html.spx .tr2-planet{background:#0f1018;}
+/* THE EXPANSION MAP heading — rides the globe's DAY half, then clears out
+   before the night side brings the sourcing territories up */
+.globe-over{
+  position:absolute;left:50%;top:7%;z-index:3;width:min(880px,90%);
+  transform:translateX(-50%);text-align:center;pointer-events:none;opacity:0;
+}
+.globe-over .globe-kick{
+  margin:0 0 10px;color:var(--pink);font-size:.68rem;font-weight:900;
+  letter-spacing:.22em;text-transform:uppercase;
+}
+.globe-over h3{
+  margin:0;color:#fff;font-size:clamp(1.3rem,2.6vw,2.25rem);line-height:1.14;
+  letter-spacing:-.03em;text-wrap:balance;text-shadow:0 4px 30px rgba(0,0,0,.5);
+}
+.globe-legend{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px;
+}
+.globe-legend > div{
+  padding:11px 12px;border:1px solid rgba(255,255,255,.16);border-radius:13px;
+  background:rgba(10,12,22,.5);backdrop-filter:blur(3px);text-align:left;
+}
+.globe-legend b{display:block;color:#fff;font-size:.8rem;letter-spacing:-.01em;}
+.globe-legend span{display:block;margin-top:3px;color:rgba(243,244,251,.66);font-size:.66rem;line-height:1.36;}
+@media (max-width:900px){
+  .globe-legend{grid-template-columns:repeat(2,1fr);}
+  .globe-over{top:5%;}
+}
 /* COURIER FLIGHT — the system's rocket as free-flying page content: bursts
    out beneath the cloud deck and escorts the scroll down to the destination
    planet. Fixed layer, never interactive, always inside the viewport. */
@@ -1339,12 +1366,33 @@ section.tint{background:var(--bg-soft);}
 .ch-lede{font-size:1.03rem;font-weight:600;line-height:1.5;color:var(--ink);max-width:50ch;margin:0 0 12px;}
 .ch-body p{font-size:.92rem;line-height:1.62;color:var(--ink-dim);margin:0 0 7px;max-width:56ch;}
 .ch-body .ch-close{color:var(--mint-ink);font-weight:600;}
-.ch-stats{display:flex;margin-top:20px;padding:13px 4px;border:1px solid var(--line);border-radius:16px;background:var(--bg-soft);}
-.ch-stat{flex:1 1 0;display:flex;align-items:center;gap:11px;padding:3px 14px;min-width:0;}
+/* PROOF OF TRACTION — four evidence pillars */
+.pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:22px;}
+.pillar{
+  padding:20px 18px 14px;border:1px solid var(--line);border-top:3px solid var(--pc,var(--pink));
+  border-radius:18px;background:var(--card);box-shadow:var(--shadow);transition:var(--t);
+}
+.pillar:hover{border-color:var(--line-strong);border-top-color:var(--pc,var(--pink));transform:translateY(-2px);}
+.pillar h4{margin:0;font-size:1.04rem;letter-spacing:-.025em;}
+.pillar .p-scope{margin:5px 0 12px;color:var(--ink-dim);font-size:.72rem;line-height:1.4;}
+.pillar .p-row{padding:9px 0;border-top:1px solid var(--line);}
+.pillar .p-row b{display:block;color:var(--pc,var(--pink));font-size:1rem;font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere;}
+.pillar .p-row span{display:block;margin-top:2px;color:var(--ink-dim);font-size:.68rem;line-height:1.38;}
+@media (max-width:1100px){.pillars{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:620px){.pillars{grid-template-columns:1fr;}}
+
+.ch-stats{display:flex;margin-top:20px;padding:16px 6px;border:1px solid var(--line);border-radius:16px;background:var(--bg-soft);}
+.ch-stat{flex:1 1 0;display:flex;align-items:flex-start;gap:11px;padding:2px 17px;min-width:0;}
 .ch-stat + .ch-stat{border-left:1px solid var(--line);}
-.ch-stat svg{width:26px;height:26px;flex:none;color:var(--acc,var(--pink));}
-.ch-stat b{display:block;font-size:1.28rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--acc,var(--pink));}
-.ch-stat span{display:block;font-size:.7rem;line-height:1.32;color:var(--ink-dim);}
+.ch-stat svg{width:24px;height:24px;flex:none;margin-top:1px;color:var(--acc,var(--pink));}
+.ch-stat > div{min-width:0;}
+/* the readout scales to the LENGTH of its value, so "£0" stays big and
+   "Fire safety · Aerosols · Batteries" still sits on tidy lines */
+.ch-stat b{display:block;font-size:1.26rem;font-weight:800;letter-spacing:-.02em;line-height:1.12;color:var(--acc,var(--pink));overflow-wrap:anywhere;}
+.ch-stat.v-md b{font-size:1.02rem;line-height:1.18;}
+.ch-stat.v-sm b{font-size:.85rem;line-height:1.24;letter-spacing:-.01em;}
+.ch-stat.v-xs b{font-size:.76rem;line-height:1.28;letter-spacing:0;}
+.ch-stat span{display:block;margin-top:4px;font-size:.7rem;line-height:1.36;color:var(--ink-dim);}
 .jcard.chapter .jbrands{margin-top:18px;}
 .ch-side{display:flex;flex-direction:column;min-width:0;}
 /* The frame takes its shape from the picture itself (--ar is measured at
@@ -2906,9 +2954,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <section data-sec="growth" id="growth" class="sec-light" aria-label="Revenue growth">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="kicker">E-commerce revenue analytics</span>
-        <h2>The growth curve — <span class="grad-text">sales to date</span></h2>
-        <p class="section-sub">Total revenue across every channel. eBay is the engine; on-site servicing has run alongside since day one; Temu opened in 2025. Hover or tap a point for the breakdown.</p>
+        <span class="kicker">E-commerce revenue analytics · Proof of traction</span>
+        <h2>The story is emotional. <span class="grad-text">The data makes it investable.</span></h2>
+        <p class="section-sub">The ecommerce model is no longer theoretical. It has already been tested across thousands of orders, multiple channels and an expanding owned-brand portfolio.</p>
       </div>
       <div class="panel reveal">
         <h3>Total revenue by year</h3>
@@ -2919,6 +2967,47 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <div class="stat reveal"><div class="num" data-count="11.4" data-decimals="1" data-suffix="×">0</div><div class="lbl">growth 2023 → 2024 (£42k → £479k)</div></div>
         <div class="stat reveal d1"><div class="num" data-count="2.5" data-decimals="1" data-suffix="×">0</div><div class="lbl">growth 2024 → 2025 (£479k → £1.22M)</div></div>
         <div class="stat reveal d2"><div class="num" data-count="29" data-suffix="×">0</div><div class="lbl">total growth in 24 months</div></div>
+      </div>
+
+      <!-- FOUR EVIDENCE PILLARS — the traction grouped so the room reads it in
+           four moves rather than twenty charts at once -->
+      <div class="sec-head reveal" style="margin-top:56px;">
+        <span class="kicker">Four evidence pillars</span>
+        <h3 style="font-size:clamp(1.3rem,2.2vw,1.8rem);letter-spacing:-.03em;">Where the proof actually sits</h3>
+      </div>
+      <div class="pillars">
+        <article class="pillar reveal" style="--pc:var(--mint-ink)">
+          <h4>Commercial traction</h4>
+          <p class="p-scope">Revenue, orders and growth</p>
+          <div class="p-row"><b>£1m+</b><span>Combined sales, second full online year</span></div>
+          <div class="p-row"><b>29×</b><span>Revenue growth across 24 months</span></div>
+          <div class="p-row"><b>250,000+</b><span>Orders processed nationwide</span></div>
+          <div class="p-row"><b>£42k → £1.22m</b><span>2023 → 2025 actuals</span></div>
+        </article>
+        <article class="pillar reveal d1" style="--pc:var(--blue)">
+          <h4>Channel traction</h4>
+          <p class="p-scope">eBay, Temu, Amazon, Shopify and beyond</p>
+          <div class="p-row"><b>~£890k</b><span>eBay sales, 2025 – 2026</span></div>
+          <div class="p-row"><b>£160k+</b><span>Temu, first three months on under 10 SKUs</span></div>
+          <div class="p-row"><b>#1 &amp; #2</b><span>Temu Safety &amp; Security best sellers</span></div>
+          <div class="p-row"><b>3 launching</b><span>Amazon · OnBuy · Shopify in 2026</span></div>
+        </article>
+        <article class="pillar reveal d2" style="--pc:var(--pink)">
+          <h4>Brand traction</h4>
+          <p class="p-scope">Firestorm and the owned-brand portfolio</p>
+          <div class="p-row"><b>3 protected</b><span>Firestorm™ · FXL™ · Skyline™</span></div>
+          <div class="p-row"><b>12</b><span>Owned and developing brands</span></div>
+          <div class="p-row"><b>UK00004085840</b><span>Firestorm™ UK registration</span></div>
+          <div class="p-row"><b>6 categories</b><span>Fire · Aerosols · Batteries · PPE · Cleaning · Automotive</span></div>
+        </article>
+        <article class="pillar reveal d3" style="--pc:var(--ember)">
+          <h4>Operational traction</h4>
+          <p class="p-scope">Dispatch, stock, warehouse and fulfilment</p>
+          <div class="p-row"><b>3× larger</b><span>Unit 19 headquarters capacity</span></div>
+          <div class="p-row"><b>Same day</b><span>Dispatch on UK-held stock</span></div>
+          <div class="p-row"><b>24 hr</b><span>Delivery via the DHL account</span></div>
+          <div class="p-row"><b>Direct from source</b><span>Container imports, no UK middleman</span></div>
+        </article>
       </div>
     </div>
   </section>
@@ -2952,6 +3041,24 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
     </div>
   </section>
+
+
+  <!-- ====================================================================
+       THE EXPANSION MAP — the 360° globe now sits straight after the market
+       research: white section → the planet → white section.
+       ==================================================================== -->
+  <div class="tr2 tr2-planet" id="opportunity"><div class="tr2-stage"><canvas></canvas>
+    <div class="globe-over" id="globeOver">
+      <p class="globe-kick">The expansion map</p>
+      <h3>Built in Britain. Sourced Globally.<br>Designed to Scale Internationally.</h3>
+      <div class="globe-legend">
+        <div><b>Supply</b><span>Where products originate</span></div>
+        <div><b>Infrastructure</b><span>Where products are stored and fulfilled</span></div>
+        <div><b>Demand</b><span>Where customers and future markets sit</span></div>
+        <div><b>Expansion</b><span>Where the business plans to go next</span></div>
+      </div>
+    </div>
+  </div></div>
 
   <!-- ====================================================================
        PROJECTIONS (5-YEAR CHANNELS MAP)
@@ -3045,10 +3152,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        TEAM
        ==================================================================== -->
-  <!-- the 360° planet is now a pure cinematic globe; the market research it
-       used to carry has moved to its own standalone section before the map -->
-  <div class="tr2 tr2-planet" id="opportunity" aria-hidden="true"><div class="tr2-stage"><canvas></canvas>
-  </div></div>
 
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
     <div class="wrap">
@@ -7706,11 +7809,14 @@ function renderJourney() {
     const lede = m.subtitle || sents[0] || "";
     const closing = !isStructured && sents.length > 2 ? sents[sents.length - 1] : null;
     const middle = isStructured ? sents : sents.slice(1, closing ? -1 : undefined);
+    // long readouts step down a size so they wrap tidily instead of colliding
+    const vCls = v => { const n = String(v || "").replace(/&[a-z]+;/g, "x").length;
+      return n <= 6 ? "" : n <= 12 ? " v-md" : n <= 20 ? " v-sm" : " v-xs"; };
     const stats = m.statItems
-      ? m.statItems.slice(0, 3).map(s => `<div class="ch-stat">${ICO[s.icon] || icoFor(`${s.value} ${s.label}`)}<div><b>${s.value}</b><span>${s.label}</span></div></div>`).join("")
+      ? m.statItems.slice(0, 3).map(s => `<div class="ch-stat${vCls(s.value)}">${ICO[s.icon] || icoFor(`${s.value} ${s.label}`)}<div><b>${s.value}</b><span>${s.label}</span></div></div>`).join("")
       : (m.facts || []).slice(0, 3).map(([t]) => {
           const [v, l] = chSplit(t);
-          return `<div class="ch-stat">${icoFor(t)}<div>${v ? `<b>${v}</b>` : ""}<span>${l}</span></div></div>`;
+          return `<div class="ch-stat${vCls(v)}">${icoFor(t)}<div>${v ? `<b>${v}</b>` : ""}<span>${l}</span></div></div>`;
         }).join("");
     const nxt = FG_DATA.milestones[i + 1];
     const teaser = nxt
@@ -9512,15 +9618,30 @@ function initSetpieces() {
   // the route-timeline order: Turkey, India, Malaysia, then China.
   // Every pin begins on the bright rim, then travels to and rotates with its
   // country; there are no permanently planted rim exceptions.
+  /* THE EXPANSION MAP — every sourcing, infrastructure and demand territory
+     the group actually trades through. Longitude/latitude drive the pin; the
+     `start` staggers each card so they manifest as the globe turns, and the
+     side/lift pair keeps the two columns of cards from ever colliding. */
+  const geo = (lon, lat) => ({ u: (lon + 180) / 360, v: (1 - Math.sin(lat * Math.PI / 180)) / 2 });
   const PL_PINS = [
-    { n: "Turkey", u: (35 + 180) / 360, v: (1 - Math.sin(39 * Math.PI / 180)) / 2, start: .58,
-      side: -1, lift: -.62, d1: "European manufacturing bridge —", d2: "fast-lane exports into the UK" },
-    { n: "India", u: (78 + 180) / 360, v: (1 - Math.sin(21 * Math.PI / 180)) / 2,
-      start: .64, side: -1, lift: .34, d1: "Expanding sourcing & export lane —", d2: "components & safety equipment" },
-    { n: "Malaysia", u: (102 + 180) / 360, v: (1 - Math.sin(3.7 * Math.PI / 180)) / 2,
-      start: .70, side: 1, lift: .34, d1: "South-East Asian export hub —", d2: "logistics & consolidated shipping" },
-    { n: "China", u: (104 + 180) / 360, v: (1 - Math.sin(35 * Math.PI / 180)) / 2,
-      start: .76, side: 1, lift: -.62, d1: "Primary export partner — JinDun,", d2: "the world's №3 extinguisher maker" },
+    { n: "United Kingdom", ...geo(-2, 54), start: .60, side: -1, lift: -.95,
+      d1: "INFRASTRUCTURE · Import & fulfilment —", d2: "Bury HQ, stockholding and national dispatch" },
+    { n: "Belgium", ...geo(4.5, 50.5), start: .62, side: -1, lift: -.32,
+      d1: "SUPPLY · Batteries —", d2: "cell sourcing for Voltz and Kunergy" },
+    { n: "Italy", ...geo(12.5, 42), start: .64, side: -1, lift: .32,
+      d1: "SUPPLY · Plastics —", d2: "mouldings, housings, brackets and fittings" },
+    { n: "Poland", ...geo(19, 52), start: .66, side: -1, lift: .95,
+      d1: "SUPPLY · Extinguishers —", d2: "European production and short-haul freight" },
+    { n: "Türkiye", ...geo(35, 39), start: .68, side: 1, lift: -.95,
+      d1: "SUPPLY · PPE —", d2: "gloves, workwear and protective equipment" },
+    { n: "Pakistan", ...geo(69, 30), start: .72, side: 1, lift: -.32,
+      d1: "SUPPLY · PPE —", d2: "gloves and protective textiles" },
+    { n: "Malaysia", ...geo(102, 4), start: .76, side: 1, lift: .32,
+      d1: "SUPPLY · PPE & consolidation —", d2: "South-East Asian export hub" },
+    { n: "China", ...geo(104, 35), start: .78, side: 1, lift: .95,
+      d1: "SUPPLY · Primary manufacturing — JinDun,", d2: "the world's №3 extinguisher maker" },
+    { n: "Taiwan", ...geo(121, 23.5), start: .80, side: -1, lift: 0,
+      d1: "SUPPLY · PPE & components —", d2: "precision technical safety equipment" },
   ];
   let GLland = null, GLcloud = null;
   const GTW = 2048, GTH = 1024;
@@ -9598,8 +9719,17 @@ function initSetpieces() {
     }
     ctx.globalAlpha = 1;
   }
+  /* One rotation clock for the texture AND the pins so they can never drift.
+     The +.30 phase brings the UK/Europe sourcing lanes round to face the
+     camera as soon as the night half opens, so the nine territories spread
+     across the whole chapter instead of piling up at the very end. */
+  const PLROT = p => (p * 1.55 + .30) % 1;
+  let PLover;
   function drawPlanet(ctx, p, w, h) {
     if (!GLland) makeGlobeTex();
+    // the heading owns the DAY half, then clears before the territories rise
+    if (PLover === undefined) PLover = document.getElementById("globeOver");
+    if (PLover) PLover.style.opacity = (sm(ph2(p, .04, .12)) * (1 - sm(ph2(p, .34, .46)))).toFixed(3);
     // day half (runway) → dusk at the midpoint → night half (export routes)
     const night = sm(ph2(p, .42, .58));
     ctx.globalCompositeOperation = "source-over";
@@ -9624,7 +9754,7 @@ function initSetpieces() {
     const ob = ctx.createRadialGradient(cx - R * .38, cy - R * .34, R * .08, cx, cy, R * 1.04);
     ob.addColorStop(0, "#ff9dcd"); ob.addColorStop(.35, "#ff5fae"); ob.addColorStop(.7, "#ee2288"); ob.addColorStop(1, "#a90a58");
     ctx.fillStyle = ob; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-    sphereStrips(ctx, GLland, cx, cy, R, (p * 1.55) % 1, 1);
+    sphereStrips(ctx, GLland, cx, cy, R, PLROT(p), 1);
     /* Keep the 360° ocean surface clean. The old wide cloud ellipses became
        rectangular horizontal bands after spherical strip projection. */
     const sweep = sm(ph2(p, .40, .62));
@@ -9660,7 +9790,7 @@ function initSetpieces() {
     // every box instead of painting lines over already-manifested content.
     const pvBase = 1 - sm(ph2(p, .93, .985));
     if (sm(ph2(p, .58, .68)) * pvBase > .02) {
-      const rot2 = (p * 1.55) % 1;
+      const rot2 = PLROT(p);
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map(pin => {
         const leadP = sm(ph2(p, pin.start, pin.start + .075)) * pvBase;

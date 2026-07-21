@@ -1347,12 +1347,18 @@ section.tint{background:var(--bg-soft);}
 .ch-stat span{display:block;font-size:.7rem;line-height:1.32;color:var(--ink-dim);}
 .jcard.chapter .jbrands{margin-top:18px;}
 .ch-side{display:flex;flex-direction:column;min-width:0;}
-.ch-fig{margin:0;position:relative;}
-.ch-fig img{display:block;width:100%;aspect-ratio:4/3.15;object-fit:cover;border-radius:18px;border:1px solid var(--line);}
-/* chapters with several shots cross-fade between them. The first image stays
-   in flow to hold the figure's height; the rest stack on top of it. */
-.ch-fig.cycle img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .9s var(--ease);}
-.ch-fig.cycle img:first-child{position:relative;}
+/* The frame takes its shape from the picture itself (--ar is measured at
+   runtime), and the image is CONTAINED rather than cropped — the wide
+   infographics and portrait photographs both have to survive intact. */
+.ch-fig{
+  margin:0;position:relative;aspect-ratio:var(--ar,4/3.15);
+  border-radius:18px;border:1px solid var(--line);overflow:hidden;
+  background:rgba(17,22,38,.045);
+}
+.ch-fig img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;}
+/* chapters with several shots cross-fade between them; the frame is sized to
+   the tallest of the set so no shot in the cycle is ever clipped */
+.ch-fig.cycle img{opacity:0;transition:opacity .9s var(--ease);}
 .ch-fig.cycle img.on{opacity:1;}
 @media (prefers-reduced-motion:reduce){.ch-fig.cycle img{transition:none;}}
 .ch-quote{position:relative;z-index:1;display:flex;gap:14px;align-items:flex-start;margin:-58px 16px 0;
@@ -7617,6 +7623,29 @@ function renderSystem() {
 /* =========================================================================
    JOURNEY — cards + scroll-linked rail
    ========================================================================= */
+/* Each chapter frame adopts the true shape of its picture, so nothing is ever
+   cropped. Where a chapter cycles through several shots the frame is sized to
+   the TALLEST of them (the smallest width/height ratio), which leaves the
+   wider shots gently letterboxed instead of chopping their edges off. The
+   measurement is per-image and runs as each file decodes, so lazy-loaded
+   photographs settle the layout the moment they arrive. */
+function fitChapterFigures() {
+  document.querySelectorAll(".ch-fig").forEach(fig => {
+    const imgs = [...fig.querySelectorAll("img")];
+    if (!imgs.length) return;
+    let ar = Infinity;
+    const take = im => {
+      if (!im.naturalWidth || !im.naturalHeight) return;
+      const r = im.naturalWidth / im.naturalHeight;
+      if (r < ar) { ar = r; fig.style.setProperty("--ar", ar.toFixed(4)); }
+    };
+    imgs.forEach(im => {
+      if (im.complete) take(im);
+      else im.addEventListener("load", () => take(im), { once: true });
+    });
+  });
+}
+
 /* Chapters carrying several photographs cross-fade through them. One shared
    timer drives every figure so the whole timeline stays on a single clock. */
 function initChapterPhotos() {
@@ -10303,6 +10332,7 @@ safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones 
 safeBoot("focusHandoff", initFocusHandoff);
 safeBoot("focusPlanet", initFocusPlanet); // clones the map's blue planet behind the focus screen
 safeBoot("journey", renderJourney);
+safeBoot("figureFit", fitChapterFigures);     // shape every frame to its picture
 safeBoot("chapterPhotos", initChapterPhotos); // after the cards exist
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);

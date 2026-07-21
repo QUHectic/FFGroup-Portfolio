@@ -1366,6 +1366,33 @@ section.tint{background:var(--bg-soft);}
 .ch-lede{font-size:1.03rem;font-weight:600;line-height:1.5;color:var(--ink);max-width:50ch;margin:0 0 12px;}
 .ch-body p{font-size:.92rem;line-height:1.62;color:var(--ink-dim);margin:0 0 7px;max-width:56ch;}
 .ch-body .ch-close{color:var(--mint-ink);font-weight:600;}
+/* THE MARKET BLUEPRINT — three levels on one slider */
+.bp-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.bp-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.bp-tabs button{
+  padding:8px 15px;border:1px solid var(--line);border-radius:99px;background:transparent;
+  color:var(--ink-dim);font-size:.76rem;font-weight:800;letter-spacing:.02em;transition:var(--t);
+}
+.bp-tabs button[aria-selected="true"]{border-color:var(--blue);color:var(--blue);background:rgba(56,169,255,.08);}
+.bp-count{color:var(--ink-faint);font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;}
+.bp-slider{width:100%;margin:0 0 20px;}
+.bp-stage{min-height:210px;}
+.bp-lv{display:none;}
+.bp-lv.on{display:block;animation:bpIn .45s var(--ease-out);}
+@keyframes bpIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.bp-lv h4{margin:0 0 4px;font-size:1.08rem;letter-spacing:-.025em;}
+.bp-lv .bp-sub{margin:0 0 16px;color:var(--ink-dim);font-size:.8rem;line-height:1.5;}
+.bp-points{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
+.bp-points div{
+  position:relative;padding:13px 14px 13px 34px;border:1px solid var(--line);border-radius:13px;
+  background:var(--bg-soft);color:var(--ink);font-size:.8rem;line-height:1.45;
+}
+.bp-points div::before{
+  content:"";position:absolute;left:14px;top:18px;width:8px;height:8px;border-radius:50%;
+  background:var(--lvc,var(--blue));box-shadow:0 0 10px var(--lvc,var(--blue));
+}
+@media (max-width:620px){.bp-points{grid-template-columns:1fr;}}
+
 /* PROOF OF TRACTION — four evidence pillars */
 .pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:22px;}
 .pillar{
@@ -3039,6 +3066,26 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           </div>
         </div>
       </div>
+
+      <!-- THE MARKET BLUEPRINT — three levels, stepped through on one slider
+           so the room reads the opportunity widening rather than three lists -->
+      <div class="sec-head reveal" style="margin-top:56px;">
+        <span class="kicker">The market blueprint</span>
+        <h3 style="font-size:clamp(1.3rem,2.2vw,1.85rem);letter-spacing:-.03em;">A large market is moving online</h3>
+        <p class="section-sub" style="margin-top:10px;">Freedom Global sits at the intersection of regulated safety products, changing buying behaviour and the continued expansion of ecommerce. Step through the three levels.</p>
+      </div>
+      <div class="panel reveal" id="blueprint">
+        <div class="bp-head">
+          <div class="bp-tabs" id="bpTabs" role="tablist" aria-label="Market levels">
+            <button role="tab" aria-selected="true" data-lv="0">Level 1</button>
+            <button role="tab" aria-selected="false" data-lv="1">Level 2</button>
+            <button role="tab" aria-selected="false" data-lv="2">Level 3</button>
+          </div>
+          <span class="bp-count" id="bpCount">1 / 3</span>
+        </div>
+        <input type="range" class="bp-slider" id="bpSlider" min="0" max="2" step="1" value="0" aria-label="Market level">
+        <div class="bp-stage" id="bpStage" aria-live="polite"></div>
+      </div>
     </div>
   </section>
 
@@ -3809,6 +3856,8 @@ const FG_DATA = {
         { value: "Thousands monthly", label: "Orders being fulfilled", icon: "cart" }
       ],
       summary: "The expansion",
+      alt: "Unit 19 — the new Freedom headquarters, reception and group meeting room",
+      photos: ["journey-photos/ch10-a.jpg", "journey-photos/ch10-b.jpg", "journey-photos/ch10-c.jpg"],
       nextQuestion: "But could the margins and supply chains support the next level of growth?" },
     { year: "2024", kick: "The Supply Chain", q: "Could we stop buying from the big players and become one?",
       title: "To Compete With the Biggest, We Had to Buy Like the Biggest",
@@ -7726,6 +7775,43 @@ function renderSystem() {
 /* =========================================================================
    JOURNEY — cards + scroll-linked rail
    ========================================================================= */
+/* THE MARKET BLUEPRINT — three widening levels of the same opportunity,
+   stepped through with a slider or the level tabs (they stay in lockstep). */
+const BP_LEVELS = [
+  { t: "Fire safety market", c: "var(--pink)",
+    s: "The regulated core the business already trades in — non-discretionary, repeat-cycle demand.",
+    p: ["Regulatory demand", "Replacement cycles", "Servicing requirements",
+        "Commercial compliance", "Household safety awareness"] },
+  { t: "Fire safety ecommerce", c: "var(--blue)",
+    s: "The same category online, where the incumbents have not kept pace with how customers now buy.",
+    p: ["Fragmented online competition", "Poor digital customer experiences",
+        "Limited strong consumer brands", "Opportunity for better education, bundles and delivery"] },
+  { t: "Broader ecommerce opportunity", c: "var(--mint-ink)",
+    s: "The same infrastructure applied beyond fire safety — the route from one category to a platform.",
+    p: ["Expansion into adjacent product categories", "Multi-brand infrastructure",
+        "Marketplace reach", "Central fulfilment", "Cross-selling and repeat purchasing"] }
+];
+function initBlueprint() {
+  const stage = $("#bpStage"), slider = $("#bpSlider"), tabs = $("#bpTabs"), count = $("#bpCount");
+  if (!stage || !slider || !tabs) return;
+  stage.innerHTML = BP_LEVELS.map((l, i) => `
+    <div class="bp-lv${i === 0 ? " on" : ""}" data-lv="${i}" style="--lvc:${l.c}">
+      <h4>Level ${i + 1} — ${l.t}</h4>
+      <p class="bp-sub">${l.s}</p>
+      <div class="bp-points">${l.p.map(x => `<div>${x}</div>`).join("")}</div>
+    </div>`).join("");
+  const show = n => {
+    const i = Math.max(0, Math.min(BP_LEVELS.length - 1, n | 0));
+    $$(".bp-lv", stage).forEach(el => el.classList.toggle("on", +el.dataset.lv === i));
+    $$("button", tabs).forEach(b => b.setAttribute("aria-selected", String(+b.dataset.lv === i)));
+    if (slider.value !== String(i)) slider.value = String(i);
+    count.textContent = `${i + 1} / ${BP_LEVELS.length}`;
+  };
+  slider.addEventListener("input", () => show(+slider.value));
+  tabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(+b.dataset.lv); });
+  show(0);
+}
+
 /* Each chapter frame adopts the true shape of its picture, so nothing is ever
    cropped. Where a chapter cycles through several shots the frame is sized to
    the TALLEST of them (the smallest width/height ratio), which leaves the
@@ -9624,23 +9710,23 @@ function initSetpieces() {
      side/lift pair keeps the two columns of cards from ever colliding. */
   const geo = (lon, lat) => ({ u: (lon + 180) / 360, v: (1 - Math.sin(lat * Math.PI / 180)) / 2 });
   const PL_PINS = [
-    { n: "United Kingdom", ...geo(-2, 54), start: .60, side: -1, lift: -.95,
+    { n: "United Kingdom", ...geo(-2, 54), start: .53, side: -1, lift: -.95,
       d1: "INFRASTRUCTURE · Import & fulfilment —", d2: "Bury HQ, stockholding and national dispatch" },
-    { n: "Belgium", ...geo(4.5, 50.5), start: .62, side: -1, lift: -.32,
+    { n: "Belgium", ...geo(4.5, 50.0), start: .55, side: -1, lift: -.32,
       d1: "SUPPLY · Batteries —", d2: "cell sourcing for Voltz and Kunergy" },
-    { n: "Italy", ...geo(12.5, 42), start: .64, side: -1, lift: .32,
+    { n: "Italy", ...geo(12.5, 42), start: .57, side: -1, lift: .32,
       d1: "SUPPLY · Plastics —", d2: "mouldings, housings, brackets and fittings" },
-    { n: "Poland", ...geo(19, 52), start: .66, side: -1, lift: .95,
+    { n: "Poland", ...geo(19, 52), start: .58, side: -1, lift: .95,
       d1: "SUPPLY · Extinguishers —", d2: "European production and short-haul freight" },
-    { n: "Türkiye", ...geo(35, 39), start: .68, side: 1, lift: -.95,
+    { n: "Türkiye", ...geo(35, 39), start: .60, side: 1, lift: -.95,
       d1: "SUPPLY · PPE —", d2: "gloves, workwear and protective equipment" },
-    { n: "Pakistan", ...geo(69, 30), start: .72, side: 1, lift: -.32,
+    { n: "Pakistan", ...geo(69, 30), start: .64, side: 1, lift: -.32,
       d1: "SUPPLY · PPE —", d2: "gloves and protective textiles" },
-    { n: "Malaysia", ...geo(102, 4), start: .76, side: 1, lift: .32,
+    { n: "Malaysia", ...geo(102, 4), start: .69, side: 1, lift: .32,
       d1: "SUPPLY · PPE & consolidation —", d2: "South-East Asian export hub" },
-    { n: "China", ...geo(104, 35), start: .78, side: 1, lift: .95,
+    { n: "China", ...geo(104, 35), start: .70, side: 1, lift: .95,
       d1: "SUPPLY · Primary manufacturing — JinDun,", d2: "the world's №3 extinguisher maker" },
-    { n: "Taiwan", ...geo(121, 23.5), start: .80, side: -1, lift: 0,
+    { n: "Taiwan", ...geo(119, 25), start: .72, side: -1, lift: 0,
       d1: "SUPPLY · PPE & components —", d2: "precision technical safety equipment" },
   ];
   let GLland = null, GLcloud = null;
@@ -9723,15 +9809,16 @@ function initSetpieces() {
      The +.30 phase brings the UK/Europe sourcing lanes round to face the
      camera as soon as the night half opens, so the nine territories spread
      across the whole chapter instead of piling up at the very end. */
-  const PLROT = p => (p * 1.55 + .30) % 1;
+  const PLROT = p => (p * 2.0 + .994) % 1;
   let PLover;
   function drawPlanet(ctx, p, w, h) {
     if (!GLland) makeGlobeTex();
     // the heading owns the DAY half, then clears before the territories rise
     if (PLover === undefined) PLover = document.getElementById("globeOver");
     if (PLover) PLover.style.opacity = (sm(ph2(p, .04, .12)) * (1 - sm(ph2(p, .34, .46)))).toFixed(3);
-    // day half (runway) → dusk at the midpoint → night half (export routes)
-    const night = sm(ph2(p, .42, .58));
+    // white → dusk → night (the sourcing territories) → dawn back to white, so
+    // the chapter opens and closes on the same page colour it sits between
+    const night = sm(ph2(p, .36, .50)) * (1 - sm(ph2(p, .90, .995)));
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = `rgb(${Math.round(lp(255, 15, night))},${Math.round(lp(255, 16, night))},${Math.round(lp(255, 24, night))})`;
     ctx.fillRect(0, 0, w, h);
@@ -9788,8 +9875,8 @@ function initSetpieces() {
     // only after its tether and map-pin are established does the matching card
     // rise into place. Two passes also keep every connector visually behind
     // every box instead of painting lines over already-manifested content.
-    const pvBase = 1 - sm(ph2(p, .93, .985));
-    if (sm(ph2(p, .58, .68)) * pvBase > .02) {
+    const pvBase = 1 - sm(ph2(p, .84, .91));   // territories clear BEFORE dawn
+    if (sm(ph2(p, .50, .58)) * pvBase > .02) {
       const rot2 = PLROT(p);
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map(pin => {
@@ -10462,6 +10549,7 @@ safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones 
 safeBoot("focusHandoff", initFocusHandoff);
 safeBoot("focusPlanet", initFocusPlanet); // clones the map's blue planet behind the focus screen
 safeBoot("journey", renderJourney);
+safeBoot("blueprint", initBlueprint);         // market levels 1–3
 safeBoot("figureFit", fitChapterFigures);     // shape every frame to its picture
 safeBoot("chapterPhotos", initChapterPhotos); // after the cards exist
 safeBoot("growth", renderGrowthChart);

@@ -2862,7 +2862,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <p><b>Currently trading as</b>Freedom Fire &amp; Safety Ltd</p>
           <p><b>Core model</b>D2C ecommerce</p>
           <p class="wide"><b>Core channels</b>Amazon &middot; eBay &middot; Shopify &middot; Temu &middot; TikTok Shop &middot; OnBuy</p>
-          <p class="wide"><b>Long-term ambition</b>Build towards a &pound;100 million enterprise value</p>
+          <p class="wide"><b>Long-term ambition</b>Build towards a &pound;100 million target enterprise value</p>
         </div>
       </div>
       <a class="focus-begin" href="#journey">Begin the Journey</a>
@@ -3083,8 +3083,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="fund-over" id="fundOver" aria-hidden="true">
       <div class="fund-inner">
         <div class="fund-kick">THE RAISE · USE OF FUNDS</div>
-        <h3 class="fund-h">Why we need this money.</h3>
-        <p class="fund-sub">Four deployments, one engine — every pound is put to work inside the group's licence structure.</p>
+        <h3 class="fund-h">What capital unlocks.</h3>
+        <p class="fund-sub">The constraint is no longer demand — it is the working capital, people and infrastructure required to meet that demand consistently. Every pound removes a constraint, not a shortfall.</p>
         <div class="fund-cards">
           <article class="fund-card"><span class="no">01</span><div class="fc-body">
             <h4>Inventory &amp; buying power <em class="pct">40%</em></h4>
@@ -3121,11 +3121,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap lo-head">
       <div class="sec-head reveal">
         <span class="kicker">Mission control</span>
-        <h2>Ready for <span class="grad-text">liftoff.</span></h2>
-        <p>The courier has flown the whole story — hero to horizon. One press puts you back on the launch rail at the very top.</p>
+        <h2>The system is built. The next stage is <span class="grad-text">liftoff.</span></h2>
+        <p>One second-hand extinguisher created the first opportunity. Freedom Global proved the ecommerce model. Investment accelerates the next stage — and lays the foundation for everything that follows.</p>
       </div>
       <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
-        <span class="kicker">The raise · why we need this money</span>
+        <span class="kicker">The raise · what capital unlocks</span>
         <div class="fsr"><span class="fsr-no">01</span><div class="fsr-body">
           <div class="fsr-top"><b>Inventory &amp; buying power</b><span class="fsr-pc">40%</span></div>
           <p>[Placeholder] deeper stock positions and supplier volume pricing.</p>
@@ -3430,7 +3430,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <span class="lo-chip"><i></i>WEATHER GO</span>
         </div>
         <span class="lo-count" id="loCount">T-<b>00:10</b></span>
-        <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff — return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
+        <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Initiate liftoff — return to the top of the page"><i></i>INITIATE LIFTOFF</button>
       </div>
       <span class="lo-hint">Full burn back to the top of the story.</span>
     </div>
@@ -5199,18 +5199,30 @@ function initCourier() {
           const gateX = pr && cr ? Math.min(pr.right - 18, cr.right + 22)
             : pr ? pr.right - 26 : iw * .58;
           const leftT = Math.min(.82, gateT + .24);
+          const approachT = Math.max(underT + .07, gateT - .12);
           const K = [
             { t: 0,   x: a.x, y: a.y },
             { t: Math.max(.035, underT * .42), x: Math.min(iw - 54, a.x + 74), y: a.y + 24 },
             { t: Math.max(underT * .7, underT - .045), x: outsideX, y: underY - 76 },
-            { t: underT, x: underX, y: underY },
-            { t: Math.max(underT + .07, gateT - .12), x: approachX, y: vh * .21 },
+            { t: underT, x: underX, y: underY }
+          ];
+          // The standalone market-research section now sits in this corridor.
+          // Anchor a calm right-gutter waypoint to it so the courier glides
+          // level PAST the panel instead of a long, unguided climb across it.
+          const mkt = docRect(document.querySelector("#market #runwayPanel") || document.querySelector("#market"));
+          if (mkt) {
+            const mktT = qAt((mkt.top + mkt.bottom) / 2, vh * .5);
+            if (mktT > underT + .03 && mktT < approachT - .03)
+              K.push({ t: mktT, x: Math.min(iw - 54, iw * .9), y: vh * .5 });
+          }
+          K.push(
+            { t: approachT, x: approachX, y: vh * .21 },
             { t: gateT, x: gateX, y: gateY },
             { t: Math.min(leftT - .07, gateT + .13), x: iw * .34, y: vh * .57 },
             { t: leftT, x: iw * .075, y: vh * .72 },
             { t: Math.min(.93, leftT + .13), x: iw * .052, y: vh * .82 },
             { t: 1,   x: b.x, y: b.y }
-          ];
+          );
           return flightSplineKeyed(K, q);
         }
       });
@@ -6096,12 +6108,15 @@ function renderSystem() {
   /* One horizontal chronology whose anchor dot genuinely belongs to its own
      orbit. Intersect every ellipse with the same y-coordinate; the two outer
      pills face left so the complete row remains inside the system canvas. */
-  /* The chronology now runs DOWN the right-hand wedge that opens between the
-     orange Distribution lane (above) and the violet 2036 lane (below) —
-     2026 at the top, 2030+ at the foot — a vertical column instead of a row. */
-  const YEAR_COL = [[1168, 452], [1258, 520], [1352, 588], [1444, 656], [1520, 724]];
+  /* Every year rides ON its own ring: we read a point straight off that
+     shell's lower arc, so the label genuinely sits on the orbit it dates.
+     The x's step outward so the row cascades DOWN the right-hand wedge
+     (2026 highest → 2030+ lowest), clearing the Distribution planet, its
+     card and the 2036 moon. */
+  const ringLowerY = (i, x) => { const [rx, ry, ringCy] = SHELLS[i]; const c = (x - cx) / rx; return ringCy + ry * Math.sqrt(Math.max(0, 1 - c * c)); };
+  const YEAR_X = [1240, 1330, 1400, 1470, 1540];
   const yearMarks = SHELLS.map((shell2, i) => {
-    const [px, py] = YEAR_COL[i];
+    const px = YEAR_X[i], py = ringLowerY(i, px);
     const future = shell2[3].includes("future") ? " future" : "";
     return `<g class="sm-year${future}" data-ring="${i}" transform="translate(${f(px)} ${f(py)})">
       <rect x="-31" y="-12" width="62" height="24" rx="12"/>

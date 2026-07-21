@@ -1502,6 +1502,7 @@ section.tint{background:var(--bg-soft);}
 .bp-vals > div{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--bg-soft);}
 .bp-vals b{display:block;font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--ink);}
 .bp-vals span{display:block;margin-top:2px;color:var(--ink-dim);font-size:.62rem;line-height:1.32;}
+.bp-vals span b{color:var(--ink);font-weight:800;}
 .bp-slider{width:100%;margin:0 0 16px;}
 .bp-stage{min-height:132px;}
 .bp-pt{display:none;}
@@ -8110,9 +8111,9 @@ function renderSystem() {
    stepped through with a slider or the level tabs (they stay in lockstep). */
 const BP_SETS = [
   { c: "var(--blue)", v: [
-      ["~£6bn", "UK fire &amp; safety market today"],
-      ["£8.5bn", "projected UK market by 2030"],
-      ["0.02%", "Freedom's share today — the headroom is the point"]
+      ["~£1.6bn", "UK fire &amp; safety bought <b>online</b> today (est.)"],
+      ["~£2.3bn", "the same online slice at the 2030 market size"],
+      ["0.02%", "Freedom's share of it — the headroom is the point"]
     ], p: [
     ["Fragmented online competition", "No single trusted brand owns the category online — demand is spread across dozens of small, inconsistent sellers."],
     ["Poor digital customer experiences", "Listings are technical, badly photographed and written for engineers rather than the person actually buying."],

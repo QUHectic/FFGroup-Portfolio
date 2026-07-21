@@ -1204,6 +1204,76 @@ section[data-sec]{padding:86px 0;scroll-margin-top:calc(var(--nav-h) + 10px);}
 section.tint{background:var(--bg-soft);}
 
 /* ==========================================================================
+   MOBILE SYSTEM TREE — the orbital map is desktop-only; phones get the same
+   structure as a readable hierarchy. Exactly one of the two ever shows.
+   ========================================================================== */
+.sys-tree{display:none;}
+@media (max-width:900px){
+  .sys-tree{display:block;padding-top:8px;padding-bottom:8px;}
+  /* a later mobile rule forces .sys-build to display:block !important, so this
+     needs the id to out-specify it rather than fight !important with !important */
+  section#system .sys-build{display:none !important;}
+  section#system{padding-top:56px;padding-bottom:56px;min-height:0;}
+}
+.st-head{text-align:center;margin-bottom:22px;}
+.st-head h2{font-size:clamp(1.6rem,7vw,2.2rem);line-height:1.08;letter-spacing:-.035em;margin:6px 0 10px;}
+.st-head .section-sub{font-size:.88rem;}
+.st-parent{
+  position:relative;padding:18px 16px;border:1px solid rgba(255,61,154,.34);border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,61,154,.10),rgba(255,61,154,.02));text-align:center;
+  box-shadow:0 0 40px rgba(255,61,154,.14);
+}
+.st-parent .st-tag{display:block;color:var(--pink);font-size:.6rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
+.st-parent b{display:block;margin:6px 0 6px;font-size:1.06rem;letter-spacing:-.02em;}
+.st-parent p{margin:0;color:var(--ink-dim);font-size:.8rem;line-height:1.5;}
+.st-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:11px;}
+.st-chips span{padding:5px 10px;border:1px solid var(--line);border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);}
+.st-stem{width:2px;height:26px;margin:0 auto;background:linear-gradient(180deg,rgba(255,61,154,.55),rgba(255,61,154,.12));}
+.st-lvl{margin:0 0 12px;text-align:center;color:var(--ink-faint);font-size:.62rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
+.st-co{
+  position:relative;padding:16px 15px;margin-bottom:12px;border:1px solid var(--line);
+  border-left:4px solid var(--stc,var(--blue));border-radius:16px;background:var(--card);box-shadow:var(--shadow);
+}
+.st-co.st-active{--stc:var(--blue);}
+.st-co.st-planned{--stc:var(--mint-ink);}
+.st-co.st-ember{--stc:var(--ember);}
+.st-co-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.st-co-top i{width:9px;height:9px;border-radius:50%;background:var(--stc);box-shadow:0 0 10px var(--stc);flex:none;}
+.st-co-top b{font-size:.98rem;letter-spacing:-.02em;}
+.st-status{margin-left:auto;padding:3px 9px;border:1px solid var(--stc);border-radius:99px;color:var(--stc);font-size:.58rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;}
+.st-role{display:block;margin:7px 0 8px;color:var(--stc);font-size:.64rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase;}
+.st-co p{margin:0;color:var(--ink-dim);font-size:.8rem;line-height:1.5;}
+.st-meta{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);}
+.st-meta b{display:block;color:var(--ink-faint);font-size:.58rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+.st-meta span{display:block;margin-top:3px;color:var(--ink-dim);font-size:.75rem;line-height:1.45;}
+.st-focus{display:inline-block;margin-top:11px;padding:6px 11px;border-radius:99px;color:#fff;font-size:.6rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,var(--pink),var(--blue));}
+.st-future{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.st-future > div{padding:11px 12px;border:1px dashed var(--line-strong);border-radius:13px;background:var(--bg-soft);}
+.st-future b{display:block;font-size:.8rem;letter-spacing:-.015em;}
+.st-future span{display:block;margin-top:2px;color:var(--ink-dim);font-size:.66rem;line-height:1.35;}
+.st-future i{display:inline-block;margin-top:6px;color:var(--ink-faint);font-size:.58rem;font-weight:900;font-style:normal;letter-spacing:.1em;}
+.st-note{margin:12px 0 0;text-align:center;color:var(--ink-faint);font-size:.68rem;font-style:italic;}
+@media (max-width:380px){.st-future{grid-template-columns:1fr;}}
+
+/* ==========================================================================
+   SECTION SEAMS — the deck alternates light and dark chapters, and a hard
+   edge between them reads as a mistake. Each boundary gets a soft gradient
+   in the colour of the section BEFORE it, so one bleeds into the next.
+   ========================================================================== */
+#team,#beyond,#liftoff{position:relative;}
+#team::before,#beyond::before,#liftoff::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:clamp(90px,13vh,180px);
+  pointer-events:none;z-index:0;
+}
+/* light chapter → dark chapter */
+#team::before{background:linear-gradient(180deg,#eef1f8 0%,rgba(238,241,248,.55) 38%,rgba(238,241,248,0) 100%);}
+#liftoff::before{background:linear-gradient(180deg,#f4f6fb 0%,rgba(244,246,251,.5) 40%,rgba(244,246,251,0) 100%);}
+/* dark chapter → light chapter */
+#beyond::before{background:linear-gradient(180deg,#07070d 0%,rgba(7,7,13,.5) 42%,rgba(7,7,13,0) 100%);}
+/* keep the content above its own seam */
+#team > .wrap,#beyond > .wrap,#liftoff > .wrap,#liftoff .lo-scene,#liftoff .lo-head{position:relative;z-index:1;}
+
+/* ==========================================================================
    LIGHT SECTIONS — informational blocks flip to a white canvas.
    Scoped token overrides: every card/chart/label inherits these vars, so the
    components adapt with no per-element rewrites. Chart channel hexes stay as
@@ -1391,6 +1461,12 @@ section.tint{background:var(--bg-soft);}
 .flywheel li:not(:last-child)::after{content:"";position:absolute;left:27px;bottom:-8px;width:1px;height:8px;background:var(--line-strong);}
 .fly-loop{display:flex;align-items:center;gap:9px;margin:12px 0 0;color:var(--ink-dim);font-size:.75rem;font-style:italic;}
 .fly-loop span{width:20px;height:20px;flex:none;border:2px solid var(--pink);border-right-color:transparent;border-radius:50%;}
+.grp-val{margin-top:16px;padding:16px 17px;border:1px solid rgba(255,61,154,.3);border-radius:15px;
+  background:linear-gradient(180deg,rgba(255,61,154,.08),rgba(56,169,255,.05));}
+.grp-val b{display:block;font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.035em;
+  background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.grp-val span{display:block;margin-top:5px;color:var(--ink-dim);font-size:.8rem;line-height:1.5;}
+.grp-val i{display:block;margin-top:9px;color:var(--ink-faint);font-size:.68rem;font-style:italic;line-height:1.45;}
 .scen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
 .scen{border-top:3px solid var(--sc,var(--mint-ink));}
 .scen.s-now{--sc:var(--mint-ink);} .scen.s-next{--sc:var(--blue);} .scen.s-opt{--sc:var(--ink-faint);}
@@ -1415,32 +1491,27 @@ section.tint{background:var(--bg-soft);}
   color:var(--ink-dim);font-size:.74rem;line-height:1.5;}
 .assume-note b{color:var(--ink);}
 
-/* THE MARKET BLUEPRINT — three levels on one slider */
-.bp-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
-.bp-tabs{display:flex;gap:8px;flex-wrap:wrap;}
-.bp-tabs button{
-  padding:8px 15px;border:1px solid var(--line);border-radius:99px;background:transparent;
-  color:var(--ink-dim);font-size:.76rem;font-weight:800;letter-spacing:.02em;transition:var(--t);
-}
-.bp-tabs button[aria-selected="true"]{border-color:var(--blue);color:var(--blue);background:rgba(56,169,255,.08);}
-.bp-count{color:var(--ink-faint);font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;}
-.bp-slider{width:100%;margin:0 0 20px;}
-.bp-stage{min-height:210px;}
-.bp-lv{display:none;}
-.bp-lv.on{display:block;animation:bpIn .45s var(--ease-out);}
-@keyframes bpIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-.bp-lv h4{margin:0 0 4px;font-size:1.08rem;letter-spacing:-.025em;}
-.bp-lv .bp-sub{margin:0 0 16px;color:var(--ink-dim);font-size:.8rem;line-height:1.5;}
-.bp-points{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
-.bp-points div{
-  position:relative;padding:13px 14px 13px 34px;border:1px solid var(--line);border-radius:13px;
-  background:var(--bg-soft);color:var(--ink);font-size:.8rem;line-height:1.45;
-}
-.bp-points div::before{
-  content:"";position:absolute;left:14px;top:18px;width:8px;height:8px;border-radius:50%;
-  background:var(--lvc,var(--blue));box-shadow:0 0 10px var(--lvc,var(--blue));
-}
-@media (max-width:620px){.bp-points{grid-template-columns:1fr;}}
+/* THE MARKET BLUEPRINT — two independent sliders, one per level */
+.bp-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.bp-panel .bp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.bp-lvtag{display:block;color:var(--ink-faint);font-size:.6rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
+.bp-panel h4{margin:3px 0 0;font-size:1.04rem;letter-spacing:-.025em;}
+.bp-count{flex:none;color:var(--ink-faint);font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;}
+.bp-panel .bp-sub{margin:0 0 14px;color:var(--ink-dim);font-size:.78rem;line-height:1.5;}
+.bp-vals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px;}
+.bp-vals > div{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--bg-soft);}
+.bp-vals b{display:block;font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--ink);}
+.bp-vals span{display:block;margin-top:2px;color:var(--ink-dim);font-size:.62rem;line-height:1.32;}
+.bp-slider{width:100%;margin:0 0 16px;}
+.bp-stage{min-height:132px;}
+.bp-pt{display:none;}
+.bp-pt.on{display:block;animation:bpIn .4s var(--ease-out);}
+@keyframes bpIn{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+.bp-pt b{position:relative;display:block;padding-left:20px;font-size:.94rem;letter-spacing:-.02em;line-height:1.3;}
+.bp-pt b::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;
+  background:var(--lvc,var(--blue));box-shadow:0 0 11px var(--lvc,var(--blue));}
+.bp-pt span{display:block;margin-top:8px;padding-left:20px;color:var(--ink-dim);font-size:.8rem;line-height:1.55;}
+@media (max-width:900px){.bp-pair{grid-template-columns:1fr;}}
 
 /* PROOF OF TRACTION — four evidence pillars */
 .pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:22px;}
@@ -2961,7 +3032,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="hero-right">
         <h1 class="reveal d1" data-suck>From one rusty old fire extinguisher<br><span class="grad-text">to a group built beyond £100 million.</span></h1>
         <p class="hero-sub reveal d1" data-suck>Freedom Global is being built into a £100 million ecommerce business — and the first major value-creation engine within a much wider group.</p>
-        <div class="hero-cta-row reveal d1" data-suck><button class="hero-cta" data-goto="system" type="button">Explore the System</button></div>
+        <div class="hero-cta-row reveal d1" data-suck><button class="hero-cta" data-goto="system" data-goto-at="0.86" type="button">Explore the System</button></div>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -2978,6 +3049,59 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <canvas class="sys-nova" aria-hidden="true"></canvas>
       <div class="sysmap reveal" id="sysMap" aria-label="Hierarchical map of the Freedom system"></div>
     </div></div>
+
+    <!-- MOBILE: the orbital map cannot work on a phone, so the same structure
+         is served as a readable hierarchy instead. Never both at once. -->
+    <div class="wrap sys-tree" id="sysTree">
+      <div class="st-head">
+        <span class="kicker">The Freedom System</span>
+        <h2>One group. <span class="grad-text">One commercial engine.</span></h2>
+        <p class="section-sub">Freedom Group Holdings sits at the centre — owning the brands, trademarks and IP, and licensing them to each specialist operating company.</p>
+      </div>
+
+      <div class="st-parent">
+        <span class="st-tag">Holding company</span>
+        <b>Freedom Group Holdings Ltd</b>
+        <p>Owner of the group's brands, intellectual property and long-term strategic platform.</p>
+        <div class="st-chips"><span>Brands</span><span>IP</span><span>Strategy</span><span>Capital</span></div>
+      </div>
+
+      <div class="st-stem" aria-hidden="true"></div>
+      <p class="st-lvl">Operating companies</p>
+
+      <article class="st-co st-active">
+        <div class="st-co-top"><i></i><b>Freedom Global Ltd</b><span class="st-status">Active</span></div>
+        <span class="st-role">Consumer ecommerce · D2C</span>
+        <p>The group's established commercial engine, scaling owned brands across marketplaces and ecommerce channels. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
+        <div class="st-meta"><b>Channels</b><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy</span></div>
+        <div class="st-meta"><b>Core brands</b><span>Firestorm™ · Voltz™ · Kunergy™ · FXL™ · Skyline™</span></div>
+        <span class="st-focus">Today's investment focus</span>
+      </article>
+
+      <article class="st-co st-planned">
+        <div class="st-co-top"><i></i><b>Freedom Facilities Ltd</b><span class="st-status">Planned</span></div>
+        <span class="st-role">Compliance · Servicing · Facilities</span>
+        <p>A recurring-revenue operation delivering fire safety servicing, installation, compliance and facilities support.</p>
+        <div class="st-meta"><b>Core market</b><span>Commercial premises · Education · Warehousing · Construction · Hospitality</span></div>
+      </article>
+
+      <article class="st-co st-planned st-ember">
+        <div class="st-co-top"><i></i><b>Freedom Distribution Ltd</b><span class="st-status">Planned</span></div>
+        <span class="st-role">Trade distribution · B2B</span>
+        <p>A wholesale operation supplying the group's owned brands to national retailers, trade partners and commercial distributors.</p>
+        <div class="st-meta"><b>Categories</b><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
+      </article>
+
+      <div class="st-stem" aria-hidden="true"></div>
+      <p class="st-lvl">Long-term ventures</p>
+      <div class="st-future">
+        <div><b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i></div>
+        <div><b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i></div>
+        <div><b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i></div>
+        <div><b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i></div>
+      </div>
+      <p class="st-note">Illustrative long-term direction — not part of the current investment case.</p>
+    </div>
   </section>
 
   <!-- ====================================================================
@@ -3123,17 +3247,27 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <h3 style="font-size:clamp(1.3rem,2.2vw,1.85rem);letter-spacing:-.03em;">A large market is moving online</h3>
         <p class="section-sub" style="margin-top:10px;">Freedom Global sits at the intersection of regulated safety products, changing buying behaviour and the continued expansion of ecommerce. Step through the three levels.</p>
       </div>
-      <div class="panel reveal" id="blueprint">
-        <div class="bp-head">
-          <div class="bp-tabs" id="bpTabs" role="tablist" aria-label="Market levels">
-            <button role="tab" aria-selected="true" data-lv="0">Level 1</button>
-            <button role="tab" aria-selected="false" data-lv="1">Level 2</button>
-            <button role="tab" aria-selected="false" data-lv="2">Level 3</button>
+      <div class="bp-pair">
+        <div class="panel reveal bp-panel" data-bp="0">
+          <div class="bp-head">
+            <div><span class="bp-lvtag">Level 2</span><h4>Fire safety ecommerce</h4></div>
+            <span class="bp-count">1 / 4</span>
           </div>
-          <span class="bp-count" id="bpCount">1 / 3</span>
+          <p class="bp-sub">The same regulated category online, where the incumbents have not kept pace with how customers now buy.</p>
+          <div class="bp-vals"></div>
+          <input type="range" class="bp-slider" min="0" max="3" step="1" value="0" aria-label="Fire safety ecommerce points">
+          <div class="bp-stage"></div>
         </div>
-        <input type="range" class="bp-slider" id="bpSlider" min="0" max="2" step="1" value="0" aria-label="Market level">
-        <div class="bp-stage" id="bpStage" aria-live="polite"></div>
+        <div class="panel reveal d1 bp-panel" data-bp="1">
+          <div class="bp-head">
+            <div><span class="bp-lvtag">Level 3</span><h4>Broader ecommerce opportunity</h4></div>
+            <span class="bp-count">1 / 5</span>
+          </div>
+          <p class="bp-sub">The same infrastructure applied beyond fire safety — the route from one category to a platform.</p>
+          <div class="bp-vals"></div>
+          <input type="range" class="bp-slider" min="0" max="4" step="1" value="0" aria-label="Broader ecommerce points">
+          <div class="bp-stage"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -3395,6 +3529,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <li><b>Provides more capital for Freedom Global and future companies</b></li>
         </ol>
         <p class="fly-loop"><span></span>and the loop repeats, larger each turn</p>
+        <div class="grp-val">
+          <b>£500 million</b>
+          <span>Long-term projected group value — Freedom Group Holdings with all of its operating companies at maturity, of which the £100 million Freedom Global ambition is the first and nearest component.</span>
+          <i>Illustrative long-term target, not a valuation. Dependent on Freedom Global reaching scale first and each venture being funded and executed in turn.</i>
+        </div>
       </div>
 
       <div class="scen-grid">
@@ -3427,11 +3566,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap lo-head">
       <div class="sec-head reveal">
         <span class="kicker">Mission control</span>
-        <h2>The system is built. The next stage is <span class="grad-text">liftoff.</span></h2>
-        <p>One second-hand extinguisher created the first opportunity. Freedom Global proved the ecommerce model. Investment accelerates the next stage — and lays the foundation for everything that follows.</p>
+        <h2>Ready for <span class="grad-text">liftoff.</span></h2>
+        <p>The courier has flown the whole story — hero to horizon. One press puts you back on the launch rail at the very top.</p>
       </div>
       <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
-        <span class="kicker">The raise · what capital unlocks</span>
+        <span class="kicker">The raise · why we need this money</span>
         <div class="fsr"><span class="fsr-no">01</span><div class="fsr-body">
           <div class="fsr-top"><b>Inventory &amp; working capital</b></div>
           <p>Larger purchasing volumes, improved supplier pricing, fewer stockouts and broader availability.</p>
@@ -3740,7 +3879,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <span class="lo-chip"><i></i>WEATHER GO</span>
         </div>
         <span class="lo-count" id="loCount">T-<b>00:10</b></span>
-        <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Initiate liftoff — return to the top of the page"><i></i>INITIATE LIFTOFF</button>
+        <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff — return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
       </div>
       <span class="lo-hint">Full burn back to the top of the story.</span>
     </div>
@@ -7969,39 +8108,51 @@ function renderSystem() {
    ========================================================================= */
 /* THE MARKET BLUEPRINT — three widening levels of the same opportunity,
    stepped through with a slider or the level tabs (they stay in lockstep). */
-const BP_LEVELS = [
-  { t: "Fire safety market", c: "var(--pink)",
-    s: "The regulated core the business already trades in — non-discretionary, repeat-cycle demand.",
-    p: ["Regulatory demand", "Replacement cycles", "Servicing requirements",
-        "Commercial compliance", "Household safety awareness"] },
-  { t: "Fire safety ecommerce", c: "var(--blue)",
-    s: "The same category online, where the incumbents have not kept pace with how customers now buy.",
-    p: ["Fragmented online competition", "Poor digital customer experiences",
-        "Limited strong consumer brands", "Opportunity for better education, bundles and delivery"] },
-  { t: "Broader ecommerce opportunity", c: "var(--mint-ink)",
-    s: "The same infrastructure applied beyond fire safety — the route from one category to a platform.",
-    p: ["Expansion into adjacent product categories", "Multi-brand infrastructure",
-        "Marketplace reach", "Central fulfilment", "Cross-selling and repeat purchasing"] }
+const BP_SETS = [
+  { c: "var(--blue)", v: [
+      ["~£6bn", "UK fire &amp; safety market today"],
+      ["£8.5bn", "projected UK market by 2030"],
+      ["0.02%", "Freedom's share today — the headroom is the point"]
+    ], p: [
+    ["Fragmented online competition", "No single trusted brand owns the category online — demand is spread across dozens of small, inconsistent sellers."],
+    ["Poor digital customer experiences", "Listings are technical, badly photographed and written for engineers rather than the person actually buying."],
+    ["Limited strong consumer brands", "Almost no recognisable consumer-facing names in fire safety — precisely the gap Firestorm was built for."],
+    ["Opportunity for better education, bundles and delivery", "Customers need guidance on what they legally require. Clear advice, sensible bundles and next-day delivery win the sale."]
+  ]},
+  { c: "var(--mint-ink)", v: [
+      ["£127bn", "UK online retail sales, 2024 (ONS)"],
+      ["27%", "of all UK retail is now ecommerce"],
+      ["62.1m", "UK adults shopping online"]
+    ], p: [
+    ["Expansion into adjacent product categories", "Batteries, PPE, cleaning, aerosols and automotive — all non-seasonal, needs-driven, repeat-purchase."],
+    ["Multi-brand infrastructure", "One supply chain, one fulfilment operation and one marketplace capability carrying many owned brands."],
+    ["Marketplace reach", "Amazon, eBay, Temu, OnBuy, Shopify and TikTok Shop reached through the same catalogue and stock."],
+    ["Central fulfilment", "UK-held stock dispatched same day, so every brand inherits the delivery promise on day one."],
+    ["Cross-selling and repeat purchasing", "Consumable and replacement-cycle products turn a first order into a recurring customer."]
+  ]}
 ];
 function initBlueprint() {
-  const stage = $("#bpStage"), slider = $("#bpSlider"), tabs = $("#bpTabs"), count = $("#bpCount");
-  if (!stage || !slider || !tabs) return;
-  stage.innerHTML = BP_LEVELS.map((l, i) => `
-    <div class="bp-lv${i === 0 ? " on" : ""}" data-lv="${i}" style="--lvc:${l.c}">
-      <h4>Level ${i + 1} — ${l.t}</h4>
-      <p class="bp-sub">${l.s}</p>
-      <div class="bp-points">${l.p.map(x => `<div>${x}</div>`).join("")}</div>
-    </div>`).join("");
-  const show = n => {
-    const i = Math.max(0, Math.min(BP_LEVELS.length - 1, n | 0));
-    $$(".bp-lv", stage).forEach(el => el.classList.toggle("on", +el.dataset.lv === i));
-    $$("button", tabs).forEach(b => b.setAttribute("aria-selected", String(+b.dataset.lv === i)));
-    if (slider.value !== String(i)) slider.value = String(i);
-    count.textContent = `${i + 1} / ${BP_LEVELS.length}`;
-  };
-  slider.addEventListener("input", () => show(+slider.value));
-  tabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(+b.dataset.lv); });
-  show(0);
+  $$(".bp-panel").forEach(panel => {
+    const set = BP_SETS[+panel.dataset.bp];
+    if (!set) return;
+    const slider = panel.querySelector(".bp-slider");
+    const stage = panel.querySelector(".bp-stage");
+    const count = panel.querySelector(".bp-count");
+    const vs = panel.querySelector(".bp-vals");
+    if (vs && set.v) vs.innerHTML = set.v.map(([n, l]) =>
+      `<div><b>${n}</b><span>${l}</span></div>`).join("");
+    stage.innerHTML = set.p.map(([t, d], i) => `
+      <div class="bp-pt${i === 0 ? " on" : ""}" data-i="${i}" style="--lvc:${set.c}">
+        <b>${t}</b><span>${d}</span></div>`).join("");
+    const show = n => {
+      const i = Math.max(0, Math.min(set.p.length - 1, n | 0));
+      $$(".bp-pt", stage).forEach(el => el.classList.toggle("on", +el.dataset.i === i));
+      if (slider.value !== String(i)) slider.value = String(i);
+      count.textContent = `${i + 1} / ${set.p.length}`;
+    };
+    slider.addEventListener("input", () => show(+slider.value));
+    show(0);
+  });
 }
 
 /* Each chapter frame adopts the true shape of its picture, so nothing is ever
@@ -8099,7 +8250,7 @@ function renderJourney() {
     const nxt = FG_DATA.milestones[i + 1];
     const teaser = nxt
       ? `<div class="ch-next"><span class="qm">?</span><div><i>Next chapter</i><p>${m.nextQuestion || nxt.q || nxt.title}</p></div>${arrow}</div>`
-      : `<button class="ch-next as-btn" type="button" data-goto="system"><span class="qm">&rarr;</span><div><i>Keep exploring</i><p>One group. One engine. See the Freedom System.</p></div>${arrow}</button>`;
+      : `<button class="ch-next as-btn" type="button" data-goto="system" data-goto-at="0.86"><span class="qm">&rarr;</span><div><i>Keep exploring</i><p>One group. One engine. See the Freedom System.</p></div>${arrow}</button>`;
     let quote = "";
     if (m.highlight) {
       quote = `<div class="ch-quote ch-highlight"><span class="qg">&ldquo;</span><p>${m.highlight}</p></div>`;

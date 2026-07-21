@@ -1021,8 +1021,10 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
    distance. A slim body with a forked tail sits between them. The old 4-unit
    round-capped stroke was the same weight tip to root and bled 2 units past
    each wingtip, which is why they looked like glowing chevrons. */
-.bird path{fill:#dce6f7;stroke:none;filter:drop-shadow(0 0 1.6px rgba(190,205,230,.32));}
-.bird .bd{fill:#cfdcf0;}
+.bird path{stroke:none;filter:drop-shadow(0 0 1.4px rgba(185,200,226,.28));}
+.bird .wl{fill:url(#loWingL);}
+.bird .wr{fill:url(#loWingR);}
+.bird .bd{fill:#d6e1f4;}
 .bird{animation:birdBob 2.6s ease-in-out infinite;}
 .bird.b{animation-delay:-.9s;}
 .bird.c{animation-delay:-1.7s;}
@@ -1542,7 +1544,7 @@ section.tint{background:var(--bg-soft);}
    art stay deliberately dark on both.
    ========================================================================== */
 .jcard.chapter{
-  position:relative;display:grid;grid-template-columns:1.08fr .92fr;gap:20px 38px;
+  position:relative;display:grid;grid-template-columns:var(--chcols,1.08fr .92fr);gap:20px 38px;
   padding:32px 36px 30px;overflow:hidden;isolation:isolate;
   box-shadow:var(--shadow),0 0 44px -16px var(--acc,var(--pink));
   transition:border-color .3s var(--ease),box-shadow .3s var(--ease);
@@ -1668,6 +1670,10 @@ section.tint{background:var(--bg-soft);}
 .ch-stat span{display:block;margin-top:4px;font-size:.7rem;line-height:1.36;color:var(--ink-dim);}
 .jcard.chapter .jbrands{margin-top:18px;}
 .ch-side{display:flex;flex-direction:column;min-width:0;}
+/* When the story column still outruns the rail, the leftover height is split
+   above and below rather than dumped at the bottom, so the rail reads as
+   deliberately centred against the text instead of stopping short of it. */
+.ch-side.balanced{justify-content:center;}
 /* The frame takes its shape from the picture itself (--ar is measured at
    runtime), and the image is CONTAINED rather than cropped — the wide
    infographics and portrait photographs both have to survive intact. */
@@ -1675,7 +1681,21 @@ section.tint{background:var(--bg-soft);}
   margin:0;position:relative;aspect-ratio:var(--ar,4/3.15);
   border-radius:18px;border:1px solid var(--line);overflow:hidden;
   background:rgba(17,22,38,.045);
+  /* Deliberately NOT transitioned. Animating aspect-ratio looks nicer, but a
+     backgrounded tab freezes CSS transitions mid-flight and the frame then
+     sits at its fallback shape indefinitely — the same freeze that once left
+     `main` stuck mid-zoom and broke every sticky descendant. A frame that is
+     instantly the right shape beats one that is usually the right shape. */
 }
+/* A chapter that cross-fades between a portrait and a landscape shot used to
+   size one frame to the TALLEST photo, so the wide ones sat in a bordered box
+   with half its height as empty bands (ch7 lost 47% of its frame, ch16 44%).
+   Now the BOX reserves the tallest footprint and the FRAME inside hugs
+   whichever photo is showing: every picture gets a box its own shape, nothing
+   is cropped, and because the reservation never changes the quote and next-
+   chapter card below cannot shuffle each time the photo turns over. */
+.ch-figbox{display:flex;align-items:center;aspect-ratio:var(--armin,4/3.15);}
+.ch-figbox > .ch-fig{width:100%;}
 .ch-fig img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;}
 /* chapters with several shots cross-fade between them; the frame is sized to
    the tallest of the set so no shot in the cycle is ever clipped */
@@ -3723,6 +3743,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="lo-scene" aria-hidden="true">
       <svg class="lo-art" viewBox="0 0 1900 780" xmlns="http://www.w3.org/2000/svg">
         <defs>
+          <!-- Wings shade light at the shoulder to dark at the primaries, the way
+               a gull's black wingtips read against a dusk sky. Two mirrored
+               gradients because objectBoundingBox runs left-to-right and the
+               wings point opposite ways. -->
+          <linearGradient id="loWingR" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#e6eefc"/><stop offset=".5" stop-color="#d3dff2"/>
+            <stop offset=".82" stop-color="#a9b9d4"/><stop offset="1" stop-color="#7d8fae"/>
+          </linearGradient>
+          <linearGradient id="loWingL" x1="1" y1="0" x2="0" y2="0">
+            <stop offset="0" stop-color="#e6eefc"/><stop offset=".5" stop-color="#d3dff2"/>
+            <stop offset=".82" stop-color="#a9b9d4"/><stop offset="1" stop-color="#7d8fae"/>
+          </linearGradient>
           <linearGradient id="loGround" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="#141f18"/><stop offset=".45" stop-color="#0e1610"/><stop offset="1" stop-color="#080d09"/>
           </linearGradient>
@@ -3800,26 +3832,26 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <!-- ground -->
         <rect x="0" y="570" width="1900" height="210" fill="url(#loGround)"/>
         <g class="lo-flock f1" opacity=".72">
-          <g class="bird" transform="translate(0 296) scale(2.05)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird b" transform="translate(84 318) scale(1.75)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird g" transform="translate(158 284) scale(1.55)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird c" transform="translate(232 306) scale(1.35)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird d" transform="translate(298 292) scale(1.2)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird" transform="translate(0 296) scale(2.05)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird b" transform="translate(84 318) scale(1.75)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird g" transform="translate(158 284) scale(1.55)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird c" transform="translate(232 306) scale(1.35)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird d" transform="translate(298 292) scale(1.2)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
         </g>
         <g class="lo-flock f2" opacity=".66">
-          <g class="bird" transform="translate(0 388) scale(1.5)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird c" transform="translate(66 404) scale(1.25)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird d" transform="translate(128 380) scale(1.1)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird" transform="translate(0 388) scale(1.5)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird c" transform="translate(66 404) scale(1.25)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird d" transform="translate(128 380) scale(1.1)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
         </g>
         <g class="lo-flock f3" opacity=".6">
-          <g class="bird b" transform="translate(0 232) scale(1.15)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird g" transform="translate(52 220) scale(1.05)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird d" transform="translate(104 240) scale(.9)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird b" transform="translate(0 232) scale(1.15)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird g" transform="translate(52 220) scale(1.05)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird d" transform="translate(104 240) scale(.9)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
         </g>
         <g class="lo-flock f4" opacity=".68">
-          <g class="bird" transform="translate(0 452) scale(1.7)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird c" transform="translate(76 470) scale(1.45)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
-          <g class="bird b" transform="translate(140 444) scale(1.15)"><path class="wl" d="M-.8-.2C-3.4-2.2-6.2-3.4-8.6-3.1C-10.9-2.9-13-2-15-.2C-13-.6-10.6-.7-8.4-1C-6-1.3-3.2-1-.8.9Z"/><path class="bd" d="M0-3.2C1.1-3.2 1.5-1.6 1.5.2C1.5 1.8 1 3 0 4.6C-1 3-1.5 1.8-1.5.2C-1.5-1.6-1.1-3.2 0-3.2Z"/><path class="wr" d="M.8-.2C3.4-2.2 6.2-3.4 8.6-3.1C10.9-2.9 13-2 15-.2C13-.6 10.6-.7 8.4-1C6-1.3 3.2-1 .8.9Z"/></g>
+          <g class="bird" transform="translate(0 452) scale(1.7)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird c" transform="translate(76 470) scale(1.45)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
+          <g class="bird b" transform="translate(140 444) scale(1.15)"><path class="wl" d="M-.3-.6C-3.4-2-6.4-3-9.2-3.15C-11.4-3.2-13.4-2.75-15.2-1.75C-15.4-1.42-15.15-1.08-14.8-1.08C-12.85-1.15-10.7-1.3-8.7-1.5C-5.9-1.32-3.2-.45-.3.85Z"/><path class="bd" d="M0-2.45C.66-2.45.9-1.62.9-.72C.9.3.76 1.05.58 1.72L.86 2.66L0 2.3L-.86 2.66L-.58 1.72C-.76 1.05-.9.3-.9-.72C-.9-1.62-.66-2.45 0-2.45Z"/><path class="wr" d="M.3-.6C3.4-2 6.4-3 9.2-3.15C11.4-3.2 13.4-2.75 15.2-1.75C15.4-1.42 15.15-1.08 14.8-1.08C12.85-1.15 10.7-1.3 8.7-1.5C5.9-1.32 3.2-.45.3.85Z"/></g>
         </g>
         <ellipse cx="1210" cy="668" rx="430" ry="64" fill="url(#loPadGlow)"/>
         <!-- floodlight cones (behind the pad hardware) -->
@@ -7903,9 +7935,12 @@ function renderSystem() {
         const bR = (bb.width / 2) * Math.hypot(m.a, m.b);
         const dxq = ctrl[0] - c.x, dyq = ctrl[1] - c.y;
         const dq = Math.hypot(dxq, dyq) || 1;
-        // stop just short of the limb; the marker's 3.4-unit overshoot then
-        // buries the head in the planet edge instead of floating off it
-        const bite = bR - 7;
+        // Land the arrowHEAD on the limb, not the path end. #smArr is
+        // userSpaceOnUse with viewBox 8 wide, refX 6.5 and markerWidth 18, so
+        // the tip sits (8-6.5)x(18/8) = 3.375 units beyond the path end. Ending
+        // 3 units outside the limb therefore puts the tip 0.4 inside it: just
+        // kissing the edge, with no hairline gap and nothing buried.
+        const bite = bR + 3;
         const ex = c.x + dxq / dq * bite, ey = c.y + dyq / dq * bite;
         [".fl-" + key, ".g-" + key].forEach(sel => {
           const pth = map.querySelector(sel);
@@ -8375,21 +8410,35 @@ function initBlueprint() {
   });
 }
 
-/* Each chapter frame adopts the true shape of its picture, so nothing is ever
-   cropped. Where a chapter cycles through several shots the frame is sized to
-   the TALLEST of them (the smallest width/height ratio), which leaves the
-   wider shots gently letterboxed instead of chopping their edges off. The
-   measurement is per-image and runs as each file decodes, so lazy-loaded
-   photographs settle the layout the moment they arrive. */
+/* Each chapter frame adopts the true shape of the picture it is showing, so
+   nothing is ever cropped and nothing is ever letterboxed. Where a chapter
+   cycles through several shots the surrounding BOX reserves the tallest of
+   them; the frame then morphs between ratios inside that fixed reservation as
+   the photos turn over. The measurement is per-image and runs as each file
+   decodes, so lazy-loaded photographs settle the layout the moment they
+   arrive. */
 function fitChapterFigures() {
   document.querySelectorAll(".ch-fig").forEach(fig => {
     const imgs = [...fig.querySelectorAll("img")];
     if (!imgs.length) return;
-    let ar = Infinity;
+    let box = fig.parentElement;
+    if (!box || !box.classList.contains("ch-figbox")) {
+      box = document.createElement("div");
+      box.className = "ch-figbox";
+      fig.parentNode.insertBefore(box, fig);
+      box.appendChild(fig);
+    }
+    let tallest = Infinity;
     const take = im => {
       if (!im.naturalWidth || !im.naturalHeight) return;
-      const r = im.naturalWidth / im.naturalHeight;
-      if (r < ar) { ar = r; fig.style.setProperty("--ar", ar.toFixed(4)); }
+      im.dataset.ar = (im.naturalWidth / im.naturalHeight).toFixed(4);
+      if (+im.dataset.ar < tallest) {
+        tallest = +im.dataset.ar;
+        box.style.setProperty("--armin", tallest.toFixed(4));
+      }
+      const shown = imgs.find(x => x.classList.contains("on")) || imgs[0];
+      if (im === shown) fig.style.setProperty("--ar", im.dataset.ar);
+      if (window.__ffBalanceSoon) window.__ffBalanceSoon();
     };
     imgs.forEach(im => {
       if (im.complete) take(im);
@@ -8397,6 +8446,47 @@ function fitChapterFigures() {
     });
   });
 }
+
+/* CHAPTER BALANCE — every chapter is measured and tuned on its own. The story
+   column and the picture rail rarely run to the same length (chapter 14's text
+   overran its rail by 653px, chapter 8 and 12 by 432px), which reads as a hole
+   punched out of the card. Each card picks the column split that brings the
+   two closest from a small fixed set of steps, so the layout still looks like
+   a system rather than twenty arbitrary widths, and whatever is left over is
+   centred instead of left dangling. */
+const CHCOL_STEPS = [0.84, 0.92, 1.0, 1.08, 1.16, 1.24];
+function balanceChapters() {
+  const cards = [...document.querySelectorAll(".jcard.chapter")];
+  if (!cards.length) return;
+  const contentH = el => {
+    const k = el.children;
+    if (!k.length) return 0;
+    const last = k[k.length - 1];
+    return (last.offsetTop - el.offsetTop) + last.offsetHeight;
+  };
+  const narrow = innerWidth <= 900;
+  cards.forEach(card => {
+    const main = card.querySelector(".ch-main"), side = card.querySelector(".ch-side");
+    if (!main || !side) return;
+    side.classList.remove("balanced");
+    if (narrow) { card.style.removeProperty("--chcols"); return; }
+    let best = 0.92, bestGap = Infinity;
+    for (const fr of CHCOL_STEPS) {
+      card.style.setProperty("--chcols", `1.08fr ${fr}fr`);
+      const gap = contentH(main) - contentH(side);
+      if (Math.abs(gap) < Math.abs(bestGap)) { bestGap = gap; best = fr; }
+      if (gap < 0) break;                       // rail already outruns the text
+    }
+    card.style.setProperty("--chcols", `1.08fr ${best}fr`);
+    if (contentH(main) - contentH(side) > 80) side.classList.add("balanced");
+  });
+}
+let chBalanceT = 0;
+window.__ffBalanceSoon = () => {
+  clearTimeout(chBalanceT);
+  chBalanceT = setTimeout(() => { try { balanceChapters(); } catch (e) {} }, 160);
+};
+addEventListener("resize", () => window.__ffBalanceSoon());
 
 /* Chapters carrying several photographs cross-fade through them. One shared
    timer drives every figure so the whole timeline stays on a single clock. */
@@ -8411,7 +8501,10 @@ function initChapterPhotos() {
       if (!o.f.isConnected) return;              // the figure self-removes if a file is missing
       o.imgs[o.i].classList.remove("on");
       o.i = (o.i + 1) % o.imgs.length;
-      o.imgs[o.i].classList.add("on");
+      const next = o.imgs[o.i];
+      next.classList.add("on");
+      // the frame morphs to the incoming photo's own shape as it fades in
+      if (next.dataset.ar) o.f.style.setProperty("--ar", next.dataset.ar);
     });
   }, 3800);
 }
@@ -11171,6 +11264,7 @@ safeBoot("journey", renderJourney);
 safeBoot("blueprint", initBlueprint);         // market levels 1–3
 safeBoot("figureFit", fitChapterFigures);     // shape every frame to its picture
 safeBoot("chapterPhotos", initChapterPhotos); // after the cards exist
+safeBoot("chapterBalance", balanceChapters);  // then even the two columns up
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);
 safeBoot("trajectory", renderTrajectory);

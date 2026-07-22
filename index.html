@@ -750,7 +750,11 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 /* The sphere sits directly behind this copy, so both the headline and the
    standfirst carry a soft light bloom of their own — it lifts them clear of
    the planet's mid-tones without putting a visible plate behind the text. */
-.focus-handoff h2{position:relative;max-width:900px;margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);
+/* max-width tracks the container (930) rather than 900: the headline breaks
+   explicitly after "Company", and at the 4.4rem cap the second line needs
+   ~873px — against a 900 cap that is 27px of headroom, close enough that a
+   font-rendering difference would spill it onto a third line. */
+.focus-handoff h2{position:relative;max-width:min(930px,100%);margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);
   line-height:1.02;letter-spacing:-.045em;text-wrap:balance;
   text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 34px rgba(238,244,255,.95),0 0 70px rgba(238,244,255,.7);}
 .focus-handoff .focus-subtitle{position:relative;max-width:780px;margin:18px auto 0;color:#4b5769;
@@ -3364,7 +3368,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="focus-orb" aria-hidden="true"></div>
     <div class="focus-handoff-inner">
       <p class="focus-label">Current Investment Focus</p>
-      <h2 id="investment-focus-title">Now Zoom Into the Company Already Building the Future</h2>
+      <h2 id="investment-focus-title">Explore the Company<br>Already Building the Future</h2>
       <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd (soon to become <b>Freedom Global Ltd</b>) is the group&rsquo;s established direct-to-consumer ecommerce business and the focus of this investment case.</p>
       <div class="focus-summary" aria-label="Freedom Global company summary">
         <div class="fs-head">
@@ -6169,6 +6173,12 @@ function initCourier() {
   // Linear angular progress preserves the incoming downward tangent at the
   // right limb and avoids an ease-in pause or acceleration kink on entry.
   const orbitTh = q => cl01(q) * T2 * ORBIT_REVS;
+  /* THE BLUE PLANET LAP. The courier circles the flagship sphere on the focus
+     screen while it zooms in. 1.25 revolutions: it enters at the right limb
+     travelling DOWN (the tangent it arrives with) and leaves at the bottom
+     travelling LEFT — straight into the run down to the timeline rail. */
+  const FOCUS_REVS = 1.25, FOCUS_FLAT = .40;      // ry/rx of the lap ellipse
+  const focusTh = q => cl01(q) * T2 * FOCUS_REVS;
   // THE RAISE showcase lap — a slower, wider circuit around the funding
   // brief while the cloud chapter scrolls (and it keeps gliding when parked)
   const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + raiseSpinRel * .55;
@@ -6240,6 +6250,33 @@ function initCourier() {
     const segs = [];
     // the sky — dives out beneath the cloud deck
     segs.push({ sky: true, s0: S0 - 9, s1: S0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
+    /* the blue planet — a full lap of the flagship sphere while the focus
+       screen zooms it in. Geometry is read from the live element every frame,
+       so the lap tracks the zoom instead of drifting off it. */
+    const fSec = document.getElementById("investment-focus");
+    const fOrb = fSec && fSec.querySelector(".focus-orb");
+    if (fOrb) {
+      /* Anchor the lap to the SPHERE's own travel, not the section's. Tied to
+         the section it ran on until the orb had scrolled 260px above the
+         viewport — and band() then clamped the exit point back into view,
+         teleporting the courier 255px sideways the instant the lap ended.
+         Between .84vh and .24vh the sphere is comfortably on screen the whole
+         way, so entry and exit are both continuous. */
+      const oR0 = fOrb.getBoundingClientRect();
+      const orbDocY = oR0.top + oR0.height / 2 + scrollY;
+      const f0 = Math.max(S0 + 30, orbDocY - vh * .84);
+      const f1 = orbDocY - vh * .24;
+      if (f1 - f0 > 140) segs.push({ focus: true, s0: f0, s1: f1, at: q => {
+        const r3 = fOrb.getBoundingClientRect();
+        // the PAINTED sphere is 270 of the orb's 500px box and sits 1.8% right
+        // of its centre — orbit that, not the box
+        const R3 = r3.width * .27;
+        const cx3 = r3.left + r3.width * .518, cy3 = r3.top + r3.height / 2;
+        const th = focusTh(q);
+        const rx3 = R3 * 1.46, ry3 = rx3 * FOCUS_FLAT;
+        return { x: cx3 + Math.cos(th) * rx3, y: cy3 + Math.sin(th) * ry3 };
+      } });
+    }
     // the journey timeline — the courier locks onto the rail and holds the
     // exact focus line where the milestones ignite as they scroll past it
     const rail = document.getElementById("jrail");
@@ -6466,6 +6503,7 @@ function initCourier() {
         const toOrbit = !!s.orbit;
         const toTraj = s.kind === "traj";
         const toRail = !!s.rail;
+        const toFocus = !!s.focus;
         const gx = exitRight ? gxR : gxL;
         let P4, seamBand = null;
         if (toTraj) {
@@ -6503,6 +6541,19 @@ function initCourier() {
             { x: Math.max(b2.x + 130, Math.min(rightLane, approachX)), y: Math.max(approachY - 40, ih * .70) },
             { x: b2.x + 48, y: b2.y - 118 },
             { x: b2.x, y: b2.y - 50 },
+            b2];
+        } else if (toFocus) {
+          // Down the right flank and onto the sphere's right limb already
+          // travelling downward — the exact tangent the lap opens with, so
+          // approach and orbit read as one continuous motion. Knots are evenly
+          // spaced; the spline gives each the same share of the scroll, so an
+          // uneven set makes the courier crawl then bolt.
+          const dxF = b2.x - a2.x, dyF = b2.y - a2.y;
+          P4 = [a2,
+            { x: a2.x + dxF * .20, y: a2.y + dyF * .24 },
+            { x: a2.x + dxF * .50, y: a2.y + dyF * .52 },
+            { x: b2.x + 30, y: a2.y + dyF * .78 },
+            { x: b2.x, y: b2.y - 62 },
             b2];
         } else if (toRail) {
           // JOINING THE TIMELINE. The generic gutter route exited right, ran
@@ -6545,14 +6596,14 @@ function initCourier() {
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
         // the near-vertical globe approach flies a DEAD-STRAIGHT rail — any
         // lateral wave on that leg reads as stutter, not life
-        if (!toOrbit && !toRail) {
+        if (!toOrbit && !toRail && !toFocus) {
           const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
           pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
         }
         // longer hauls keep the signature loop-the-loop — flown INSIDE the
         // gutter (radius stays within the margin), smt() eases the sweep in
         // and out so entry and exit tangents stay kink-free
-        if (haul > innerHeight * 1.05 && !toOrbit && !toTraj && !toRail) {
+        if (haul > innerHeight * 1.05 && !toOrbit && !toTraj && !toRail && !toFocus) {
           const lw = cl01((g2 - .36) / .28);
           if (lw > 0 && lw < 1) {
             const th3 = smt(lw) * T2;
@@ -6572,11 +6623,11 @@ function initCourier() {
       }
       if (yEff <= s.s1) {
         const q = cl01((yEff - s.s0) / Math.max(1, s.s1 - s.s0));
-        return { p: s.at(q), oq: s.orbit ? q : null, pq: s.pad ? q : null, rq: s.raise ? q : null, kind: s.kind || null, q };
+        return { p: s.at(q), oq: s.orbit ? q : null, fq: s.focus ? q : null, pq: s.pad ? q : null, rq: s.raise ? q : null, kind: s.kind || null, q };
       }
     }
     const last = segs[segs.length - 1];
-    return { p: last.at(1), oq: last.orbit ? 1 : null, pq: last.pad ? 1 : null, rq: last.raise ? 1 : null, kind: last.kind || null, q: 1 };
+    return { p: last.at(1), oq: last.orbit ? 1 : null, fq: last.focus ? 1 : null, pq: last.pad ? 1 : null, rq: last.raise ? 1 : null, kind: last.kind || null, q: 1 };
   };
   let pd = -1, angS = null, posS = null, lastT = 0, ptPrev = null, dirState = 1;
   const loSecRef = document.getElementById("liftoff");
@@ -6587,6 +6638,7 @@ function initCourier() {
   const plumeEls = [...wrap.querySelectorAll(".rk-plume,.rk-plume2,.rk-nozGlow,.rk-trailline")];
   let landT = 0, lastBurn = -1;
   let orbitSpin0 = null, raiseSpin0 = null, inOrbitPrev = false, inRaisePrev = false;
+  let fOrbRef = null;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
   let gDotsC = [], tDotsC = [];
@@ -6711,7 +6763,7 @@ function initCourier() {
              run a little wide through a bend and settle back, instead of being nailed
              to the path sample every frame (which is what made it feel stiff). */
           const posK = snap ? 1 : 1 - Math.exp(-dt * ((L0.oq != null || L0.pq != null) ? 14 : (L0.q == null ? 9 : 7)));
-          if (!posS || snap || L0.oq != null || L0.pq != null || globeLocked) posS = { x: P.x, y: P.y };
+          if (!posS || snap || L0.oq != null || L0.fq != null || L0.pq != null || globeLocked) posS = { x: P.x, y: P.y };
           else {
             posS.x += (P.x - posS.x) * posK;
             posS.y += (P.y - posS.y) * posK;
@@ -6751,6 +6803,11 @@ function initCourier() {
           else if (L0.oq != null) {
             const th = orbitTh(L0.oq);
             ta = Math.atan2(Math.cos(th) * .46, -Math.sin(th));
+          } else if (L0.fq != null) {
+            // the lap ellipse's own tangent, read analytically so the circuit
+            // reads as true motion even with the scroll parked
+            const th = focusTh(L0.fq);
+            ta = Math.atan2(Math.cos(th) * FOCUS_FLAT, -Math.sin(th));
           } else if (L0.rq != null) {
             const th = raiseTh(L0.rq);
             ta = Math.atan2(Math.cos(th) * ((innerHeight * .27) / (innerWidth * .3)), -Math.sin(th));
@@ -6761,6 +6818,18 @@ function initCourier() {
           while (dA < -Math.PI) dA += T2;
           const angK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 10 : 4.2));
           if (L0.oq != null || globeLocked) { angS = ta; dA = 0; }
+          else if (L0.fq != null) {
+            /* The lap's own tangent is authoritative once the circuit is under
+               way, but snapping straight to it swung the nose 142 degrees in a
+               single frame. The approach's heading is a finite difference of
+               SCREEN position, and the sphere is scrolling upward underneath
+               the courier, which drags that measurement well off the true
+               flight direction — so the two sources genuinely disagree at the
+               boundary. Easing across the lap's first tenth turns that into
+               the ship pitching into its insertion. */
+            const w = smt(cl01(L0.fq / .10));
+            angS += dA * (angK + (1 - angK) * w);
+          }
           else angS += dA * angK;
           // Layered time-based drift moves perpendicular to the flight path:
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
@@ -6774,7 +6843,23 @@ function initCourier() {
           alpha = smt(cl01(pd / .028));                   // fade in out of the deck
           // No autonomous breathing while orbiting: the globe rocket's
           // position, heading and scale are all dictated by scroll.
-          let sc = (L0.oq != null || globeLocked) ? 1 : 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
+          let sc = (L0.oq != null || L0.fq != null || globeLocked) ? 1 : 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
+          if (L0.fq != null) {
+            /* The ship grows WITH the sphere it is circling, because its size
+               is derived from the sphere's measured diameter rather than a
+               blind multiplier. That is what makes "always smaller than the
+               planet" a property of the code instead of a coincidence: a fixed
+               x1.42 put the art box at 97% of the planet the moment the zoom
+               failed to run. The box holds .66 -> .72 of the diameter across
+               the lap, and the drawn hull is a fraction of that box again.
+               (468 is the art's natural width; the transform divides sc by 3.) */
+            const oEl = fOrbRef || (fOrbRef = document.querySelector("#investment-focus .focus-orb"));
+            const r4 = oEl && oEl.getBoundingClientRect();
+            if (r4 && r4.width > 8) {
+              const sphereD = r4.width * .54;
+              sc = 3 * (sphereD * (.66 + .06 * smt(cl01(L0.fq)))) / 468;
+            } else sc *= 1 + .42 * smt(cl01(L0.fq));
+          }
           if (padQ != null) {
             // the courier ENLARGES into the pad rocket as it settles on the slot
             const ps = window.__ffPadScale ? window.__ffPadScale() : 2.2;
@@ -6784,6 +6869,14 @@ function initCourier() {
             const dk = padQ != null && padQ >= .985;
             if (dk !== dockOn) { dockOn = dk; loSecRef.classList.toggle("docked", dk); }
             if (dk) alpha = 0;                            // the pad rocket takes over seamlessly
+          }
+          if (L0.fq != null) {
+            // the far half of the lap is BEHIND the sphere. The courier is a
+            // fixed, high z-index layer so it cannot be stacked under the
+            // orb — it fades across the limb instead, which reads the same.
+            const occF = smt(cl01((-Math.sin(focusTh(L0.fq)) - .02) / .2));
+            alpha *= 1 - occF * .93;
+            sc *= 1 - .06 * occF;
           }
           if (L0.oq != null) {
             const q = L0.oq;
@@ -7212,7 +7305,15 @@ function renderSystem() {
        30. The outer must stay ABOVE the inner at every x or the two arcs
        cross; at 302 vs 332 it clears by 30 at the centre and more at the
        flanks. */
-    const apex = cls.indexOf("outer") !== -1 ? 302 : 332;
+    /* The apexes MUST keep rising through the whole stack — 349, 328, 310 for
+       the pink shells, then both whites above them. Flattening the inner white
+       to 332 put it BELOW the 310 pink arc, so a pink line ran between the two
+       white ones and they no longer read as a neighbouring pair. 294/272 keeps
+       the two whites adjacent with nothing between them (22 apart at the apex,
+       more at the flanks), still clears the pink stack by 16, and because the
+       outer shell also grew to rx 1190 its back is flatter in proportion than
+       it ever was: 244/1190 = 0.205 against the old 233/1060 = 0.220. */
+    const apex = cls.indexOf("outer") !== -1 ? 272 : 294;
     return cyR - apex;
   };
   const shell = ([rx, ry, cyR, cls], i) => {
@@ -11309,18 +11410,28 @@ function initFocusHandoff() {
   const inner = section && section.querySelector(".focus-handoff-inner");
   if (!section || !inner || REDUCED) return;
   let raf = 0;
+  const orb = section.querySelector(".focus-orb");
   const paint = () => {
     raf = 0;
     const r = section.getBoundingClientRect();
     const vh = Math.max(1, innerHeight);
     const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .72)));
     const eased = 1 - Math.pow(1 - p, 3);
+    if (orb) {
+      /* the sphere zooms IN across the whole pass — 0 when its section's top
+         is at the fold, 1 when its bottom leaves the top. The courier's lap
+         reads the element live, so the circuit widens with it. */
+      const zp = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+      orb.style.transform = "translate(-50%,-50%) scale(" + (.85 + .37 * zp).toFixed(4) + ")";
+    }
     inner.style.opacity = eased.toFixed(3);
     inner.style.transform = `translate3d(0,${((1 - eased) * 58).toFixed(2)}px,0) scale(${(.985 + eased * .015).toFixed(4)})`;
   };
   const queue = () => { if (!raf) raf = requestAnimationFrame(paint); };
   addEventListener("scroll", queue, { passive: true });
   addEventListener("resize", queue, { passive: true });
+  // hidden tabs get no rAF — a deterministic single-step for verification
+  window.__ffFocusOrb = () => { paint(); return orb ? orb.style.transform : null; };
   paint();
 }
 

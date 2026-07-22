@@ -8396,26 +8396,26 @@ function renderSystem() {
           const nums = dAttr.match(/-?[\d.]+/g);
           if (!nums || nums.length < 4) return;
           const ex = +nums[nums.length - 2], ey = +nums[nums.length - 1];
+          /* Move ONLY the endpoint, out along the ray from the planet's centre
+             through where the lane already ended, so it comes to rest on the
+             limb. The control points are left exactly as authored, which is
+             what gives each lane its own approach angle: form and storm keep
+             the lift of arcUp, the two stations keep their long sweeps. An
+             earlier pass also rewrote the second control point to sit radially
+             behind the landing, forcing every arrival square-on to the sphere;
+             that flattened the curves into the planet and has been dropped. */
+          let ux = ex - t.cx, uy = ey - t.cy;
+          const ul = Math.hypot(ux, uy);
+          if (!(ul > .5)) return;
+          ux /= ul; uy /= ul;
+          const nx = (t.cx + ux * bite).toFixed(1), ny = (t.cy + uy * bite).toFixed(1);
           if (/C/i.test(dAttr) && nums.length >= 8) {
-            let ux = ex - t.cx, uy = ey - t.cy;
-            const ul = Math.hypot(ux, uy);
-            if (!(ul > .5)) return;
-            ux /= ul; uy /= ul;
-            const nx = t.cx + ux * bite, ny = t.cy + uy * bite;
-            const run = Math.max(24, Math.hypot(+nums[2] - nx, +nums[3] - ny) * .38);
             pth.setAttribute("d", "M " + nums[0] + " " + nums[1]
               + " C " + nums[2] + " " + nums[3]
-              + ", " + (nx + ux * run).toFixed(1) + " " + (ny + uy * run).toFixed(1)
-              + ", " + nx.toFixed(1) + " " + ny.toFixed(1));
+              + ", " + nums[4] + " " + nums[5]
+              + ", " + nx + " " + ny);
           } else {
-            // a straight lane is only head-on if the whole line points at the
-            // centre, so the landing point follows from where the lane starts
-            let vx = +nums[0] - t.cx, vy = +nums[1] - t.cy;
-            const vl = Math.hypot(vx, vy);
-            if (!(vl > .5)) return;
-            vx /= vl; vy /= vl;
-            pth.setAttribute("d", "M " + nums[0] + " " + nums[1]
-              + " L " + (t.cx + vx * bite).toFixed(1) + " " + (t.cy + vy * bite).toFixed(1));
+            pth.setAttribute("d", "M " + nums[0] + " " + nums[1] + " L " + nx + " " + ny);
           }
         });
       });

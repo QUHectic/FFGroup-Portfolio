@@ -761,6 +761,16 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;
   text-shadow:0 0 22px rgba(238,244,255,.95),0 0 44px rgba(238,244,255,.8);}
 .focus-handoff .focus-subtitle b{font-weight:750;color:#1e2a3c;}
+/* the second line carries the same three-stop brand ramp as the dossier's
+   category line. Gradient text is painted through the glyphs, so the h2's
+   white bloom would ghost straight through it — a drop-shadow filter acts on
+   the painted result instead and keeps it legible over the sphere. */
+.focus-handoff h2 .h2-grad{
+  background:linear-gradient(90deg,#ff4fb0,#7c5cff,#52c8ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;
+  filter:drop-shadow(0 0 16px rgba(238,244,255,.95)) drop-shadow(0 0 40px rgba(238,244,255,.7));
+}
 /* the summary card carries the blue essence of the planet it describes —
    a lit rim, an outer bloom and a cool inner wash, all on top of white */
 .focus-summary{
@@ -792,25 +802,27 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
    is, WHERE it sells and WHAT it is aiming at without reading a line of prose. */
 .focus-summary-head{display:none;}
 .fs-head{
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;
-  padding:16px 24px;text-align:left;
+  /* 1fr auto 1fr puts the identity on the box's true centre line, with the
+     monogram and the status pill flanking it */
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;
+  padding:16px 24px;text-align:center;
   border-bottom:1px solid rgba(56,169,255,.22);
   background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(238,246,255,.72));
 }
 .fs-mark{
-  display:grid;place-items:center;width:46px;height:46px;border-radius:14px;flex:none;
+  justify-self:start;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;flex:none;
   font-family:"Orbitron",system-ui,sans-serif;font-size:.92rem;font-weight:700;
   color:#0d2b4a;background:linear-gradient(150deg,#ffffff,#dcecff);
   border:1px solid rgba(56,169,255,.45);
   box-shadow:0 6px 18px rgba(20,58,112,.16),inset 0 1px 0 #fff,0 0 22px rgba(56,169,255,.28);
 }
-.fs-id{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.fs-id{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
 .fs-id strong{font-size:clamp(1.24rem,2vw,1.5rem);letter-spacing:-.03em;line-height:1.1;}
 .fs-type{font-size:.63rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;
   background:linear-gradient(90deg,#ff4fb0,#7c5cff,#52c8ff);
   -webkit-background-clip:text;background-clip:text;color:transparent;}
 .fs-status{
-  display:inline-flex;align-items:center;gap:7px;flex:none;padding:6px 12px;border-radius:99px;
+  justify-self:end;display:inline-flex;align-items:center;gap:7px;flex:none;padding:6px 12px;border-radius:99px;
   font-size:.6rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#0f7a4a;
   background:rgba(38,200,130,.12);border:1px solid rgba(38,200,130,.42);
 }
@@ -818,18 +830,18 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   box-shadow:0 0 0 0 rgba(34,192,125,.55);animation:fsPulse 2.4s var(--ease) infinite;}
 @keyframes fsPulse{70%{box-shadow:0 0 0 7px rgba(34,192,125,0);}100%{box-shadow:0 0 0 0 rgba(34,192,125,0);}}
 .fs-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
-  background:rgba(56,169,255,.2);text-align:left;}
+  background:rgba(56,169,255,.2);text-align:center;}
 .fs-fact{padding:13px 24px;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(248,252,255,.97));
   transition:background .25s var(--ease);}
 .fs-fact:hover{background:linear-gradient(180deg,#ffffff,#e8f4ff);}
 .fs-fact span{display:block;color:#28374d;font-size:.9rem;font-weight:650;line-height:1.45;}
 .focus-summary b{display:block;margin-bottom:5px;font-size:.6rem;font-weight:900;
   letter-spacing:.15em;text-transform:uppercase;color:#2f8fd4;}
-.fs-block{padding:14px 24px 15px;text-align:left;border-top:1px solid rgba(56,169,255,.2);
+.fs-block{padding:14px 24px 15px;text-align:center;border-top:1px solid rgba(56,169,255,.2);
   background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(246,251,255,.97));}
 /* channels carry their real state, straight from the story: eBay and Temu are
    trading, Amazon/Shopify/OnBuy are mid-launch, TikTok Shop is on the roadmap */
-.fs-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;}
+.fs-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0;padding:0;list-style:none;}
 .fs-chips li{
   display:inline-flex;align-items:center;gap:8px;padding:7px 13px 7px 11px;border-radius:11px;
   font-size:.82rem;font-weight:700;color:#1d2b3e;background:#fff;
@@ -847,11 +859,11 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 .fs-chips .soon em{color:#a86a06;}
 .fs-chips .next i{background:#9aa7ba;}
 /* the north star: one number, stated plainly, on its own lit plate */
-.fs-ambition{position:relative;overflow:hidden;padding:15px 24px 17px;text-align:left;
+.fs-ambition{position:relative;overflow:hidden;padding:15px 24px 17px;text-align:center;
   border-top:1px solid rgba(56,169,255,.28);
   background:linear-gradient(140deg,#0d1730,#122a52 58%,#0e2647);}
 .fs-ambition b{color:#7fd0ff;}
-.fs-ambition p{display:flex;align-items:baseline;gap:14px;margin:0;flex-wrap:wrap;}
+.fs-ambition p{display:flex;flex-direction:column;align-items:center;gap:5px;margin:0;}
 .fs-ambition strong{font-family:"Orbitron",system-ui,sans-serif;font-size:clamp(1.7rem,3.4vw,2.3rem);
   font-weight:700;letter-spacing:-.02em;line-height:1;
   background:linear-gradient(92deg,#7ee3ff,#b9a3ff 52%,#ff8fc8);
@@ -3368,7 +3380,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="focus-orb" aria-hidden="true"></div>
     <div class="focus-handoff-inner">
       <p class="focus-label">Current Investment Focus</p>
-      <h2 id="investment-focus-title">Explore the Company<br>Already Building the Future</h2>
+      <h2 id="investment-focus-title">Explore the Company<br><span class="h2-grad">Already Building the Future</span></h2>
       <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd (soon to become <b>Freedom Global Ltd</b>) is the group&rsquo;s established direct-to-consumer ecommerce business and the focus of this investment case.</p>
       <div class="focus-summary" aria-label="Freedom Global company summary">
         <div class="fs-head">
@@ -6173,12 +6185,19 @@ function initCourier() {
   // Linear angular progress preserves the incoming downward tangent at the
   // right limb and avoids an ease-in pause or acceleration kink on entry.
   const orbitTh = q => cl01(q) * T2 * ORBIT_REVS;
-  /* THE BLUE PLANET LAP. The courier circles the flagship sphere on the focus
-     screen while it zooms in. 1.25 revolutions: it enters at the right limb
-     travelling DOWN (the tangent it arrives with) and leaves at the bottom
-     travelling LEFT — straight into the run down to the timeline rail. */
-  const FOCUS_REVS = 1.25, FOCUS_FLAT = .40;      // ry/rx of the lap ellipse
+  /* THE BLUE PLANET LAP — flown during the DIVE, where the system map scales
+     into the flagship sphere until it fills the frame. The sphere grows ~29x
+     underneath the courier, so both the circuit and the ship are sized from
+     the face's LIVE rect every frame rather than from constants. */
+  const FOCUS_REVS = 1, FOCUS_FLAT = .42;         // ry/rx of the lap ellipse
   const focusTh = q => cl01(q) * T2 * FOCUS_REVS;
+  let diveFaceEl = null;
+  const diveFace = () => {
+    if (!diveFaceEl || !diveFaceEl.isConnected)
+      diveFaceEl = document.querySelector('#sysMap .sm-planet[data-key="fly"] circle[fill^="url(#smp-"]');
+    const r5 = diveFaceEl && diveFaceEl.getBoundingClientRect();
+    return (r5 && r5.width) ? { cx: r5.left + r5.width / 2, cy: r5.top + r5.height / 2, R: r5.width / 2 } : null;
+  };
   // THE RAISE showcase lap — a slower, wider circuit around the funding
   // brief while the cloud chapter scrolls (and it keeps gliding when parked)
   const raiseTh = q => Math.PI * .5 + smt5(cl01(q)) * T2 + raiseSpinRel * .55;
@@ -6246,35 +6265,29 @@ function initCourier() {
       return { s0: a2.y + scrollY - vh * .88, s1: b2.y + scrollY - vh * .28, at: eased, els, Ls, Lt };
     } catch (e2) { return null; }
   };
-  const buildSegs = (S0, S1, pT, vh) => {
+  const buildSegs = (S0, S1, pT, vh, cloudS0, diveA, diveB) => {
     const segs = [];
     // the sky — dives out beneath the cloud deck
-    segs.push({ sky: true, s0: S0 - 9, s1: S0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
-    /* the blue planet — a full lap of the flagship sphere while the focus
-       screen zooms it in. Geometry is read from the live element every frame,
-       so the lap tracks the zoom instead of drifting off it. */
-    const fSec = document.getElementById("investment-focus");
-    const fOrb = fSec && fSec.querySelector(".focus-orb");
-    if (fOrb) {
-      /* Anchor the lap to the SPHERE's own travel, not the section's. Tied to
-         the section it ran on until the orb had scrolled 260px above the
-         viewport — and band() then clamped the exit point back into view,
-         teleporting the courier 255px sideways the instant the lap ended.
-         Between .84vh and .24vh the sphere is comfortably on screen the whole
-         way, so entry and exit are both continuous. */
-      const oR0 = fOrb.getBoundingClientRect();
-      const orbDocY = oR0.top + oR0.height / 2 + scrollY;
-      const f0 = Math.max(S0 + 30, orbDocY - vh * .84);
-      const f1 = orbDocY - vh * .24;
-      if (f1 - f0 > 140) segs.push({ focus: true, s0: f0, s1: f1, at: q => {
-        const r3 = fOrb.getBoundingClientRect();
-        // the PAINTED sphere is 270 of the orb's 500px box and sits 1.8% right
-        // of its centre — orbit that, not the box
-        const R3 = r3.width * .27;
-        const cx3 = r3.left + r3.width * .518, cy3 = r3.top + r3.height / 2;
+    segs.push({ sky: true, s0: cloudS0 - 9, s1: cloudS0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
+    /* the blue planet — one lap of the flagship sphere while the dive zooms
+       it up to fill the frame. The circuit is capped at a fraction of the
+       viewport: once the sphere is larger than the screen a true 1.5R orbit
+       would be entirely off-frame, and the courier then reads as riding the
+       visible face, which is exactly what it is doing. */
+    if (diveA != null && diveB - diveA > 160) {
+      segs.push({ focus: true, s0: diveA, s1: diveB, at: q => {
+        const F = diveFace();
+        if (!F) return { x: innerWidth * .5, y: innerHeight * .5 };
+        const rx5 = Math.min(F.R * 1.5, Math.min(innerWidth, innerHeight) * .36);
+        const ry5 = rx5 * FOCUS_FLAT;
+        /* The dive drives the sphere's CENTRE well below the fold — it reaches
+           cy 1351 in an 860px frame, because what fills the screen by then is
+           the planet's upper dome. Following that centre would fly the courier
+           off the bottom, so the circuit is held over the visible face. */
+        const ccx = Math.max(rx5 + 30, Math.min(innerWidth - rx5 - 30, F.cx));
+        const ccy = Math.max(ry5 + 60, Math.min(innerHeight - ry5 - 60, F.cy));
         const th = focusTh(q);
-        const rx3 = R3 * 1.46, ry3 = rx3 * FOCUS_FLAT;
-        return { x: cx3 + Math.cos(th) * rx3, y: cy3 + Math.sin(th) * ry3 };
+        return { x: ccx + Math.cos(th) * rx5, y: ccy + Math.sin(th) * ry5 };
       } });
     }
     // the journey timeline — the courier locks onto the rail and holds the
@@ -6638,7 +6651,6 @@ function initCourier() {
   const plumeEls = [...wrap.querySelectorAll(".rk-plume,.rk-plume2,.rk-nozGlow,.rk-trailline")];
   let landT = 0, lastBurn = -1;
   let orbitSpin0 = null, raiseSpin0 = null, inOrbitPrev = false, inRaisePrev = false;
-  let fOrbRef = null;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
   let gDotsC = [], tDotsC = [];
@@ -6708,7 +6720,20 @@ function initCourier() {
     wrap.style.zIndex = "70";
     if (document.documentElement.classList.contains("spx") && innerWidth > 900) {
       const cR = clouds.getBoundingClientRect();
-      const S0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
+      const cloudS0 = scrollY + cR.top + clouds.offsetHeight - vh + vh * .12;  // just past the cloud scrub
+      /* The flight now reaches back to the blue-planet dive, which runs over
+         the system build's last stretch. Segments carry ABSOLUTE scroll, so
+         extending the range backwards only re-parameterises pd — every later
+         landmark keeps its exact position. */
+      const bEl = document.querySelector(".sys-build");
+      let diveA = null, diveB = null;
+      if (bEl && bEl.offsetHeight > vh) {
+        const bTop = bEl.getBoundingClientRect().top + scrollY;
+        const bSpan = bEl.offsetHeight - vh;
+        diveA = bTop + bSpan * .941;      // the face is a few hundred px across by here
+        diveB = bTop + bSpan * .995;
+      }
+      const S0 = diveA != null ? Math.min(diveA, cloudS0) : cloudS0;
       const pT = scrollY + planet.getBoundingClientRect().top;
       const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
       const S1 = document.documentElement.scrollHeight - vh; // the page's true end IS the pad — never target scroll that can't exist
@@ -6730,7 +6755,7 @@ function initCourier() {
         pd = pd < 0 ? pt : pd + (pt - pd) * k;
         if (Math.abs(pt - pd) < .0005) pd = pt;
         if (pd > .0004) {
-          const segs = buildSegs(S0, S1, pT, vh);
+          const segs = buildSegs(S0, S1, pT, vh, cloudS0, diveA, diveB);
           const orbitSeg = segs.find(s2 => s2.orbit);
           // From the final analytics hand-off through the globe exit, the
           // visitor's scroll is the one and only clock.  Using the globally
@@ -6840,25 +6865,31 @@ function initCourier() {
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
           const bank = Math.max(-.16, Math.min(.16, dA * .42));
-          alpha = smt(cl01(pd / .028));                   // fade in out of the deck
+          /* Measured from the CLOUD hand-off, not from pd: S0 now reaches
+             back to the dive, so a pd-relative ramp would stretch over
+             thousands of pixels. */
+          alpha = smt(cl01((yEffNow - cloudS0) / (vh * .45)));
+          if (L0.fq != null) {
+            // the lap arrives and leaves under its own power — in as the
+            // sphere grows big enough to circle, out as it engulfs the frame
+            alpha = smt(cl01(L0.fq / .14)) * (1 - smt(cl01((L0.fq - .80) / .20)));
+          }
           // No autonomous breathing while orbiting: the globe rocket's
           // position, heading and scale are all dictated by scroll.
           let sc = (L0.oq != null || L0.fq != null || globeLocked) ? 1 : 1 + Math.sin(lifeT * .0019 + pd * 9) * .009;
           if (L0.fq != null) {
             /* The ship grows WITH the sphere it is circling, because its size
-               is derived from the sphere's measured diameter rather than a
-               blind multiplier. That is what makes "always smaller than the
-               planet" a property of the code instead of a coincidence: a fixed
-               x1.42 put the art box at 97% of the planet the moment the zoom
-               failed to run. The box holds .66 -> .72 of the diameter across
-               the lap, and the drawn hull is a fraction of that box again.
+               is derived from the face's measured diameter rather than a blind
+               multiplier. That is what makes "always smaller than the planet"
+               a property of the code instead of a coincidence: an earlier
+               fixed x1.42 put the art box at 97% of the planet the moment the
+               zoom failed to run. The box holds .30 of the diameter, and the
+               drawn hull is a fraction of that box again. A second cap keeps
+               it sane once the sphere is larger than the screen.
                (468 is the art's natural width; the transform divides sc by 3.) */
-            const oEl = fOrbRef || (fOrbRef = document.querySelector("#investment-focus .focus-orb"));
-            const r4 = oEl && oEl.getBoundingClientRect();
-            if (r4 && r4.width > 8) {
-              const sphereD = r4.width * .54;
-              sc = 3 * (sphereD * (.66 + .06 * smt(cl01(L0.fq)))) / 468;
-            } else sc *= 1 + .42 * smt(cl01(L0.fq));
+            const F = diveFace();
+            if (F) sc = Math.min(3 * (F.R * 2 * .30) / 468, 3 * (innerWidth * .19) / 468);
+            else sc *= 1 + .42 * smt(cl01(L0.fq));
           }
           if (padQ != null) {
             // the courier ENLARGES into the pad rocket as it settles on the slot
@@ -6875,8 +6906,13 @@ function initCourier() {
             // fixed, high z-index layer so it cannot be stacked under the
             // orb — it fades across the limb instead, which reads the same.
             const occF = smt(cl01((-Math.sin(focusTh(L0.fq)) - .02) / .2));
-            alpha *= 1 - occF * .93;
-            sc *= 1 - .06 * occF;
+            /* Once the sphere is larger than the frame there is no "behind"
+               left to pass into — the courier is simply over its surface — so
+               the occlusion tapers out as the planet engulfs the screen. */
+            const Fo = diveFace();
+            const surf = 1 - smt(cl01((Fo ? Fo.R * 2 / innerHeight : 0) - .9));
+            alpha *= 1 - occF * .92 * surf;
+            sc *= 1 - .05 * occF * surf;
           }
           if (L0.oq != null) {
             const q = L0.oq;
@@ -7316,10 +7352,33 @@ function renderSystem() {
     const apex = cls.indexOf("outer") !== -1 ? 272 : 294;
     return cyR - apex;
   };
+  /* The far half is normally a plain elliptical arc, but the OUTERMOST white
+     ring needs to run closer to the ring inside it only where the two pass
+     behind the sun — out at the flanks the spacing stays as it is. An arc
+     cannot vary like that, so that one ring is sampled and given a raised
+     centre. The rings are dotted, so a fine polyline is indistinguishable. */
+  const farPath = (rx, fry, cyR, tuck, halfW) => {
+    const N = 120;
+    let d = "";
+    for (let i2 = 0; i2 <= N; i2++) {
+      const t = Math.PI * i2 / N;
+      const x = cx - rx * Math.cos(t);
+      let y = cyR - fry * Math.sin(t);
+      if (tuck) {
+        const u = Math.abs(x - cx) / halfW;
+        if (u < 1) { const c2 = Math.cos(u * Math.PI / 2); y += tuck * c2 * c2; }
+      }
+      d += (i2 ? " L " : "M ") + f(x) + " " + f(y);
+    }
+    return d;
+  };
   const shell = ([rx, ry, cyR, cls], i) => {
     const fry = farRyOf(ry, cyR, cls);
+    const far = cls.indexOf("outer") !== -1
+      ? farPath(rx, fry, cyR, 12, 560)            // tuck 12 across the sun only
+      : `M ${cx - rx} ${cyR} A ${rx} ${fry} 0 0 1 ${cx + rx} ${cyR}`;
     return `
-    <path class="${cls} far" style="stroke:url(#smrg${i})" d="M ${cx - rx} ${cyR} A ${rx} ${fry} 0 0 1 ${cx + rx} ${cyR}"/>
+    <path class="${cls} far" style="stroke:url(#smrg${i})" d="${far}"/>
     <path class="${cls}" d="M ${cx - rx} ${cyR} A ${rx} ${ry} 0 0 0 ${cx + rx} ${cyR}"/>`;
   };
   // the behind-the-globe arcs fade out smoothly: each ring's far half wears a
@@ -8230,6 +8289,11 @@ function renderSystem() {
       return { cx: c.x, cy: c.y, r: (bb.width / 2) * Math.hypot(m.a, m.b) };
     };
     const fitLaneHeads = () => {
+      // Never re-land the arrows while the blue-planet dive is running: the
+      // flagship's face is mid-zoom, so anything measured off it now would be
+      // written back as a permanent endpoint. The lanes are hidden during the
+      // dive anyway, and layoutSubs runs again the moment it ends.
+      if (map.classList.contains("diving")) return;
       ["form", "storm", "fly", "ds1", "ds2"].forEach(key => {
         const t = laneTarget(key);
         if (!t || !(t.r > 0)) return;

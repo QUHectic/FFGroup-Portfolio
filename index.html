@@ -739,14 +739,28 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   background:radial-gradient(circle at 50% 44%,rgba(238,241,248,.72) 0%,rgba(238,241,248,.4) 44%,rgba(238,241,248,0) 74%);
 }
 .focus-handoff-inner{width:min(930px,100%);margin:auto;text-align:center;}
-.focus-handoff .focus-label{display:inline-flex;align-items:center;gap:10px;margin:0 0 15px;color:#52c8ff;font-size:.7rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
-.focus-handoff .focus-label::before{content:"";width:27px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--blue));box-shadow:0 0 12px rgba(56,169,255,.5);}
-.focus-handoff h2{max-width:900px;margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);line-height:1.02;letter-spacing:-.045em;text-wrap:balance;}
-.focus-handoff .focus-subtitle{max-width:780px;margin:18px auto 0;color:#5d6677;font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;}
+/* the eyebrow reads as a badge pinned over the planet, not floating type */
+.focus-handoff .focus-label{display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;
+  padding:7px 15px 7px 12px;border-radius:99px;color:#1a86c9;
+  font-size:.67rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;
+  background:rgba(255,255,255,.72);border:1px solid rgba(56,169,255,.34);
+  box-shadow:0 6px 20px rgba(20,58,112,.10),inset 0 1px 0 #fff;
+  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);}
+.focus-handoff .focus-label::before{content:"";width:24px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--blue));box-shadow:0 0 12px rgba(56,169,255,.5);}
+/* The sphere sits directly behind this copy, so both the headline and the
+   standfirst carry a soft light bloom of their own — it lifts them clear of
+   the planet's mid-tones without putting a visible plate behind the text. */
+.focus-handoff h2{position:relative;max-width:900px;margin:0 auto;font-size:clamp(2rem,4.4vw,4.4rem);
+  line-height:1.02;letter-spacing:-.045em;text-wrap:balance;
+  text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 34px rgba(238,244,255,.95),0 0 70px rgba(238,244,255,.7);}
+.focus-handoff .focus-subtitle{position:relative;max-width:780px;margin:18px auto 0;color:#4b5769;
+  font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;
+  text-shadow:0 0 22px rgba(238,244,255,.95),0 0 44px rgba(238,244,255,.8);}
+.focus-handoff .focus-subtitle b{font-weight:750;color:#1e2a3c;}
 /* the summary card carries the blue essence of the planet it describes —
    a lit rim, an outer bloom and a cool inner wash, all on top of white */
 .focus-summary{
-  position:relative;width:min(820px,100%);margin:32px auto 0;padding:0;overflow:hidden;
+  position:relative;width:min(820px,100%);margin:24px auto 0;padding:0;overflow:hidden;
   border:1px solid rgba(56,169,255,.4);border-radius:24px;isolation:isolate;
   background:linear-gradient(180deg,#ffffff 0%,#eef6ff 62%,#e4f0ff 100%);
   box-shadow:
@@ -768,40 +782,121 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   background:linear-gradient(90deg,rgba(255,61,154,0),#ff4fb0 18%,#7c5cff 50%,#52c8ff 82%,rgba(56,169,255,0));
   box-shadow:0 0 22px rgba(56,169,255,.9);
 }
-/* the header sits on its own darker plate so the card has real structure */
-.focus-summary-head{
-  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
-  padding:22px 26px 0;
+/* THE DOSSIER. This was four label/value rows separated by hairlines, which
+   read as a spec sheet. It now carries an identity plate, real per-channel
+   trading state and a north-star band, so an investor can see WHAT the company
+   is, WHERE it sells and WHAT it is aiming at without reading a line of prose. */
+.focus-summary-head{display:none;}
+.fs-head{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;
+  padding:16px 24px;text-align:left;
+  border-bottom:1px solid rgba(56,169,255,.22);
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(238,246,255,.72));
 }
-.focus-summary-head i{width:11px;height:11px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#a6e0ff,var(--blue));
-  box-shadow:0 0 10px var(--blue),0 0 26px rgba(56,169,255,.9);}
-.focus-summary-head strong{font-size:clamp(1.3rem,2.2vw,1.62rem);letter-spacing:-.03em;}
-.focus-summary-type{margin:8px 0 0;padding:0 26px 20px;font-size:.7rem;font-weight:900;
-  letter-spacing:.16em;text-transform:uppercase;
+.fs-mark{
+  display:grid;place-items:center;width:46px;height:46px;border-radius:14px;flex:none;
+  font-family:"Orbitron",system-ui,sans-serif;font-size:.92rem;font-weight:700;
+  color:#0d2b4a;background:linear-gradient(150deg,#ffffff,#dcecff);
+  border:1px solid rgba(56,169,255,.45);
+  box-shadow:0 6px 18px rgba(20,58,112,.16),inset 0 1px 0 #fff,0 0 22px rgba(56,169,255,.28);
+}
+.fs-id{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.fs-id strong{font-size:clamp(1.24rem,2vw,1.5rem);letter-spacing:-.03em;line-height:1.1;}
+.fs-type{font-size:.63rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;
   background:linear-gradient(90deg,#ff4fb0,#7c5cff,#52c8ff);
   -webkit-background-clip:text;background-clip:text;color:transparent;}
-.focus-summary-grid{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;text-align:left;
-  background:rgba(56,169,255,.22);border-top:1px solid rgba(56,169,255,.22);
+.fs-status{
+  display:inline-flex;align-items:center;gap:7px;flex:none;padding:6px 12px;border-radius:99px;
+  font-size:.6rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#0f7a4a;
+  background:rgba(38,200,130,.12);border:1px solid rgba(38,200,130,.42);
 }
-.focus-summary-grid p{margin:0;padding:15px 26px;color:#28374d;font-size:.84rem;line-height:1.5;
-  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,252,255,.96));transition:background .25s var(--ease);}
-.focus-summary-grid p:hover{background:linear-gradient(180deg,#ffffff,#e8f4ff);}
-.focus-summary-grid p.wide{grid-column:1/-1;}
-.focus-summary-grid b{display:block;margin-bottom:4px;font-size:.6rem;font-weight:900;
+.fs-status i{width:7px;height:7px;border-radius:50%;background:#22c07d;
+  box-shadow:0 0 0 0 rgba(34,192,125,.55);animation:fsPulse 2.4s var(--ease) infinite;}
+@keyframes fsPulse{70%{box-shadow:0 0 0 7px rgba(34,192,125,0);}100%{box-shadow:0 0 0 0 rgba(34,192,125,0);}}
+.fs-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  background:rgba(56,169,255,.2);text-align:left;}
+.fs-fact{padding:13px 24px;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(248,252,255,.97));
+  transition:background .25s var(--ease);}
+.fs-fact:hover{background:linear-gradient(180deg,#ffffff,#e8f4ff);}
+.fs-fact span{display:block;color:#28374d;font-size:.9rem;font-weight:650;line-height:1.45;}
+.focus-summary b{display:block;margin-bottom:5px;font-size:.6rem;font-weight:900;
   letter-spacing:.15em;text-transform:uppercase;color:#2f8fd4;}
-.focus-begin{display:inline-flex;align-items:center;gap:11px;margin-top:22px;color:#111626;text-decoration:none;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;}
-.focus-begin::after{content:"";width:9px;height:9px;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);transform:rotate(45deg) translateY(-3px);animation:focusPrompt 1.4s ease-in-out infinite;}
-@keyframes focusPrompt{50%{transform:rotate(45deg) translate(4px,1px);opacity:.55;}}
+.fs-block{padding:14px 24px 15px;text-align:left;border-top:1px solid rgba(56,169,255,.2);
+  background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(246,251,255,.97));}
+/* channels carry their real state, straight from the story: eBay and Temu are
+   trading, Amazon/Shopify/OnBuy are mid-launch, TikTok Shop is on the roadmap */
+.fs-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;}
+.fs-chips li{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 13px 7px 11px;border-radius:11px;
+  font-size:.82rem;font-weight:700;color:#1d2b3e;background:#fff;
+  border:1px solid rgba(56,169,255,.3);box-shadow:0 2px 8px rgba(20,58,112,.07);
+  transition:transform .22s var(--ease-out),box-shadow .22s var(--ease-out),border-color .22s var(--ease-out);
+}
+.fs-chips li:hover{transform:translateY(-2px);border-color:rgba(56,169,255,.62);
+  box-shadow:0 8px 20px rgba(20,58,112,.16);}
+.fs-chips i{width:7px;height:7px;border-radius:50%;flex:none;}
+.fs-chips em{font-style:normal;font-size:.58rem;font-weight:900;letter-spacing:.1em;
+  text-transform:uppercase;color:#7c8798;}
+.fs-chips .live i{background:#22c07d;box-shadow:0 0 8px rgba(34,192,125,.8);}
+.fs-chips .live em{color:#0f7a4a;}
+.fs-chips .soon i{background:#ffab2e;box-shadow:0 0 8px rgba(255,171,46,.7);}
+.fs-chips .soon em{color:#a86a06;}
+.fs-chips .next i{background:#9aa7ba;}
+/* the north star: one number, stated plainly, on its own lit plate */
+.fs-ambition{position:relative;overflow:hidden;padding:15px 24px 17px;text-align:left;
+  border-top:1px solid rgba(56,169,255,.28);
+  background:linear-gradient(140deg,#0d1730,#122a52 58%,#0e2647);}
+.fs-ambition b{color:#7fd0ff;}
+.fs-ambition p{display:flex;align-items:baseline;gap:14px;margin:0;flex-wrap:wrap;}
+.fs-ambition strong{font-family:"Orbitron",system-ui,sans-serif;font-size:clamp(1.7rem,3.4vw,2.3rem);
+  font-weight:700;letter-spacing:-.02em;line-height:1;
+  background:linear-gradient(92deg,#7ee3ff,#b9a3ff 52%,#ff8fc8);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.fs-ambition span{color:rgba(219,232,250,.8);font-size:.86rem;line-height:1.45;}
+.fs-runway{position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,rgba(126,227,255,0),#7ee3ff 22%,#b9a3ff 60%,rgba(255,143,200,0));
+  opacity:.55;}
+.focus-begin{display:inline-flex;align-items:center;gap:13px;margin-top:20px;
+  padding:11px 13px 11px 22px;border-radius:99px;color:#111626;text-decoration:none;
+  font-size:.7rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;
+  background:rgba(255,255,255,.8);border:1px solid rgba(20,58,112,.14);
+  box-shadow:0 8px 26px rgba(20,58,112,.12),inset 0 1px 0 #fff;
+  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+  transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out),border-color .25s var(--ease-out);}
+.focus-begin:hover{transform:translateY(-2px);border-color:rgba(255,61,154,.5);
+  box-shadow:0 14px 34px rgba(20,58,112,.2),0 0 24px rgba(255,61,154,.28),inset 0 1px 0 #fff;}
+.focus-begin span.chev{position:relative;display:grid;place-items:center;width:28px;height:28px;flex:none;
+  border-radius:50%;background:linear-gradient(140deg,var(--pink),#7c5cff);
+  box-shadow:0 4px 14px rgba(255,61,154,.42);}
+.focus-begin span.chev::before{content:"";width:8px;height:8px;
+  border-right:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(45deg) translate(-1px,-1px);
+  animation:focusPrompt 1.6s ease-in-out infinite;}
+@keyframes focusPrompt{50%{transform:rotate(45deg) translate(1px,1px);opacity:.6;}}
 .focus-handoff-inner{will-change:opacity,transform;}
+/* The handoff is meant to read as one full screen. On short viewports the
+   dossier compresses instead of pushing "Begin the Journey" below the fold. */
+@media (min-width:701px) and (max-height:880px){
+  .focus-handoff h2{font-size:clamp(1.8rem,3.6vw,3.3rem);}
+  .focus-handoff .focus-subtitle{margin-top:13px;font-size:clamp(.9rem,1.1vw,1rem);}
+  .focus-summary{margin-top:18px;}
+  .fs-head{padding:13px 24px;}
+  .fs-mark{width:40px;height:40px;border-radius:12px;}
+  .fs-fact{padding:11px 24px;}
+  .fs-block{padding:12px 24px 13px;}
+  .fs-ambition{padding:13px 24px 14px;}
+  .fs-chips li{padding:6px 11px 6px 10px;font-size:.78rem;}
+  .focus-begin{margin-top:15px;}
+}
 @media (max-width:700px){
   .focus-handoff{min-height:100svh;padding:82px 16px 36px;overflow:visible;}
   .focus-handoff h2{font-size:clamp(1.9rem,10vw,3rem);}
   .focus-handoff .focus-subtitle{font-size:.93rem;line-height:1.55;}
   .focus-summary{padding:17px 14px;margin-top:22px;border-radius:17px;}
-  .focus-summary-grid{grid-template-columns:1fr;}
-  .focus-summary-grid p.wide{grid-column:auto;}
+  .fs-facts{grid-template-columns:1fr;}
+  .fs-head{grid-template-columns:auto 1fr;gap:12px;padding:16px 18px;}
+  .fs-status{grid-column:2;justify-self:start;}
+  .fs-fact,.fs-block,.fs-ambition{padding-left:18px;padding-right:18px;}
   .focus-begin{min-height:44px;margin-top:16px;}
 }
 .rw-over{
@@ -831,7 +926,17 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 .rw-knob{pointer-events:none;}
 .rw-years span{pointer-events:auto;cursor:pointer;}
 .rw-years span:hover{color:#fff;}
-html.spx .tr2-planet{background:#0f1018;}
+/* The canvas paints WHITE for the first 35% of this transition and the last
+   5%, but the section behind it was a flat near-black. Any frame where the
+   canvas is cleared or stale - and size() clears it on every resize - punched
+   a black hole through white content, which is the "break" in the blue planet
+   transition. The backdrop now follows the same white -> night -> white curve
+   the canvas draws, so a missed frame is simply invisible.
+   Stops map scroll to progress: the section is 600vh with a 100vh sticky
+   stage, so progress p is centred at (p*500 + 50) / 600 of the section. */
+html.spx .tr2-planet{
+  background:linear-gradient(#fff 0 37.5%, #0f1018 50% 83.3%, #fff 91.7% 100%);
+}
 /* THE EXPANSION MAP heading — rides the globe's DAY half, then clears out
    before the night side brings the sourcing territories up */
 .globe-over{
@@ -1277,7 +1382,7 @@ section.tint{background:var(--bg-soft);}
   .pillar .p-scope,.st-future span,.by-tags span,.becomes span{font-size:.75rem !important;}
   /* the remaining sub-10px labels, found by measuring rather than guessing */
   .ch-badge i,.ch-badge b,.fsr-no,.fsr .fsr-pc,.st-chips span,
-  .focus-summary-grid b,.nav-logo .word span,.ch-summary i,
+  .focus-summary b,.nav-logo .word span,.ch-summary i,
   .ch-next i,.jcard i,.ph-kick{font-size:.7rem !important;letter-spacing:.08em;}
   .st-co p,.st-meta span,.pillar .p-row b,.assume span,.scen p{font-size:.85rem !important;}
 
@@ -3260,18 +3365,38 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="focus-handoff-inner">
       <p class="focus-label">Current Investment Focus</p>
       <h2 id="investment-focus-title">Now Zoom Into the Company Already Building the Future</h2>
-      <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd (soon to become Freedom Global Ltd) is the group&rsquo;s established direct-to-consumer ecommerce business and the focus of this investment case.</p>
+      <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd (soon to become <b>Freedom Global Ltd</b>) is the group&rsquo;s established direct-to-consumer ecommerce business and the focus of this investment case.</p>
       <div class="focus-summary" aria-label="Freedom Global company summary">
-        <div class="focus-summary-head"><i aria-hidden="true"></i><strong>Freedom Global Ltd</strong></div>
-        <p class="focus-summary-type">Multi-brand ecommerce &middot; Consumer distribution &middot; D2C</p>
-        <div class="focus-summary-grid">
-          <p><b>Currently trading as</b>Freedom Fire &amp; Safety Ltd</p>
-          <p><b>Core model</b>D2C ecommerce</p>
-          <p class="wide"><b>Core channels</b>Amazon &middot; eBay &middot; Shopify &middot; Temu &middot; TikTok Shop &middot; OnBuy</p>
-          <p class="wide"><b>Long-term ambition</b>Build towards a &pound;100 million target enterprise value</p>
+        <div class="fs-head">
+          <span class="fs-mark" aria-hidden="true">FG</span>
+          <span class="fs-id">
+            <strong>Freedom Global Ltd</strong>
+            <span class="fs-type">Multi-brand ecommerce &middot; Consumer distribution &middot; D2C</span>
+          </span>
+          <span class="fs-status"><i aria-hidden="true"></i>Trading now</span>
+        </div>
+        <div class="fs-facts">
+          <div class="fs-fact"><b>Currently trading as</b><span>Freedom Fire &amp; Safety Ltd</span></div>
+          <div class="fs-fact"><b>Core model</b><span>D2C ecommerce</span></div>
+        </div>
+        <div class="fs-block">
+          <b>Core channels</b>
+          <ul class="fs-chips">
+            <li class="live"><i aria-hidden="true"></i>eBay<em>Live</em></li>
+            <li class="live"><i aria-hidden="true"></i>Temu<em>Live</em></li>
+            <li class="soon"><i aria-hidden="true"></i>Amazon<em>Launching</em></li>
+            <li class="soon"><i aria-hidden="true"></i>Shopify<em>Launching</em></li>
+            <li class="soon"><i aria-hidden="true"></i>OnBuy<em>Phased rollout</em></li>
+            <li class="next"><i aria-hidden="true"></i>TikTok Shop<em>Roadmap</em></li>
+          </ul>
+        </div>
+        <div class="fs-ambition">
+          <b>Long-term ambition</b>
+          <p><strong>&pound;100m</strong><span>Build towards a &pound;100 million target enterprise value</span></p>
+          <span class="fs-runway" aria-hidden="true"></span>
         </div>
       </div>
-      <a class="focus-begin" href="#journey">Begin the Journey</a>
+      <a class="focus-begin" href="#journey">Begin the Journey<span class="chev" aria-hidden="true"></span></a>
     </div>
   </section>
 
@@ -6107,7 +6232,7 @@ function initCourier() {
       const r2 = rail.getBoundingClientRect();
       const rx2 = r2.left + r2.width / 2;
       const a3 = r2.top + scrollY - vh * .55 + 50, b3 = r2.bottom + scrollY - vh * .55 - 30;
-      if (b3 - a3 > 60) segs.push({ s0: a3, s1: b3, at: q => ({ x: rx2, y: vh * (.55 + q * .04) }) });
+      if (b3 - a3 > 60) segs.push({ rail: true, s0: a3, s1: b3, at: q => ({ x: rx2, y: vh * (.55 + q * .04) }) });
     }
     // the two line graphs — flies each drawn line, start → summit
     const g2 = pathRide(["#growthChart svg .gc-line"]);
@@ -6325,6 +6450,7 @@ function initCourier() {
         // then rolls inward to a right-hand orbital insertion point.
         const toOrbit = !!s.orbit;
         const toTraj = s.kind === "traj";
+        const toRail = !!s.rail;
         const gx = exitRight ? gxR : gxL;
         let P4, seamBand = null;
         if (toTraj) {
@@ -6363,6 +6489,25 @@ function initCourier() {
             { x: b2.x + 48, y: b2.y - 118 },
             { x: b2.x, y: b2.y - 50 },
             b2];
+        } else if (toRail) {
+          // JOINING THE TIMELINE. The generic gutter route exited right, ran
+          // the full page width at the rail's own height and arrived flying
+          // SIDEWAYS, then pivoted on the spot once it was already on the
+          // rail - it held -185 degrees (nose left) for the whole 800px
+          // approach. Cross to the rail's lane early and high instead, then
+          // fall down its centreline: the last three knots share the rail's
+          // x, so the arrival tangent is straight down and the courier joins
+          // the story already travelling the way the story reads.
+          // The knots are spaced EVENLY along the route. The spline gives every
+          // segment the same share of the scroll, so a 16px hop sitting next to
+          // a 571px one makes the courier crawl and then bolt - and while it is
+          // crawling the tangent is degenerate, which had it pirouetting 92
+          // degrees on the spot while moving 5px. Even spacing keeps the speed
+          // honest; the last two knots share the rail's x so the finish is
+          // exactly vertical.
+          const dx = a2.x - b2.x, dy = b2.y - a2.y;
+          const K = (fx, fy) => ({ x: a2.x - dx * fx, y: a2.y + dy * fy });
+          P4 = [a2, K(.15, .20), K(.38, .40), K(.66, .58), K(1, .74), b2];
         } else {
           P4 = haul > innerHeight * 1.45
             ? [a2, mom,
@@ -6385,14 +6530,14 @@ function initCourier() {
         const pos3 = crm2(pk(s3 - 1), pk(s3), pk(s3 + 1), pk(s3 + 2), u3);
         // the near-vertical globe approach flies a DEAD-STRAIGHT rail — any
         // lateral wave on that leg reads as stutter, not life
-        if (!toOrbit) {
+        if (!toOrbit && !toRail) {
           const sway = Math.max(0, 1 - Math.abs(g2 - .5) / .34);
           pos3.x += Math.sin(g2 * 22) * 7 * sway;   // alive on the long run
         }
         // longer hauls keep the signature loop-the-loop — flown INSIDE the
         // gutter (radius stays within the margin), smt() eases the sweep in
         // and out so entry and exit tangents stay kink-free
-        if (haul > innerHeight * 1.05 && !toOrbit && !toTraj) {
+        if (haul > innerHeight * 1.05 && !toOrbit && !toTraj && !toRail) {
           const lw = cl01((g2 - .36) / .28);
           if (lw > 0 && lw < 1) {
             const th3 = smt(lw) * T2;

@@ -5993,6 +5993,21 @@ function mountStation(stage, g) {
     // panes the px-sized company columns grow in canvas units and would reach
     // the panels, so the panel drops below the LOWEST detail shelf instead.
     // Both future panels read the same reference, keeping their tops aligned.
+    /* Both future panels line up with the flagship column's CORE BRANDS box
+       rather than a magic y: they used to start 73 units above it, which read
+       as three columns that had been dropped from different heights. Reading
+       the box itself means they stay aligned if its content ever changes. */
+    if (below && below.alignBrands) {
+      const bx = [...stage.querySelectorAll(".sm-sub .subbox")]
+        .find(b2 => b2.offsetHeight && /core brands/i.test(b2.textContent || ""));
+      // Plain offset space: the shelves and both panels share one offsetParent
+      // (.sysmap), so this is exact. Do NOT "improve" it with getBoundingClientRect
+      // — #sysMap carries perspective(1600px) rotateX(7deg), so screen rects
+      // disagree with layout by an amount that varies with position, and
+      // converting them back split the two panels 19 units apart.
+      const su2 = bx && bx.closest(".sm-sub");
+      if (bx && su2) desiredTop = su2.offsetTop + bx.offsetTop;
+    }
     if (below && below.clearShelves) {
       let shelfBot = 0;
       for (const su of stage.querySelectorAll(".sm-sub"))
@@ -7154,7 +7169,10 @@ function renderSystem() {
     [618, 145, 473, "sm-orbit"],
     [800, 195, 505, "sm-orbit"],
     [950, 286, 496, "sm-orbit future"],
-    [1060, 325, 516, "sm-orbit future outer"],
+    /* the outermost shell was only 110 wider than the one inside it, so at the
+       flanks the two dotted rings almost merged. 1190 opens that flank gap to
+       240 and the front to 70. */
+    [1190, 336, 516, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -7180,15 +7198,21 @@ function renderSystem() {
      (59° is the limit: further right its body meets the shelf at laptop
      widths, further up the year rail). */
   const deathStar1At = lowerShellAtAngle(3, 117);   // 120 grazed the Facilities column with the RING art (it reaches ~64 past the body)
-  const deathStar2At = lowerShellAtAngle(4, 65);    // left of the 2030+ marker, nudged right so its panel clears the flagship column's CORE BRANDS box
+  const deathStar2At = lowerShellAtAngle(4, 68);    // left of the 2030+ marker, nudged right so its panel clears the flagship column's CORE BRANDS box
   // the far (back) half of the WHITE future rings tucks its apex down inside
   // the sun's disk (like the pink lanes) so the ring reads as connecting INTO
   // the planet — emerging from its flanks — rather than arcing over the top.
   const farRyOf = (ry, cyR, cls) => {
     if (cls.indexOf("future") === -1) return ry;
-    // continue the pink rings' rising back-arc apex (349 → 328 → 310) so each
-    // white ring tucks a little HIGHER again — a nested, concentric finish
-    const apex = cls.indexOf("outer") !== -1 ? 283 : 297;
+    /* FLATTER BACKS. The two white rings used apexes of 297/283 — only 14
+       units apart, so their far arcs ran almost on top of each other and each
+       back half was nearly as deep as its front, which read as a loop rather
+       than a circle seen at a tilt. Dropping both apexes compresses the far
+       halves (the real foreshortening cue) and opens the gap between them to
+       30. The outer must stay ABOVE the inner at every x or the two arcs
+       cross; at 302 vs 332 it clears by 30 at the centre and more at the
+       flanks. */
+    const apex = cls.indexOf("outer") !== -1 ? 302 : 332;
     return cyR - apex;
   };
   const shell = ([rx, ry, cyR, cls], i) => {
@@ -7950,7 +7974,7 @@ function renderSystem() {
   mountStation(map, {
     kind: "destroyer", stationType: "futureRing", side: "left", art: .70, at: deathStar1At,
     // Both future panels share one top line below their newly separated lanes.
-    panelBelow: { align: "center", topY: 880, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
+    panelBelow: { align: "center", topY: 880, alignBrands: true, nudgeX: 5, free: true }, panelColor: "#d7b35f", autoOpen: true,
     items: [
       { n: "Freedom Form Ltd", pill: "FUTURE · 2029", cat: "Property · Development · Design", catC: "#e8c15c",
         d: "A future commercial-property platform for the group&rsquo;s premises, acquisitions and growth." },
@@ -7960,7 +7984,7 @@ function renderSystem() {
   });
   mountStation(map, {
     kind: "moon", stationType: "futureAurora", side: "right", art: .72, at: deathStar2At,
-    panelBelow: { align: "center", topY: 880, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
+    panelBelow: { align: "center", topY: 880, alignBrands: true, nudgeX: -29, free: true }, panelColor: "#a487df", autoOpen: true,
     items: [
       { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
@@ -8062,40 +8086,89 @@ function renderSystem() {
        getBBox() + getCTM() are immune to both: they read the painted circle in
        the lane's own coordinate system. The lane then lands on the limb along
        its incoming direction, so the head pierces the edge like the green one. */
-    const fitFutureLanes = () => {
-      [["ds1", "fc-destroyer", [620, 560]], ["ds2", "fc-moon", [1300, 590]]].forEach(([key, cls, ctrl]) => {
-        const st = map.querySelector(".mg-station." + cls);
-        const lane = map.querySelector(".fl-" + key);
-        if (!st || !lane) return;
-        const body = [...st.querySelectorAll("circle")]
+    /* LANE HEADS — measured, radial, head-on.
+       Two things went wrong before. The station lanes assumed a fixed radius,
+       but the art offsets its sphere from the shell anchor by an amount that
+       does not scale, so a hard-coded value was only right at one viewport
+       (4 units inside the limb at 1440, 25 units clear of it at 1100). And
+       every lane arrived on a slant, because the curve's last control point
+       pointed wherever the arc happened to be going rather than at the planet.
+       Now each lane's target circle is read from the live drawing, the end is
+       placed on the limb along the radius, and the final control point is
+       pulled out along that SAME radius - so the tangent at the head is
+       exactly radial and the arrow lands square-on. getBBox/getCTM rather than
+       getBoundingClientRect: #sysMap carries perspective(1600px) rotateX(7deg),
+       which makes client rects disagree with real geometry by an amount that
+       varies with width. */
+    const laneTarget = key => {
+      const lane = map.querySelector(".fl-" + key);
+      if (!lane) return null;
+      const stCls = key === "ds1" ? "fc-destroyer" : key === "ds2" ? "fc-moon" : null;
+      let body;
+      if (stCls) {
+        const st = map.querySelector(".mg-station." + stCls);
+        if (!st) return null;
+        body = [...st.querySelectorAll("circle")]
           .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)[0];
-        if (!body) return;
-        let bb, mb, ml;
-        try { bb = body.getBBox(); mb = body.getCTM(); ml = lane.getCTM(); } catch (e) { return; }
-        if (!bb || !bb.width || !mb || !ml) return;
-        const m = ml.inverse().multiply(mb);           // sphere space -> lane space
-        const pt = svg2.createSVGPoint();
-        pt.x = bb.x + bb.width / 2; pt.y = bb.y + bb.height / 2;
-        const c = pt.matrixTransform(m);
-        const bR = (bb.width / 2) * Math.hypot(m.a, m.b);
-        const dxq = ctrl[0] - c.x, dyq = ctrl[1] - c.y;
-        const dq = Math.hypot(dxq, dyq) || 1;
-        // Land the arrowHEAD on the limb, not the path end. #smArr is
-        // userSpaceOnUse with viewBox 8 wide, refX 6.5 and markerWidth 18, so
-        // the tip sits (8-6.5)x(18/8) = 3.375 units beyond the path end. Ending
-        // 3 units outside the limb therefore puts the tip 0.4 inside it: just
-        // kissing the edge, with no hairline gap and nothing buried.
-        const bite = bR + 3;
-        const ex = c.x + dxq / dq * bite, ey = c.y + dyq / dq * bite;
+      } else {
+        /* The operating planets' PLANETS.r is the HALO radius, and the halo is
+           opacity:0 until hover - so ending on it left the arrow 10-13 units
+           clear of the sphere anyone can actually see (fly 13.1, form 11.4,
+           storm 9.7). Target the painted body instead, exactly as the two
+           stations do, so all five behave identically. */
+        body = map.querySelector('.sm-planet circle[fill="url(#smp-' + key + ')"]');
+      }
+      if (!body) return null;
+      let bb, mb, ml;
+      try { bb = body.getBBox(); mb = body.getCTM(); ml = lane.getCTM(); } catch (e) { return null; }
+      if (!bb || !bb.width || !mb || !ml) return null;
+      const m = ml.inverse().multiply(mb);          // sphere space -> lane space
+      const pt = svg2.createSVGPoint();
+      pt.x = bb.x + bb.width / 2; pt.y = bb.y + bb.height / 2;
+      const c = pt.matrixTransform(m);
+      return { cx: c.x, cy: c.y, r: (bb.width / 2) * Math.hypot(m.a, m.b) };
+    };
+    const fitLaneHeads = () => {
+      ["form", "storm", "fly", "ds1", "ds2"].forEach(key => {
+        const t = laneTarget(key);
+        if (!t || !(t.r > 0)) return;
+        // #smArr is userSpaceOnUse with an 8-wide viewBox, refX 6.5 and
+        // markerWidth 18, so the tip sits (8-6.5)x(18/8) = 3.375 units past the
+        // path end. Ending 3 units outside the limb rests the tip 0.4 inside
+        // it: kissing the edge, no hairline gap, nothing buried.
+        const bite = t.r + 3;
         [".fl-" + key, ".g-" + key].forEach(sel => {
           const pth = map.querySelector(sel);
           if (!pth) return;
           const dAttr = pth.getAttribute("d") || "";
-          pth.setAttribute("d", dAttr.replace(/,\s*[-\d.]+\s+[-\d.]+\s*$/, `, ${ex.toFixed(1)} ${ey.toFixed(1)}`));
+          const nums = dAttr.match(/-?[\d.]+/g);
+          if (!nums || nums.length < 4) return;
+          const ex = +nums[nums.length - 2], ey = +nums[nums.length - 1];
+          if (/C/i.test(dAttr) && nums.length >= 8) {
+            let ux = ex - t.cx, uy = ey - t.cy;
+            const ul = Math.hypot(ux, uy);
+            if (!(ul > .5)) return;
+            ux /= ul; uy /= ul;
+            const nx = t.cx + ux * bite, ny = t.cy + uy * bite;
+            const run = Math.max(24, Math.hypot(+nums[2] - nx, +nums[3] - ny) * .38);
+            pth.setAttribute("d", "M " + nums[0] + " " + nums[1]
+              + " C " + nums[2] + " " + nums[3]
+              + ", " + (nx + ux * run).toFixed(1) + " " + (ny + uy * run).toFixed(1)
+              + ", " + nx.toFixed(1) + " " + ny.toFixed(1));
+          } else {
+            // a straight lane is only head-on if the whole line points at the
+            // centre, so the landing point follows from where the lane starts
+            let vx = +nums[0] - t.cx, vy = +nums[1] - t.cy;
+            const vl = Math.hypot(vx, vy);
+            if (!(vl > .5)) return;
+            vx /= vl; vy /= vl;
+            pth.setAttribute("d", "M " + nums[0] + " " + nums[1]
+              + " L " + (t.cx + vx * bite).toFixed(1) + " " + (t.cy + vy * bite).toFixed(1));
+          }
         });
       });
     };
-    fitFutureLanes();
+    fitLaneHeads();
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
     // overflow so the shelf is never buried under the next chapter's

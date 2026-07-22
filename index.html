@@ -1724,6 +1724,12 @@ section.tint{background:var(--bg-soft);}
 .ch-main{display:flex;flex-direction:column;min-width:0;}
 .ch-main > .ch-body{margin-bottom:auto;}
 .ch-side > .ch-next{margin-top:auto;}
+/* margin-top:auto on .ch-next pushes it to the bottom of the column, but when
+   the picture column is the taller of the two there is no free space left and
+   auto computes to ZERO — the quote and the question card then touch. This
+   carries the minimum separation instead, so the pair can never close up, no
+   matter which column is driving the row height. */
+.ch-side > .ch-quote{margin-bottom:35px;}
 /* The date and the chapter title now stack beside the badge, so the pair
    occupies exactly the badge's height and the three read as one header block
    instead of the title floating loose beneath the row. */
@@ -1738,7 +1744,11 @@ section.tint{background:var(--bg-soft);}
 .ch-kick{display:inline-block;position:relative;margin:0;padding-bottom:7px;
   font-size:.74rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--pink);}
 .ch-kick::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:2px;border-radius:99px;background:var(--pink);}
-.ch-q{display:block;font-size:.76rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--mint-ink);margin:8px 0 2px;}
+/* The green question is a single line, always. Its length varies a lot between
+   chapters, so a fixed size would either wrap the long ones or leave the short
+   ones tiny; fitChapterQuestions() shrinks each one only as far as it needs. */
+.ch-q{display:block;white-space:nowrap;overflow:hidden;font-size:var(--chq,.76rem);font-weight:800;
+  letter-spacing:var(--chqls,.16em);text-transform:uppercase;color:var(--mint-ink);margin:8px 0 2px;}
 .jcard.chapter h3{font-size:clamp(1.5rem,2.4vw,2.1rem);line-height:1.14;letter-spacing:-.018em;margin:8px 0 12px;max-width:22ch;}
 /* The standfirst and the body ran too close to read as different voices —
    12px between them and 7px between body paragraphs is barely a difference.
@@ -1746,7 +1756,7 @@ section.tint{background:var(--bg-soft);}
    enough that the two blocks are unmistakably distinct. */
 /* .jcard p sets margin-bottom:12px at (0,1,1) and beats a bare .ch-lede, so
    this has to carry the card in the selector to win. */
-.jcard .ch-lede{font-size:1.03rem;font-weight:600;line-height:1.5;color:var(--ink);max-width:50ch;margin:0 0 26px;}
+.jcard .ch-lede{font-style:italic;font-size:1.03rem;font-weight:600;line-height:1.5;color:var(--ink);max-width:50ch;margin:0 0 26px;}
 .ch-body p{font-size:.92rem;line-height:1.62;color:var(--ink-dim);margin:0 0 13px;max-width:56ch;}
 .ch-body p:last-child{margin-bottom:0;}
 .ch-body .ch-close{color:var(--mint-ink);font-weight:600;}
@@ -1836,18 +1846,17 @@ section.tint{background:var(--bg-soft);}
    chapter. They ran 94-165px (stats), 79-124 (quote) and 91-111 (next), which
    is what made every card look individually laid out. --chbox is that height;
    the content centres inside it. */
-:root{--chbox:120px;}
+:root{--chbox:106px;}
 .ch-stats{display:flex;align-items:center;margin-top:20px;padding:10px 6px;
   min-height:var(--chbox);height:var(--chbox);box-sizing:border-box;
   border:1px solid var(--line);border-radius:16px;background:var(--bg-soft);}
 .ch-stat{flex:1 1 0;display:flex;align-items:center;gap:12px;padding:2px 15px;min-width:0;}
 .ch-stat + .ch-stat{border-left:1px solid var(--line);}
-/* the icon was a bare 24px glyph floating at the top of the cell. It now sits
-   in its own tinted badge, vertically centred against the value it belongs to. */
-.ch-stat .si{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:12px;
-  background:color-mix(in srgb,var(--acc,var(--pink)) 13%,transparent);
-  border:1px solid color-mix(in srgb,var(--acc,var(--pink)) 30%,transparent);}
-.ch-stat .si svg{width:20px;height:20px;color:var(--acc,var(--pink));}
+/* the icon was a 24px glyph floating at the top of the cell: it is now larger
+   and vertically centred against the value it belongs to, with no plate around
+   it — the wrapper exists only to centre the glyph. */
+.ch-stat .si{flex:none;display:grid;place-items:center;}
+.ch-stat .si svg{width:38px;height:38px;color:var(--acc,var(--pink));}
 .ch-stat > div{min-width:0;}
 /* the readout scales to the LENGTH of its value, so "£0" stays big and
    "Fire safety · Aerosols · Batteries" still sits on tidy lines */
@@ -1855,8 +1864,8 @@ section.tint{background:var(--bg-soft);}
 .ch-stat.v-md b{font-size:1.02rem;line-height:1.18;}
 .ch-stat.v-sm b{font-size:.85rem;line-height:1.24;letter-spacing:-.01em;}
 .ch-stat.v-xs b{font-size:.76rem;line-height:1.28;letter-spacing:0;}
-.ch-stat span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
-  margin-top:4px;font-size:.7rem;line-height:1.34;color:var(--ink-dim);overflow-wrap:anywhere;}
+.ch-stat span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+  margin-top:3px;font-size:.68rem;line-height:1.3;color:var(--ink-dim);overflow-wrap:anywhere;}
 .ch-stat b{overflow-wrap:anywhere;}
 .jcard.chapter .jbrands{margin-top:18px;}
 .ch-side{display:flex;flex-direction:column;min-width:0;}
@@ -1907,7 +1916,7 @@ section.tint{background:var(--bg-soft);}
   min-height:var(--chbox);height:var(--chbox);box-sizing:border-box;
   padding:16px 18px 17px;border-radius:16px;border:1px solid rgba(255,255,255,.15);
   background:linear-gradient(155deg,#12131f 0%,#171021 62%,#43122f 130%);
-  box-shadow:0 18px 44px rgba(0,0,0,.5);}
+  box-shadow:none;}
 .ch-quote .qg{flex:none;font-family:Georgia,serif;font-size:2.5rem;line-height:.72;color:#ff3d9a;margin-top:5px;}
 .ch-quote p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
   margin:0;padding-left:14px;border-left:1px solid rgba(255,255,255,.22);
@@ -1924,7 +1933,7 @@ section.tint{background:var(--bg-soft);}
 .ch-summary strong{font-size:1.15rem;line-height:1.25;color:#fff;}
 .ch-highlight{margin-top:14px;}
 .ch-highlight p{font-size:1rem;}
-.ch-next{display:flex;align-items:center;gap:14px;margin-top:18px;padding:15px 18px;text-align:left;width:100%;
+.ch-next{display:flex;align-items:center;gap:14px;margin-top:12px;padding:15px 18px;text-align:left;width:100%;
   min-height:var(--chbox);height:var(--chbox);box-sizing:border-box;
   border:1px dashed var(--line-strong);border-radius:16px;background:var(--bg-soft);color:inherit;}
 .ch-next.as-btn{cursor:pointer;font:inherit;transition:border-color .25s var(--ease-out),box-shadow .25s var(--ease-out);}
@@ -1944,6 +1953,10 @@ section.tint{background:var(--bg-soft);}
      stat strip stacks its three cells vertically, which cannot fit 120px.
      Release the fixed height rather than clip the content. */
   .ch-stats,.ch-quote,.ch-next{height:auto;min-height:0;}
+  /* A single column is ~300px wide. An 80-character question cannot fit that
+     on one line at any readable size, and nowrap + overflow:hidden would
+     silently cut the text off — so it wraps here rather than truncating. */
+  .ch-q{white-space:normal;overflow:visible;}
   .ch-main > .ch-body{margin-bottom:0;}
   .ch-side > .ch-next{margin-top:18px;}
 }
@@ -4337,14 +4350,11 @@ const FG_DATA = {
   milestones: [
     { year: "2019", kick: "Where It All Began",
       q: "Could one overlooked product become something more?",
-      title: "Before the \u00a3100 Million Vision, There Was One Rusty Fire Extinguisher",
+      title: "One Rusty Extinguisher Started Everything",
       subtitle: "No master plan. No investors. No ecommerce business. No group of companies. Just one overlooked product and the willingness to start.",
       body: [
         "There was no Freedom Group. No portfolio of brands. No international supply chain. No team, no projections or \u00a3100 million ambition.",
-        "There was just one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value.",
-        "But that single sale changed the direction of everything. It proved that value could be found where others saw none.",
-        "It created the first customer, the first opportunity and the first glimpse of what might be possible.",
-        "Every order, every brand, every employee and every company that followed can be traced back to that one extinguisher. It was not just the first product we sold. It was the first step towards everything Freedom would become."
+        "There was just one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value. But that single sale changed the direction of everything. It proved that value could be found where others saw none. It created the first customer, the first opportunity and the first glimpse of what might be possible. Every order, every brand and every company that followed can be traced back to that one extinguisher. It was the first step towards everything Freedom would become."
       ],
       highlight: "Everything that exists today can be traced back to one extinguisher nobody else saw value in.",
       statItems: [
@@ -4356,14 +4366,11 @@ const FG_DATA = {
       alt: "The first refurbished extinguishers lined up against the warehouse wall",
       photos: ["journey-photos/ch1-a.png"],
       nextQuestion: "But could one sale become a genuine opportunity?" },
-    { year: "Late 2019", kick: "The First Signal", q: "Was there really a market?",
-      title: "The £400 Order That Proved It Was More Than One Sale",
+    { year: "September 2019", kick: "The First Signal", q: "Was there really a market?",
+      title: "The £400 Order That Proved the Demand",
       subtitle: "A bulk enquiry from Bolton revealed that the opportunity might be bigger than expected.",
       body: [
-        "A buyer in Bolton contacted us looking for hundreds of refurbished fire extinguishers for fire safety training. We supplied approximately 400 units for £400.",
-        "The order itself was small. What it proved was not.",
-        "The first sale had not been a one off. There was real demand for affordable, second life extinguishers when the application was right.",
-        "For the first time, this no longer felt like a single transaction. It felt like the beginning of a market."
+        "A buyer in Bolton contacted us looking for hundreds of refurbished fire extinguishers for fire safety training. We supplied approximately 400 units for &pound;400. For training, what matters is that a cylinder is sound, safe and available in quantity, not that it is new. That was exactly what we could offer, and we could offer it at a price nobody else was matching. The order itself was small. What it proved was not. The first sale had not been a one off, and the demand could be met at volume rather than one unit at a time. For the first time, this no longer felt like a single transaction. It felt like the beginning of a market."
       ],
       highlight: "The first extinguisher created the possibility. The first bulk order proved the demand.",
       statItems: [
@@ -4375,14 +4382,11 @@ const FG_DATA = {
       alt: "Hundreds of refurbished foam extinguishers loaded and ready for the first bulk order",
       photos: ["journey-photos/ch2-a.png", "journey-photos/ch2-b.png"],
       nextQuestion: "But would customers buy without collecting in person?" },
-    { year: "Early 2020", kick: "The First Leap", q: "Would people trust buying remotely?",
+    { year: "January 2020", kick: "The First Leap", q: "Would people trust buying remotely?",
       title: "Then Someone Asked: “Can You Send It?”",
       subtitle: "One remote order proved the opportunity was no longer limited by geography.",
       body: [
-        "The next breakthrough came when a kebab shop in Nottingham trusted us enough to order a cheap refurbished extinguisher without ever visiting in person.",
-        "The sale still came through Facebook Marketplace, but this one felt different. They trusted the listing, paid remotely and relied on us to make sure the product reached them.",
-        "It was only one order to one small business. But it changed the scale of what suddenly felt possible.",
-        "The business was no longer limited to whoever could drive to us. For the first time, the opportunity could travel."
+        "The next breakthrough came when a kebab shop in Nottingham trusted us enough to order a cheap refurbished extinguisher without ever visiting in person. The sale still came through Facebook Marketplace, but this one felt different. They trusted the listing, paid remotely and relied on us to make sure the product reached them. Every sale before it had depended on somebody being close enough to collect. This one did not. The customer never saw the unit, never met us and never needed to. It was only one order to one small business, but it changed the scale of what suddenly felt possible. The opportunity was no longer limited to whoever could drive to us. It could travel."
       ],
       highlight: "The first remote order did not simply reach another customer. It removed geography from the business model.",
       statItems: [
@@ -4394,14 +4398,11 @@ const FG_DATA = {
       alt: "Boxed fire extinguishers packed and labelled for despatch",
       photos: ["journey-photos/ch3-a.png"],
       nextQuestion: "If customers would order remotely, how far could the model really grow?" },
-    { year: "2020", kick: "The Growth", q: "Could a small operation keep up with the demand?",
+    { year: "June 2020", kick: "The Growth", q: "Could a small operation keep up with the demand?",
       title: "From One Extinguisher to Hundreds Every Day",
       subtitle: "Orders grew quickly, and a small, rented space became a refurbishment operation running at full speed.",
       body: [
-        "As demand accelerated, we began trading as Freedom Fire and rented a small space at the back of the family warehouse. The setup was basic, but the pace quickly became relentless.",
-        "University and college students joined the team, helping us clean, refill, prepare and process hundreds of refurbished extinguishers every day.",
-        "Training companies began purchasing hundreds of units at a time, while vans travelled the length of the country delivering pallets to Scotland, Wales, London, Milton Keynes and beyond.",
-        "We also supplied North West exporters who consolidated extinguishers into containers bound for Ghana, Nigeria, Sierra Leone and the Democratic Republic of the Congo.",
+        "As demand accelerated, we began trading as Freedom Fire and rented a small space at the back of the family warehouse. The setup was basic, but the pace quickly became relentless. University and college students joined the team, helping us clean, refill, prepare and process hundreds of refurbished extinguishers every day. Training companies began purchasing hundreds of units at a time, while vans travelled the length of the country delivering pallets to Scotland, Wales, London, Milton Keynes and beyond. We also supplied North West exporters who consolidated extinguishers into containers bound for Ghana, Nigeria, Sierra Leone and the Democratic Republic of the Congo.",
         "What had begun as one isolated Facebook sale was no longer a side opportunity. It had become a fast moving national operation, stretching far beyond anything we had imagined at the start."
       ],
       highlight: "Demand had arrived faster than the infrastructure required to serve it.",
@@ -4415,15 +4416,12 @@ const FG_DATA = {
       photos: ["journey-photos/ch4-a.png", "journey-photos/ch4-b.png", "journey-photos/ch4-c.png",
                "journey-photos/ch4-d.png", "journey-photos/ch4-e.png"],
       nextQuestion: "Could a local Facebook operation become a genuine ecommerce business?" },
-    { year: "Late 2020", kick: "The Leap of Faith", q: "Could one eBay listing open an entire new channel?",
-      title: "One eBay Login. One CO2 Extinguisher. One Unexpected Breakthrough.",
+    { year: "December 2020", kick: "The Leap of Faith", q: "Could one eBay listing open an entire new channel?",
+      title: "One Listing. One Unexpected Breakthrough.",
       subtitle: "A single second hand CO2 listing became the first real proof that ecommerce could scale nationally.",
       body: [
-        "We decided to test eBay using a personal account and listed one second hand 2kg CO2 extinguisher.",
-        "The product had a broader market than we initially realised. Customers purchased CO2 extinguishers for fire safety training, welding, aquarium systems and other non operational applications where a lower cost cylinder was suitable.",
-        "For several months, the listing quietly gained momentum. Then it became one of the fastest moving CO2 extinguisher listings on eBay UK.",
-        "Years later, that same listing remains one of the company’s most successful individual product listings, generating thousands of sales and hundreds of thousands of pounds in revenue.",
-        "One listing had shown us what a national marketplace could do."
+        "We decided to test eBay using a personal account and listed one second hand 2kg CO2 extinguisher. There was no store, no branding and no advertising behind it. The product had a broader market than we initially realised. Customers purchased CO2 extinguishers for fire safety training, welding, aquarium systems and other non operational applications where a lower cost cylinder was suitable. For several months, the listing quietly gained momentum. Then it became one of the fastest moving CO2 extinguisher listings on eBay UK.",
+        "Years later, that same listing remains one of the company&rsquo;s most successful individual product listings, generating thousands of sales and hundreds of thousands of pounds in revenue. One listing had shown us what a national marketplace could do."
       ],
       highlight: "The listing was not for a new product. But it revealed a completely new future.",
       statItems: [
@@ -4435,15 +4433,12 @@ const FG_DATA = {
       alt: "The original eBay CO2 extinguisher listing on screen",
       photos: ["journey-photos/ch5-a.jpg"],
       nextQuestion: "Could the operation become a real limited company with a larger ambition?" },
-    { year: "2021", kick: "The Company", q: "Could the operation become a structured business?",
+    { year: "August 2021", kick: "The Company", q: "Could the operation become a structured business?",
       title: "Freedom Fire & Safety Ltd Was Born",
       subtitle: "The sole trader operation had outgrown its original structure and the next stage required a real company.",
       body: [
-        "By 2021, sales had exceeded the limits of the original sole trader model. In August, Freedom Fire & Safety Ltd was incorporated.",
-        "The company now had two clear areas of opportunity. The first was ecommerce: using the early success of the CO2 listing to build a broader online product range. The second was servicing and contracted work: maintaining extinguishers for colleges, warehouses, factories, exhibition centres, shops and commercial premises.",
-        "At the same time, the limitations of relying heavily on refurbished stock were becoming increasingly clear. We were processing between 800 and 1,000 refurbished units each week, but suppliers could not consistently provide enough suitable stock.",
-        "Scrap values increased, disposal practices changed and restrictions surrounding certain extinguisher types developed.",
-        "The future needed reliable products, dependable supply chains and stock that could be scaled."
+        "By 2021, sales had exceeded the limits of the original sole trader model. In August, Freedom Fire & Safety Ltd was incorporated. The company now had two clear areas of opportunity: ecommerce, using the early success of the CO2 listing to build a broader online range, and servicing and contracted work, maintaining extinguishers for colleges, warehouses, factories, exhibition centres, shops and commercial premises.",
+        "At the same time, the limits of relying on refurbished stock were becoming clear. We were processing between 800 and 1,000 refurbished units each week, but suppliers could not consistently provide enough. Scrap values increased, disposal practices changed and restrictions surrounding certain extinguisher types developed. The future needed reliable products, dependable supply chains and stock that could be scaled."
       ],
       highlight: "The limited company was not simply a change of name. It marked the transition from opportunity to strategy.",
       statItems: [
@@ -4457,15 +4452,13 @@ const FG_DATA = {
                "journey-photos/ch6-d.jpg", "journey-photos/ch6-e.jpg", "journey-photos/ch6-f.jpg",
                "journey-photos/ch6-g.jpg"],
       nextQuestion: "Where could the company build a permanent home of its own?" },
-    { year: "2022", kick: "The First Home", q: "Could 500 square feet become the base for something bigger?",
+    { year: "April 2022", kick: "The First Home", q: "Could 500 square feet become the base for something bigger?",
       title: "Unit 10 Became Our First Real Warehouse",
       subtitle: "A modest 500 square foot unit gave the company its first independent home.",
       body: [
-        "In 2022, we moved into Unit 10, our first dedicated warehouse. It was only around 500 square feet, but it represented independence.",
-        "We had finally moved away from the cramped space at the back of the family warehouse and created a home for the ecommerce operation, service stock and growing product range.",
+        "In 2022, we moved into Unit 10, our first dedicated warehouse. It was only around 500 square feet, but it represented independence. We had finally moved away from the cramped space at the back of the family warehouse and created a home for the ecommerce operation, service stock and growing product range. For the first time the operation had a front door of its own.",
         "Unit 10 became the hub from which we planned our first full scale eBay store. We wanted to take the entire fire and safety category online, extinguishers, alarms, blankets, signs, accessories and everything around them.",
-        "The original CO2 listing had already built sales history, customer reviews and marketplace credibility.",
-        "Above the surface, it still looked like a small warehouse. Below it, something much bigger was being prepared."
+        "The original CO2 listing had already built sales history, customer reviews and marketplace credibility, so the store would not be starting from nothing. Above the surface, it still looked like a small warehouse. Below it, something much bigger was being prepared."
       ],
       highlight: "Unit 10 was small in square footage, but enormous in what it allowed us to imagine.",
       statItems: [
@@ -4477,16 +4470,12 @@ const FG_DATA = {
       alt: "The Freedom team and van fleet outside Unit 10",
       photos: ["journey-photos/ch7-a.jpg", "journey-photos/ch7-b.jpg"],
       nextQuestion: "Could we build an entire ecommerce store before knowing whether the market would respond?" },
-    { year: "2023", kick: "The Build", q: "Would we invest everything before the sales arrived?",
+    { year: "May 2023", kick: "The Build", q: "Would we invest everything before the sales arrived?",
       title: "Twelve Months of Building Before One New Sale",
       subtitle: "Thousands of products, images, descriptions and calculations were prepared manually before the store launched.",
       body: [
-        "For 12 months throughout 2023, we built the foundations of a major ecommerce store. There was no mature AI workflow completing the work for us.",
-        "Products were researched manually. Images were sourced and edited. Descriptions were written. Margins were calculated. Product codes, supplier costs, packaging, delivery fees and marketplace charges were recorded line by line.",
-        "Thousands of SKUs were prepared before most of them had generated a single sale.",
-        "The bigger challenge was supply. Many established manufacturers and distributors did not believe fire extinguishers belonged online. Some were concerned that ecommerce would undermine traditional servicing and engineering channels, while others were unwilling to extend meaningful supply or credit to a young business with limited financial history.",
-        "But consumer behaviour was already changing. Customers were buying almost every other category online, and fire safety would not remain an exception forever.",
-        "To fund the launch, Managing Director Tom invested his entire £17,000 life savings and borrowed a further £5,000 from his nana. Nearly all of it went into stock. There was no safety net, no guarantee and no proof it would work. Only the conviction that one day, it would."
+        "Throughout 2023, we built the foundations of a major ecommerce store, with no mature AI workflow doing the work for us. Products were researched manually, images sourced and edited, descriptions written and margins calculated. Product codes, supplier costs, packaging, delivery and marketplace charges were recorded line by line, and thousands of SKUs prepared before most had sold. Supply was the bigger challenge. Many manufacturers did not believe fire extinguishers belonged online, and others would not extend credit to a young business with limited financial history. But consumer behaviour was already changing.",
+        "To fund the launch, Managing Director Tom invested his entire &pound;17,000 life savings and borrowed a further &pound;5,000 from his nana. Nearly all of it went into stock. There was no safety net, only the conviction that one day it would work."
       ],
       highlight: "We invested in the infrastructure before the market gave us permission to believe it would work.",
       statItems: [
@@ -4498,13 +4487,12 @@ const FG_DATA = {
       alt: "Stock being racked ahead of the store launch",
       photos: ["journey-photos/ch8-a.jpg"],
       nextQuestion: "What would happen when the store finally went live?" },
-    { year: "Early 2024", kick: "The Breakthrough", q: "Would the market respond?",
+    { year: "May 2024", kick: "The Breakthrough", q: "Would the market respond?",
       title: "Then the Orders Started Coming",
       subtitle: "The official eBay store launched, and the months of preparation finally began turning into sales.",
       body: [
-        "In early 2024, the existing eBay account was transformed into the Freedom Fire business store. New products launched at competitive prices, a DHL account enabled reliable next day delivery, and the range began expanding rapidly.",
-        "Reviews grew, momentum built and orders started arriving faster than expected. Between January and May 2024 alone, the store generated approximately £143,000 in sales.",
-        "The speed of growth soon caught eBay’s attention. Later that year, Freedom Fire was named runner up in the eBay UK Business Awards, leading to a trip to Belfast to meet members of the eBay leadership team and share the story behind the company, including the opportunities being created for young people who needed experience, support and a second chance.",
+        "In early 2024, the existing eBay account was transformed into the Freedom Fire business store. New products launched at competitive prices, a DHL account enabled next day delivery, and the range expanded rapidly.",
+        "Reviews grew, momentum built and orders started arriving faster than expected. Between January and May 2024 alone, the store generated approximately £143,000 in sales. The speed of growth soon caught eBay’s attention. Later that year, Freedom Fire was named runner up in the eBay UK Business Awards, leading to a trip to Belfast to meet the eBay leadership team and share the story behind the company, including the opportunities created for young people who needed a second chance.",
         "For years, the business had been building quietly beneath the surface. Now, one of the world’s largest marketplaces had taken notice."
       ],
       highlight: "Years of quiet preparation became visible almost overnight.",
@@ -4517,16 +4505,12 @@ const FG_DATA = {
       alt: "The eBay UK Business Awards and the store's first months of sales",
       photos: ["journey-photos/ch9-a.jpg", "journey-photos/ch9-b.jpg", "journey-photos/ch9-c.jpg"],
       nextQuestion: "Could our small warehouse survive the speed of growth?" },
-    { year: "Mid 2024", kick: "The Expansion", q: "How quickly could the business outgrow its first home?",
+    { year: "June 2024", kick: "The Expansion", q: "How quickly could the business outgrow its first home?",
       title: "Unit 10 Was No Longer Big Enough",
       subtitle: "A warehouse three times the size became available directly opposite, and we moved immediately.",
       body: [
-        "By the summer of 2024, Unit 10, once the symbol of our independence, was already becoming too small. A larger unit became available directly opposite.",
-        "We secured it and spent six months transforming an empty industrial shell into the new Freedom headquarters. The new space included offices, reception, kitchen, fulfilment areas, packing stations and room for a much larger stockholding operation.",
-        "It was professional, ambitious and still unmistakably ours, complete with games consoles, electric bikes, RC cars and the energy of a young team building something together.",
-        "We moved into Unit 19 around November 2024 while processing thousands of monthly orders.",
-        "As the fire safety range expanded into smoke alarms and related products, batteries became a natural adjacent category. Relationships with major brands such as Duracell and Energizer followed.",
-        "Only one year earlier, established suppliers had been reluctant to take our plans seriously. Now suddenly, major brands wanted to work with us."
+        "By the summer of 2024, Unit 10, once the symbol of our independence, was already too small. A larger unit became available directly opposite. We secured it and spent six months turning an empty industrial shell into the new Freedom headquarters, with offices, reception, kitchen, fulfilment areas, packing stations and room for far more stock. It was professional, ambitious and still unmistakably ours, complete with games consoles, electric bikes and the energy of a young team. We moved into Unit 19 around November 2024 while processing thousands of monthly orders.",
+        "As the range expanded into smoke alarms, batteries became a natural adjacent category, and relationships with Duracell and Energizer followed. A year earlier, established suppliers had been reluctant to take our plans seriously."
       ],
       highlight: "The companies that once overlooked us were beginning to see what we were becoming.",
       statItems: [
@@ -4538,16 +4522,12 @@ const FG_DATA = {
       alt: "Unit 19, the new Freedom headquarters, reception and group meeting room",
       photos: ["journey-photos/ch10-a.jpg", "journey-photos/ch10-b.jpg", "journey-photos/ch10-c.jpg"],
       nextQuestion: "But could the margins and supply chains support the next level of growth?" },
-    { year: "2024", kick: "The Supply Chain", q: "Could we stop buying from the big players and become one?",
-      title: "To Compete With the Biggest, We Had to Buy Like the Biggest",
+    { year: "July 2024", kick: "The Supply Chain", q: "Could we stop buying from the big players and become one?",
+      title: "We Had to Buy Like the Biggest",
       subtitle: "Marketplace growth exposed the limits of buying through traditional UK supply chains.",
       body: [
-        "As sales accelerated, a commercial reality became impossible to ignore. After marketplace fees, packaging, fulfilment and delivery costs, margins on products purchased through UK distributors were becoming increasingly tight. To remain competitive online, we needed to move closer to the source.",
-        "In April 2024, we attended the National Fire Safety trade show at the NEC and met Xiao “Bob” Li and his father, owners of JinDun, one of the world’s major fire extinguisher manufacturers.",
-        "They later travelled to Manchester and visited our modest operation. Where others saw a small warehouse and a young team, they saw ambition, ecommerce capability and long term potential.",
-        "They offered us a direct manufacturing relationship and access to pricing capable of transforming the business. The opportunity was enormous. So was the challenge.",
-        "We were their first UK client. The minimum first order approached £90k, capital we did not have. We borrowed, reinvested profits and committed everything available to making it happen.",
-        "But importing directly created another question. Whose name would sit on the products?"
+        "As sales accelerated, a commercial reality became impossible to ignore. After marketplace fees, packaging, fulfilment and delivery, margins on stock bought through UK distributors were too tight to compete online.",
+        "In April 2024, we attended the National Fire Safety trade show at the NEC and met Xiao &ldquo;Bob&rdquo; Li and his father, owners of JinDun, one of the world&rsquo;s major fire extinguisher manufacturers. They later travelled to Manchester and visited our modest operation. Where others saw a small warehouse and a young team, they saw ambition and long term potential, and offered a direct manufacturing relationship with transformative pricing. We were their first UK client. The minimum first order approached &pound;90k, capital we did not have. We borrowed and committed everything available. But importing directly raised another question. Whose name would sit on the products?"
       ],
       highlight: "The warehouse was small. The order was enormous. The belief had to be bigger than both.",
       statItems: [
@@ -4560,33 +4540,28 @@ const FG_DATA = {
       photos: ["journey-photos/ch11-a.jpg", "journey-photos/ch11-b.jpg"],
       nextQuestion: "If we were going to manufacture our own products, what would the brand become?" },
     { year: "August 2024", kick: "The Brand Is Born", q: "Could we create something the business could truly own?",
-      title: "Rejected by the Industry. Built Anyway. Firestorm™ Was Born.",
+      title: "Firestorm&trade; Was Born From Rejection",
       subtitle: "A name became protected intellectual property, marking the transition from reseller to brand owner.",
       body: [
-        "Direct manufacturing created an opportunity to do more than purchase products closer to the source. It gave us the chance to build something of our own.",
-        "Firestorm™ was chosen as the name for the next stage: “Fire” represented the industry we had grown from, while “Storm” captured the ambition to disrupt it, challenge the established market and arrive with force. It was a recognisable brand the company could control, protect and grow.",
-        "The UK registration for the FIRESTORM mark took effect on 9 August 2024 and was entered on the register on 1 November 2024, in the name of Freedom Fire &amp; Safety Ltd. The registration covers core fire safety equipment and related storage and transport products across Classes 9 and 20.",
-        "Before a single branded extinguisher reached the warehouse, Firestorm had already changed the direction of the company.",
-        "For the first time, we were not simply preparing to sell somebody else’s product. We were creating intellectual property, an asset capable of growing with every product, customer and market that followed."
+        "Direct manufacturing created an opportunity to do more than buy closer to the source. It gave us the chance to build something of our own.",
+        "Firestorm&trade; was chosen for the next stage: &ldquo;Fire&rdquo; for the industry we had grown from, &ldquo;Storm&rdquo; for the ambition to disrupt it. It was a brand the company could control, protect and grow. The FIRESTORM mark took effect on 9 August 2024 and was entered on the register on 1 November 2024, in the name of Freedom Fire &amp; Safety Ltd, covering fire safety equipment and related storage and transport across Classes 9 and 20. Before a single branded extinguisher reached the warehouse, Firestorm had already changed the direction of the company. We were no longer preparing to sell somebody else&rsquo;s product. We were creating intellectual property that could grow with every product and market that followed."
       ],
       highlight: "Firestorm was more than a name on a cylinder. It was the moment the business began building value it could own.",
       statItems: [
-        { value: "9 August 2024", label: "Trade mark effective date", icon: "cal" },
-        { value: "UK00004085840", label: "UK registration number", icon: "tag" },
+        { value: "First owned brand", label: "Firestorm&trade;, the company&rsquo;s first protected mark", icon: "tag" },
+        { value: "9 August 2024", label: "Trade mark effective date, UK00004085840", icon: "cal" },
         { value: "Classes 9 and 20", label: "Fire safety products and related storage and transport equipment", icon: "box" }
       ],
       summary: "The brand is born",
       alt: "The Firestorm registered trade mark",
       photos: ["journey-photos/ch12-a.jpg"],
       nextQuestion: "But could a protected name become thousands of products people could hold?" },
-    { year: "Christmas Eve 2024", kick: "The Christmas Delivery", q: "Would Firestorm finally become real?",
-      title: "Our Biggest Christmas Present Arrived in a Shipping Container",
+    { year: "December 2024", kick: "The Christmas Delivery", q: "Would Firestorm finally become real?",
+      title: "The Best Christmas Present Was a Container",
       subtitle: "The first container transformed a protected name into thousands of physical products.",
       body: [
         "Until then, Firestorm existed in plans, design files, supplier conversations, legal documents and belief.",
-        "On Christmas Eve 2024, the first container arrived in the UK carrying thousands of Firestorm fire extinguishers. When the doors opened, the brand was no longer an idea waiting to happen. It was there, in steel, labels, pallets and products carrying a name we owned.",
-        "The arrival represented years of reinvestment, rejected supplier conversations, late nights, borrowing, risk and the refusal to accept that a young ecommerce company from Bury could not compete with the established industry.",
-        "For the first time, the company was no longer simply reselling the products of others. It was holding its own future in its hands."
+        "On Christmas Eve 2024, the first container arrived in the UK carrying thousands of Firestorm fire extinguishers. When the doors opened, the brand was no longer an idea waiting to happen. It was there, in steel, labels, pallets and products carrying a name we owned. Every cylinder inside it came from the manufacturer we had met at the NEC eight months earlier, paid for with money the business did not have when the order was placed. The arrival represented years of reinvestment, rejected supplier conversations, late nights, borrowing and the refusal to accept that a young ecommerce company from Bury could not compete with the established industry. The company was no longer reselling the products of others. It was holding its own future in its hands."
       ],
       highlight: "The container did not simply deliver stock. It delivered the moment Firestorm became real.",
       statItems: [
@@ -4599,15 +4574,12 @@ const FG_DATA = {
       photos: ["journey-photos/ch13-a.jpg", "journey-photos/ch13-b.jpg"],
       nextQuestion: "Could one owned brand become the foundation of a much larger ecommerce platform?" },
     { year: "January 2025", kick: "The Vision Expands", q: "Could one successful category become a multi brand ecommerce powerhouse?",
-      title: "One Fire Safety Store Became the Blueprint for Freedom Global",
-      subtitle: "Twelve months after the phased eBay launch began, online sales had passed £500,000, contracted work had added around £100,000, and the business was beginning to outgrow a fire only identity.",
+      title: "One Store Became the Freedom Global Blueprint",
+      subtitle: "Twelve months on, online sales had passed &pound;500,000 and the business was starting to outgrow a fire only identity.",
       body: [
-        "From January 2024 to January 2025, the Freedom Fire eBay store was built while it was already trading. The complete range did not launch overnight; products were researched, prepared and added gradually as the team learned what customers wanted, which listings converted and where the greatest opportunities existed.",
-        "Despite that phased rollout, eBay sales surpassed £500,000 during the first 12 months, while national servicing and contracted site work contributed approximately a further £100,000.",
-        "Direct manufacturing relationships in China also became stronger, improving confidence in product quality, pricing and long term availability.",
-        "But the most important development was not only in the revenue. It was in the identity of the business. Fire extinguishers were no longer viewed as its limit; they had become proof of a repeatable system.",
-        "If Freedom could identify a needs driven product, create and protect a brand, source directly from manufacturers, import reliably and scale through established marketplaces, the same model could be repeated across alarms, batteries, PPE, cleaning products and other year round essentials.",
-        "Around this point, the name Freedom Fire &amp; Safety began to feel too narrow for the company being imagined. The idea of Freedom Global started to take shape: a future multi brand, multi category ecommerce platform built on the same supply chains, fulfilment infrastructure and marketplace expertise. The legal company remained Freedom Fire &amp; Safety Ltd, but the long term identity had begun to evolve."
+        "From January 2024 to January 2025, the Freedom Fire eBay store was built while it was already trading, with products added gradually as the team learned which listings converted.",
+        "Despite that phased rollout, eBay sales surpassed &pound;500,000 during the first 12 months, while national servicing and contracted site work contributed approximately a further &pound;100,000. The most important development was not the revenue but the identity of the business. Fire extinguishers were no longer its limit; they had become proof of a repeatable system that could be applied to alarms, batteries, PPE, cleaning products and other year round essentials.",
+        "Freedom Global took shape: a multi brand, multi category ecommerce platform built on the same supply chains, fulfilment infrastructure and marketplace expertise. The legal company remained unchanged; the identity had begun to evolve."
       ],
       highlight: "Fire extinguishers were no longer the destination. They had become the blueprint for Freedom Global.",
       statItems: [
@@ -4620,13 +4592,11 @@ const FG_DATA = {
       photos: ["journey-photos/ch14-a.jpg"],
       nextQuestion: "Could the company grow by creating opportunity for the next generation too?" },
     { year: "September 2025", kick: "The People", q: "Could business growth create opportunity for others?",
-      title: "The Business Was Growing. So Were the People Inside It.",
-      subtitle: "The next stage would be built by giving young people a genuine route into responsibility, employment and long term careers.",
+      title: "The Business Was Growing and So Were Its People",
+      subtitle: "The next stage would be built by giving young people a real route into long term careers.",
       body: [
-        "Creating opportunity had been part of Freedom’s story since 2021, when the company began providing placements for learners from Newbridge College, including young people with additional needs.",
-        "Several young people joined the business, gained practical experience and developed their confidence, while one of the earliest placements, Jojo, progressed into long term full time employment.",
-        "In September 2025, Freedom formalised that commitment by beginning its official T Level journey with support from the Growth Company. Bill, Harrison and Gabriel joined the team, not simply as temporary names on a placement sheet, but as young people the company intended to train, support and develop towards long term employment.",
-        "As Freedom learned how to build products, brands and ecommerce platforms, it also began building its future workforce around potential rather than polished CVs."
+        "Creating opportunity had been part of Freedom’s story since 2021, when the company began providing placements for learners from Newbridge College, including young people with additional needs. Several young people joined the business, gained practical experience and developed their confidence, while one of the earliest placements, Jojo, progressed into long term full time employment.",
+        "In September 2025, Freedom formalised that commitment by beginning its official T Level journey with support from the Growth Company. Bill, Harrison and Gabriel joined the team, not simply as temporary names on a placement sheet, but as young people the company intended to train, support and develop towards long term employment. As Freedom learned how to build products, brands and ecommerce platforms, it also began building its future workforce around potential rather than polished CVs."
       ],
       highlight: "Freedom was not only building a company. It was creating a place where young people could build a future.",
       statItems: [
@@ -4638,14 +4608,12 @@ const FG_DATA = {
       alt: "A T Level student presenting Freedom Group Holdings project research at the new HQ",
       photos: ["journey-photos/ch15-a.jpg"],
       nextQuestion: "Could the ecommerce system this growing team was helping to build succeed beyond eBay?" },
-    { year: "October to December 2025", kick: "The Second Proof", q: "Was eBay the exception, or was the model repeatable?",
+    { year: "October 2025", kick: "The Second Proof", q: "Was eBay the exception, or was the model repeatable?",
       title: "Temu Proved the Model Could Travel",
       subtitle: "A second marketplace generated more than £160,000 in its first three months with fewer than ten live products.",
       body: [
-        "In August 2025, Freedom Fire was approached by Temu UK to become its first dedicated fire extinguisher seller.",
-        "Working closely with the platform’s compliance teams in the UK and China, the company helped establish the category around compliant products, reputable UK held stock and rapid domestic delivery.",
-        "Freedom went live later that year with fewer than ten products, yet generated more than £160,000 in sales during its first three months.",
-        "The strength of demand was reflected not only in revenue, but in marketplace performance: two Firestorm products secured the number one and number two positions in Temu’s Safety &amp; Security best seller rankings.",
+        "In August 2025, Freedom Fire was approached by Temu UK to become its first dedicated fire extinguisher seller. Working closely with the platform’s compliance teams in the UK and China, the company helped establish the category around compliant products, reputable UK held stock and rapid domestic delivery.",
+        "Freedom went live later that year with fewer than ten products, yet generated more than £160,000 in sales during its first three months. The strength of demand was reflected not only in revenue, but in marketplace performance: two Firestorm products secured the number one and number two positions in Temu’s Safety &amp; Security best seller rankings.",
         "The result answered a crucial question. Success had not belonged to one listing, one store or one marketplace. The same product category, fulfilment model and commercial thinking could be rebuilt successfully somewhere else."
       ],
       highlight: "eBay proved the category. Temu proved the system.",
@@ -4660,12 +4628,9 @@ const FG_DATA = {
       nextQuestion: "What would two marketplaces and a growing service operation add up to by the end of the company’s second online year?" },
     { year: "January 2026", kick: "The Million Pound Year", q: "Could the business break through £1 million in only its second full online year?",
       title: "The Second Year Broke the Million Pound Barrier",
-      subtitle: "Approximately £890,000 on eBay, more than £160,000 on Temu and growing contracted work took combined sales beyond £1 million.",
+      subtitle: "£890,000 on eBay and more than £160,000 on Temu took combined sales beyond £1 million.",
       body: [
-        "Between January 2025 and January 2026, Freedom entered only its second full year of scaled online trading.",
-        "During that period, eBay generated approximately £890,000 in sales, almost doubling the result achieved during the first 12 months.",
-        "Temu contributed more than £160,000 during only its first three months, while national servicing and contracted site work continued to grow alongside ecommerce.",
-        "Combined sales moved beyond £1 million, with fire extinguishers still at the centre of the business.",
+        "Between January 2025 and January 2026, Freedom entered its second full year of scaled online trading. eBay generated approximately &pound;890,000 in sales, almost doubling the first 12 months. Temu contributed more than &pound;160,000 during only its first three months, while national servicing and contracted site work continued to grow alongside ecommerce. Combined sales moved beyond &pound;1 million, with fire extinguishers still at the centre of the business and growth no longer resting on a single listing or a single platform.",
         "The milestone proved that the earlier growth had not been a temporary launch spike. Freedom could grow across multiple channels, serve ecommerce and commercial customers simultaneously, and turn one specialist product category into a seven figure operation."
       ],
       highlight: "The first year proved the launch could work. The second proved the business could scale.",
@@ -4678,15 +4643,12 @@ const FG_DATA = {
       alt: "A container arriving at the Freedom unit as the second year passes £1 million",
       photos: ["journey-photos/ch17-a.jpg"],
       nextQuestion: "If one core category could create a seven figure business, how many brands could the same system support?" },
-    { year: "February to March 2026", kick: "The Brand Portfolio", q: "Could one owned brand become many?",
+    { year: "February 2026", kick: "The Brand Portfolio", q: "Could one owned brand become many?",
       title: "Firestorm™ Was Only the Beginning",
       subtitle: "The same brand building model began expanding across new product categories, markets and customer groups.",
       body: [
-        "Firestorm had proved that Freedom could identify a product opportunity, create a name around it, protect the intellectual property, source directly from manufacturers and scale the brand through ecommerce. The next step was to repeat that process.",
-        "In February and March 2026, FXL™ and Skyline™ became the company’s second and third protected brands, taking the model beyond fire extinguishers and into aerosols and line marking products.",
-        "Around them, a wider portfolio began taking shape across batteries, PPE, cleaning products, automotive products and other year round essentials.",
-        "Some brands were already protected, while others remained in application or development, but each followed the same principle: target non seasonal, needs driven or repeat purchase products that could use the same supply chains, fulfilment infrastructure and marketplace expertise.",
-        "What had started as one owned fire safety brand was becoming a platform capable of carrying an entire portfolio."
+        "Firestorm had proved Freedom could identify a product opportunity, create a name, protect the intellectual property, source directly and scale the brand through ecommerce. The next step was to repeat it. In February and March 2026, FXL&trade; and Skyline&trade; became the second and third protected brands, taking the model beyond fire extinguishers into aerosols and line marking products.",
+        "Around them, a wider portfolio began taking shape across batteries, PPE, cleaning products, automotive products and other year round essentials. Some brands were protected, others in application or development. Each followed the same principle: target non seasonal, repeat purchase products using the same supply chains and marketplace expertise. One owned brand was becoming a platform capable of carrying a portfolio."
       ],
       highlight: "Firestorm proved the model once. The brand portfolio was designed to prove it repeatedly.",
       statItems: [
@@ -4698,15 +4660,13 @@ const FG_DATA = {
       alt: "The Freedom brand portfolio, Voltz, Kunergy, FXL, Skyline and Firestorm",
       photos: ["journey-photos/ch18-a.jpg", "journey-photos/ch18-b.jpg", "journey-photos/ch18-c.jpg"],
       nextQuestion: "Could this growing portfolio now compete on the largest marketplace of all?" },
-    { year: "May to August 2026", kick: "The Biggest Launch", q: "Could the system compete at a much greater scale?",
+    { year: "May 2026", kick: "The Biggest Launch", q: "Could the system compete at a much greater scale?",
       title: "Amazon Became the Next Frontier",
       subtitle: "Years of marketplace learning were brought together for the company’s largest channel expansion to date.",
       body: [
         "By summer 2026, Freedom had spent years learning how to research products, build catalogues, manage compliance, fulfil orders and earn customer trust across eBay, Temu and emerging marketplaces.",
-        "In May, the company appointed a specialist agency to prepare its full Amazon storefront, with the initial launch targeted for the end of July.",
-        "This was not a rushed leap onto the largest platform; it was the result of mastering smaller channels first and carrying those lessons forward.",
-        "Alongside Amazon, the phased OnBuy rollout continued, Freedom’s own Shopify store moved towards an end of August launch following six months of development, and further routes through TikTok Shop, B&amp;Q and Screwfix entered the channel roadmap.",
-        "For the first time, multiple platforms were being prepared to grow at the same moment."
+        "In May, the company appointed a specialist agency to prepare its full Amazon storefront, with the initial launch targeted for the end of July. This was not a rushed leap onto the largest platform; it was the result of mastering smaller channels first and carrying those lessons forward.",
+        "Alongside Amazon, the phased OnBuy rollout continued, Freedom’s own Shopify store moved towards an end of August launch following six months of development, and further routes through TikTok Shop, B&amp;Q and Screwfix entered the channel roadmap. For the first time, multiple platforms were being prepared to grow at the same moment."
       ],
       highlight: "Amazon was not where the experiment began. It was where years of experimentation were meant to compound.",
       statItems: [
@@ -4718,14 +4678,13 @@ const FG_DATA = {
       alt: "The channel roadmap, eBay and Temu live, Amazon, OnBuy, Shopify, TikTok Shop, B&amp;Q and Screwfix ahead",
       photos: ["journey-photos/ch19-a.jpg"],
       nextQuestion: "What happens when the platforms, brands and people all begin to launch together?" },
-    { year: "June to September 2026", kick: "The Launchpad", q: "What happens when people, platforms and purpose align?",
+    { year: "June 2026", kick: "The Launchpad", q: "What happens when people, platforms and purpose align?",
       title: "The Foundations Were Ready. Liftoff Was Next.",
       subtitle: "New channels, long term jobs and a national award application converged at the beginning of the next growth phase.",
       body: [
-        "In June 2026, Freedom began preparing an application after being nominated for The King’s Awards for Enterprise in the Promoting Opportunity through social mobility category, drawing on a placement, mentoring and employment programme that had been developing since 2021.",
-        "By this point, Bill, Harrison and Gabriel had each been offered long term roles, turning the T Level chapter from a temporary placement initiative into a genuine pathway towards lasting employment.",
-        "At the same time, Amazon, OnBuy and the company’s own Shopify store were moving towards launch, bringing the people, systems, brands and channels developed over the previous years into one decisive window.",
-        "The end of summer was not being treated as a finish line. It was the launchpad for Q4 2026, 2027 and the period in which the real scale of Freedom Global could begin to emerge."
+        "In June 2026, Freedom began preparing an application after being nominated for The King’s Awards for Enterprise in the Promoting Opportunity through social mobility category, drawing on a placement and mentoring programme running since 2021. By this point, Bill, Harrison and Gabriel had each been offered long term roles, turning the T Level chapter from a temporary placement initiative into a genuine pathway towards lasting employment.",
+        "At the same time, Amazon, OnBuy and the company’s own Shopify store were moving towards launch, bringing the people, systems, brands and channels of previous years into one decisive window.",
+        "The end of summer was not a finish line. It was the launchpad for Q4 2026, 2027 and the period in which the real scale of Freedom Global could begin to emerge."
       ],
       highlight: "The next stage would not be powered by one founder, one product or one marketplace. It would be powered by a team and a system ready to scale.",
       statItems: [
@@ -9011,10 +8970,35 @@ function balanceChapters() {
     if (contentH(main) - contentH(side) > 80) side.classList.add("balanced");
   });
 }
+/* Shrink each green question until it fits its column on one line. Letter
+   spacing is what makes these overflow, so the floor is low enough to hold the
+   longest of them without ever going below legibility. */
+function fitChapterQuestions() {
+  const narrow = innerWidth <= 1080;          // single-column: the question wraps
+  document.querySelectorAll(".jcard.chapter .ch-q").forEach(q => {
+    q.style.removeProperty("--chq");
+    q.style.removeProperty("--chqls");
+    if (narrow || !q.clientWidth) return;
+    /* Spacing goes first: at .16em an 80-character question spends ~156px on
+       tracking alone, so tightening it buys far more room than shrinking the
+       type does — and costs much less legibility. Size only moves once the
+       tracking is spent, and never below 9.5px. */
+    let ls = .16;
+    for (let i = 0; i < 14 && q.scrollWidth > q.clientWidth + 0.5 && ls > .03; i++) {
+      ls -= .01;
+      q.style.setProperty("--chqls", ls.toFixed(3) + "em");
+    }
+    let px = 12.16;                       // .76rem
+    for (let i = 0; i < 12 && q.scrollWidth > q.clientWidth + 0.5 && px > 9.5; i++) {
+      px -= 0.24;
+      q.style.setProperty("--chq", px.toFixed(2) + "px");
+    }
+  });
+}
 let chBalanceT = 0;
 window.__ffBalanceSoon = () => {
   clearTimeout(chBalanceT);
-  chBalanceT = setTimeout(() => { try { balanceChapters(); } catch (e) {} }, 160);
+  chBalanceT = setTimeout(() => { try { balanceChapters(); fitChapterQuestions(); } catch (e) {} }, 160);
 };
 addEventListener("resize", () => window.__ffBalanceSoon());
 
@@ -11811,6 +11795,7 @@ safeBoot("blueprint", initBlueprint);         // market levels 1–3
 safeBoot("figureFit", fitChapterFigures);     // shape every frame to its picture
 safeBoot("chapterPhotos", initChapterPhotos); // after the cards exist
 safeBoot("chapterBalance", balanceChapters);  // then even the two columns up
+safeBoot("chapterQuestions", fitChapterQuestions); // and hold each green question on one line
 safeBoot("growth", renderGrowthChart);
 safeBoot("projections", renderProjections);
 safeBoot("trajectory", renderTrajectory);

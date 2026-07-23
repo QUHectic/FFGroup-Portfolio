@@ -6943,34 +6943,39 @@ function initCourier() {
      scroll only moves a TARGET along the flight path, and the ship chases it
      with inertia, turns its nose through its real velocity vector, banks into
      turns and throttles its flame by speed.
-     · scrubLag   1/s  base catch-up rate. SMALLER = floatier/laggier (a GSAP
-                       scrub:1.2 feel is ~4-5; 10+ feels glued to the wheel).
-     · scrubBoost      extra catch-up per unit of progress error, so a huge
-                       wheel-fling still lands within a beat instead of
-                       drifting for seconds. Raise if the ship falls too far
-                       behind on fast scrolls; lower for more float.
+     · scrubLag /
+       scrubBoost      progress catch-up (rate = scrubLag + error·scrubBoost).
+                       These MUST stay high enough that pd tracks the scroll
+                       truthfully: the route is evaluated from LIVE element
+                       rects, so letting pd trail far behind makes the ship
+                       visibly traverse stale, off-screen geometry (it read as
+                       slack, backwards drifting). The FLOAT/weight feel comes
+                       from the posS screen-space spring below instead.
      · turnRate  rad/s hard cap on nose swing. A scroll reversal turns the
                        ship around in ~PI/turnRate seconds (≈.6s at 5.2) —
                        never an instant snap.
      · bankGain        roll per rad/s of turn (aerodynamic banking); bankMax
                        clamps it; bankK is how fast the roll eases in/out.
      · flameIdle       thruster scale at rest (gentle idle glow);
-       flameGain       extra scale per px/s of TRUE screen speed;
+       flameGain       extra scale per px/s of SCROLL velocity — scroll fast
+                       and the burn stretches, stop and it eases back to idle;
        flameMax        clamp; flameK eases the throttle both ways.
-     · speedK          smoothing of the velocity estimate the nose/flame use.
+     · speedK          smoothing of the scroll-velocity estimate.
      PATH WAYPOINTS: the route itself lives in buildSegs() above — each leg is
      anchored to live element rects (charts, globe, pad) with gutter offsets,
      so edit the anchors THERE to reroute; the physics here is route-agnostic. */
   const PHYS = {
-    scrubLag: 4.6, scrubBoost: 26,
+    scrubLag: 5.4, scrubBoost: 260,
     turnRate: 5.2,
     bankGain: .085, bankMax: .30, bankK: 6,
     flameIdle: .62, flameGain: 1 / 1500, flameMax: 1.55, flameK: 5,
     speedK: 8,
   };
-  // physics state: smoothed screen-velocity, applied turn rate, bank and flame
-  let velX = 0, velY = 0, prevRX = null, prevRY = null;
-  let angVel = 0, bankS = 0, flameS = PHYS.flameIdle, lastTa = null;
+  // physics state: last rendered position, smoothed viewport velocity (the
+  // nose's motion reference), smoothed scroll speed (the flame's throttle),
+  // applied turn rate, bank and flame
+  let prevRX = null, prevRY = null, vX = 0, vY = 0, svS = 0;
+  let angVel = 0, bankS = 0, flameS = PHYS.flameIdle;
   const loSecRef = document.getElementById("liftoff");
   let dockOn = false;
   // LANDING AUTOPILOT state — once the ship reaches the pad approach the
@@ -7092,14 +7097,20 @@ function initCourier() {
         if (!inRaisePrev || raiseSpin0 == null) raiseSpin0 = courierSpin;
         orbitSpinRel = 0;
         raiseSpinRel = courierSpin - raiseSpin0;
-        /* INERTIA — the ship chases the scroll target instead of being nailed
-           to it. The old rate (5.4 + err*260) collapsed to a 1:1 snap on any
-           real wheel movement; scrubBoost is an order of magnitude gentler, so
-           starts, stops and flings all carry visible weight. */
+        /* progress tracks the scroll truthfully (see PHYS notes) — the ship's
+           physical weight lives in the posS screen-space spring, the capped
+           nose turn and the flame throttle, NOT in progress lag. */
         const k = snap ? 1 : 1 - Math.exp(-dt * (PHYS.scrubLag + Math.abs(pt - pd) * PHYS.scrubBoost));
         // travelling direction — scrolling back up TURNS the ship around so
         // it always flies nose-first (the smoothing animates the U-turn)
         if (ptPrev != null && Math.abs(pt - ptPrev) > .0004) dirState = pt > ptPrev ? 1 : -1;
+        // SCROLL VELOCITY (px/s of page travel) — the thruster's throttle
+        // input. Estimated from the progress delta, smoothed by speedK, so a
+        // fast fling stretches the burn and a stop eases it back to idle.
+        if (!snap) {
+          const rawSv = ptPrev == null ? 0 : Math.min(12000, Math.abs(pt - ptPrev) / dt * (S1 - S0));
+          svS += (rawSv - svS) * (1 - Math.exp(-dt * PHYS.speedK));
+        }
         ptPrev = pt;
         pd = pd < 0 ? pt : pd + (pt - pd) * k;
         if (Math.abs(pt - pd) < .0005) pd = pt;
@@ -7186,18 +7197,25 @@ function initCourier() {
             const th = raiseTh(L0.rq);
             ta = Math.atan2(Math.cos(th) * ((innerHeight * .27) / (innerWidth * .3)), -Math.sin(th));
           } else {
-            /* FREE FLIGHT heading = the ship's own velocity vector. The nose
-               points where the ship is actually GOING (atan2 of the smoothed
-               screen velocity), so it leans into every curve naturally and a
-               scroll reversal turns it around through the real motion — not a
-               dirState flip. Below ~90px/s the vector direction is noise, so
-               the nose HOLDS its last meaningful heading (a parked ship keeps
-               pointing where it was flying); the path tangent only seeds the
-               very first frame. */
-            const spd = Math.hypot(velX, velY);
-            if (spd > 90) lastTa = Math.atan2(velY, velX);
-            ta = lastTa != null ? lastTa
-              : Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+            /* FREE FLIGHT heading — a speed-blended hybrid of the two truths:
+               · the PATH TANGENT (dirState flips it on reverse) — always
+                 defined, sensible when parked or crawling;
+               · the ship's TRUE MOTION vector (atan2 of its smoothed viewport
+                 velocity) — the physical "nose points where it is going",
+                 which also covers pursuit cut-corners after sharp bends.
+               Below 60px/s the vector is noise so the tangent owns the nose;
+               above 240px/s the motion owns it; between, they crossfade. The
+               nose is therefore NEVER held stale (the old hold was what flew
+               the ship backwards for seconds) and never scroll-jittered. */
+            const taP = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+            const spd = Math.hypot(vX, vY);
+            const wv = cl01((spd - 60) / 180);
+            if (wv > 0) {
+              let dv = Math.atan2(vY, vX) - taP;
+              while (dv > Math.PI) dv -= T2;
+              while (dv < -Math.PI) dv += T2;
+              ta = taP + dv * wv;
+            } else ta = taP;
           }
           if (angS == null) angS = ta;
           let dA = ta - angS;
@@ -7232,18 +7250,17 @@ function initCourier() {
           // Layered time-based drift moves perpendicular to the flight path:
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
           const lifeT = snap ? pd * 10000 : now;           // deterministic in the verification hook
-          const drift = (Math.sin(lifeT * .00165 + pd * 17) * 2.5
-            + Math.sin(lifeT * .00061 + 1.2) * 1.15) * (L0.oq == null && !globeLocked ? 1 : 0)
+          const drift = (Math.sin(lifeT * .00165 + pd * 17) * 3.6
+            + Math.sin(lifeT * .00061 + 1.2) * 1.6) * (L0.oq == null && !globeLocked ? 1 : 0)
             * (padQ == null ? 1 : 1 - smt(cl01(padQ)));   // the wobble dies at touchdown
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
-          /* smoothed TRUE screen velocity (px/s) of the rendered ship — this
-             is what the nose steers by and the flame throttles on. speedK
-             filters frame noise without smearing real accelerations. */
+          /* smoothed viewport velocity of the rendered ship — next frame's
+             nose blends toward this true motion once it beats ~60px/s */
           if (prevRX != null && dt > 0 && !snap) {
             const kv = 1 - Math.exp(-dt * PHYS.speedK);
-            velX += ((renderX - prevRX) / dt - velX) * kv;
-            velY += ((renderY - prevRY) / dt - velY) * kv;
+            vX += ((renderX - prevRX) / dt - vX) * kv;
+            vY += ((renderY - prevRY) / dt - vY) * kv;
           }
           prevRX = renderX; prevRY = renderY;
           /* BANKING — roll follows the applied turn rate (rad/s), eased both
@@ -7321,14 +7338,14 @@ function initCourier() {
             plumeEls.forEach(el2 => { el2.style.opacity = burn >= .997 ? "" : burn.toFixed(3); });
             lastBurn = burn;
           }
-          /* DYNAMIC THRUSTER — the flame length answers the ship's true speed:
+          /* DYNAMIC THRUSTER — the flame length answers the SCROLL velocity:
              flameIdle at rest (gentle glow), stretching toward flameMax under a
              fast scroll, easing back when the wheel stops. The CSS flicker was
              disabled on these clones (it owns `transform`), so the flicker is
              re-created here and COMPOSED with the throttle. The trail streak
              only appears at speed, like a motion vapour line. */
           {
-            const spd = Math.hypot(velX, velY);
+            const spd = svS;
             const fT = Math.min(PHYS.flameMax, PHYS.flameIdle + spd * PHYS.flameGain);
             flameS += (fT - flameS) * (snap ? 1 : 1 - Math.exp(-dt * PHYS.flameK));
             const fl1 = 1 - .14 * (0.5 + 0.5 * Math.sin(lifeT * .0137));      // slow tongue flicker
@@ -7379,7 +7396,7 @@ function initCourier() {
     frame(testNow, false);
     return { p: +pd.toFixed(5), x: prevRX == null ? null : +prevRX.toFixed(1),
       y: prevRY == null ? null : +prevRY.toFixed(1),
-      v: +Math.hypot(velX, velY).toFixed(1), ang: angS == null ? null : +angS.toFixed(4),
+      v: +svS.toFixed(1), ang: angS == null ? null : +angS.toFixed(4),
       bank: +bankS.toFixed(4), flame: +flameS.toFixed(3), o: wrap.style.opacity };
   };
 }

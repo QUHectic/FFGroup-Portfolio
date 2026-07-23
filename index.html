@@ -286,6 +286,7 @@ section#team{overflow-x:clip;}
   --ember:#ff6a3d;        /* ember sphere */
   --slate:#94a3b8;        /* neutral chart series (B2B) */
   --gold:#fbbf24;         /* scale partnerships */
+  --violet:#a78bfa;       /* director division */
 
   /* Bright text-safe variants (were darkened for white; light on black now) */
   --blue-ink:#5cb8ff;
@@ -2124,6 +2125,15 @@ figure.photo.zoom:hover img{transform:scale(1.055);}
 /* team hero banner */
 .photo.team-hero{max-width:760px;margin:0 auto 30px;background:#0b0c12;}
 .photo.team-hero img{object-fit:contain;height:auto;}
+/* team intro: title/description LEFT, group photo RIGHT */
+.team-intro{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:38px;}
+.team-intro .sec-head{margin:0;text-align:left;max-width:none;}
+.team-intro .team-hero{max-width:480px;margin:0 0 0 auto;}
+.team-intro .team-hero img{width:100%;height:auto;}
+@media (max-width:820px){
+  .team-intro{grid-template-columns:1fr;gap:22px;}
+  .team-intro .team-hero{max-width:520px;margin:0 auto;}
+}
 
 /* ==========================================================================
    CHART FRAMEWORK
@@ -2437,6 +2447,30 @@ input[type="range"]::-moz-range-thumb{
   display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px;
 }
 .spider-hint{color:var(--ink-faint);font-size:.78rem;text-align:center;margin-top:10px;}
+/* Prominent "how to explore" guide above the diagram so the interaction is
+   obvious before the user touches anything. */
+.spider-guide{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 20px;
+  margin:0 auto 20px;padding:13px 22px;max-width:860px;
+  border:1px solid var(--line-strong);border-radius:14px;
+  background:linear-gradient(180deg,var(--bg-soft),rgba(255,255,255,.02));
+}
+.spider-guide .sg-lead{
+  font-size:.66rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);
+  padding-right:16px;border-right:1px solid var(--line-strong);
+}
+.spider-guide .sg-item{
+  display:inline-flex;align-items:center;gap:9px;color:var(--ink);font-size:.85rem;font-weight:600;
+}
+.spider-guide .sg-ic{width:16px;height:16px;flex:none;border-radius:5px;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;}
+.spider-guide .sg-hover{background:linear-gradient(135deg,var(--pink),var(--pink-bright));}
+.spider-guide .sg-click{background:linear-gradient(135deg,var(--blue),var(--blue-ink));}
+.spider-guide .sg-node{border-radius:50%;background:conic-gradient(var(--pink),var(--ember),var(--gold),var(--mint),var(--blue),var(--violet),var(--pink));}
+@media (max-width:900px){
+  .spider-guide{gap:8px 14px;padding:12px 16px;}
+  .spider-guide .sg-lead{width:100%;border-right:0;padding:0 0 4px;text-align:center;}
+  .spider-guide .sg-item{font-size:.8rem;}
+}
 
 /* mobile: the spider needs width, so we scroll it and shrink the type */
 @media (max-width:1040px){
@@ -3946,16 +3980,17 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 
   <section data-sec="team" id="team" class="tint" aria-label="Culture, team structure and future talent pipeline">
     <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="kicker">Culture, team structure &amp; talent pipeline</span>
-        <h2>The people behind<br><span class="grad-text">the movement</span></h2>
-        <p class="section-sub">A colour coded organisational matrix. Filter by division or employment type, click anyone for detail, and open the pipeline to see where we're hiring next.</p>
+      <div class="team-intro reveal">
+        <div class="sec-head">
+          <span class="kicker">Culture, team structure &amp; talent pipeline</span>
+          <h2>The people behind<br><span class="grad-text">the movement</span></h2>
+          <p class="section-sub">A colour coded organisational matrix. Filter by division or employment type, click anyone for detail, and open the pipeline to see where we're hiring next.</p>
+        </div>
+        <figure class="photo zoom team-hero">
+          <img loading="lazy" decoding="async" src="journey-photos/team-in-van.webp" alt="The Freedom team on a Martello container lorry at Unit 19">
+          <figcaption>The team at Unit 19, Freedom Fire &amp; Safety headquarters.</figcaption>
+        </figure>
       </div>
-
-      <figure class="photo zoom team-hero reveal">
-        <img loading="lazy" decoding="async" src="journey-photos/team-hero.jpg" alt="The Freedom team inside a shipping container at Unit 19">
-        <figcaption>The team at Unit 19, Freedom Fire &amp; Safety headquarters.</figcaption>
-      </figure>
 
       <div class="head-stats reveal" id="headStats"></div>
 
@@ -4920,21 +4955,26 @@ const FG_DATA = {
 
   /* ---------------------------------------------------------------------
      ORGANISATIONAL MATRIX
-     Six colour coded divisions. `type` drives the "By employment type"
+     Seven colour coded divisions. `type` drives the "By employment type"
      view and the headcount tiles; `pillar` promotes a card to a feature.
      --------------------------------------------------------------------- */
   team: {
     divisions: [
       {
-        key: "core", label: "Core Operations & Leadership", color: "var(--pink)",
+        key: "director", label: "Director", color: "var(--violet)",
         people: [
           // `root: true` puts Tom at the centre of the spider's hub
           { name: "Tom Letcher", role: "Managing Director", type: "Full time", tag: "MD", root: true,
-            bio: "Leads group strategy across every subsidiary, from the first £400 pallet in Bolton to the JinDun partnership and the trademarked Firestorm™ brand." },
+            bio: "Leads group strategy across every subsidiary, from the first £400 pallet in Bolton to the JinDun partnership and the trademarked Firestorm™ brand." }
+        ]
+      },
+      {
+        key: "core", label: "Core Operations & Leadership", color: "var(--pink)",
+        people: [
           { name: "Jojo Williams", nickname: "“Badger”", role: "Warehouse Operative", type: "Full time",
-            pillar: true, badge: "3 years · not a single day missed",
+            pillar: true, badge: "5 years · not a single day missed",
             note: "Jojo bikes 2 to 3 hours to work every day, rain, snow or shine. He embodies the spirit of Freedom Fire: honesty, heart and unwavering dedication. No excuses, just determination.",
-            bio: "Warehouse operative and the heartbeat of the culture, three years, zero days missed, 2 to 3 hours on a bike every single day." },
+            bio: "Warehouse operative and the heartbeat of the culture. He came up through the placement programme and has been here five years, zero days missed, 2 to 3 hours on a bike every single day." },
           { name: "Dylan Griffiths", role: "Warehouse Operative", type: "Full time",
             bio: "Full time warehouse operative at the heart of the Unit 19 refurbishment and dispatch operation." },
           { name: "Harrison Duckworth", role: "Warehouse Operative", type: "T Level Students",
@@ -4954,10 +4994,17 @@ const FG_DATA = {
         ]
       },
       {
-        key: "it", label: "IT & Ecommerce", color: "var(--ember)",
+        key: "it", label: "IT", color: "var(--mint)",
         people: [
           { name: "Milad Shukri", role: "Head of IT", type: "Subcontractor", lead: true,
-            bio: "Head of IT, owns the systems and infrastructure the multi channel machine runs on." },
+            bio: "Head of IT, designs the systems and infrastructure the multi channel machine runs on." },
+          { name: "Billy Kelly", role: "IT Technician", type: "Part time", tag: "Charity work",
+            bio: "IT technician working part time and giving much of his spare time to charity work. Still holds the servicing record that has never been broken: 280 extinguishers in a single day." }
+        ]
+      },
+      {
+        key: "ecom", label: "Ecommerce", color: "var(--ember)",
+        people: [
           { name: "Elliot Saxon", role: "Ecommerce Assistant", type: "Full time", tag: "Full time from September",
             bio: "Ecommerce assistant stepping up to full time this September, growing with the platform." },
           { name: "Josh Okolanji", role: "Ecommerce Assistant", type: "Part time", tag: "University student",
@@ -4965,20 +5012,13 @@ const FG_DATA = {
         ]
       },
       {
-        key: "web", label: "Web Development Track", color: "var(--blue)",
+        key: "web", label: "Web Development", color: "var(--blue)",
         people: [
-          { name: "Bill Nebo", role: "Web Developer", type: "T Level Students",
-            tag: "Secured job · Upcoming Part Time", tagKind: "win",
-            bio: "T Level graduate developer who has secured his job with the group, full time over the summer, moving to term time part time." },
+          { name: "Bill Nebo", role: "Web Developer", type: "Full time",
+            tag: "Secured job · Full Time", tagKind: "win",
+            bio: "T Level graduate developer who secured his job with the group and has stepped up to full time on the web development team." },
           { name: "Gabriel Mroczek", role: "Web Developer", type: "T Level Students", tag: "Summer engineering placement",
-            bio: "Summer engineering placement on the web development track." }
-        ]
-      },
-      {
-        key: "support", label: "Technical Support & CSR", color: "var(--mint)",
-        people: [
-          { name: "Billy Kelly", role: "IT Technician", type: "Part time", tag: "CSR & rehabilitation",
-            bio: "IT technician working part time, balanced with mental health rehabilitation and charity initiatives. Still holds the servicing record that has never been broken: 280 extinguishers in a single day." }
+            bio: "Summer engineering placement on the web development team." }
         ]
       },
       {
@@ -10289,11 +10329,11 @@ const SPIDER = {
   vennR: 150, vennOffset: 88
 };
 
-/* Which divisions hang off which side, top to bottom.
-   Left carries 8 people, right 7 — balanced by design. */
+/* Which divisions hang off which side, top to bottom. Tom (director) is the
+   root/hub, so his division has no spoke. Left carries 8 people, right 7. */
 const SPIDER_SIDES = {
   left:  ["finance", "core", "web"],
-  right: ["partners", "it", "support"]
+  right: ["partners", "it", "ecom"]
 };
 
 function spiderGeometry() {
@@ -10386,7 +10426,14 @@ function renderSpider() {
     </button>`;
   })).join("");
 
+  const mob = innerWidth <= 900, act = mob ? "Tap" : "Click";
   $("#orgChart").innerHTML = `
+    <div class="spider-guide" role="note" aria-label="How to explore the diagram">
+      <span class="sg-lead">How to explore</span>
+      <span class="sg-item"><span class="sg-ic sg-hover"></span>${mob ? "Tap" : "Hover"} a name to trace its spoke</span>
+      <span class="sg-item"><span class="sg-ic sg-click"></span>${act} anyone for their full detail</span>
+      <span class="sg-item"><span class="sg-ic sg-node"></span>${act} a coloured node to filter its division</span>
+    </div>
     <div class="spider-scroll">
       <div class="spider" id="spider">
         <svg class="spider-svg" viewBox="0 0 ${S.W} ${S.H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -10403,9 +10450,7 @@ function renderSpider() {
         ${leaves}
       </div>
     </div>
-    <p class="spider-hint">${innerWidth <= 900
-      ? "Swipe horizontally · tap a name for detail · tap a coloured node to filter that division"
-      : "Hover a name to trace its spoke · click anyone for their detail · click a coloured node to filter that division"}</p>`;
+    ${mob ? '<p class="spider-hint">Swipe the diagram sideways to reach every division</p>' : ""}`;
 
   const spider = $("#spider");
 

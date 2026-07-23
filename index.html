@@ -1273,6 +1273,14 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
   backdrop-filter:blur(10px);
 }
 .lo-status{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
+/* closing statement — the narrative sign-off, pinned to the LEFT of the pad */
+#liftoff .lo-closing{position:absolute;left:clamp(16px,2.6vw,48px);top:clamp(96px,17vh,196px);z-index:6;
+  max-width:min(42vw,470px);margin:0;text-align:left;pointer-events:none;
+  font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:600;letter-spacing:-.01em;color:var(--ink-dim);}
+#liftoff .lo-closing b{color:var(--ink);font-weight:800;}
+@media (max-width:900px){
+  #liftoff .lo-closing{position:static;max-width:none;margin:14px auto 0;text-align:center;padding:0 18px;}
+}
 .lo-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(120,160,210,.28);border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.12em;color:rgba(210,226,248,.85);}
 .lo-chip i{width:7px;height:7px;border-radius:50%;background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
 .lo-count{font-family:"Orbitron",system-ui,sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:.14em;color:#dfe9fb;min-width:120px;}
@@ -1742,12 +1750,16 @@ section.tint{background:var(--bg-soft);}
    card or the picture box, opened one of those gaps up on the long chapters).
    The stat strip opposite still bottom-aligns for every chapter whose story
    fits the picture height, which is the common case. */
-.ch-side > .ch-figbox,.ch-side > .ch-fig,.ch-side > .ch-ph{margin-bottom:0;}
-.ch-side > .ch-quote{margin:14px 0 35px;}
+.ch-side > .ch-figbox,.ch-side > .ch-fig,.ch-side > .ch-ph{margin-bottom:0;flex:none;}
+/* The quote and next boxes GROW to swallow any residual column height left after
+   balanceChapters has sized the picture, so the pair ALWAYS bottom-aligns with
+   the stat strip opposite and there is never an empty gap beneath the question.
+   The image→quote (14) and quote→next (35) gaps stay identical in every chapter. */
+.ch-side > .ch-quote{margin:14px 0 35px;flex:1 1 auto;}
 /* .ch-next carries a 12px top margin for the mobile stack; on the desktop pair
    the 35px above is the whole gap, so zero it out here (the old auto rule used
    to do this implicitly). Keeps the quote-to-question gap at exactly 35px. */
-.ch-side > .ch-next{margin-top:0;}
+.ch-side > .ch-next{margin-top:0;flex:1 1 auto;}
 /* The date and the chapter title now stack beside the badge, so the pair
    occupies exactly the badge's height and the three read as one header block
    instead of the title floating loose beneath the row. */
@@ -1858,6 +1870,40 @@ section.tint{background:var(--bg-soft);}
   margin:28px auto 0;max-width:720px;padding:14px 22px;border:1px dashed var(--line-strong);border-radius:14px;
   color:var(--ink-dim);font-size:.76rem;line-height:1.5;text-align:center;}
 .assume-note b{color:var(--ink);}
+/* ===== PREMIUM POLISH — ambition + beyond were reading flat/dull ===== */
+.ambition-panel{position:relative;overflow:hidden;}
+.ambition-panel::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(85% 65% at 50% -12%,rgba(56,169,255,.10),transparent 55%),
+            radial-gradient(70% 60% at 50% 118%,rgba(255,61,154,.08),transparent 55%);}
+.ambition-panel > *{position:relative;}
+.assume > div{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.006));}
+.assume > div::before{height:2px;box-shadow:0 0 14px currentColor;}
+.assume-no{width:50px;height:50px;font-size:1.08rem;position:relative;}
+.assume-no::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(255,255,255,.12);}
+.assume > div:nth-child(3n+1) .assume-no{box-shadow:0 10px 28px -6px rgba(255,61,154,.65);}
+.assume > div:nth-child(3n+2) .assume-no{box-shadow:0 10px 28px -6px rgba(56,169,255,.65);}
+.assume > div:nth-child(3n)   .assume-no{box-shadow:0 10px 28px -6px rgba(67,230,171,.65);}
+.assume > div:hover{transform:translateY(-6px);}
+.assume > div:nth-child(3n+1):hover{border-color:rgba(255,61,154,.45);box-shadow:0 24px 56px -22px rgba(255,61,154,.55);}
+.assume > div:nth-child(3n+2):hover{border-color:rgba(56,169,255,.45);box-shadow:0 24px 56px -22px rgba(56,169,255,.55);}
+.assume > div:nth-child(3n):hover{border-color:rgba(67,230,171,.45);box-shadow:0 24px 56px -22px rgba(67,230,171,.55);}
+/* beyond */
+#beyond .panel{background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 40%),var(--card);}
+.by-tags span{transition:var(--t);background:linear-gradient(180deg,rgba(255,255,255,.045),var(--bg-soft));}
+.by-tags span:hover{border-color:var(--line-strong);color:var(--ink);transform:translateY(-2px);}
+.by-cos span{transition:var(--t);}
+.by-cos span:nth-child(3n+1){border-left-color:var(--pink);}
+.by-cos span:nth-child(3n+2){border-left-color:var(--blue);}
+.by-cos span:nth-child(3n){border-left-color:var(--mint-ink);}
+.by-cos span:hover{transform:translateY(-2px);border-color:var(--line-strong);box-shadow:0 12px 30px -14px rgba(0,0,0,.6);}
+.grp-val{position:relative;overflow:hidden;
+  background:radial-gradient(130% 130% at 0% 0%,rgba(255,61,154,.14),transparent 58%),var(--bg-soft) !important;
+  box-shadow:0 24px 56px -26px rgba(255,61,154,.45);}
+.grp-val b{text-shadow:0 0 34px rgba(255,61,154,.45);}
+.scen{transition:var(--t);}
+.scen:hover{transform:translateY(-4px);border-color:var(--line-strong);box-shadow:0 22px 48px -22px rgba(0,0,0,.6);}
+.flywheel li{transition:var(--t);}
+.flywheel li:hover{transform:translateX(3px);}
 
 /* THE MARKET BLUEPRINT — two independent sliders, one per level */
 .bp-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -1902,27 +1948,29 @@ section.tint{background:var(--bg-soft);}
    chapter. They ran 94-165px (stats), 79-124 (quote) and 91-111 (next), which
    is what made every card look individually laid out. --chbox is that height;
    the content centres inside it. */
-:root{--chbox:106px;}
+:root{--chbox:118px;}
 .ch-stats{display:flex;align-items:center;margin-top:20px;padding:10px 6px;
   min-height:var(--chbox);height:var(--chbox);box-sizing:border-box;
   border:1px solid var(--line);border-radius:16px;background:var(--bg-soft);}
-.ch-stat{flex:1 1 0;display:flex;align-items:center;gap:12px;padding:2px 15px;min-width:0;}
+/* stacked tile: bigger icon on top, then the value, then the label across the
+   FULL cell width — the old icon-beside-text layout left the label barely 60px
+   wide, which is what forced the ellipsis. */
+.ch-stat{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:2px 8px;min-width:0;}
 .ch-stat + .ch-stat{border-left:1px solid var(--line);}
 /* the icon was a 24px glyph floating at the top of the cell: it is now larger
    and vertically centred against the value it belongs to, with no plate around
    it — the wrapper exists only to centre the glyph. */
 .ch-stat .si{flex:none;display:grid;place-items:center;}
-.ch-stat .si svg{width:38px;height:38px;color:var(--acc,var(--pink));}
+.ch-stat .si svg{width:46px;height:46px;color:var(--acc,var(--pink));}
 .ch-stat > div{min-width:0;}
 /* the readout scales to the LENGTH of its value, so "£0" stays big and
    "Fire safety · Aerosols · Batteries" still sits on tidy lines */
-.ch-stat b{display:block;font-size:1.26rem;font-weight:800;letter-spacing:-.02em;line-height:1.12;color:var(--acc,var(--pink));overflow-wrap:anywhere;}
-.ch-stat.v-md b{font-size:1.02rem;line-height:1.18;}
-.ch-stat.v-sm b{font-size:.85rem;line-height:1.24;letter-spacing:-.01em;}
-.ch-stat.v-xs b{font-size:.76rem;line-height:1.28;letter-spacing:0;}
-.ch-stat span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
-  margin-top:3px;font-size:.68rem;line-height:1.3;color:var(--ink-dim);overflow-wrap:anywhere;}
-.ch-stat b{overflow-wrap:anywhere;}
+/* readouts now sit on ONE line at a UNIFORM size (labels were shortened to suit).
+   fitChapterStats() only nudges a rare outlier down a touch so nothing overflows. */
+.ch-stat b{display:block;font-size:.96rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;color:var(--acc,var(--pink));white-space:nowrap;max-width:100%;}
+.ch-stat.v-md b,.ch-stat.v-sm b,.ch-stat.v-xs b{font-size:.96rem;line-height:1.15;letter-spacing:-.02em;}
+.ch-stat span{display:block;white-space:nowrap;max-width:100%;
+  margin-top:4px;font-size:.66rem;line-height:1.3;color:var(--ink-dim);}
 .jcard.chapter .jbrands{margin-top:18px;}
 .ch-side{display:flex;flex-direction:column;min-width:0;}
 /* When the story column still outruns the rail, the leftover height is split
@@ -3816,35 +3864,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
       <p class="runway-note" style="margin-top:14px;">£6bn across 5.7 million UK private sector businesses is roughly £1,053 each, and by population about £87 a person a year, close to £3,000 each over a lifetime of homes, vehicles and workplaces. At around £30 a product, that is a hundred purchases per person. Turned the other way round, one percent of the UK is 690,000 people, so a single £30 product each is £20.7m of demand, more than 5% of the entire online fire safety market. The category is enormous precisely because the individual purchase is small, repeated and legally required.</p>
 
-      <!-- THE MARKET BLUEPRINT, three levels, stepped through on one slider
-           so the room reads the opportunity widening rather than three lists -->
-      <div class="sec-head reveal" style="margin-top:56px;">
-        <span class="kicker">The market blueprint · 2026</span>
-        <h3 style="font-size:clamp(1.3rem,2.2vw,1.85rem);letter-spacing:-.03em;">A large market is moving online</h3>
-        <p class="section-sub" style="margin-top:10px;">Freedom Global sits at the intersection of regulated safety products, changing buying behaviour and the continued expansion of ecommerce. Step through the three levels.</p>
-      </div>
-      <div class="bp-pair">
-        <div class="panel reveal bp-panel" data-bp="0">
-          <div class="bp-head">
-            <div><span class="bp-lvtag">Level 2</span><h4>Fire safety ecommerce</h4></div>
-            <span class="bp-count">1 / 4</span>
-          </div>
-          <p class="bp-sub">The same regulated category online, where the incumbents have not kept pace with how customers now buy.</p>
-          <div class="bp-vals"></div>
-          <input type="range" class="bp-slider" min="0" max="3" step="1" value="0" aria-label="Fire safety ecommerce points">
-          <div class="bp-stage"></div>
-        </div>
-        <div class="panel reveal d1 bp-panel" data-bp="1">
-          <div class="bp-head">
-            <div><span class="bp-lvtag">Level 3</span><h4>Broader ecommerce opportunity</h4></div>
-            <span class="bp-count">1 / 5</span>
-          </div>
-          <p class="bp-sub">The same infrastructure applied beyond fire safety, the route from one category to a platform.</p>
-          <div class="bp-vals"></div>
-          <input type="range" class="bp-slider" min="0" max="4" step="1" value="0" aria-label="Broader ecommerce points">
-          <div class="bp-stage"></div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -4029,7 +4048,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <div class="tr2 tr2-funding" id="investment"><div class="tr2-stage"><canvas></canvas>
     <div class="fund-over" id="fundOver" aria-hidden="true">
       <div class="fund-inner">
-        <div class="fund-kick">THE RAISE · USE OF FUNDS</div>
+        <div class="fund-kick">THE RAISE · WHERE IT GOES</div>
         <h3 class="fund-h">What capital unlocks</h3>
         <p class="fund-sub">The constraint is no longer demand. It is the working capital, people and infrastructure required to meet that demand consistently. Every pound removes a constraint, not a shortfall.</p>
         <div class="fund-cards">
@@ -4143,6 +4162,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        the visitor back to the very top under full burn.
        ==================================================================== -->
   <section data-sec="liftoff" id="liftoff" aria-label="Mission control, press for liftoff">
+    <p class="lo-closing reveal">One second-hand extinguisher created the first opportunity. <b>Freedom Global proved the ecommerce model.</b> Investment accelerates the next stage <span class="grad-text">&mdash; and lays the foundation for everything that follows.</span></p>
     <div class="wrap lo-head">
       <div class="sec-head reveal">
         <span class="kicker">Mission control</span>
@@ -4543,13 +4563,13 @@ const FG_DATA = {
       subtitle: "No master plan. No investors. No ecommerce business. No group of companies. Just one overlooked product and the willingness to start.",
       body: [
         "There was no Freedom Group. No portfolio of brands, no international supply chain, no team, no projections and no &pound;100 million ambition. There was simply one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value.",
-        "At the time, it did not feel like the beginning of a major business. There was no carefully written strategy, no investment behind it and no clear roadmap showing where it might lead. It was one product, one listing and one customer willing to take a chance. But that single sale changed the direction of everything. It proved that value could be found where others saw none. It created the first customer, the first opportunity and the first real glimpse of what might be possible. From there came more enquiries, more products, more responsibility and the growing belief that this could become something far greater than a one off transaction. Every order, every brand, every employee, every supplier relationship and every company that followed can be traced back to that one extinguisher. It was not simply the first product we sold. It was the moment the journey began, the first proof that an overlooked opportunity could be turned into something meaningful, and the first step towards everything Freedom would eventually become."
+        "At the time, it did not feel like the beginning of a major business. There was no strategy, no investment and no roadmap. It was one product, one listing and one customer willing to take a chance. But that single sale changed everything. It proved value could be found where others saw none, and created the first customer, the first opportunity and the first glimpse of what might be possible. Every order, brand, employee and supplier relationship that followed can be traced back to that one extinguisher. It was the moment the journey began."
       ],
       highlight: "Everything that exists today can be traced back to one extinguisher nobody else saw value in.",
       statItems: [
-        { value: "1", label: "Second hand extinguisher", icon: "ext" },
+        { value: "1", label: "Second-hand unit", icon: "ext" },
         { value: "\u00a30", label: "External investment", icon: "pound" },
-        { value: "Facebook Marketplace", label: "The first sales channel", icon: "cart" }
+        { value: "FB Marketplace", label: "First sales channel", icon: "cart" }
       ],
       summary: "The starting point",
       alt: "The first refurbished extinguishers lined up against the warehouse wall",
@@ -4563,9 +4583,9 @@ const FG_DATA = {
       ],
       highlight: "The first extinguisher created the possibility. The first bulk order proved the demand.",
       statItems: [
-        { value: "400", label: "Mixed refurbished extinguishers", icon: "ext" },
+        { value: "400", label: "Refurbished units", icon: "ext" },
         { value: "£400", label: "Total order value", icon: "pound" },
-        { value: "£1", label: "Approximate price per unit", icon: "tag" }
+        { value: "£1", label: "Approx. per unit", icon: "tag" }
       ],
       summary: "The first bulk order",
       alt: "Hundreds of refurbished foam extinguishers loaded and ready for the first bulk order",
@@ -4575,13 +4595,13 @@ const FG_DATA = {
       title: "Then Someone Asked: “Can You Send It?”",
       subtitle: "One remote order proved the opportunity was no longer limited by geography.",
       body: [
-        "The next breakthrough came when a kebab shop in Nottingham contacted us through Facebook Marketplace looking for the cheapest suitable refurbished extinguisher we could provide. They had never visited us, never met us and had no reason to trust a small operation just starting out in Bury, but they trusted the listing, paid remotely and asked us to send it. Even arranging the delivery became part of the lesson. Fire extinguishers could not simply be handed to any courier, so we had to work out how to package the unit properly and find a carrier willing to take it. What now sounds like a routine shipment felt enormous at the time. It was the first real test of whether this could become more than a collection only business. The customer promised us a free kebab if we ever made it to Nottingham and, after the order arrived, began recommending us to other takeaways in the area. One small delivery quietly led to more conversations, more trust and more customers we had never met. It was still only a few extinguishers going to one kebab shop. But for a business just beginning, it felt like the world had opened up. The opportunity was no longer limited to whoever could drive to us. These products could be boxed, collected and sent anywhere. For the first time, the opportunity could travel."
+        "The next breakthrough came when a kebab shop in Nottingham contacted us through Facebook Marketplace looking for the cheapest suitable refurbished extinguisher we could provide. They had never met us and had no reason to trust a small operation just starting out in Bury, but they trusted the listing, paid remotely and asked us to send it. Even the delivery became part of the lesson. Fire extinguishers could not be handed to any courier, so we had to package the unit properly and find a carrier willing to take it. It was the first real test of whether this could become more than a collection only business. The customer even promised a free kebab if we made it to Nottingham, and began recommending us to other takeaways nearby. It was still only a few extinguishers going to one kebab shop, but it felt like the world had opened up. These products could be boxed and sent anywhere. For the first time, the opportunity could travel."
       ],
       highlight: "The first remote order did not simply reach another customer. It removed geography from the business model.",
       statItems: [
         { value: "First", label: "Remote customer order", icon: "cart" },
-        { value: "Online", label: "Payment and communication", icon: "tag" },
-        { value: "National potential", label: "The opportunity moved beyond local collection", icon: "globe" }
+        { value: "Online", label: "Paid online", icon: "tag" },
+        { value: "National reach", label: "Beyond local collection", icon: "globe" }
       ],
       summary: "Geography removed",
       alt: "Boxed fire extinguishers packed and labelled for despatch",
@@ -4597,8 +4617,8 @@ const FG_DATA = {
       highlight: "Demand had arrived faster than the infrastructure required to serve it.",
       statItems: [
         { value: "Hundreds daily", label: "Units processed", icon: "ext" },
-        { value: "National deliveries", label: "From Scotland to London and Wales", icon: "truck" },
-        { value: "Six containers", label: "Supplied into export networks serving African markets", icon: "box" }
+        { value: "Nationwide", label: "Scotland to Wales", icon: "truck" },
+        { value: "Six containers", label: "Export into Africa", icon: "box" }
       ],
       summary: "A national operation",
       alt: "The Freedom Fire team, warehouse racking, pallets and container despatch during the 2020 growth",
@@ -4616,7 +4636,7 @@ const FG_DATA = {
       statItems: [
         { value: "1", label: "Original eBay listing", icon: "cart" },
         { value: "Nearly 8,000", label: "Units sold to date", icon: "chart" },
-        { value: "£350,000+", label: "Historic sales generated", icon: "pound" }
+        { value: "£350,000+", label: "Historic sales", icon: "pound" }
       ],
       summary: "Ecommerce proven",
       alt: "The original eBay CO2 extinguisher listing on screen",
@@ -4632,8 +4652,8 @@ const FG_DATA = {
       highlight: "The limited company was not simply a change of name. It marked the transition from opportunity to strategy.",
       statItems: [
         { value: "August 2021", label: "Company incorporated", icon: "cal" },
-        { value: "800 to 1,000", label: "Refurbished units processed weekly", icon: "ext" },
-        { value: "Two growth engines", label: "Ecommerce and contracted servicing", icon: "chart" }
+        { value: "800 to 1,000", label: "Refurbished weekly", icon: "ext" },
+        { value: "Two engines", label: "Ecommerce + servicing", icon: "chart" }
       ],
       summary: "The company forms",
       alt: "Freedom engineers servicing and installing extinguishers across commercial sites",
@@ -4651,9 +4671,9 @@ const FG_DATA = {
       ],
       highlight: "Unit 10 was small in square footage, but enormous in what it allowed us to imagine.",
       statItems: [
-        { value: "500 sq ft", label: "First dedicated warehouse", icon: "box" },
-        { value: "One existing listing", label: "The foundation of the new store", icon: "cart" },
-        { value: "One objective", label: "Build the broadest fire safety ecommerce range possible", icon: "tag" }
+        { value: "500 sq ft", label: "First warehouse", icon: "box" },
+        { value: "One listing", label: "Base of the new store", icon: "cart" },
+        { value: "One objective", label: "Broadest range online", icon: "tag" }
       ],
       summary: "The first home",
       alt: "The Freedom team and van fleet outside Unit 10",
@@ -4669,8 +4689,8 @@ const FG_DATA = {
       highlight: "We invested in the infrastructure before the market gave us permission to believe it would work.",
       statItems: [
         { value: "12 months", label: "Store development", icon: "cal" },
-        { value: "Thousands", label: "Products and listings prepared", icon: "tag" },
-        { value: "£22,000", label: "Founder and family capital invested", icon: "pound" }
+        { value: "Thousands", label: "Listings prepared", icon: "tag" },
+        { value: "£22,000", label: "Self-funded capital", icon: "pound" }
       ],
       summary: "The build",
       alt: "Stock being racked ahead of the store launch",
@@ -4686,9 +4706,9 @@ const FG_DATA = {
       ],
       highlight: "Years of quiet preparation became visible almost overnight.",
       statItems: [
-        { value: "£143,000", label: "Sales from January to May 2024", icon: "pound" },
-        { value: "Next day delivery", label: "Enabled through DHL", icon: "truck" },
-        { value: "eBay UK runner up", label: "National recognition", icon: "cart" }
+        { value: "£143,000", label: "Jan–May 2024 sales", icon: "pound" },
+        { value: "Next day", label: "Enabled through DHL", icon: "truck" },
+        { value: "eBay runner-up", label: "National recognition", icon: "cart" }
       ],
       summary: "The breakthrough",
       alt: "The eBay UK Business Awards and the store's first months of sales",
@@ -4698,14 +4718,14 @@ const FG_DATA = {
       title: "Unit 10 Was No Longer Big Enough",
       subtitle: "A warehouse three times the size became available directly opposite, and we moved immediately.",
       body: [
-        "By the summer of 2024, Unit 10, once the symbol of our independence, was already becoming too small. Stock was filling every available corner, packing space was under pressure and the business was beginning to outgrow the place that had once felt like such a major step forward. Then, almost perfectly timed, a larger unit became available directly opposite. We secured it and spent the next six months transforming an empty industrial shell into the new Freedom headquarters. The new space included offices, a reception area, kitchen, fulfilment rooms, packing stations and enough capacity to support a far larger stockholding operation. It was more professional, more ambitious and still unmistakably ours, complete with games consoles, electric bikes, RC cars and the energy of a young team building something together.",
-        "We moved into Unit 19 around November 2024 while already processing thousands of orders each month. As the fire safety range expanded into smoke alarms and related products, batteries became a natural adjacent category, creating new opportunities beyond extinguishers alone. Relationships with major brands such as Duracell and Energizer soon followed. Only a year earlier, established suppliers had been reluctant to take our plans seriously. Now, the warehouse was bigger, the sales were growing and the conversations had changed. The same major brands that once seemed out of reach were beginning to see Freedom as a company worth working with."
+        "By the summer of 2024, Unit 10, once the symbol of our independence, was already becoming too small. Stock filled every corner and packing space was under pressure. Then, almost perfectly timed, a larger unit became available directly opposite. We secured it and spent six months transforming an empty industrial shell into the new Freedom headquarters, with offices, a kitchen, fulfilment rooms and packing stations, still unmistakably ours and full of the energy of a young team building something together.",
+        "We moved into Unit 19 around November 2024 while already processing thousands of orders each month. As the range expanded into smoke alarms, batteries became a natural adjacent category, and relationships with brands such as Duracell and Energizer soon followed. Only a year earlier, suppliers had been reluctant to take our plans seriously. Now the warehouse was bigger, sales were growing, and the same brands that once seemed out of reach were beginning to see Freedom as a company worth working with."
       ],
       highlight: "The companies that once overlooked us were beginning to see what we were becoming.",
       statItems: [
         { value: "3× larger", label: "New warehouse capacity", icon: "box" },
         { value: "Six months", label: "HQ transformation", icon: "cal" },
-        { value: "Thousands monthly", label: "Orders being fulfilled", icon: "cart" }
+        { value: "Thousands/mo", label: "Orders being fulfilled", icon: "cart" }
       ],
       summary: "The expansion",
       alt: "Unit 19, the new Freedom headquarters, reception and group meeting room",
@@ -4721,8 +4741,8 @@ const FG_DATA = {
       highlight: "The warehouse was small. The order was enormous. The belief had to be bigger than both.",
       statItems: [
         { value: "April 2024", label: "First supplier meeting", icon: "cal" },
-        { value: "Direct from source", label: "A new manufacturing relationship", icon: "globe" },
-        { value: "Nearly £100,000", label: "Initial order requirement", icon: "pound" }
+        { value: "Direct source", label: "New manufacturer", icon: "globe" },
+        { value: "~£100,000", label: "Initial order", icon: "pound" }
       ],
       summary: "The supply chain",
       alt: "Shaking hands with Xiao (Bob) Li and his father of JinDun at the Freedom unit",
@@ -4737,9 +4757,9 @@ const FG_DATA = {
       ],
       highlight: "Firestorm was more than a name on a cylinder. It was the moment the business began building value it could own.",
       statItems: [
-        { value: "First owned brand", label: "Firestorm&trade;, the company&rsquo;s first protected mark", icon: "tag" },
-        { value: "9 August 2024", label: "Trade mark effective date, UK00004085840", icon: "cal" },
-        { value: "Classes 9 and 20", label: "Fire safety products and related storage and transport equipment", icon: "box" }
+        { value: "First brand", label: "First protected mark", icon: "tag" },
+        { value: "9 August 2024", label: "Trade mark date", icon: "cal" },
+        { value: "Classes 9 & 20", label: "Fire safety products", icon: "box" }
       ],
       summary: "The brand is born",
       alt: "The Firestorm registered trade mark",
@@ -4754,9 +4774,9 @@ const FG_DATA = {
       ],
       highlight: "The container did not simply deliver stock. It delivered the moment Firestorm became real.",
       statItems: [
-        { value: "24 December 2024", label: "First container arrival", icon: "cal" },
-        { value: "Thousands", label: "Firestorm extinguishers landed", icon: "ext" },
-        { value: "One owned brand", label: "A completely new chapter for the company", icon: "tag" }
+        { value: "Dec 2024", label: "First container", icon: "cal" },
+        { value: "Thousands", label: "Firestorm units landed", icon: "ext" },
+        { value: "One brand", label: "A new chapter", icon: "tag" }
       ],
       summary: "Firestorm lands",
       alt: "The team in front of the first container of Firestorm stock",
@@ -4772,9 +4792,9 @@ const FG_DATA = {
       ],
       highlight: "Fire extinguishers were no longer the destination. They had become the blueprint for Freedom Global.",
       statItems: [
-        { value: "£600k+", label: "Total sales, £500k+ eBay plus site work", icon: "pound" },
-        { value: "One repeatable model", label: "Source · Brand · Import · Marketplace · Scale", icon: "chart" },
-        { value: "One wider vision", label: "Freedom Global begins to take shape", icon: "globe" }
+        { value: "£600k+", label: "eBay plus site work", icon: "pound" },
+        { value: "One model", label: "The repeatable model", icon: "chart" },
+        { value: "Wider vision", label: "Freedom Global forms", icon: "globe" }
       ],
       summary: "The blueprint",
       alt: "The first twelve months of eBay sales and the widening product ecosystem",
@@ -4789,9 +4809,9 @@ const FG_DATA = {
       ],
       highlight: "Freedom was not only building a company. It was creating a place where young people could build a future.",
       statItems: [
-        { value: "Since 2021", label: "Providing supported work placements", icon: "cal" },
-        { value: "Three T Level students", label: "Bill · Harrison · Gabriel", icon: "people" },
-        { value: "One early success story", label: "Placement progressed into full time employment", icon: "chart" }
+        { value: "Since 2021", label: "Supported placements", icon: "cal" },
+        { value: "Three students", label: "Bill, Harrison, Gabe", icon: "people" },
+        { value: "First success", label: "Placement to full time", icon: "chart" }
       ],
       summary: "The people",
       alt: "A T Level student presenting Freedom Group Holdings project research at the new HQ",
@@ -4807,9 +4827,9 @@ const FG_DATA = {
       ],
       highlight: "eBay proved the category. Temu proved the system.",
       statItems: [
-        { value: "£160,000+", label: "Sales during the first three months", icon: "pound" },
-        { value: "First at launch", label: "Dedicated fire extinguisher seller on Temu UK", icon: "cart" },
-        { value: "#1 and #2", label: "Positions in Temu’s Safety &amp; Security best seller rankings", icon: "chart" }
+        { value: "£160,000+", label: "First three months", icon: "pound" },
+        { value: "First", label: "First on Temu UK", icon: "cart" },
+        { value: "#1 and #2", label: "Temu best-seller", icon: "chart" }
       ],
       summary: "The second proof",
       alt: "Firestorm products at number one and two in Temu’s Safety &amp; Security best sellers",
@@ -4825,8 +4845,8 @@ const FG_DATA = {
       highlight: "The first year proved the launch could work. The second proved the business could scale.",
       statItems: [
         { value: "~£890,000", label: "eBay sales", icon: "pound" },
-        { value: "£160,000+", label: "Temu sales in its first three months", icon: "cart" },
-        { value: "£1 million+", label: "Combined sales across ecommerce and contracted work", icon: "chart" }
+        { value: "£160,000+", label: "Temu, first 3 months", icon: "cart" },
+        { value: "£1 million+", label: "Ecommerce + servicing", icon: "chart" }
       ],
       summary: "The million pound year",
       alt: "A container arriving at the Freedom unit as the second year passes £1 million",
@@ -4836,14 +4856,14 @@ const FG_DATA = {
       title: "Firestorm™ Was Only the Beginning",
       subtitle: "The same brand building model began expanding across new product categories, markets and customer groups.",
       body: [
-        "Firestorm had proved that Freedom could identify a product opportunity, create a name around it, protect the intellectual property, source directly from manufacturers and scale the brand through ecommerce. The next step was to prove that the process could be repeated. In February and March 2026, FXL&trade; and Skyline&trade; became the company&rsquo;s second and third protected brands, taking the model beyond fire extinguishers and into aerosols and line marking products. Around them, a wider portfolio began to take shape across batteries, PPE, cleaning products, automotive products and other year-round essentials.",
-        "Some brands were already protected, while others remained in application or development, but each was being built around the same principle: target non seasonal, needs driven or repeat purchase products that could use the same supply chains, fulfilment infrastructure, marketplace expertise and customer base. The ambition was no longer simply to build one successful fire safety brand. It was to create a repeatable system capable of launching, owning and scaling multiple brands across different categories. What had started with one owned fire safety product was becoming a platform capable of carrying an entire portfolio."
+        "Firestorm had proved that Freedom could identify a product opportunity, create a name, protect the intellectual property, source directly from manufacturers and scale through ecommerce. The next step was to prove the process could be repeated. In February and March 2026, FXL&trade; and Skyline&trade; became the second and third protected brands, taking the model beyond fire extinguishers into aerosols and line marking. Around them, a wider portfolio took shape across batteries, PPE, cleaning and automotive.",
+        "Some brands were already protected, others still in application, but each was built on the same principle: target non seasonal, needs driven or repeat purchase products that could use the same supply chains, fulfilment, marketplace expertise and customer base. The ambition was no longer to build one fire safety brand, but a repeatable system for launching, owning and scaling multiple brands across categories. What began with one owned product was becoming a platform capable of carrying an entire portfolio."
       ],
       highlight: "Firestorm proved the model once. The brand portfolio was designed to prove it repeatedly.",
       statItems: [
-        { value: "Three protected brands", label: "Firestorm™ · FXL™ · Skyline™", icon: "tag" },
-        { value: "12 owned and developing brands", label: "A growing intellectual property portfolio", icon: "chart" },
-        { value: "Multiple product categories", label: "Fire safety · Aerosols · Batteries · PPE · Cleaning · Automotive", icon: "box" }
+        { value: "Three brands", label: "Firestorm, FXL, Skyline", icon: "tag" },
+        { value: "12 brands", label: "Growing IP portfolio", icon: "chart" },
+        { value: "Six categories", label: "Fire, PPE and more", icon: "box" }
       ],
       summary: "The brand portfolio",
       alt: "The Freedom brand portfolio, Voltz, Kunergy, FXL, Skyline and Firestorm",
@@ -4859,9 +4879,9 @@ const FG_DATA = {
       ],
       highlight: "Amazon was not where the experiment began. It was where years of experimentation were meant to compound.",
       statItems: [
-        { value: "May 2026", label: "Specialist Amazon agency appointed", icon: "cal" },
-        { value: "End of July 2026", label: "Target for initial Amazon launch", icon: "cart" },
-        { value: "End of August 2026", label: "Target for the owned Shopify store", icon: "globe" }
+        { value: "May 2026", label: "Amazon agency hired", icon: "cal" },
+        { value: "July 2026", label: "Amazon launch target", icon: "cart" },
+        { value: "August 2026", label: "Shopify store target", icon: "globe" }
       ],
       summary: "The biggest launch",
       alt: "The channel roadmap, eBay and Temu live, Amazon, OnBuy, Shopify, TikTok Shop, B&amp;Q and Screwfix ahead",
@@ -4877,9 +4897,9 @@ const FG_DATA = {
       ],
       highlight: "The next stage would not be powered by one founder, one product or one marketplace. It would be powered by a team and a system ready to scale.",
       statItems: [
-        { value: "Three", label: "T Level students offered long term roles", icon: "people" },
-        { value: "Three key channels", label: "Amazon · OnBuy · Shopify", icon: "cart" },
-        { value: "2027 awards programme", label: "King’s Awards application in development", icon: "tag" }
+        { value: "Three", label: "Students kept on", icon: "people" },
+        { value: "Three channels", label: "Amazon, OnBuy, Shopify", icon: "cart" },
+        { value: "2027 programme", label: "King's Award pending", icon: "tag" }
       ],
       summary: "The launchpad",
       alt: "The King’s Awards for Enterprise emblem",
@@ -6918,6 +6938,39 @@ function initCourier() {
     return { p: last.at(1), oq: last.orbit ? 1 : null, fq: last.focus ? 1 : null, pq: last.pad ? 1 : null, rq: last.raise ? 1 : null, kind: last.kind || null, q: 1 };
   };
   let pd = -1, angS = null, posS = null, lastT = 0, ptPrev = null, dirState = 1;
+  /* ========================= FLIGHT PHYSICS TUNING =========================
+     Every "feel" number lives here. The ship is NOT bound 1:1 to scroll: the
+     scroll only moves a TARGET along the flight path, and the ship chases it
+     with inertia, turns its nose through its real velocity vector, banks into
+     turns and throttles its flame by speed.
+     · scrubLag   1/s  base catch-up rate. SMALLER = floatier/laggier (a GSAP
+                       scrub:1.2 feel is ~4-5; 10+ feels glued to the wheel).
+     · scrubBoost      extra catch-up per unit of progress error, so a huge
+                       wheel-fling still lands within a beat instead of
+                       drifting for seconds. Raise if the ship falls too far
+                       behind on fast scrolls; lower for more float.
+     · turnRate  rad/s hard cap on nose swing. A scroll reversal turns the
+                       ship around in ~PI/turnRate seconds (≈.6s at 5.2) —
+                       never an instant snap.
+     · bankGain        roll per rad/s of turn (aerodynamic banking); bankMax
+                       clamps it; bankK is how fast the roll eases in/out.
+     · flameIdle       thruster scale at rest (gentle idle glow);
+       flameGain       extra scale per px/s of TRUE screen speed;
+       flameMax        clamp; flameK eases the throttle both ways.
+     · speedK          smoothing of the velocity estimate the nose/flame use.
+     PATH WAYPOINTS: the route itself lives in buildSegs() above — each leg is
+     anchored to live element rects (charts, globe, pad) with gutter offsets,
+     so edit the anchors THERE to reroute; the physics here is route-agnostic. */
+  const PHYS = {
+    scrubLag: 4.6, scrubBoost: 26,
+    turnRate: 5.2,
+    bankGain: .085, bankMax: .30, bankK: 6,
+    flameIdle: .62, flameGain: 1 / 1500, flameMax: 1.55, flameK: 5,
+    speedK: 8,
+  };
+  // physics state: smoothed screen-velocity, applied turn rate, bank and flame
+  let velX = 0, velY = 0, prevRX = null, prevRY = null;
+  let angVel = 0, bankS = 0, flameS = PHYS.flameIdle, lastTa = null;
   const loSecRef = document.getElementById("liftoff");
   let dockOn = false;
   // LANDING AUTOPILOT state — once the ship reaches the pad approach the
@@ -6925,6 +6978,16 @@ function initCourier() {
   // (and back to 0 if the visitor scrolls away), while the engine burn dims
   const plumeEls = [...wrap.querySelectorAll(".rk-plume,.rk-plume2,.rk-nozGlow,.rk-trailline")];
   let landT = 0, lastBurn = -1;
+  /* the two flame tongues carry a CSS flicker ANIMATION on transform, which
+     would override any inline throttle — so the courier's clones drop the CSS
+     animation and get their flicker re-created in JS, composed WITH the
+     velocity throttle. The trail streak scales from the nozzle end too. */
+  const flamePlume = wrap.querySelector(".rk-plume");
+  const flamePlume2 = wrap.querySelector(".rk-plume2");
+  const flameTrail = wrap.querySelector(".rk-trailline");
+  if (flamePlume) flamePlume.style.animation = "none";
+  if (flamePlume2) flamePlume2.style.animation = "none";
+  if (flameTrail) { flameTrail.style.transformBox = "fill-box"; flameTrail.style.transformOrigin = "right center"; }
   let orbitSpin0 = null, raiseSpin0 = null, inOrbitPrev = false, inRaisePrev = false;
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
@@ -7018,7 +7081,9 @@ function initCourier() {
       const orbitEnd = pT + Math.max(vh * .9, planet.offsetHeight - vh);
       const S1 = document.documentElement.scrollHeight - vh; // the page's true end IS the pad — never target scroll that can't exist
       if (S1 - S0 > vh) {
-        const pt = cl01((scrollY - S0) / (S1 - S0));
+        // __ffCourierPt: test-only progress override (hidden panes cannot scroll)
+        const pt = window.__ffCourierPt != null ? cl01(window.__ffCourierPt)
+          : cl01((scrollY - S0) / (S1 - S0));
         const dt = Math.min(.05, Math.max(.001, (now - (lastT || now)) / 1000));
         // The globe orbit is cursor/scroll controlled; only the later funding
         // showcase retains an ambient clock.
@@ -7027,7 +7092,11 @@ function initCourier() {
         if (!inRaisePrev || raiseSpin0 == null) raiseSpin0 = courierSpin;
         orbitSpinRel = 0;
         raiseSpinRel = courierSpin - raiseSpin0;
-        const k = snap ? 1 : 1 - Math.exp(-dt * (5.4 + Math.abs(pt - pd) * 260));
+        /* INERTIA — the ship chases the scroll target instead of being nailed
+           to it. The old rate (5.4 + err*260) collapsed to a 1:1 snap on any
+           real wheel movement; scrubBoost is an order of magnitude gentler, so
+           starts, stops and flings all carry visible weight. */
+        const k = snap ? 1 : 1 - Math.exp(-dt * (PHYS.scrubLag + Math.abs(pt - pd) * PHYS.scrubBoost));
         // travelling direction — scrolling back up TURNS the ship around so
         // it always flies nose-first (the smoothing animates the U-turn)
         if (ptPrev != null && Math.abs(pt - ptPrev) > .0004) dirState = pt > ptPrev ? 1 : -1;
@@ -7116,13 +7185,26 @@ function initCourier() {
           } else if (L0.rq != null) {
             const th = raiseTh(L0.rq);
             ta = Math.atan2(Math.cos(th) * ((innerHeight * .27) / (innerWidth * .3)), -Math.sin(th));
-          } else ta = Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+          } else {
+            /* FREE FLIGHT heading = the ship's own velocity vector. The nose
+               points where the ship is actually GOING (atan2 of the smoothed
+               screen velocity), so it leans into every curve naturally and a
+               scroll reversal turns it around through the real motion — not a
+               dirState flip. Below ~90px/s the vector direction is noise, so
+               the nose HOLDS its last meaningful heading (a parked ship keeps
+               pointing where it was flying); the path tangent only seeds the
+               very first frame. */
+            const spd = Math.hypot(velX, velY);
+            if (spd > 90) lastTa = Math.atan2(velY, velX);
+            ta = lastTa != null ? lastTa
+              : Math.atan2(A2.y - B2.y, A2.x - B2.x) + (dirState < 0 ? Math.PI : 0);
+          }
           if (angS == null) angS = ta;
           let dA = ta - angS;
           while (dA > Math.PI) dA -= T2;
           while (dA < -Math.PI) dA += T2;
           const angK = snap ? 1 : 1 - Math.exp(-dt * (L0.oq != null ? 10 : 4.2));
-          if (L0.oq != null || globeLocked) { angS = ta; dA = 0; }
+          if (L0.oq != null || globeLocked) { angS = ta; dA = 0; angVel = 0; }
           else if (L0.fq != null) {
             /* The lap's own tangent is authoritative once the circuit is under
                way, but snapping straight to it swung the nose 142 degrees in a
@@ -7133,9 +7215,20 @@ function initCourier() {
                boundary. Easing across the lap's first tenth turns that into
                the ship pitching into its insertion. */
             const w = smt(cl01(L0.fq / .10));
-            angS += dA * (angK + (1 - angK) * w);
+            const stepF = dA * (angK + (1 - angK) * w);
+            angS += stepF;
+            angVel = snap ? 0 : stepF / Math.max(dt, .001);
           }
-          else angS += dA * angK;
+          else {
+            /* capped turn: the exponential ease gives the swing its shape, the
+               turnRate clamp gives it a top speed — a 180° reversal sweeps
+               around over ~PI/turnRate seconds instead of whipping. */
+            let step = dA * angK;
+            const mx = PHYS.turnRate * dt;
+            if (step > mx) step = mx; else if (step < -mx) step = -mx;
+            angS += step;
+            angVel = snap ? 0 : step / Math.max(dt, .001);
+          }
           // Layered time-based drift moves perpendicular to the flight path:
           // a slow buoyant breath plus a smaller flutter, never scroll-jitter.
           const lifeT = snap ? pd * 10000 : now;           // deterministic in the verification hook
@@ -7144,7 +7237,22 @@ function initCourier() {
             * (padQ == null ? 1 : 1 - smt(cl01(padQ)));   // the wobble dies at touchdown
           const nx = -Math.sin(angS), ny = Math.cos(angS);
           const renderX = posS.x + nx * drift, renderY = posS.y + ny * drift;
-          const bank = Math.max(-.16, Math.min(.16, dA * .42));
+          /* smoothed TRUE screen velocity (px/s) of the rendered ship — this
+             is what the nose steers by and the flame throttles on. speedK
+             filters frame noise without smearing real accelerations. */
+          if (prevRX != null && dt > 0 && !snap) {
+            const kv = 1 - Math.exp(-dt * PHYS.speedK);
+            velX += ((renderX - prevRX) / dt - velX) * kv;
+            velY += ((renderY - prevRY) / dt - velY) * kv;
+          }
+          prevRX = renderX; prevRY = renderY;
+          /* BANKING — roll follows the applied turn rate (rad/s), eased both
+             in and out, clamped at bankMax and faded out through the landing
+             flare so touchdown stays wings-level. */
+          const bankT = Math.max(-PHYS.bankMax, Math.min(PHYS.bankMax, angVel * PHYS.bankGain))
+            * (padQ == null ? 1 : 1 - smt(cl01(padQ)));
+          bankS += (bankT - bankS) * (snap ? 1 : 1 - Math.exp(-dt * PHYS.bankK));
+          const bank = bankS;
           /* Measured from the CLOUD hand-off, not from pd: S0 now reaches
              back to the dive, so a pd-relative ramp would stretch over
              thousands of pixels. */
@@ -7213,6 +7321,31 @@ function initCourier() {
             plumeEls.forEach(el2 => { el2.style.opacity = burn >= .997 ? "" : burn.toFixed(3); });
             lastBurn = burn;
           }
+          /* DYNAMIC THRUSTER — the flame length answers the ship's true speed:
+             flameIdle at rest (gentle glow), stretching toward flameMax under a
+             fast scroll, easing back when the wheel stops. The CSS flicker was
+             disabled on these clones (it owns `transform`), so the flicker is
+             re-created here and COMPOSED with the throttle. The trail streak
+             only appears at speed, like a motion vapour line. */
+          {
+            const spd = Math.hypot(velX, velY);
+            const fT = Math.min(PHYS.flameMax, PHYS.flameIdle + spd * PHYS.flameGain);
+            flameS += (fT - flameS) * (snap ? 1 : 1 - Math.exp(-dt * PHYS.flameK));
+            const fl1 = 1 - .14 * (0.5 + 0.5 * Math.sin(lifeT * .0137));      // slow tongue flicker
+            const fl2 = 1 - .18 * (0.5 + 0.5 * Math.sin(lifeT * .0211 + 2)); // fast inner flicker
+            if (flamePlume) {
+              flamePlume.style.transform = `scaleX(${(flameS * fl1).toFixed(3)})`;
+              flamePlume.style.opacity = (burn * .92 * Math.min(1, .45 + .55 * flameS)).toFixed(3);
+            }
+            if (flamePlume2) {
+              flamePlume2.style.transform = `scaleX(${(flameS * fl2).toFixed(3)})`;
+              flamePlume2.style.opacity = (burn * .85 * Math.min(1, .45 + .55 * flameS)).toFixed(3);
+            }
+            if (flameTrail) {
+              flameTrail.style.transform = `scaleX(${(.35 + .65 * flameS).toFixed(3)})`;
+              flameTrail.style.opacity = (burn * .8 * cl01((flameS - .72) / .6)).toFixed(3);
+            }
+          }
           wrap.style.transform =
             `translate3d(${renderX.toFixed(1)}px,${renderY.toFixed(1)}px,0) rotate(${(angS + bank).toFixed(4)}rad) scale(${(sc / 3).toFixed(4)})`;   // ÷3 pairs with the 3× svg raster — crisp at pad scale
         } else if (pd <= .0004) { angS = null; posS = null; inOrbitPrev = false; inRaisePrev = false; }
@@ -7236,6 +7369,18 @@ function initCourier() {
     if (sy != null) window.scrollTo({ top: sy, behavior: "instant" });
     frame(performance.now(), true);
     return { p: +pd.toFixed(4), o: wrap.style.opacity, t: wrap.style.transform };
+  };
+  // PHYSICS test hook: advance one synthetic frame of dtMs with the full
+  // physics live (snap=false). Drive the target via __ffCourierPt. Returns the
+  // live physics state so inertia/heading/bank/flame are verifiable headless.
+  let testNow = null;
+  window.__ffCourierStep = dtMs => {
+    testNow = (testNow == null ? 1e6 : testNow) + dtMs;
+    frame(testNow, false);
+    return { p: +pd.toFixed(5), x: prevRX == null ? null : +prevRX.toFixed(1),
+      y: prevRY == null ? null : +prevRY.toFixed(1),
+      v: +Math.hypot(velX, velY).toFixed(1), ang: angS == null ? null : +angS.toFixed(4),
+      bank: +bankS.toFixed(4), flame: +flameS.toFixed(3), o: wrap.style.opacity };
   };
 }
 
@@ -9292,11 +9437,25 @@ function fitSectionSubs() {
     p.style.maxWidth = Math.ceil(hi) + "px";
   });
 }
+/* Shrink each stat readout — the pink value AND the muted label — until it
+   finishes inside two lines, so no stat ever ends in an ellipsis. Measured
+   un-clamped; the CSS 2-line clamp stays as a silent safety net for anything
+   that still can't fit at the floor. */
+function fitChapterStats() {
+  document.querySelectorAll(".ch-stat > div > b, .ch-stat > div > span").forEach(el => {
+    el.style.fontSize = "";
+    const cell = el.parentElement.clientWidth;     // the tile's inner width
+    if (!cell) return;
+    let fs = parseFloat(getComputedStyle(el).fontSize), g = 0;
+    // keep each readout on ONE line — only shrink the rare outlier that overruns
+    while (el.scrollWidth > cell + 0.5 && fs > 7 && g++ < 30) { fs -= 0.3; el.style.fontSize = fs.toFixed(1) + "px"; }
+  });
+}
 let chBalanceT = 0;
 window.__ffBalanceSoon = () => {
   clearTimeout(chBalanceT);
   chBalanceT = setTimeout(() => {
-    try { balanceChapters(); fitChapterQuestions(); fitSectionSubs(); } catch (e) {}
+    try { balanceChapters(); fitChapterQuestions(); fitSectionSubs(); fitChapterStats(); } catch (e) {}
   }, 160);
 };
 addEventListener("resize", () => window.__ffBalanceSoon());
@@ -11293,31 +11452,41 @@ function initSetpieces() {
        RIGHT (north→south): Türkiye 39, China 35, Pakistan 30, Malaysia 4
      `start` is untouched — that is the reveal running order, not position.
      `tag` / `cat` / `d2` feed the three card rows: pill, category, detail. */
+  /* PIN PLACEMENT — DISPLAY positions, not literal coordinates. The night globe
+     eases to a HOLD at rotation 0.435 (see PLROT) and every card reveals against
+     that one still frame, so each pin's geo() is tuned for WHERE IT SITS ON
+     SCREEN AT THE HOLD: left-side pins arc down the left half of the disc, right
+     pins down the right half, each level with its own card row. Real geography
+     bunches all of Europe into a ~60px blob at this rotation, which read as a
+     tangle of raking tethers. On a stylised planet the pins are markers, not a
+     map, so they are spread for legibility: relative order stays truthful (UK
+     top-west … Türkiye south-east; China north … Malaysia south).
+     Derivation (needed if you retune): at hold, du = u−0.435, lam = (du/.5−.5)π,
+     untilted x = sin(lam)·√(1−d²)·R, y = d·R with d = −sin(lat); the −.16 rad
+     tilt then rotates that. `lift` = d so the pin materialises level with its
+     final row. `start` values step 0.016 apart (≈ one wheel-notch of the 600vh
+     scrub) alternating left/right, so the cards land one after another. */
   const PL_PINS = [
-    { n: "United Kingdom", ...geo(-2, 54), start: .53, side: -1, lift: -.95,
+    { n: "United Kingdom", ...geo(14.35, 38.32), start: .665, side: -1, lift: -.62,
       tag: "HQ", cat: "Import & fulfilment", d2: "Bury HQ, stockholding and national dispatch" },
-    { n: "Poland", ...geo(19, 52), start: .58, side: -1, lift: -.48,
+    { n: "Poland", ...geo(17.13, 18.66), start: .697, side: -1, lift: -.32,
       tag: "SUPPLY", cat: "Extinguishers", d2: "European production and short haul freight" },
-    { n: "Belgium", ...geo(4.5, 50.0), start: .55, side: -1, lift: 0,
+    { n: "Belgium", ...geo(17.13, 0), start: .729, side: -1, lift: 0,
       tag: "SUPPLY", cat: "Batteries", d2: "cell sourcing for Voltz and Kunergy" },
-    { n: "Italy", ...geo(12.5, 42), start: .57, side: -1, lift: .48,
+    { n: "Italy", ...geo(17.13, -18.66), start: .761, side: -1, lift: .32,
       tag: "SUPPLY", cat: "Plastics", d2: "mouldings, housings, brackets and fittings" },
-    { n: "Taiwan", ...geo(119, 25), start: .72, side: -1, lift: .95,
-      tag: "SUPPLY", cat: "PPE & components", d2: "precision technical safety equipment" },
-    { n: "Türkiye", ...geo(35, 39), start: .60, side: 1, lift: -.95,
+    { n: "Türkiye", ...geo(14.35, -38.32), start: .793, side: -1, lift: .62,
       tag: "SUPPLY", cat: "PPE", d2: "gloves, workwear and protective equipment" },
-    /* China carries the most weight in this chain, so it is pinned at every
-       point the goods actually move through rather than once in the middle
-       of the landmass: the plant, then the export ports. */
     /* ONE pin, distinguished by colour not size — China is the primary
-       manufacturing base, marked gold instead of pink at the same radius. The
-       export-port extras were removed at the user's request. */
-    { n: "China", ...geo(114, 34), start: .70, side: 1, lift: -.32,
+       manufacturing base, marked gold instead of pink at the same radius. */
+    { n: "China", ...geo(111.03, 38.32), start: .681, side: 1, lift: -.62,
       tag: "PRIMARY", cat: "Manufacturing & export",
       d2: "JinDun, the world's №3 extinguisher maker", distinct: true },
-    { n: "Pakistan", ...geo(69, 30), start: .64, side: 1, lift: .32,
+    { n: "Taiwan", ...geo(110.6, 12.12), start: .713, side: 1, lift: -.21,
+      tag: "SUPPLY", cat: "PPE & components", d2: "precision technical safety equipment" },
+    { n: "Pakistan", ...geo(110.6, -12.12), start: .745, side: 1, lift: .21,
       tag: "SUPPLY", cat: "PPE", d2: "gloves and protective textiles" },
-    { n: "Malaysia", ...geo(102, 4), start: .69, side: 1, lift: .95,
+    { n: "Malaysia", ...geo(111.03, -38.32), start: .777, side: 1, lift: .62,
       tag: "SUPPLY", cat: "PPE & consolidation", d2: "South East Asian export hub" },
   ];
   let GLland = null, GLcloud = null;
@@ -11400,7 +11569,19 @@ function initSetpieces() {
      The +.30 phase brings the UK/Europe sourcing lanes round to face the
      camera as soon as the night half opens, so the nine territories spread
      across the whole chapter instead of piling up at the very end. */
-  const PLROT = p => (p * 2.0 + .994) % 1;
+  const PLROT = p => {
+    if (p < 0.5) return (p * 2.0 + .994) % 1;   // day half: the pink globe spins as before
+    // night half: glide the sourcing hemisphere to the FRONT over p .50-.66, then
+    // HOLD it there so every supply pin sits still while its card reveals — a
+    // static globe means no pin ever crosses centre, so the reveal never flickers.
+    // The glide is a Hermite curve whose ENTRY slope matches the day spin's
+    // rotation speed exactly (f'(0)·0.441/0.16 = 2 = d(rot)/dp of the day half)
+    // and whose exit slope is 0 — so the globe decelerates continuously into the
+    // hold with no hitch at p=.5 and no jolt at p=.66.
+    const t = cl((p - 0.5) / 0.16, 0, 1);
+    const f = 0.7256 * t + 1.5488 * t * t - 1.2744 * t * t * t;
+    return (0.994 + 0.441 * f) % 1;             // 0.994 → 1.435 → (mod 1) 0.435, then holds
+  };
   let PLover;
   function drawPlanet(ctx, p, w, h) {
     if (!GLland) makeGlobeTex();
@@ -11467,12 +11648,13 @@ function initSetpieces() {
     // only after its tether and map-pin are established does the matching card
     // rise into place. Two passes also keep every connector visually behind
     // every box instead of painting lines over already-manifested content.
-    const pvBase = 1 - sm(ph2(p, .84, .91));   // territories clear BEFORE dawn
+    const pvBase = 1 - sm(ph2(p, .90, .97));   // territories hold on longer, clearing only at dawn
     if (sm(ph2(p, .50, .58)) * pvBase > .02) {
       const rot2 = PLROT(p);
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map(pin => {
-        const leadP = sm(ph2(p, pin.start, pin.start + .075)) * pvBase;
+        const leadRaw = sm(ph2(p, pin.start, pin.start + .06));   // quick rise; starts stagger 0.016 apart
+        const leadP = leadRaw * pvBase;                            // alpha: fades out only at dawn
         // pin, tether and card share ONE clock — they manifest together in
         // every frame, never pin-first-box-later
         const boxP = leadP;
@@ -11484,7 +11666,7 @@ function initSetpieces() {
         const countryFace = rawCountryFace < .25 ? 0 : rawCountryFace;
         // At the first visible frame settle=0, so the map-pin is on the white
         // circumference. It then hands off quickly to the live country point.
-        const settle = sm(cl((leadP - .02) / .16, 0, 1));
+        const settle = sm(cl((leadRaw - .02) / .16, 0, 1));   // from leadRaw, so the dawn fade never un-settles the pin
         const face = countryFace === 0 && settle > .48 ? 0 : lp(1, countryFace, settle);
         const bw = 252, bh = 64;   // three rows now: name+pill, category, detail
         const sx = pin.side < 0 ? cx - R * 1.58 : cx + R * 1.58;
@@ -11512,11 +11694,13 @@ function initSetpieces() {
         // tethers that stay on their own side are ever drawn, and a rake — the
         // one remaining way two tethers could cross — can never occur.
         const dSide = pin.side * (px2 - cx);
-        // fade the trio out by the time the pin reaches the globe's centre line,
-        // so left-side tethers stay left of centre and right-side stay right —
-        // two tethers on opposite columns then can never overlap, let alone
-        // cross. Full only once the pin is ~0.28R onto its own side.
-        const sideVis = cl((dSide + R * 0.05) / (R * 0.33), 0, 1);
+        // FULL while the pin is anywhere on its own side of centre (dSide >= 0),
+        // even sitting right on the centre line; it only fades once the pin has
+        // rotated onto the WRONG side, which is the sole way a tether could rake
+        // across and cross another. The night globe is held still, so on-side
+        // pins never move — this keeps every card lit instead of dimming the
+        // near-centre ones.
+        const sideVis = cl(dSide / (R * 0.30) + 1, 0, 1);
         const ex0 = pin.side < 0 ? bx + bw : bx;
         const byC = cy + pin.lift * R + rise;
         const by = byC - bh / 2;
@@ -11542,7 +11726,7 @@ function initSetpieces() {
            cluster tighter than the cards — the one case a pure straight tether
            still crossed — the stacked, ordered horizontal departures keep the
            near-vertical tether from slicing across its neighbour. */
-        const GAP = 76, top = cy - R * 0.98, bot = cy + R * 0.98;
+        const GAP = 94, top = cy - R * 0.98, bot = cy + R * 0.98;
         // 1) each card level with its pin, then push DOWN to de-overlap
         let prev = -1e9, sumSlot = 0, sumPin = 0;
         act.forEach(r => {

@@ -1740,16 +1740,19 @@ section.tint{background:var(--bg-soft);}
 /* The date and the chapter title now stack beside the badge, so the pair
    occupies exactly the badge's height and the three read as one header block
    instead of the title floating loose beneath the row. */
-.ch-toprow{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
-.ch-headstack{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;}
-.ch-badge{display:inline-flex;flex-direction:column;align-items:center;gap:3px;line-height:1;
-  padding:9px 12px 8px;border-radius:15px;color:#fff;
+/* Badge and the date+kicker stack are a matched pair: align-items:stretch makes
+   both fill the row's height, so the pink title block is exactly as tall as the
+   chapter box beside it (the user's "same vertical size"). Both were sized up. */
+.ch-toprow{display:flex;align-items:stretch;gap:16px;margin-bottom:20px;}
+.ch-headstack{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;}
+.ch-badge{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1;
+  padding:11px 17px 10px;border-radius:16px;color:#fff;
   background:linear-gradient(140deg,#ff4da4,#d3167e);box-shadow:0 8px 22px -8px rgba(255,61,154,.65);}
-.ch-badge i{font-style:normal;font-size:.52rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.9;}
-.ch-badge b{font-family:"Orbitron",system-ui,sans-serif;font-size:1.18rem;font-weight:700;}
-.ch-date{font-style:italic;font-weight:700;font-size:1rem;color:var(--ink);letter-spacing:.01em;line-height:1.15;}
+.ch-badge i{font-style:normal;font-size:.6rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.9;}
+.ch-badge b{font-family:"Orbitron",system-ui,sans-serif;font-size:1.55rem;font-weight:700;}
+.ch-date{font-style:italic;font-weight:700;font-size:1.2rem;color:var(--ink);letter-spacing:.01em;line-height:1.15;}
 .ch-kick{display:inline-block;position:relative;margin:0;padding-bottom:7px;
-  font-size:.74rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--pink);}
+  font-size:.9rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--pink);}
 .ch-kick::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:2px;border-radius:99px;background:var(--pink);}
 /* The green question is a single line, always. Its length varies a lot between
    chapters, so a fixed size would either wrap the long ones or leave the short
@@ -4667,7 +4670,7 @@ const FG_DATA = {
       alt: "The team in front of the first container of Firestorm stock",
       photos: ["journey-photos/ch13-a.jpg", "journey-photos/ch13-b.jpg"],
       nextQuestion: "Could one owned brand become the foundation of a much larger ecommerce platform?" },
-    { year: "January 2025", kick: "The Vision Expands", q: "Could one successful category become a multi brand ecommerce powerhouse?",
+    { year: "January 2025", kick: "The Vision Expands", q: "Could one category become a multi brand powerhouse?",
       title: "One Store Became the Freedom Global Blueprint",
       subtitle: "Twelve months on, online sales had passed &pound;500,000 and the business was starting to outgrow a fire only identity.",
       body: [
@@ -4720,7 +4723,7 @@ const FG_DATA = {
       alt: "Firestorm products at number one and two in Temu’s Safety &amp; Security best sellers",
       photos: ["journey-photos/ch16-a.jpg", "journey-photos/ch16-b.jpg"],
       nextQuestion: "What would two marketplaces and a growing service operation add up to by the end of the company’s second online year?" },
-    { year: "January 2026", kick: "The Million Pound Year", q: "Could the business break through £1 million in only its second full online year?",
+    { year: "January 2026", kick: "The Million Pound Year", q: "Could the business pass £1 million in its second year?",
       title: "The Second Year Broke the Million Pound Barrier",
       subtitle: "£890,000 on eBay and more than £160,000 on Temu took combined sales beyond £1 million.",
       body: [
@@ -7486,10 +7489,14 @@ function renderSystem() {
     [618, 145, 473, "sm-orbit"],
     [800, 195, 505, "sm-orbit"],
     [950, 286, 496, "sm-orbit future"],
+    // ry raised 336->372 on the outer white ring so its FRONT (near half, the
+    // only part ry drives) sits further below the inner white ring — the front
+    // gap was 70 units and read as cramped; it is now ~106. Sides (at cyR) and
+    // the back (apex-driven, ry-independent) are untouched, exactly as asked.
     /* the outermost shell was only 110 wider than the one inside it, so at the
        flanks the two dotted rings almost merged. 1190 opens that flank gap to
        240 and the front to 70. */
-    [1190, 336, 516, "sm-orbit future outer"],
+    [1190, 372, 516, "sm-orbit future outer"],
   ];
   const lowerShellAtX = (ring, x) => {
     const [rx, ry, ringCy] = SHELLS[ring];
@@ -8350,6 +8357,15 @@ function renderSystem() {
      Distribution to the right. Every shelf then follows its own main card
      with the same measured gap, and every connector is edge-to-edge. */
   const layoutSubs = () => {
+    /* NEVER lay out mid-dive. The blue-planet zoom scales the map ~29x and the
+       card coordinates are derived from svg.clientWidth; a layout pass fired
+       during a diving frame (a resize, a ResizeObserver tick, fonts landing,
+       the watchdog) reads a collapsed width and bunches every card into the
+       centre — that is the intermittent "jumble" on load. fitLaneHeads already
+       guards this way. Preserve the last good positions, flag for a retry, and
+       let driveBuild re-lay out the instant the dive clears; the cards are
+       hidden behind the zoomed planet while diving anyway, so nothing is lost. */
+    if (map.classList.contains("diving")) { map.__ffUnlaid = true; return; }
     // measure with the dock transform neutralised so mid-scroll resizes
     // can't bake the perspective tilt into the layout
     const keepT = map.style.transform;
@@ -8883,12 +8899,17 @@ function renderSystem() {
     if (fitNow < .9995) tf += ` scale(${fitNow.toFixed(4)})`;
     map.style.transform = tf;
     if ((zq > 0) !== map.classList.contains("diving")) {
+      const leavingDive = zq <= 0;              // the dive is ending this frame
       map.classList.toggle("diving", zq > 0);
       // the ×~29 planet paints tens of thousands of px past the stage — while
       // diving, the stage CLIPS to its own 100vh box, so the instant the
       // section scrolls on, the planet leaves with it instead of ghosting
       // behind every later chapter
       if (stage) stage.classList.toggle("dive-clip", zq > 0);
+      // layout was suppressed throughout the dive; now it has cleared, re-place
+      // every card and box from the true unscaled geometry BEFORE they scroll
+      // back into view, so the system can never reappear jumbled
+      if (leavingDive) { requestAnimationFrame(layoutSubs); setTimeout(layoutSubs, 60); }
     }
     if (zq > 0) {
       const face = map.querySelector('.sm-planet[data-key="fly"] circle[fill^="url(#smp-"]');
@@ -9086,24 +9107,38 @@ function balanceChapters() {
    longest of them without ever going below legibility. */
 function fitChapterQuestions() {
   const narrow = innerWidth <= 1080;          // single-column: the question wraps
-  document.querySelectorAll(".jcard.chapter .ch-q").forEach(q => {
-    q.style.removeProperty("--chq");
-    q.style.removeProperty("--chqls");
-    if (narrow || !q.clientWidth) return;
-    /* Spacing goes first: at .16em an 80-character question spends ~156px on
-       tracking alone, so tightening it buys far more room than shrinking the
-       type does — and costs much less legibility. Size only moves once the
-       tracking is spent, and never below 9.5px. */
-    let ls = .16;
-    for (let i = 0; i < 14 && q.scrollWidth > q.clientWidth + 0.5 && ls > .03; i++) {
-      ls -= .01;
-      q.style.setProperty("--chqls", ls.toFixed(3) + "em");
-    }
-    let px = 12.16;                       // .76rem
-    for (let i = 0; i < 12 && q.scrollWidth > q.clientWidth + 0.5 && px > 9.5; i++) {
-      px -= 0.24;
-      q.style.setProperty("--chq", px.toFixed(2) + "px");
-    }
+  const qs = [...document.querySelectorAll(".jcard.chapter .ch-q")];
+  qs.forEach(q => { q.style.removeProperty("--chq"); q.style.removeProperty("--chqls"); });
+  if (narrow) return;
+  const usable = qs.filter(q => q.clientWidth);
+  if (!usable.length) return;
+  const fitsAt = (q, px, ls) => {
+    q.style.setProperty("--chq", px.toFixed(2) + "px");
+    q.style.setProperty("--chqls", ls.toFixed(3) + "em");
+    return q.scrollWidth <= q.clientWidth + 0.5;
+  };
+  /* The user wants every green question at the SAME size. So find the single
+     largest font-size at which ALL of them fit on one line, letting each one's
+     letter-spacing tighten from .16em down to .03em to get there. Font-size is
+     the thing that reads as "size" and is now identical everywhere; tracking is
+     the free variable that absorbs the length differences between questions.
+     (The two longest questions were trimmed so this common size stays ~12px
+     instead of being dragged down to the 9.5px floor by a single outlier.) */
+  const DEFAULT_PX = 12.16, FLOOR_PX = 9.5;
+  let px = DEFAULT_PX;
+  for (; px > FLOOR_PX + 0.001; px -= 0.12) {
+    const everyFits = usable.every(q => {
+      for (let ls = .16; ls >= .03; ls -= .01) if (fitsAt(q, px, ls)) return true;
+      return false;
+    });
+    if (everyFits) break;
+  }
+  px = Math.max(FLOOR_PX, px);
+  usable.forEach(q => {
+    let chosen = .03;                          // give each its LOOSEST fitting track
+    for (let ls = .16; ls >= .03; ls -= .01) { if (fitsAt(q, px, ls)) { chosen = ls; break; } }
+    q.style.setProperty("--chq", px.toFixed(2) + "px");
+    q.style.setProperty("--chqls", chosen.toFixed(3) + "em");
   });
 }
 /* Every section subtitle reads as exactly two lines. No single max-width can

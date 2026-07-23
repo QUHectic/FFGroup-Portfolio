@@ -1071,34 +1071,39 @@ html.spx section#team{background:var(--bg-soft);}
    between the team chapter and the launch pad. The canvas is a second cloud
    set-piece (drawFunding) that climbs from the team's dark, cruises a bright
    deck while the brief unfolds, then descends into launch-night. ============ */
-html.spx .tr2-funding{height:560vh;background:#07070d;}
+html.spx .tr2-funding{height:560vh;background:#0f1018;}
 .fund-over{position:absolute;inset:0;z-index:2;display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;}
-.fund-inner{width:min(680px,88vw);text-align:center;}
-.fund-kick{font-size:.66rem;font-weight:800;letter-spacing:.22em;color:#8d1d56;opacity:0;}
-.fund-h{margin:8px 0 0;font-size:clamp(1.6rem,3.2vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:#0b0e1a;opacity:0;}
-.fund-sub{margin:10px auto 0;max-width:56ch;font-size:.86rem;line-height:1.55;color:#39405a;opacity:0;}
-.fund-card h4 .pct{float:right;font-style:normal;font-family:"Orbitron",system-ui,sans-serif;font-size:.72rem;font-weight:700;color:#c9186f;letter-spacing:.06em;}
+.fund-inner{width:min(800px,92vw);text-align:center;}
+.fund-kick{font-size:.7rem;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:var(--pink);opacity:0;}
+.fund-h{margin:12px 0 0;font-size:clamp(2rem,4vw,3.1rem);font-weight:800;letter-spacing:-.025em;line-height:1.05;opacity:0;
+  background:linear-gradient(92deg,var(--pink) 0%,var(--blue) 55%,var(--mint) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.fund-sub{margin:15px auto 0;max-width:none;font-size:.92rem;line-height:1.6;color:var(--ink-dim);opacity:0;}
+.fund-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:26px;text-align:left;}
+.fund-cards .fund-card:last-child{grid-column:1 / -1;}
+.fund-card{opacity:0;position:relative;overflow:hidden;display:flex;gap:14px;align-items:flex-start;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  padding:15px 18px 16px 20px;box-shadow:0 22px 60px rgba(0,0,0,.5);}
+.fund-card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--pink),var(--blue));opacity:.9;}
+.fund-card .no{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.8rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--pink),var(--blue));margin-top:1px;box-shadow:0 6px 18px rgba(56,169,255,.32);}
 .fund-card .fc-body{flex:1;min-width:0;}
-.fund-mech{opacity:0;transition:opacity .4s ease;}
-.fund-card .bar{display:block;height:4px;border-radius:99px;background:rgba(10,14,26,.10);margin-top:9px;overflow:hidden;}
-.fund-card .bar i{display:block;height:100%;width:var(--w,50%);border-radius:99px;background:linear-gradient(90deg,#ff3d9a,#38a9ff);}
-.fund-cards{display:grid;gap:12px;margin-top:20px;text-align:left;}
+.fund-card h4{margin:0 0 4px;font-size:.98rem;color:var(--ink);letter-spacing:-.01em;}
+.fund-card p{margin:0;font-size:.8rem;line-height:1.5;color:var(--ink-dim);}
+.fund-card h4 .pct{float:right;font-style:normal;font-family:"Orbitron",system-ui,sans-serif;font-size:.72rem;font-weight:700;color:var(--pink-bright);letter-spacing:.06em;}
+.fund-card .bar{display:block;height:4px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:9px;overflow:hidden;}
+.fund-card .bar i{display:block;height:100%;width:var(--w,50%);border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--blue));}
 /* the mechanism chain — capital → operational change → commercial outcome */
-.fund-mech{margin-top:18px;text-align:left;}
-.fund-mech .fm-lead{display:block;margin-bottom:9px;color:rgba(11,14,26,.62);font-size:.68rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
-.fm-chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 16px;border:1px dashed rgba(10,14,26,.22);border-radius:14px;background:rgba(255,255,255,.7);}
+.fund-mech{opacity:0;transition:opacity .4s ease;margin-top:22px;text-align:left;}
+.fund-mech .fm-lead{display:block;margin-bottom:10px;color:var(--ink-faint);font-size:.68rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+.fm-chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 16px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;background:rgba(255,255,255,.04);}
 .fm-chain b,.fm-chain span{font-size:.78rem;line-height:1.3;}
-.fm-chain b{color:#0b0e1a;font-weight:800;}
-.fm-chain span{color:rgba(11,14,26,.66);}
-.fm-chain .fm-out{color:#c9186f;}
-.fm-chain i{width:16px;height:8px;flex:none;background:linear-gradient(90deg,#ff3d9a,#38a9ff);
+.fm-chain b{color:var(--ink);font-weight:800;}
+.fm-chain span{color:var(--ink-dim);}
+.fm-chain .fm-out{color:var(--mint-ink);}
+.fm-chain i{width:16px;height:8px;flex:none;background:linear-gradient(90deg,var(--pink),var(--blue));
   -webkit-mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'><path d='M0 4h12M9 1l3 3-3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;
   mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'><path d='M0 4h12M9 1l3 3-3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;}
-.fund-card{opacity:0;background:rgba(255,255,255,.88);border:1px solid rgba(10,14,26,.14);border-radius:16px;padding:13px 18px 14px;box-shadow:0 18px 44px rgba(25,35,70,.16);display:flex;gap:14px;align-items:flex-start;}
-.fund-card .no{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:2px;}
-.fund-card h4{margin:0 0 3px;font-size:.95rem;color:#0b0e1a;letter-spacing:-.01em;}
-.fund-card p{margin:0;font-size:.8rem;line-height:1.5;color:#39405a;}
-.fund-note{margin:16px 0 0;font-size:.68rem;color:#4a516b;opacity:0;}
+.fund-note{margin:16px 0 0;font-size:.68rem;color:var(--ink-faint);opacity:0;}
 html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb instead */
 #fundStatic .fsr{display:flex;gap:12px;align-items:flex-start;padding:12px 0 11px;border-top:1px solid rgba(255,255,255,.08);}
 #fundStatic .kicker + .fsr{border-top:0;margin-top:10px;}
@@ -2462,10 +2467,11 @@ input[type="range"]::-moz-range-thumb{
 .spider-guide .sg-item{
   display:inline-flex;align-items:center;gap:9px;color:var(--ink);font-size:.85rem;font-weight:600;
 }
-.spider-guide .sg-ic{width:16px;height:16px;flex:none;border-radius:5px;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;}
-.spider-guide .sg-hover{background:linear-gradient(135deg,var(--pink),var(--pink-bright));}
-.spider-guide .sg-click{background:linear-gradient(135deg,var(--blue),var(--blue-ink));}
-.spider-guide .sg-node{border-radius:50%;background:conic-gradient(var(--pink),var(--ember),var(--gold),var(--mint),var(--blue),var(--violet),var(--pink));}
+.spider-guide .sg-ic{width:18px;height:18px;flex:none;}
+.spider-guide .sg-hover .sg-ic{color:var(--pink);}
+.spider-guide .sg-click .sg-ic{color:var(--blue);}
+.spider-guide .sg-node{width:15px;height:15px;flex:none;border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.22) inset;background:conic-gradient(var(--pink),var(--ember),var(--gold),var(--mint),var(--blue),var(--violet),var(--pink));}
+.spider-guide .sg-item b{color:var(--ink);font-weight:800;}
 @media (max-width:900px){
   .spider-guide{gap:8px 14px;padding:12px 16px;}
   .spider-guide .sg-lead{width:100%;border-right:0;padding:0 0 4px;text-align:center;}
@@ -4024,7 +4030,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="fund-over" id="fundOver" aria-hidden="true">
       <div class="fund-inner">
         <div class="fund-kick">THE RAISE · USE OF FUNDS</div>
-        <h3 class="fund-h">What capital unlocks.</h3>
+        <h3 class="fund-h">What capital unlocks</h3>
         <p class="fund-sub">The constraint is no longer demand. It is the working capital, people and infrastructure required to meet that demand consistently. Every pound removes a constraint, not a shortfall.</p>
         <div class="fund-cards">
           <article class="fund-card"><span class="no">01</span><div class="fc-body">
@@ -5015,8 +5021,8 @@ const FG_DATA = {
         key: "web", label: "Web Development", color: "var(--blue)",
         people: [
           { name: "Bill Nebo", role: "Web Developer", type: "Full time",
-            tag: "Secured job · Full Time", tagKind: "win",
-            bio: "T Level graduate developer who secured his job with the group and has stepped up to full time on the web development team." },
+            tag: "Secured job · Part time in term", tagKind: "win",
+            bio: "Former T Level student who secured his job with the group. Full time now, moving to part time through the school terms." },
           { name: "Gabriel Mroczek", role: "Web Developer", type: "T Level Students", tag: "Summer engineering placement",
             bio: "Summer engineering placement on the web development team." }
         ]
@@ -10430,9 +10436,9 @@ function renderSpider() {
   $("#orgChart").innerHTML = `
     <div class="spider-guide" role="note" aria-label="How to explore the diagram">
       <span class="sg-lead">How to explore</span>
-      <span class="sg-item"><span class="sg-ic sg-hover"></span>${mob ? "Tap" : "Hover"} a name to trace its spoke</span>
-      <span class="sg-item"><span class="sg-ic sg-click"></span>${act} anyone for their full detail</span>
-      <span class="sg-item"><span class="sg-ic sg-node"></span>${act} a coloured node to filter its division</span>
+      <span class="sg-item sg-hover"><svg class="sg-ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4.3 2.8 15.7 7.9l-4.8 1.5-1.5 4.8z" fill="currentColor"/></svg><b>${mob ? "Tap" : "Hover"}</b> a name to trace its spoke</span>
+      <span class="sg-item sg-click"><svg class="sg-ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M8.2 8.4 15.6 11l-3 1-.9 3z" fill="currentColor"/><path d="M4 4.8 5.4 6.2M3.6 10.2h2M10.2 3.6v2M6.4 6 5 4.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><b>${act}</b> anyone for their full detail</span>
+      <span class="sg-item"><span class="sg-node" aria-hidden="true"></span><b>${act}</b> a coloured node to filter its division</span>
     </div>
     <div class="spider-scroll">
       <div class="spider" id="spider">
@@ -11954,8 +11960,10 @@ function initSetpieces() {
   function drawFunding(ctx, p, w, h) {
     if (!CLs) makeClouds();
     const day = sm(ph2(p, .06, .20)) * (1 - sm(ph2(p, .78, .93)));
-    const top = [lp(7, 236, day), lp(7, 240, day), lp(13, 248, day)];
-    const bot = [lp(7, 226, day), lp(7, 232, day), lp(13, 242, day)];
+    // DARK ride: #0F1018 base lifting only to a deep indigo mid-climb, never the
+    // old daylight white — the deck stays black through the raise
+    const top = [lp(15, 34, day), lp(16, 38, day), lp(24, 66, day)];
+    const bot = [lp(15, 18, day), lp(16, 20, day), lp(24, 38, day)];
     const bg2 = ctx.createLinearGradient(0, 0, 0, h);
     bg2.addColorStop(0, `rgb(${top.map(Math.round)})`);
     bg2.addColorStop(1, `rgb(${bot.map(Math.round)})`);
@@ -11967,7 +11975,9 @@ function initSetpieces() {
       ctx.fillStyle = `rgba(255,255,255,${starA * (.25 + ((i * 29) % 10) / 14)})`;
       ctx.fillRect(sx * w, sy * h, 1.4, 1.4);
     }
-    const lightMix = day;
+    // clouds stay DARK — a moody grey drift, never white cumulus. The light grade
+    // is capped hard so only the cloud tops catch a faint sheen mid-climb.
+    const lightMix = day * 0.16;
     const order = CLinst.map(c2 => ({ c2, g: cloudScreen(c2, p, w, h) })).sort((a2, b2) => b2.g.zf - a2.g.zf);
     for (const { c2, g } of order) {
       const { zf, k, scale, sw, sh, x, y } = g;
@@ -11975,28 +11985,42 @@ function initSetpieces() {
       al *= 1 - sm(cl((scale - 3.6) / 1.8, 0, 1)) * .85;
       if (al <= .015) continue;
       const spr = CLs[c2.s];
-      ctx.globalAlpha = al * (1 - lightMix);
+      // dark purple body dominates (moody storm cloud), only a thin grey rim and
+      // the faintest lit sheen — keeps the sky reading as #0F1018, not daylight grey
+      ctx.globalAlpha = al * (.66 + .22 * k);
       ctx.drawImage(spr.dark, x, y, sw, sh);
-      ctx.globalAlpha = al * .38 * (1 - k);
+      ctx.globalAlpha = al * (.12 + .1 * k);
       ctx.drawImage(spr.mid, x, y, sw, sh);
-      ctx.globalAlpha = al * lightMix;
+      ctx.globalAlpha = al * lightMix * .7;
       ctx.drawImage(spr.light, x, y, sw, sh);
     }
     ctx.globalAlpha = 1;
     // the sea of clouds holds beneath the brief through the bright cruise
     const sea = sm(ph2(p, .26, .46)) * (1 - sm(ph2(p, .72, .88)));
     if (sea > .01) {
-      ctx.globalAlpha = sea * .5;
+      ctx.globalAlpha = sea * .32;
       for (let i = 0; i < 9; i++) {
         const sx2 = (i / 9) * w * 1.2 - w * .1 + ((i * 53) % 40);
         const sw2 = w * .3, sh2 = sw2 * .5;
-        ctx.drawImage(CLs[i % 4].light, sx2, h * (.86 + ((i * 31) % 8) / 100), sw2, sh2);
+        ctx.drawImage(CLs[i % 4].mid, sx2, h * (.86 + ((i * 31) % 8) / 100), sw2, sh2);
       }
       ctx.globalAlpha = 1;
     }
-    // soft breathing haze at the brightest stretch
-    ctx.fillStyle = `rgba(255,255,255,${day * .12})`;
-    ctx.fillRect(0, 0, w, h);
+    // a soft dark scrim pools behind the brief so the light overlay always reads
+    // on black, leaving the storm clouds bright only around the frame's edges —
+    // a premium spotlight rather than the old flat white daylight
+    if (day > .01) {
+      const sc = ctx.createRadialGradient(w * .5, h * .46, h * .08, w * .5, h * .46, Math.hypot(w, h) * .5);
+      sc.addColorStop(0, `rgba(15,16,24,${day * .82})`);
+      sc.addColorStop(.5, `rgba(15,16,24,${day * .48})`);
+      sc.addColorStop(1, "rgba(15,16,24,0)");
+      ctx.fillStyle = sc; ctx.fillRect(0, 0, w, h);
+      // the faintest indigo lift right at the core keeps it from going flat
+      const gl = ctx.createRadialGradient(w * .5, h * .42, 0, w * .5, h * .42, h * .5);
+      gl.addColorStop(0, `rgba(122,92,255,${day * .07})`);
+      gl.addColorStop(1, "rgba(122,92,255,0)");
+      ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
+    }
     // the moon leads the descent into launch-night
     const moonA = sm(ph2(p, .84, .94));
     if (moonA > .01) {
@@ -12010,9 +12034,9 @@ function initSetpieces() {
     }
     // dark handoffs — the team chapter above, the launch pad below
     const inDark = 1 - sm(ph2(p, .012, .07));
-    if (inDark > .01) { ctx.fillStyle = `rgba(7,7,13,${inDark})`; ctx.fillRect(0, 0, w, h); }
+    if (inDark > .01) { ctx.fillStyle = `rgba(15,16,24,${inDark})`; ctx.fillRect(0, 0, w, h); }   // #0F1018 entry, matches the team chapter above
     const outDark = sm(ph2(p, .93, .995));
-    if (outDark > .01) { ctx.fillStyle = `rgba(7,7,13,${outDark})`; ctx.fillRect(0, 0, w, h); }
+    if (outDark > .01) { ctx.fillStyle = `rgba(7,7,13,${outDark})`; ctx.fillRect(0, 0, w, h); }     // exits to #07070d 'Beyond'
   }
   let FDels = null;
   function updateFunding(p) {

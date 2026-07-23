@@ -1723,13 +1723,20 @@ section.tint{background:var(--bg-soft);}
    same line however long the story text runs. */
 .ch-main{display:flex;flex-direction:column;min-width:0;}
 .ch-main > .ch-body{margin-bottom:auto;}
-.ch-side > .ch-next{margin-top:auto;}
-/* margin-top:auto on .ch-next pushes it to the bottom of the column, but when
-   the picture column is the taller of the two there is no free space left and
-   auto computes to ZERO — the quote and the question card then touch. This
-   carries the minimum separation instead, so the pair can never close up, no
-   matter which column is driving the row height. */
+/* The quote and the next-chapter card are a RIGID pair: a fixed 35px apart,
+   anchored to the bottom of the column so the card bottom-aligns with the stat
+   strip in the story column opposite. The slack — whatever the taller column
+   leaves over — is absorbed ABOVE the pair by the picture box, never between
+   them. That is what keeps the quote-to-question gap identical in every
+   chapter however long the story runs. (The auto used to sit on .ch-next, so a
+   longer story pushed the card down and opened that gap right up — chapters 1,
+   3, 10 and 18 grew it to 100-210px once their prose was expanded.) */
+.ch-side > .ch-figbox,.ch-side > .ch-fig,.ch-side > .ch-ph{margin-bottom:auto;}
 .ch-side > .ch-quote{margin-bottom:35px;}
+/* .ch-next carries a 12px top margin for the mobile stack; on the desktop pair
+   the 35px above is the whole gap, so zero it out here (the old auto rule used
+   to do this implicitly). Keeps the quote-to-question gap at exactly 35px. */
+.ch-side > .ch-next{margin-top:0;}
 /* The date and the chapter title now stack beside the badge, so the pair
    occupies exactly the badge's height and the three read as one header block
    instead of the title floating loose beneath the row. */
@@ -4440,8 +4447,8 @@ const FG_DATA = {
       title: "One Rusty Extinguisher Started Everything",
       subtitle: "No master plan. No investors. No ecommerce business. No group of companies. Just one overlooked product and the willingness to start.",
       body: [
-        "There was no Freedom Group. No portfolio of brands. No international supply chain. No team, no projections or \u00a3100 million ambition.",
-        "There was just one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value. But that single sale changed the direction of everything. It proved that value could be found where others saw none. It created the first customer, the first opportunity and the first glimpse of what might be possible. Every order, every brand and every company that followed can be traced back to that one extinguisher. It was the first step towards everything Freedom would become."
+        "There was no Freedom Group. No portfolio of brands, no international supply chain, no team, no projections and no &pound;100 million ambition. There was simply one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value.",
+        "At the time, it did not feel like the beginning of a major business. There was no carefully written strategy, no investment behind it and no clear roadmap showing where it might lead. It was one product, one listing and one customer willing to take a chance. But that single sale changed the direction of everything. It proved that value could be found where others saw none. It created the first customer, the first opportunity and the first real glimpse of what might be possible. From there came more enquiries, more products, more responsibility and the growing belief that this could become something far greater than a one off transaction. Every order, every brand, every employee, every supplier relationship and every company that followed can be traced back to that one extinguisher. It was not simply the first product we sold. It was the moment the journey began, the first proof that an overlooked opportunity could be turned into something meaningful, and the first step towards everything Freedom would eventually become."
       ],
       highlight: "Everything that exists today can be traced back to one extinguisher nobody else saw value in.",
       statItems: [
@@ -4457,7 +4464,7 @@ const FG_DATA = {
       title: "The £400 Order That Proved the Demand",
       subtitle: "A bulk enquiry from Bolton revealed that the opportunity might be bigger than expected.",
       body: [
-        "A buyer in Bolton contacted us looking for hundreds of refurbished fire extinguishers for fire safety training. We supplied approximately 400 units for &pound;400. For training, what matters is that a cylinder is sound, safe and available in quantity, not that it is new. That was exactly what we could offer, and we could offer it at a price nobody else was matching. The order itself was small. What it proved was not. The first sale had not been a one off, and the demand could be met at volume rather than one unit at a time. For the first time, this no longer felt like a single transaction. It felt like the beginning of a market."
+        "A buyer in Bolton contacted us looking for hundreds of refurbished fire extinguishers for fire safety training. We supplied approximately 400 mixed units for &pound;400, around &pound;1 each. In truth, it was probably not a profitable order. Once the time, handling, preparation and delivery were considered, we most likely made a loss. But the value of that order was never really in the margin. Until then, the first sale could still have been dismissed as a one off. This order proved there was genuine demand for affordable, second life extinguishers when the intended application was appropriate. It also revealed that the opportunity extended beyond individual customers: training providers and commercial buyers needed volume, reliability and someone willing to supply it. For the first time, this no longer felt like a single transaction. It felt like the first clear signal that a real market existed, even if the first lesson came without a profit."
       ],
       highlight: "The first extinguisher created the possibility. The first bulk order proved the demand.",
       statItems: [
@@ -4473,7 +4480,7 @@ const FG_DATA = {
       title: "Then Someone Asked: “Can You Send It?”",
       subtitle: "One remote order proved the opportunity was no longer limited by geography.",
       body: [
-        "The next breakthrough came when a kebab shop in Nottingham trusted us enough to order a cheap refurbished extinguisher without ever visiting in person. The sale still came through Facebook Marketplace, but this one felt different. They trusted the listing, paid remotely and relied on us to make sure the product reached them. Every sale before it had depended on somebody being close enough to collect. This one did not. The customer never saw the unit, never met us and never needed to. It was only one order to one small business, but it changed the scale of what suddenly felt possible. The opportunity was no longer limited to whoever could drive to us. It could travel."
+        "The next breakthrough came when a kebab shop in Nottingham contacted us through Facebook Marketplace looking for the cheapest suitable refurbished extinguisher we could provide. They had never visited us, never met us and had no reason to trust a small operation just starting out in Bury, but they trusted the listing, paid remotely and asked us to send it. Even arranging the delivery became part of the lesson. Fire extinguishers could not simply be handed to any courier, so we had to work out how to package the unit properly and find a carrier willing to take it. What now sounds like a routine shipment felt enormous at the time. It was the first real test of whether this could become more than a collection only business. The customer promised us a free kebab if we ever made it to Nottingham and, after the order arrived, began recommending us to other takeaways in the area. One small delivery quietly led to more conversations, more trust and more customers we had never met. It was still only a few extinguishers going to one kebab shop. But for a business just beginning, it felt like the world had opened up. The opportunity was no longer limited to whoever could drive to us. These products could be boxed, collected and sent anywhere. For the first time, the opportunity could travel."
       ],
       highlight: "The first remote order did not simply reach another customer. It removed geography from the business model.",
       statItems: [
@@ -4596,8 +4603,8 @@ const FG_DATA = {
       title: "Unit 10 Was No Longer Big Enough",
       subtitle: "A warehouse three times the size became available directly opposite, and we moved immediately.",
       body: [
-        "By the summer of 2024, Unit 10, once the symbol of our independence, was already too small. A larger unit became available directly opposite. We secured it and spent six months turning an empty industrial shell into the new Freedom headquarters, with offices, reception, kitchen, fulfilment areas, packing stations and room for far more stock. It was professional, ambitious and still unmistakably ours, complete with games consoles, electric bikes and the energy of a young team. We moved into Unit 19 around November 2024 while processing thousands of monthly orders.",
-        "As the range expanded into smoke alarms, batteries became a natural adjacent category, and relationships with Duracell and Energizer followed. A year earlier, established suppliers had been reluctant to take our plans seriously."
+        "By the summer of 2024, Unit 10, once the symbol of our independence, was already becoming too small. Stock was filling every available corner, packing space was under pressure and the business was beginning to outgrow the place that had once felt like such a major step forward. Then, almost perfectly timed, a larger unit became available directly opposite. We secured it and spent the next six months transforming an empty industrial shell into the new Freedom headquarters. The new space included offices, a reception area, kitchen, fulfilment rooms, packing stations and enough capacity to support a far larger stockholding operation. It was more professional, more ambitious and still unmistakably ours, complete with games consoles, electric bikes, RC cars and the energy of a young team building something together.",
+        "We moved into Unit 19 around November 2024 while already processing thousands of orders each month. As the fire safety range expanded into smoke alarms and related products, batteries became a natural adjacent category, creating new opportunities beyond extinguishers alone. Relationships with major brands such as Duracell and Energizer soon followed. Only a year earlier, established suppliers had been reluctant to take our plans seriously. Now, the warehouse was bigger, the sales were growing and the conversations had changed. The same major brands that once seemed out of reach were beginning to see Freedom as a company worth working with."
       ],
       highlight: "The companies that once overlooked us were beginning to see what we were becoming.",
       statItems: [
@@ -4734,8 +4741,8 @@ const FG_DATA = {
       title: "Firestorm™ Was Only the Beginning",
       subtitle: "The same brand building model began expanding across new product categories, markets and customer groups.",
       body: [
-        "Firestorm had proved Freedom could identify a product opportunity, create a name, protect the intellectual property, source directly and scale the brand through ecommerce. The next step was to repeat it. In February and March 2026, FXL&trade; and Skyline&trade; became the second and third protected brands, taking the model beyond fire extinguishers into aerosols and line marking products.",
-        "Around them, a wider portfolio began taking shape across batteries, PPE, cleaning products, automotive products and other year round essentials. Some brands were protected, others in application or development. Each followed the same principle: target non seasonal, repeat purchase products using the same supply chains and marketplace expertise. One owned brand was becoming a platform capable of carrying a portfolio."
+        "Firestorm had proved that Freedom could identify a product opportunity, create a name around it, protect the intellectual property, source directly from manufacturers and scale the brand through ecommerce. The next step was to prove that the process could be repeated. In February and March 2026, FXL&trade; and Skyline&trade; became the company&rsquo;s second and third protected brands, taking the model beyond fire extinguishers and into aerosols and line marking products. Around them, a wider portfolio began to take shape across batteries, PPE, cleaning products, automotive products and other year-round essentials.",
+        "Some brands were already protected, while others remained in application or development, but each was being built around the same principle: target non seasonal, needs driven or repeat purchase products that could use the same supply chains, fulfilment infrastructure, marketplace expertise and customer base. The ambition was no longer simply to build one successful fire safety brand. It was to create a repeatable system capable of launching, owning and scaling multiple brands across different categories. What had started with one owned fire safety product was becoming a platform capable of carrying an entire portfolio."
       ],
       highlight: "Firestorm proved the model once. The brand portfolio was designed to prove it repeatedly.",
       statItems: [

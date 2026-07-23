@@ -1547,11 +1547,11 @@ section.tint{background:var(--bg-soft);}
   content:"";position:absolute;left:0;right:0;top:0;height:clamp(90px,13vh,180px);
   pointer-events:none;z-index:0;
 }
-/* light chapter → dark chapter */
-#team::before{background:linear-gradient(180deg,#eef1f8 0%,rgba(238,241,248,.55) 38%,rgba(238,241,248,0) 100%);}
-#liftoff::before{background:linear-gradient(180deg,#f4f6fb 0%,rgba(244,246,251,.5) 40%,rgba(244,246,251,0) 100%);}
-/* dark chapter → light chapter */
-#beyond::before{background:linear-gradient(180deg,#07070d 0%,rgba(7,7,13,.5) 42%,rgba(7,7,13,0) 100%);}
+/* Everything after the 360 globe is black now, so every seam here blends
+   dark→dark. These used to bleed the light section above into the next; with
+   the deck black from the globe on, they must be dark or they read as white
+   bars sitting between two black sections. */
+#team::before,#liftoff::before,#beyond::before{background:linear-gradient(180deg,#07070d 0%,rgba(7,7,13,.5) 42%,rgba(7,7,13,0) 100%);}
 /* keep the content above its own seam */
 /* NB: .lo-head is deliberately NOT listed — it already carries its own
    position/z-index, and forcing position:relative here re-activated its
@@ -1579,14 +1579,20 @@ section.tint{background:var(--bg-soft);}
     background:var(--bg); color:var(--ink);
   }
   .sec-light.alt{ --bg:#eef1f8; }
+  /* Everything AFTER the 360° globe stays on space-black — the globe spins to
+     black and the deck never returns to white. These use the default (dark)
+     root tokens, so every chart, card and table inside adapts automatically. */
+  .sec-dark{ background:var(--bg); color:var(--ink); }
 
   /* dark ↔ light boundaries dissolve on an eased smootherstep curve —
      no visible band edges, the page reads as one continuous surface */
   #journey{background:linear-gradient(180deg,#07070d 0,#09090f 34px,#14151b 68px,#2d2d33 102px,#505158 136px,#7a7c82 170px,#a5a7ad 204px,#c8cbd2 238px,#e1e3ea 272px,#eceff6 306px,var(--bg) 340px);}
   #growth{background:linear-gradient(180deg,#eef1f8 0,#eef1f8 34px,#eff2f8 68px,#f1f3f9 102px,#f3f5fa 136px,#f6f8fc 170px,#fafbfd 204px,#fcfdfe 238px,#fefeff 272px,#ffffff 306px,var(--bg) 340px);}
-  #projections{background:linear-gradient(180deg,#ffffff 0,#ffffff 34px,#fefeff 68px,#fcfdfe 102px,#fafbfd 136px,#f6f8fc 170px,#f3f5fa 204px,#f1f3f9 238px,#eff2f8 272px,#eef1f8 306px,var(--bg) 340px);}
-  #horizon{background:linear-gradient(180deg,#eef1f8 0,#eef1f8 34px,#eff2f8 68px,#f1f3f9 102px,#f3f5fa 136px,#f6f8fc 170px,#fafbfd 204px,#fcfdfe 238px,#fefeff 272px,#ffffff 306px,var(--bg) 340px);}
-  #team{background:linear-gradient(180deg,#ffffff 0,#fdfdfd 34px,#f1f1f2 68px,#d8d8d9 102px,#b3b3b6 136px,#87888c 170px,#5b5c61 204px,#36373e 238px,#1d1e25 272px,#11121a 306px,var(--bg-soft) 340px);}
+  /* Post-globe sections are black now, so their top-edge dissolves blend
+     dark→dark instead of down from white. */
+  #projections{background:var(--bg);}
+  #horizon{background:var(--bg);}
+  #team{background:var(--bg-soft);}
 }
 .sec-head{margin-bottom:40px;}
 .sec-head h2{font-size:clamp(1.7rem,3.1vw,2.5rem);max-width:26ch;}
@@ -1723,16 +1729,15 @@ section.tint{background:var(--bg-soft);}
    same line however long the story text runs. */
 .ch-main{display:flex;flex-direction:column;min-width:0;}
 .ch-main > .ch-body{margin-bottom:auto;}
-/* The quote and the next-chapter card are a RIGID pair: a fixed 35px apart,
-   anchored to the bottom of the column so the card bottom-aligns with the stat
-   strip in the story column opposite. The slack — whatever the taller column
-   leaves over — is absorbed ABOVE the pair by the picture box, never between
-   them. That is what keeps the quote-to-question gap identical in every
-   chapter however long the story runs. (The auto used to sit on .ch-next, so a
-   longer story pushed the card down and opened that gap right up — chapters 1,
-   3, 10 and 18 grew it to 100-210px once their prose was expanded.) */
-.ch-side > .ch-figbox,.ch-side > .ch-fig,.ch-side > .ch-ph{margin-bottom:auto;}
-.ch-side > .ch-quote{margin-bottom:35px;}
+/* The picture column is a RIGID stack: image, then the quote a fixed gap
+   below it, then the question card 35px below that. NO auto margins here — the
+   three gaps are identical in every chapter, whatever length the story runs
+   (the user asked for exactly this; the earlier auto-margin, whether on the
+   card or the picture box, opened one of those gaps up on the long chapters).
+   The stat strip opposite still bottom-aligns for every chapter whose story
+   fits the picture height, which is the common case. */
+.ch-side > .ch-figbox,.ch-side > .ch-fig,.ch-side > .ch-ph{margin-bottom:0;}
+.ch-side > .ch-quote{margin:14px 0 35px;}
 /* .ch-next carries a 12px top margin for the mobile stack; on the desktop pair
    the 35px above is the whole gap, so zero it out here (the old auto rule used
    to do this implicitly). Keeps the quote-to-question gap at exactly 35px. */
@@ -1807,12 +1812,45 @@ section.tint{background:var(--bg-soft);}
   padding:8px 15px;border:1px solid var(--line);border-radius:99px;background:var(--bg-soft);
   color:var(--ink-dim);font-size:.76rem;font-weight:800;letter-spacing:.01em;
 }
-.assume{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px;}
-.assume > div{padding:14px 15px;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:13px;background:var(--bg-soft);}
-.assume b{display:block;font-size:.86rem;letter-spacing:-.01em;}
-.assume span{display:block;margin-top:4px;color:var(--ink-dim);font-size:.74rem;line-height:1.45;}
-.assume-note{margin:16px 0 0;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px;
-  color:var(--ink-dim);font-size:.74rem;line-height:1.5;}
+/* THE ASSUMPTIONS — centred, premium treatment. The £100m figure is only
+   credible if the conditions behind it are stated plainly, so this reads as a
+   confident, symmetrical grid, not a left-rail afterthought. */
+.ambition-panel{text-align:center;padding-top:36px;padding-bottom:34px;}
+.assume-head{max-width:660px;margin:0 auto;}
+.assume-kicker{
+  display:inline-block;margin-bottom:14px;padding:6px 15px;border-radius:99px;
+  border:1px solid var(--line-strong);background:var(--bg-soft);
+  color:var(--ink-faint);font-size:.68rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+}
+.ambition-panel .assume-head h3{font-size:1.55rem;letter-spacing:-.02em;}
+.ambition-panel .assume-head .psub{margin:9px auto 0;max-width:560px;}
+.assume{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
+  margin:28px auto 0;max-width:940px;
+}
+.assume > div{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:28px 20px 24px;border:1px solid var(--line);border-radius:18px;background:var(--bg-soft);
+  transition:transform .28s var(--ease),border-color .28s var(--ease),box-shadow .28s var(--ease);
+}
+.assume > div::before{content:"";position:absolute;inset:0 0 auto;height:3px;opacity:.9;}
+.assume > div:nth-child(3n+1)::before{background:linear-gradient(90deg,transparent,var(--pink),transparent);}
+.assume > div:nth-child(3n+2)::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.assume > div:nth-child(3n)::before{background:linear-gradient(90deg,transparent,var(--mint-ink),transparent);}
+.assume > div:hover{transform:translateY(-4px);border-color:var(--line-strong);box-shadow:var(--shadow);}
+.assume-no{
+  display:grid;place-items:center;width:44px;height:44px;margin-bottom:16px;border-radius:50%;
+  font-style:normal;font-weight:800;font-size:1rem;letter-spacing:-.02em;color:#fff;
+}
+.assume > div:nth-child(3n+1) .assume-no{background:linear-gradient(135deg,var(--pink),#ff86be);}
+.assume > div:nth-child(3n+2) .assume-no{background:linear-gradient(135deg,var(--blue),#82c7ff);}
+.assume > div:nth-child(3n) .assume-no{background:linear-gradient(135deg,var(--mint-ink),#74e9bb);}
+.assume b{display:block;font-size:.98rem;letter-spacing:-.01em;}
+.assume span{display:block;margin-top:7px;color:var(--ink-dim);font-size:.8rem;line-height:1.5;max-width:260px;}
+.assume-note{
+  margin:28px auto 0;max-width:720px;padding:14px 22px;border:1px dashed var(--line-strong);border-radius:14px;
+  color:var(--ink-dim);font-size:.76rem;line-height:1.5;text-align:center;}
 .assume-note b{color:var(--ink);}
 
 /* THE MARKET BLUEPRINT — two independent sliders, one per level */
@@ -2166,6 +2204,9 @@ rect.bar:hover{filter:brightness(1.12);}
 .trow.tkind{opacity:.7;font-style:italic;}
 .trow.tkind span{font-size:.7rem;}
 .yd-row.yd-direct .nm{color:var(--ink-dim);}
+/* 2036 revenue-mix legend: same hatched dot + dimmed name for direct channels */
+.dl-row.dl-direct .nm{color:var(--ink-dim);}
+.cdot-direct{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.6) 0 2px,transparent 2px 4px)!important;}
 .chip[aria-pressed="false"]{opacity:.55;}
 .chip[aria-pressed="false"] .cdot{background:var(--ink-faint);}
 .seg{
@@ -2235,6 +2276,10 @@ table.matrix{width:100%;border-collapse:collapse;min-width:620px;font-size:.9rem
 .matrix tfoot td{font-weight:800;background:var(--bg-soft);}
 .matrix tfoot td:not(:first-child){color:var(--mint-ink);}
 .mdot{display:inline-block;width:9px;height:9px;border-radius:99px;margin-right:9px;}
+/* direct (non-marketplace) channels in the data matrix — On Site Servicing and
+   B2B carry the same hatched dot and "direct" tag as they do in the charts */
+.mdot-direct{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.65) 0 2px,transparent 2px 4px)!important;}
+.matrix tr.md-direct td:first-child{color:var(--ink-dim);}
 
 /* 2035 horizon */
 .h35-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;}
@@ -3655,12 +3700,38 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <h2>A rising share of a<br><span class="grad-text">£6bn market</span></h2>
         <p class="section-sub">UK fire &amp; safety market: ~£6bn today, projected £8.5bn by 2030. Drag the timeline to watch Freedom's share of it climb.</p>
       </div>
-      <div class="panel reveal" id="runwayPanel">
-        <h3>The whole UK fire safety market</h3>
+      <!-- THREE NESTED MARKETS, widest first: all UK online retail, then the
+           UK fire safety market, then the fire safety slice already bought
+           online. Freedom's share grows as the pond shrinks — a rounding error
+           of all ecommerce, a small slice of fire safety, a meaningful share of
+           fire safety ecommerce. Each keeps its own barMax because the shares
+           are orders of magnitude apart. -->
+      <div class="panel reveal" id="dgtlPanel">
+        <h3>Overall ecommerce</h3>
+        <div class="psub">All UK online retail of physical goods, £132bn in 2026 · drag to move through the years</div>
+        <div class="runway">
+          <div>
+            <input type="range" class="runway-slider" id="dgtlSlider" min="0" max="8" step="1" value="2" aria-label="Select year, overall ecommerce">
+            <div class="runway-years" id="dgtlYears"></div>
+            <div class="runway-note">ONS internet retail sales: about £132bn of physical products bought online in 2026, nearly 29% of all UK retail spending. Fire safety ecommerce (£380m) is around 0.3% of that, roughly £1 in every £347 spent online.</div>
+          </div>
+          <div class="readouts">
+            <div class="ro"><span class="lbl">Freedom revenue <span id="dgtlKind"></span></span><span class="val" id="dgtlRev">£1m</span></div>
+            <div class="ro"><span class="lbl">UK online retail (est.)</span><span class="val" id="dgtlMkt">£132bn</span></div>
+            <div class="ro share">
+              <span class="lbl">Our share of the market</span><span class="val" id="dgtlShare">0.002%</span>
+              <div class="share-track"><div class="share-fill" id="dgtlFill"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel reveal" id="runwayPanel" style="margin-top:22px;">
+        <h3>Fire safety market</h3>
         <div class="psub">Products and services, every channel, £6bn in 2026 · drag to move through the years</div>
         <div class="runway">
           <div>
-            <input type="range" class="runway-slider" id="runwaySlider" min="0" max="8" step="1" value="2" aria-label="Select year">
+            <input type="range" class="runway-slider" id="runwaySlider" min="0" max="8" step="1" value="2" aria-label="Select year, fire safety market">
             <div class="runway-years" id="runwayYears"></div>
             <div class="runway-note">Market size interpolated to the deck's £6bn → £8.5bn (2030) projection; beyond 2030 we hold the 2030 estimate, the real number will be bigger.</div>
           </div>
@@ -3675,17 +3746,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         </div>
       </div>
 
-      <!-- The same revenue measured against the two ONLINE markets. The share
-           it buys is an order of magnitude larger in each, which is the whole
-           argument for an ecommerce led model rather than another servicing
-           round. Both stop at 2031 because that is as far as the ecommerce
-           forecast behind them runs. -->
       <div class="panel reveal" id="ecomPanel" style="margin-top:22px;">
-        <h3>Fire safety ecommerce</h3>
+        <h3>Fire &amp; safety ecommerce</h3>
         <div class="psub">The slice of that market already bought online, £380m in 2026 · drag to move through the years</div>
         <div class="runway">
           <div>
-            <input type="range" class="runway-slider" id="ecomSlider" min="0" max="8" step="1" value="2" aria-label="Select year, fire safety ecommerce">
+            <input type="range" class="runway-slider" id="ecomSlider" min="0" max="8" step="1" value="2" aria-label="Select year, fire and safety ecommerce">
             <div class="runway-years" id="ecomYears"></div>
             <div class="runway-note">Management estimate: the £1.81bn equipment market at manufacturer prices, uplifted to end customer value, at a 16% online share. Grown 8% a year, ahead of the 5% market but below general retail.</div>
           </div>
@@ -3695,26 +3761,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <div class="ro share">
               <span class="lbl">Our share of the market</span><span class="val" id="ecomShare">0.32%</span>
               <div class="share-track"><div class="share-fill" id="ecomFill"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel reveal" id="dgtlPanel" style="margin-top:22px;">
-        <h3>Broader ecommerce opportunity</h3>
-        <div class="psub">Products <em>and</em> services originated digitally, £520m in 2026 · drag to move through the years</div>
-        <div class="runway">
-          <div>
-            <input type="range" class="runway-slider" id="dgtlSlider" min="0" max="8" step="1" value="2" aria-label="Select year, broader ecommerce opportunity">
-            <div class="runway-years" id="dgtlYears"></div>
-            <div class="runway-note">Management estimate: online product sales plus the servicing, inspections, risk assessments and training that are quoted, booked, renewed or triggered digitally. This is the market a compliance platform addresses, not a webshop.</div>
-          </div>
-          <div class="readouts">
-            <div class="ro"><span class="lbl">Freedom revenue <span id="dgtlKind"></span></span><span class="val" id="dgtlRev">£1m</span></div>
-            <div class="ro"><span class="lbl">Digital market size (est.)</span><span class="val" id="dgtlMkt">£520m</span></div>
-            <div class="ro share">
-              <span class="lbl">Our share of the market</span><span class="val" id="dgtlShare">0.23%</span>
-              <div class="share-track"><div class="share-fill" id="dgtlFill"></div></div>
             </div>
           </div>
         </div>
@@ -3783,7 +3829,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        PROJECTIONS (5-YEAR CHANNELS MAP)
        ==================================================================== -->
-  <section data-sec="projections" id="projections" class="sec-light alt" aria-label="Multi channel projections">
+  <section data-sec="projections" id="projections" class="sec-dark" aria-label="Multi channel projections">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">Multi channel map · 2026 to 2031</span>
@@ -3830,7 +3876,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   <!-- ====================================================================
        2035 HORIZON
        ==================================================================== -->
-  <section data-sec="horizon" id="horizon" class="sec-light" aria-label="2036 horizon">
+  <section data-sec="horizon" id="horizon" class="sec-dark" aria-label="2036 horizon">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The £100 Million Freedom Global Ambition</span>
@@ -3874,16 +3920,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 
       <!-- THE ASSUMPTIONS, the £100m figure is only credible if what it
            depends on is stated plainly alongside it -->
-      <div class="panel reveal" id="ambition" style="margin-top:22px;">
-        <h3>What the £100 million ambition assumes</h3>
-        <div class="psub">A long term value creation target, not a current valuation. Reaching it depends on all of the following holding true.</div>
+      <div class="panel reveal ambition-panel" id="ambition" style="margin-top:22px;">
+        <div class="assume-head">
+          <span class="assume-kicker">The conditions</span>
+          <h3>What the £100 million ambition assumes</h3>
+          <div class="psub">A long term value creation target, not a current valuation. Reaching it depends on all of the following holding true.</div>
+        </div>
         <div class="assume">
-          <div><b>Channel execution</b><span>Amazon, Shopify, OnBuy and TikTok Shop all launch and scale on plan, alongside eBay and Temu.</span></div>
-          <div><b>Working capital</b><span>Stock funding keeps pace with demand, so availability and marketplace ranking are never the constraint.</span></div>
-          <div><b>Brand portfolio</b><span>The owned brands repeat the Firestorm model across batteries, PPE, aerosols, cleaning and automotive.</span></div>
-          <div><b>Margin discipline</b><span>Direct-from-manufacturer sourcing holds gross margin as volume grows.</span></div>
-          <div><b>Operational capacity</b><span>Warehousing, fulfilment and headcount scale ahead of order volume, not behind it.</span></div>
-          <div><b>Market conditions</b><span>The continued migration of regulated safety and consumable categories online.</span></div>
+          <div><i class="assume-no">01</i><b>Channel execution</b><span>Amazon, Shopify, OnBuy and TikTok Shop all launch and scale on plan, alongside eBay and Temu.</span></div>
+          <div><i class="assume-no">02</i><b>Working capital</b><span>Stock funding keeps pace with demand, so availability and marketplace ranking are never the constraint.</span></div>
+          <div><i class="assume-no">03</i><b>Brand portfolio</b><span>The owned brands repeat the Firestorm model across batteries, PPE, aerosols, cleaning and automotive.</span></div>
+          <div><i class="assume-no">04</i><b>Margin discipline</b><span>Direct-from-manufacturer sourcing holds gross margin as volume grows.</span></div>
+          <div><i class="assume-no">05</i><b>Operational capacity</b><span>Warehousing, fulfilment and headcount scale ahead of order volume, not behind it.</span></div>
+          <div><i class="assume-no">06</i><b>Market conditions</b><span>The continued migration of regulated safety and consumable categories online.</span></div>
         </div>
         <p class="assume-note">£100 million is a <b>target enterprise value</b>, an illustrative future figure based on successful execution of the plan above. It is not a professional valuation and should not be read as one.</p>
       </div>
@@ -3978,7 +4027,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        BEYOND FREEDOM GLOBAL, the wider group, framed as a flywheel rather
        than a combined valuation.
        ==================================================================== -->
-  <section data-sec="beyond" id="beyond" class="sec-light" aria-label="Beyond Freedom Global">
+  <section data-sec="beyond" id="beyond" class="sec-dark" aria-label="Beyond Freedom Global">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">Beyond Freedom Global</span>
@@ -4463,7 +4512,7 @@ const FG_DATA = {
       ],
       summary: "The starting point",
       alt: "The first refurbished extinguishers lined up against the warehouse wall",
-      photos: ["journey-photos/ch1-a.png"],
+      photos: ["journey-photos/ch1-a.webp"],
       nextQuestion: "But could one sale become a genuine opportunity?" },
     { year: "September 2019", kick: "The First Signal", q: "Was there really a market?",
       title: "The £400 Order That Proved the Demand",
@@ -4479,7 +4528,7 @@ const FG_DATA = {
       ],
       summary: "The first bulk order",
       alt: "Hundreds of refurbished foam extinguishers loaded and ready for the first bulk order",
-      photos: ["journey-photos/ch2-a.png", "journey-photos/ch2-b.png"],
+      photos: ["journey-photos/ch2-a.webp", "journey-photos/ch2-b.webp"],
       nextQuestion: "But would customers buy without collecting in person?" },
     { year: "January 2020", kick: "The First Leap", q: "Would people trust buying remotely?",
       title: "Then Someone Asked: “Can You Send It?”",
@@ -4495,7 +4544,7 @@ const FG_DATA = {
       ],
       summary: "Geography removed",
       alt: "Boxed fire extinguishers packed and labelled for despatch",
-      photos: ["journey-photos/ch3-a.png"],
+      photos: ["journey-photos/ch3-a.webp"],
       nextQuestion: "If customers would order remotely, how far could the model really grow?" },
     { year: "June 2020", kick: "The Growth", q: "Could a small operation keep up with the demand?",
       title: "From One Extinguisher to Hundreds Every Day",
@@ -4512,8 +4561,8 @@ const FG_DATA = {
       ],
       summary: "A national operation",
       alt: "The Freedom Fire team, warehouse racking, pallets and container despatch during the 2020 growth",
-      photos: ["journey-photos/ch4-a.png", "journey-photos/ch4-b.png", "journey-photos/ch4-c.png",
-               "journey-photos/ch4-d.png", "journey-photos/ch4-e.png"],
+      photos: ["journey-photos/ch4-a.webp", "journey-photos/ch4-b.webp", "journey-photos/ch4-c.webp",
+               "journey-photos/ch4-d.webp", "journey-photos/ch4-e.webp"],
       nextQuestion: "Could a local Facebook operation become a genuine ecommerce business?" },
     { year: "December 2020", kick: "The Leap of Faith", q: "Could one eBay listing open an entire new channel?",
       title: "One Listing. One Unexpected Breakthrough.",
@@ -4530,7 +4579,7 @@ const FG_DATA = {
       ],
       summary: "Ecommerce proven",
       alt: "The original eBay CO2 extinguisher listing on screen",
-      photos: ["journey-photos/ch5-a.jpg"],
+      photos: ["journey-photos/ch5-a.webp"],
       nextQuestion: "Could the operation become a real limited company with a larger ambition?" },
     { year: "August 2021", kick: "The Company", q: "Could the operation become a structured business?",
       title: "Freedom Fire & Safety Ltd Was Born",
@@ -4547,9 +4596,9 @@ const FG_DATA = {
       ],
       summary: "The company forms",
       alt: "Freedom engineers servicing and installing extinguishers across commercial sites",
-      photos: ["journey-photos/ch6-a.jpg", "journey-photos/ch6-b.jpg", "journey-photos/ch6-c.jpg",
-               "journey-photos/ch6-d.jpg", "journey-photos/ch6-e.jpg", "journey-photos/ch6-f.jpg",
-               "journey-photos/ch6-g.jpg"],
+      photos: ["journey-photos/ch6-a.webp", "journey-photos/ch6-b.webp", "journey-photos/ch6-c.webp",
+               "journey-photos/ch6-d.webp", "journey-photos/ch6-e.webp", "journey-photos/ch6-f.webp",
+               "journey-photos/ch6-g.webp"],
       nextQuestion: "Where could the company build a permanent home of its own?" },
     { year: "April 2022", kick: "The First Home", q: "Could 500 square feet become the base for something bigger?",
       title: "Unit 10 Became Our First Real Warehouse",
@@ -4567,7 +4616,7 @@ const FG_DATA = {
       ],
       summary: "The first home",
       alt: "The Freedom team and van fleet outside Unit 10",
-      photos: ["journey-photos/ch7-a.jpg", "journey-photos/ch7-b.jpg"],
+      photos: ["journey-photos/ch7-a.webp", "journey-photos/ch7-b.webp"],
       nextQuestion: "Could we build an entire ecommerce store before knowing whether the market would respond?" },
     { year: "May 2023", kick: "The Build", q: "Would we invest everything before the sales arrived?",
       title: "Twelve Months of Building Before One New Sale",
@@ -4584,7 +4633,7 @@ const FG_DATA = {
       ],
       summary: "The build",
       alt: "Stock being racked ahead of the store launch",
-      photos: ["journey-photos/ch8-a.jpg"],
+      photos: ["journey-photos/ch8-a.webp"],
       nextQuestion: "What would happen when the store finally went live?" },
     { year: "May 2024", kick: "The Breakthrough", q: "Would the market respond?",
       title: "Then the Orders Started Coming",
@@ -4602,7 +4651,7 @@ const FG_DATA = {
       ],
       summary: "The breakthrough",
       alt: "The eBay UK Business Awards and the store's first months of sales",
-      photos: ["journey-photos/ch9-a.jpg", "journey-photos/ch9-b.jpg", "journey-photos/ch9-c.jpg"],
+      photos: ["journey-photos/ch9-a.webp", "journey-photos/ch9-b.webp", "journey-photos/ch9-c.webp"],
       nextQuestion: "Could our small warehouse survive the speed of growth?" },
     { year: "June 2024", kick: "The Expansion", q: "How quickly could the business outgrow its first home?",
       title: "Unit 10 Was No Longer Big Enough",
@@ -4619,7 +4668,7 @@ const FG_DATA = {
       ],
       summary: "The expansion",
       alt: "Unit 19, the new Freedom headquarters, reception and group meeting room",
-      photos: ["journey-photos/ch10-a.jpg", "journey-photos/ch10-b.jpg", "journey-photos/ch10-c.jpg"],
+      photos: ["journey-photos/ch10-a.webp", "journey-photos/ch10-b.webp", "journey-photos/ch10-c.webp"],
       nextQuestion: "But could the margins and supply chains support the next level of growth?" },
     { year: "July 2024", kick: "The Supply Chain", q: "Could we stop buying from the big players and become one?",
       title: "We Had to Buy Like the Biggest",
@@ -4636,7 +4685,7 @@ const FG_DATA = {
       ],
       summary: "The supply chain",
       alt: "Shaking hands with Xiao (Bob) Li and his father of JinDun at the Freedom unit",
-      photos: ["journey-photos/ch11-a.jpg", "journey-photos/ch11-b.jpg"],
+      photos: ["journey-photos/ch11-a.webp", "journey-photos/ch11-b.webp"],
       nextQuestion: "If we were going to manufacture our own products, what would the brand become?" },
     { year: "August 2024", kick: "The Brand Is Born", q: "Could we create something the business could truly own?",
       title: "Firestorm&trade; Was Born From Rejection",
@@ -4653,7 +4702,7 @@ const FG_DATA = {
       ],
       summary: "The brand is born",
       alt: "The Firestorm registered trade mark",
-      photos: ["journey-photos/ch12-a.jpg"],
+      photos: ["journey-photos/ch12-a.webp"],
       nextQuestion: "But could a protected name become thousands of products people could hold?" },
     { year: "December 2024", kick: "The Christmas Delivery", q: "Would Firestorm finally become real?",
       title: "The Best Christmas Present Was a Container",
@@ -4670,7 +4719,7 @@ const FG_DATA = {
       ],
       summary: "Firestorm lands",
       alt: "The team in front of the first container of Firestorm stock",
-      photos: ["journey-photos/ch13-a.jpg", "journey-photos/ch13-b.jpg"],
+      photos: ["journey-photos/ch13-a.webp", "journey-photos/ch13-b.webp"],
       nextQuestion: "Could one owned brand become the foundation of a much larger ecommerce platform?" },
     { year: "January 2025", kick: "The Vision Expands", q: "Could one category become a multi brand powerhouse?",
       title: "One Store Became the Freedom Global Blueprint",
@@ -4688,7 +4737,7 @@ const FG_DATA = {
       ],
       summary: "The blueprint",
       alt: "The first twelve months of eBay sales and the widening product ecosystem",
-      photos: ["journey-photos/ch14-a.jpg"],
+      photos: ["journey-photos/ch14-a.webp"],
       nextQuestion: "Could the company grow by creating opportunity for the next generation too?" },
     { year: "September 2025", kick: "The People", q: "Could business growth create opportunity for others?",
       title: "The Business Was Growing and So Were Its People",
@@ -4705,7 +4754,7 @@ const FG_DATA = {
       ],
       summary: "The people",
       alt: "A T Level student presenting Freedom Group Holdings project research at the new HQ",
-      photos: ["journey-photos/ch15-a.jpg"],
+      photos: ["journey-photos/ch15-a.webp"],
       nextQuestion: "Could the ecommerce system this growing team was helping to build succeed beyond eBay?" },
     { year: "October 2025", kick: "The Second Proof", q: "Was eBay the exception, or was the model repeatable?",
       title: "Temu Proved the Model Could Travel",
@@ -4723,7 +4772,7 @@ const FG_DATA = {
       ],
       summary: "The second proof",
       alt: "Firestorm products at number one and two in Temu’s Safety &amp; Security best sellers",
-      photos: ["journey-photos/ch16-a.jpg", "journey-photos/ch16-b.jpg"],
+      photos: ["journey-photos/ch16-a.webp", "journey-photos/ch16-b.webp"],
       nextQuestion: "What would two marketplaces and a growing service operation add up to by the end of the company’s second online year?" },
     { year: "January 2026", kick: "The Million Pound Year", q: "Could the business pass £1 million in its second year?",
       title: "The Second Year Broke the Million Pound Barrier",
@@ -4740,7 +4789,7 @@ const FG_DATA = {
       ],
       summary: "The million pound year",
       alt: "A container arriving at the Freedom unit as the second year passes £1 million",
-      photos: ["journey-photos/ch17-a.jpg"],
+      photos: ["journey-photos/ch17-a.webp"],
       nextQuestion: "If one core category could create a seven figure business, how many brands could the same system support?" },
     { year: "February 2026", kick: "The Brand Portfolio", q: "Could one owned brand become many?",
       title: "Firestorm™ Was Only the Beginning",
@@ -4757,7 +4806,7 @@ const FG_DATA = {
       ],
       summary: "The brand portfolio",
       alt: "The Freedom brand portfolio, Voltz, Kunergy, FXL, Skyline and Firestorm",
-      photos: ["journey-photos/ch18-a.jpg", "journey-photos/ch18-b.jpg", "journey-photos/ch18-c.jpg"],
+      photos: ["journey-photos/ch18-a.webp", "journey-photos/ch18-b.webp", "journey-photos/ch18-c.webp"],
       nextQuestion: "Could this growing portfolio now compete on the largest marketplace of all?" },
     { year: "May 2026", kick: "The Biggest Launch", q: "Could the system compete at a much greater scale?",
       title: "Amazon Became the Next Frontier",
@@ -4775,7 +4824,7 @@ const FG_DATA = {
       ],
       summary: "The biggest launch",
       alt: "The channel roadmap, eBay and Temu live, Amazon, OnBuy, Shopify, TikTok Shop, B&amp;Q and Screwfix ahead",
-      photos: ["journey-photos/ch19-a.jpg"],
+      photos: ["journey-photos/ch19-a.webp"],
       nextQuestion: "What happens when the platforms, brands and people all begin to launch together?" },
     { year: "June 2026", kick: "The Launchpad", q: "What happens when people, platforms and purpose align?",
       title: "The Foundations Were Ready. Liftoff Was Next.",
@@ -4793,7 +4842,7 @@ const FG_DATA = {
       ],
       summary: "The launchpad",
       alt: "The King’s Awards for Enterprise emblem",
-      photos: ["journey-photos/ch20-a.jpg"],
+      photos: ["journey-photos/ch20-a.webp"],
       nextQuestion: "The journey proved the model. What could Freedom Global become from here?" },
   ],
 
@@ -5078,7 +5127,9 @@ function rafScroll(fn) {
     if (document.hidden) { fn(); return; }
     if (!queued) {
       queued = true;
-      requestAnimationFrame(() => { fn(); queued = false; });
+      // try/finally: a throw inside fn() must NEVER strand queued=true, or every
+      // later scroll event is ignored and all scroll-driven repaint freezes.
+      requestAnimationFrame(() => { try { fn(); } finally { queued = false; } });
     }
   };
 }
@@ -9701,7 +9752,7 @@ function renderProjections() {
     <thead><tr><th>Channel</th>${P.years.map(y => `<th>${y}</th>`).join("")}</tr></thead>
     <tbody>
       ${P.channels.map(c => `
-        <tr><td><span class="mdot" style="background:${c.hex}"></span>${c.name}</td>
+        <tr class="${isDirect(c.name) ? "md-direct" : ""}"><td><span class="mdot${isDirect(c.name) ? " mdot-direct" : ""}" style="background:${c.hex}"></span>${c.name}${isDirect(c.name) ? `<em class="kindtag" title="${DIRECT_NOTE}">direct</em>` : ""}</td>
         ${c.values.map(v => `<td title="${fmtGBP(v)}">${fmtCompact(v)}</td>`).join("")}</tr>`).join("")}
     </tbody>
     <tfoot><tr><td>Total</td>${P.years.map((_, i) => `<td>${fmtCompact(yearTotal(i))}</td>`).join("")}</tr></tfoot>`;
@@ -9819,12 +9870,15 @@ function renderTrajectory() {
      2036 point off the top the moment the ambition moved to £100m. Round the
      linear top up to a whole tick so the gridlines stay clean. */
   const TICK = 20000000;
-  const maxLin = Math.max(TICK, Math.ceil((peak * 1.06) / TICK) * TICK);
+  // top sits just above the £100.59m peak, NOT rounded up a whole £20m tick —
+  // that rounding drew an empty £120m gridline above the ambition line
+  const maxLin = Math.max(TICK, peak * 1.05);
   // a little headroom above the peak, NOT a whole extra decade — rounding up
   // to 10^9 left the log chart two-thirds empty
   const maxLog = peak * 1.3;
   const minVLog = 20000;
-  const linTicks = Array.from({ length: maxLin / TICK + 1 }, (_, i) => i * TICK);
+  // gridlines every £20m up to the last tick at/below the peak (£100m); no £120m line
+  const linTicks = Array.from({ length: Math.floor(peak / TICK) + 1 }, (_, i) => i * TICK);
   const logTicks = (() => {
     const out = [];
     for (let v = 100000; v <= maxLog; v *= 10) out.push(v);
@@ -9868,7 +9922,8 @@ function renderTrajectory() {
       class: "pt-dot", tabindex: "0",
       "aria-label": `${d.year}: ${fmtCompact(d.value)} ${isActual ? "actual" : "target"}`
     }, svg);
-    const html = `<b>${d.year} · ${isActual ? "actual" : "target"}</b>
+    const html = `<b style="font-size:1.18em;display:block;line-height:1.1">${d.year}</b>
+      <div style="opacity:.6;margin:0 0 4px;text-transform:uppercase;letter-spacing:.07em;font-size:.78em">${isActual ? "actual" : "target"}</div>
       <div class="trow"><span>Revenue</span><b>${fmtCompact(d.value)}</b></div>
       ${d.note ? `<div style="opacity:.75">${d.note}</div>` : ""}`;
     dot.addEventListener("mousemove", e => tip.show(e.clientX, e.clientY, html));
@@ -9876,17 +9931,10 @@ function renderTrajectory() {
     dot.addEventListener("focus", () => { const r = dot.getBoundingClientRect(); tip.show(r.left + r.width / 2, r.top, html); });
     dot.addEventListener("blur", () => tip.hide());
     dots.push(dot);
-    if (d.note) {
-      // thin leader (drawn first, under the text) for labels that float off their point
-      const lead = svgEl("line", { class: "traj-lead", x1: 0, y1: 0, x2: 0, y2: 0, opacity: "0" }, svg);
-      const lbl = svgEl("text", {
-        x: xFor(d.year), y: 0, "text-anchor": "middle",
-        fill: "var(--ink-dim)", "font-size": "11.5", "font-weight": "700"
-      }, svg);
-      lbl.textContent = d.note;
-      const w = lbl.getComputedTextLength() || d.note.length * 5.6;
-      labels.push({ el: lbl, lead, d, __w: w });
-    } else labels.push(null);
+    // The milestone captions are NO LONGER drawn on the chart — the user asked
+    // for clean points. The note still lives in each point's hover tooltip
+    // above, so the detail is a hover away without cluttering the line.
+    labels.push(null);
   });
 
   // interpolate the line's y at any x, so labels can be placed clear of it
@@ -10010,18 +10058,25 @@ function render2036() {
   const tip = makeTip(fig);
 
   const legend = $("#legend35");
-  legend.innerHTML = P36.channels.map((c, i) => `
-    <div class="dl-row" data-di="${i}" role="button" tabindex="0"
-         aria-label="${c.name}, ${fmtCompact(c.value)}, ${Math.round((c.value / total36) * 100)} percent">
-      <span class="cdot" style="background:${c.hex}"></span>
-      <span class="nm">${c.name}</span>
+  legend.innerHTML = P36.channels.map((c, i) => {
+    const dir = isDirect(c.name);
+    return `
+    <div class="dl-row${dir ? " dl-direct" : ""}" data-di="${i}" role="button" tabindex="0"
+         aria-label="${c.name}${dir ? " (direct, not an online storefront)" : ""}, ${fmtCompact(c.value)}, ${Math.round((c.value / total36) * 100)} percent">
+      <span class="cdot${dir ? " cdot-direct" : ""}" style="background:${c.hex}"></span>
+      <span class="nm">${c.name}${dir ? `<em class="kindtag" title="${DIRECT_NOTE}">direct</em>` : ""}</span>
       <span class="val">${fmtCompact(c.value)}</span>
       <span class="pct">${Math.round((c.value / total36) * 100)}%</span>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 
   const rows = $$(".dl-row", legend);
   donut.paths.forEach(({ seg, path, frac }, i) => {
-    const html = `<b><span class="tdot" style="background:${seg.hex}"></span>${seg.name}</b>
+    // On Site Servicing and B2B are not online storefronts — carry the same 45°
+    // hatch here as in the projection bars/donut so a glance keeps them apart
+    const dir = isDirect(seg.name);
+    if (dir) path.setAttribute("fill", hatchFill(path, seg.hex, "h36_" + seg.name.replace(/\W+/g, "")));
+    const html = `<b><span class="tdot${dir ? " tdot-direct" : ""}" style="background:${seg.hex}"></span>${seg.name}${dir ? '<em class="kindtag">direct</em>' : ""}</b>
       <div class="trow"><span>2036 target</span><b>${fmtCompact(seg.value)}</b></div>
       <div class="trow"><span>Share</span><b>${Math.round(frac * 100)}%</b></div>`;
     const hot = on => {
@@ -10060,7 +10115,12 @@ function render2036() {
     const total = entries.reduce((s, e) => s + e.value, 0);
     return `<div class="shift-row"><span class="yr">${yr}</span>
       <div class="shift-bar" role="img" aria-label="${yr} channel share: ${entries.map(e => `${e.name} ${Math.round(e.value / total * 100)}%`).join(", ")}">
-        ${entries.map(e => `<div style="width:${(e.value / total) * 100}%;background:${e.hex}" data-tt="${e.name} · ${yr}|${fmtCompact(e.value)}|${Math.round(e.value / total * 100)}%"></div>`).join("")}
+        ${entries.map(e => {
+          const dir = isDirect(e.name);
+          // direct channels wear the same 45° hatch here as everywhere else
+          const bg = dir ? `repeating-linear-gradient(45deg,${e.hex} 0 3px,rgba(255,255,255,.5) 3px 5px)` : e.hex;
+          return `<div class="${dir ? "sh-direct" : ""}" style="width:${(e.value / total) * 100}%;background:${bg}" data-tt="${e.name}${dir ? " · direct" : ""} · ${yr}|${fmtCompact(e.value)}|${Math.round(e.value / total * 100)}%"></div>`;
+        }).join("")}
       </div></div>`;
   };
   const y26 = P.channels.map(c => ({ name: c.name, hex: c.hex, value: c.values[0] }));
@@ -10101,9 +10161,14 @@ const SHARE_SLIDERS = [
   { slider: "ecomSlider", years: "ecomYears", kind: "ecomKind", rev: "ecomRev",
     mkt: "ecomMkt", share: "ecomShare", fill: "ecomFill", barMax: 6, maxYear: 2031,
     market: y => 380e6 * Math.pow(1.08, y - 2026) },
+  /* Overall ecommerce: all UK online retail of physical goods, ONS internet
+     retail ~£132bn in 2026, grown 7% a year (mature market, below the online
+     spike). barMax .05 keeps the bar readable while showing that Freedom's
+     share is a rounding error of the whole online economy — the point of this
+     widest panel is the runway, not the current share. */
   { slider: "dgtlSlider", years: "dgtlYears", kind: "dgtlKind", rev: "dgtlRev",
-    mkt: "dgtlMkt", share: "dgtlShare", fill: "dgtlFill", barMax: 6, maxYear: 2031,
-    market: y => 520e6 * Math.pow(1.08, y - 2026) }
+    mkt: "dgtlMkt", share: "dgtlShare", fill: "dgtlFill", barMax: 0.05, maxYear: 2031,
+    market: y => 132e9 * Math.pow(1.07, y - 2026) }
 ];
 function renderShareSlider(cfg) {
   const slider = $("#" + cfg.slider);
@@ -11193,10 +11258,12 @@ function initSetpieces() {
     /* China carries the most weight in this chain, so it is pinned at every
        point the goods actually move through rather than once in the middle
        of the landmass: the plant, then the export ports. */
+    /* ONE pin, distinguished by colour not size — China is the primary
+       manufacturing base, marked gold instead of pink at the same radius. The
+       export-port extras were removed at the user's request. */
     { n: "China", ...geo(114, 34), start: .70, side: 1, lift: -.32,
       tag: "PRIMARY", cat: "Manufacturing & export",
-      d2: "JinDun, the world's №3 extinguisher maker",
-      extra: [geo(121.5, 29.9), geo(113.3, 23.1), geo(120.4, 36.1)] },
+      d2: "JinDun, the world's №3 extinguisher maker", distinct: true },
     { n: "Pakistan", ...geo(69, 30), start: .64, side: 1, lift: .32,
       tag: "SUPPLY", cat: "PPE", d2: "gloves and protective textiles" },
     { n: "Malaysia", ...geo(102, 4), start: .69, side: 1, lift: .95,
@@ -11289,11 +11356,12 @@ function initSetpieces() {
     // the heading owns the DAY half, then clears before the territories rise
     if (PLover === undefined) PLover = document.getElementById("globeOver");
     if (PLover) PLover.style.opacity = (sm(ph2(p, .04, .12)) * (1 - sm(ph2(p, .34, .46)))).toFixed(3);
-    // white → dusk → night (the sourcing territories) → dawn back to white, so
-    // the chapter opens and closes on the same page colour it sits between
-    const night = sm(ph2(p, .36, .50)) * (1 - sm(ph2(p, .90, .995)));
+    // white DAY (the market runway) → night (the sourcing territories) → and it
+    // now HOLDS on the deck's black to the end. The sections on both sides are
+    // #07070D, so the chapter must resolve to black, never dawn back to white.
+    const night = sm(ph2(p, .36, .50));
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = `rgb(${Math.round(lp(255, 15, night))},${Math.round(lp(255, 16, night))},${Math.round(lp(255, 24, night))})`;
+    ctx.fillStyle = `rgb(${Math.round(lp(255, 7, night))},${Math.round(lp(255, 7, night))},${Math.round(lp(255, 13, night))})`;
     ctx.fillRect(0, 0, w, h);
     if (night > .02) for (const st of PLstars) {
       const tw = .35 + .65 * Math.abs(Math.sin(st.c * 31 + p * 15));
@@ -11372,9 +11440,97 @@ function initSetpieces() {
         let bx = pin.side < 0 ? sx - bw : sx;
         bx = Math.max(10, Math.min(w - bw - 10, bx));
         const rise = (1 - boxP) * 16;                     // card manifests upward after its lead
+        // the pin's landed screen position (same maths as Pass 1), so the
+        // cards can be re-slotted to match it just below. rim reduces to
+        // lift*R / side*sqrt(1-lift^2)*R since the rim angle is asin(lift)
+        const lam0 = (du / .5 - .5) * Math.PI;
+        const dyN0 = pin.v * 2 - 1;
+        const halfW0 = Math.sqrt(Math.max(0, 1 - dyN0 * dyN0));
+        const ptx = Math.sin(lam0) * R * halfW0, pty = dyN0 * R;
+        const mapX0 = cx + ptx * ct - pty * st2;
+        const mapY0 = cy + ptx * st2 + pty * ct;
+        const rimX0 = cx + pin.side * Math.sqrt(Math.max(0, 1 - cl(pin.lift, -1, 1) ** 2)) * R * .996;
+        const rimY0 = cy + cl(pin.lift, -1, 1) * R * .996;
+        const px2 = lp(rimX0, mapX0, settle);
+        const py2 = lp(rimY0, mapY0, settle);
+        // A card sits in a FIXED column on its pin.side, but the pin's screen-x
+        // sweeps across the disc as the globe turns. Once a pin rotates well past
+        // centre onto the OPPOSITE half, its tether would rake right across the
+        // globe and cross the other side's tethers. The pin, tether and card
+        // share one clock, so fade the whole trio out across that crossing: only
+        // tethers that stay on their own side are ever drawn, and a rake — the
+        // one remaining way two tethers could cross — can never occur.
+        const dSide = pin.side * (px2 - cx);
+        // fade the trio out by the time the pin reaches the globe's centre line,
+        // so left-side tethers stay left of centre and right-side stay right —
+        // two tethers on opposite columns then can never overlap, let alone
+        // cross. Full only once the pin is ~0.28R onto its own side.
+        const sideVis = cl((dSide + R * 0.05) / (R * 0.33), 0, 1);
+        const ex0 = pin.side < 0 ? bx + bw : bx;
         const byC = cy + pin.lift * R + rise;
         const by = byC - bh / 2;
-        return { pin, leadP, boxP, face, settle, du, bw, bh, bx, byC, by };
+        return { pin, leadP, boxP, face: face * sideVis, settle, du, bw, bh, bx, byC, by, rise, px2, py2, ex0 };
+      });
+
+      /* DYNAMIC CARD ORDER — the fix for tethers crossing. The cards sit in
+         fixed `lift` slots, but the pins move as the globe turns, so their
+         order disagrees and tethers cross. Re-slot each side's VISIBLE cards by
+         the ANGLE of the tether that would reach the pin (not just the pin's y
+         — a CLOSE pin at an extreme latitude makes a steep line that a y-sort
+         would still let cross the far ones; the angle folds in that distance).
+         Cards dealt top-to-bottom in that angular order can never cross. Only
+         cards that will actually draw a tether take a slot. */
+      [-1, 1].forEach(side => {
+        const act = routes.filter(r => r.pin.side === side && r.leadP * r.face > .02);
+        if (!act.length) return;          // a side can be fully hidden mid-turn: no cards to de-overlap
+        act.sort((a, b) => a.py2 - b.py2);
+        /* Each card sits level with its pin (a level tether can't cross another),
+           spread apart only as far as they must not overlap, in pin order, and
+           slid back on-canvas if the stack overran. The tethers then leave every
+           card HORIZONTALLY (see the control point in Pass 1), so where two pins
+           cluster tighter than the cards — the one case a pure straight tether
+           still crossed — the stacked, ordered horizontal departures keep the
+           near-vertical tether from slicing across its neighbour. */
+        const GAP = 76, top = cy - R * 0.98, bot = cy + R * 0.98;
+        // 1) each card level with its pin, then push DOWN to de-overlap
+        let prev = -1e9, sumSlot = 0, sumPin = 0;
+        act.forEach(r => {
+          let y = r.py2;
+          if (y < prev + GAP) y = prev + GAP;
+          r._slot = y; prev = y; sumSlot += y; sumPin += r.py2;
+        });
+        // 2) recentre the whole stack on the pins' centroid (smallest shift)
+        let shift = (sumPin - sumSlot) / act.length;
+        // 3) keep it on canvas
+        const lo = act[0]._slot + shift, hi = act[act.length - 1]._slot + shift;
+        if (lo < top) shift += top - lo; else if (hi > bot) shift -= hi - bot;
+        act.forEach(r => { r.byC = r._slot + shift + r.rise; });
+        // 4) UNCROSSING PASS — provably planar. While any two tethers on this
+        //    side cross, swap the two cards' slots. Every swap strictly shortens
+        //    the total tether length, so the loop must converge, and a layout
+        //    with no crossing swap left is crossing-free (the 2-opt / segment
+        //    uncrossing lemma). This clears the residue the level-with-pin
+        //    heuristic leaves when several pins cluster tighter than the cards
+        //    can stack — the last case where a near-vertical tether still sliced
+        //    a neighbour. The slot SET is unchanged, so cards stay GAP-spaced.
+        const segX = (ax, ay, bx2, by2, cx2, cy2, dx2, dy2) => {
+          const s1 = (dx2 - cx2) * (ay - cy2) - (dy2 - cy2) * (ax - cx2);
+          const s2 = (dx2 - cx2) * (by2 - cy2) - (dy2 - cy2) * (bx2 - cx2);
+          const s3 = (bx2 - ax) * (cy2 - ay) - (by2 - ay) * (cx2 - ax);
+          const s4 = (bx2 - ax) * (dy2 - ay) - (by2 - ay) * (dx2 - ax);
+          return ((s1 > 0 && s2 < 0) || (s1 < 0 && s2 > 0)) && ((s3 > 0 && s4 < 0) || (s3 < 0 && s4 > 0));
+        };
+        const PEY = 18.5;   // the tether meets the pin ~18.5px above py2 (pin head)
+        for (let pass = 0, dirty = true; dirty && pass < 48; pass++) {
+          dirty = false;
+          for (let i = 0; i < act.length - 1; i++) for (let j = i + 1; j < act.length; j++) {
+            const a = act[i], b = act[j];
+            if (segX(a.ex0, a.byC, a.px2, a.py2 - PEY, b.ex0, b.byC, b.px2, b.py2 - PEY)) {
+              const t = a.byC; a.byC = b.byC; b.byC = t; dirty = true;
+            }
+          }
+        }
+        act.forEach(r => { r.by = r.byC - r.bh / 2; });
       });
 
       // Pass 1: draw the route and map-pin first.
@@ -11420,33 +11576,46 @@ function initSetpieces() {
             const hwE = Math.sqrt(Math.max(0, 1 - dyE * dyE));
             const xe0 = cx + Math.sin(lamE) * R * hwE, ye0 = cy + dyE * R;
             const dxe = xe0 - cx, dye = ye0 - cy;
-            const aE = leadA * faceE * settle * (.45 + .55 * Math.cos(lamE)) * .85;
+            const exX = cx + dxe * ct - dye * st2;
+            // an export port that has rotated onto the OPPOSITE half rakes across
+            // the globe just as a main pin would — fade it on the same crossing
+            const svE = cl((pin.side * (exX - cx) + R * 0.05) / (R * 0.33), 0, 1);
+            const aE = leadA * faceE * settle * (.45 + .55 * Math.cos(lamE)) * .85 * svE;
             if (aE < .02) return;
-            fan.push({ x: cx + dxe * ct - dye * st2, y: cy + dxe * st2 + dye * ct, a: aE, main: false });
+            fan.push({ x: exX, y: cy + dxe * st2 + dye * ct, a: aE, main: false });
           });
         }
         fan.forEach(f => { f.r = f.main ? 6 : 4.2; f.hy = f.y - (f.main ? 13 : 9); });
         fan.sort((p3, q3) => p3.hy - q3.hy);
         const spread = 7;
+        // a distinct pin (China, the primary manufacturing base) is GOLD, not
+        // pink — same radius, so it stands out without being larger
+        const bodyCol = pin.distinct ? "255,190,60" : "255,61,154";
+        const ringCol = pin.distinct ? "255,224,150" : "255,255,255";
 
         fan.forEach((f, fi) => {
           const anchorY = byC + (fi - (fan.length - 1) / 2) * spread;
-          ctx.strokeStyle = `rgba(255,255,255,${((f.main ? .5 : .3) * f.a).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(${ringCol},${((f.main ? .5 : .3) * f.a).toFixed(3)})`;
           ctx.lineWidth = f.main ? 1.2 : .9;
           ctx.beginPath();
           ctx.moveTo(ex, anchorY);
-          ctx.quadraticCurveTo((ex + f.x) / 2, (anchorY + f.hy) / 2 - 22, f.x, f.hy - (f.main ? 5.5 : 4));
+          // control at the EXACT midpoint -> a straight tether. The cards were
+          // slotted level with their pins AND then run through a 2-opt uncrossing
+          // pass (see the de-overlap above), so these straight lines are provably
+          // non-crossing on each side, at any rotation.
+          const endY = f.hy - (f.main ? 5.5 : 4);
+          ctx.quadraticCurveTo((ex + f.x) / 2, (anchorY + endY) / 2, f.x, endY);
           ctx.stroke();
           // a proper MAP-PIN planted on the exact point: tail to the ground,
           // round head with a white core
-          ctx.fillStyle = `rgba(255,61,154,${((f.main ? 1 : .88) * f.a).toFixed(3)})`;
+          ctx.fillStyle = `rgba(${bodyCol},${((f.main ? 1 : .88) * f.a).toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(f.x - f.r * .77, f.hy + f.r * .6);
           ctx.lineTo(f.x, f.y);
           ctx.lineTo(f.x + f.r * .77, f.hy + f.r * .6);
           ctx.closePath(); ctx.fill();
           ctx.beginPath(); ctx.arc(f.x, f.hy, f.r, 0, TAU); ctx.fill();
-          ctx.strokeStyle = `rgba(255,255,255,${((f.main ? .9 : .75) * f.a).toFixed(3)})`;
+          ctx.strokeStyle = `rgba(${ringCol},${((f.main ? .9 : .75) * f.a).toFixed(3)})`;
           ctx.lineWidth = f.main ? 1.2 : 1;
           ctx.beginPath(); ctx.arc(f.x, f.hy, f.r, 0, TAU); ctx.stroke();
           ctx.fillStyle = `rgba(255,255,255,${((f.main ? 1 : .9) * f.a).toFixed(3)})`;
@@ -11505,6 +11674,12 @@ function initSetpieces() {
       });
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
+    // Resolve the whole chapter to the deck's black at the very end so it hands
+    // off to the dark section below with no dawn-white flash. The territories
+    // have already cleared (pvBase) by p≈.91, so this only fades out the empty
+    // night globe into #07070D.
+    const outDark = sm(ph2(p, .90, .996));
+    if (outDark > .001) { ctx.fillStyle = `rgba(7,7,13,${outDark.toFixed(3)})`; ctx.fillRect(0, 0, w, h); }
   }
 
   /* ---------- CLOUD FLIGHT v2: night climb through a living deck --------

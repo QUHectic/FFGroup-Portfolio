@@ -185,9 +185,12 @@ section#team{overflow-x:clip;}
 .sm-year.future rect{stroke:rgba(255,255,255,.38);}
 .sm-year text{font-family:"Orbitron",system-ui,sans-serif;font-size:11px;font-weight:800;letter-spacing:.11em;fill:#fff;}
 .sm-card{
-  position:absolute;z-index:5;width:clamp(248px,17vw,320px);background:rgba(15,17,25,.94);
+  position:absolute;z-index:5;width:clamp(248px,17vw,320px);background:rgba(15,17,25,.96);
   border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 15px;
-  backdrop-filter:blur(6px);text-align:center;
+  /* NO backdrop-filter: the card is 96% opaque so the blur was invisible, but
+     several of these sit over the system map and re-blurred every scroll frame
+     (a major cause of scroll jank). A touch more opacity replaces it for free. */
+  text-align:center;
   transition:border-color .3s, transform .3s var(--ease-out);
 }
 .sm-card.hot{border-color:var(--c,#fff);transform:translateY(-3px);}
@@ -353,7 +356,10 @@ p{text-wrap:pretty;}
 /* stats keep their width while counting up — no digit jitter */
 .kpi .num,.stat .num,.hstat .n,.ro .val,.matrix td,.yd-row .val,.dl-row .val,
 .runway-years,.bar-total,.axis-tick{font-variant-numeric:tabular-nums;}
-html{scroll-behavior:smooth;}
+/* NO global smooth scroll: it re-animated every programmatic/auto scrollBy,
+   which made browser/extension "auto-scroll" crawl. The nav and the
+   "Begin the Journey" link do their own rAF smooth-tween in JS. */
+html{scroll-behavior:auto;}
 body{
   margin:0;
   font-family:"Manrope","DM Sans","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
@@ -424,8 +430,12 @@ h1:focus,h2:focus{outline:none;}
 }
 .nav{
   position:sticky;top:0;z-index:80;
-  background:rgba(7,7,13,.82);
-  backdrop-filter:blur(14px);
+  /* The nav sticks to the top and is on screen for the ENTIRE page, so a
+     backdrop-filter re-blurred the whole page behind it on every scroll frame
+     — the single biggest cause of "auto-scroll is extremely slow". Replaced
+     with a near-opaque dark bar (looks all but identical over this dark deck)
+     which the browser composites for free while scrolling. */
+  background:rgba(7,7,13,.93);
   border-bottom:1px solid var(--line);
 }
 .nav-inner{
@@ -509,7 +519,7 @@ h1:focus,h2:focus{outline:none;}
 .nav-btn:hover{color:var(--ink);background:var(--bg-soft);}
 .nav-btn.active{color:var(--blue-ink);background:var(--blue-soft);}
 .nav-btn.peek{color:var(--blue-ink);background:var(--blue-soft);}
-.nav.scrolled{backdrop-filter:blur(22px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.nav.scrolled{background:rgba(7,7,13,.97);box-shadow:0 10px 30px rgba(0,0,0,.35);}
 /* the Liftoff call-to-action stands out in the row */
 .nav-btn.nav-cta{color:#fff;background:linear-gradient(135deg,#ff3d9a,#c9186f);box-shadow:0 0 14px rgba(255,61,154,.35);margin-left:6px;}
 .nav-btn.nav-cta:hover{background:linear-gradient(135deg,#ff5cab,#e02280);color:#fff;}
@@ -3948,7 +3958,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <span class="fs-runway" aria-hidden="true"></span>
         </div>
       </div>
-      <a class="focus-begin" href="#journey">Begin the Journey<span class="chev" aria-hidden="true"></span></a>
+      <a class="focus-begin" href="#journey" data-goto="journey">Begin the Journey<span class="chev" aria-hidden="true"></span></a>
     </div>
   </section>
 
@@ -5570,7 +5580,12 @@ function initChrome() {
   onScroll();
 
   $$("[data-goto]").forEach(btn =>
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", e => {
+      // a no-op for the <button> nav items; on the "Begin the Journey" <a> it
+      // stops the native #journey jump so the JS smooth-tween below runs
+      // instead (the global scroll-behavior:smooth was removed — it re-smoothed
+      // scrollBy-based auto-scroll into a crawl).
+      e.preventDefault();
       const id = btn.dataset.goto;
       let el = id === "top" ? document.body : $("#" + id);
       if (!el) return;
@@ -7953,11 +7968,14 @@ function initLiftoff() {
   sync();
   // scroll-parallax: 0 when the complex first peeks in, 1 at full arrival —
   // fog slides laterally, the foreground rises, depth reads instantly
-  const par = () => {
+  // rAF-throttled: reads a rect + writes a var, so left un-throttled it forced
+  // a synchronous reflow on EVERY scroll event (many per frame under a fast or
+  // auto scroll). rafScroll collapses it to one pass per frame.
+  const par = rafScroll(() => {
     const r2 = lo.getBoundingClientRect();
     const q = Math.max(0, Math.min(1, (innerHeight - r2.top) / (innerHeight + r2.height)));
     lo.style.setProperty("--lopar", q.toFixed(3));
-  };
+  });
   window.addEventListener("scroll", par, { passive: true });
   par();
 

@@ -572,7 +572,7 @@ h1:focus,h2:focus{outline:none;}
   transition:none;
   will-change:transform,opacity;
 }
-#hero [data-suck].reveal:not(.in){opacity:0!important;}
+html.spx #hero [data-suck].reveal:not(.in){opacity:0!important;} /* cinematic only: phones/reduced (spx off) must never blank the first screen */
 /* Real gravitational pull (engines with CSS trig): each element spirals
    into the hole on a winding polar path — radius collapses quadratically,
    angle winds with it — while stretching along its infall direction
@@ -663,7 +663,7 @@ h1:focus,h2:focus{outline:none;}
   .hero{position:relative;min-height:0;display:block;}
   .bh-vig{display:none;}
   #hero [data-suck]{transform:none;opacity:1;filter:none;}
-  #hero [data-suck].reveal:not(.in){opacity:0!important;}
+  html.spx #hero [data-suck].reveal:not(.in){opacity:0!important;} /* cinematic only: phones/reduced (spx off) must never blank the first screen */
   #hero .star-field{transform:none;opacity:1;}
 }
 @media (prefers-reduced-motion:reduce){
@@ -671,7 +671,7 @@ h1:focus,h2:focus{outline:none;}
   .hero{position:relative;min-height:0;display:block;}
   .bh-vig{display:none;}
   #hero [data-suck]{transform:none;opacity:1;filter:none;}
-  #hero [data-suck].reveal:not(.in){opacity:0!important;}
+  html.spx #hero [data-suck].reveal:not(.in){opacity:0!important;} /* cinematic only: phones/reduced (spx off) must never blank the first screen */
   #hero .star-field{transform:none;opacity:1;}
 }
 
@@ -1104,7 +1104,25 @@ html.spx .tr2-funding{height:560vh;background:#0f1018;}
   -webkit-mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'><path d='M0 4h12M9 1l3 3-3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;
   mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 8'><path d='M0 4h12M9 1l3 3-3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;}
 .fund-note{margin:16px 0 0;font-size:.68rem;color:var(--ink-faint);opacity:0;}
-html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb instead */
+html.spx #fundStaticSec{display:none;} /* desktop: the brief rides the cloud climb instead */
+/* MOBILE EXPANSION MAP — the static sourcing section phones read instead of
+   the canvas globe (the spx set-piece needs >=901px). Hidden while spx runs. */
+html.spx #opportunity-static{display:none;}
+#opportunity-static .os-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 22px;}
+#opportunity-static .os-legend > div{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);}
+#opportunity-static .os-legend b{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);}
+#opportunity-static .os-legend span{font-size:.74rem;color:var(--ink-dim);line-height:1.4;}
+#opportunity-static .os-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:10px;}
+#opportunity-static .os-card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:13px 14px;}
+#opportunity-static .os-top{display:flex;align-items:center;gap:8px;}
+#opportunity-static .os-top i{width:8px;height:8px;border-radius:99px;background:var(--pink);box-shadow:0 0 8px var(--pink);flex:none;}
+#opportunity-static .os-top b{font-size:.9rem;letter-spacing:-.01em;flex:1;min-width:0;}
+#opportunity-static .os-pill{flex:none;font-size:.58rem;font-weight:800;letter-spacing:.1em;padding:3px 9px;border:1px solid rgba(255,61,154,.5);border-radius:99px;color:var(--pink);}
+#opportunity-static .os-cat{display:block;margin:7px 0 3px;font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ff56a8;}
+#opportunity-static .os-card p{margin:0;font-size:.78rem;line-height:1.5;color:var(--ink-dim);}
+#opportunity-static .os-primary .os-top i{background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
+#opportunity-static .os-primary .os-pill{border-color:rgba(47,224,160,.55);color:#2fe0a0;}
+#opportunity-static .os-primary .os-cat{color:#6ef0be;}
 #fundStatic .fsr{display:flex;gap:12px;align-items:flex-start;padding:12px 0 11px;border-top:1px solid rgba(255,255,255,.08);}
 #fundStatic .kicker + .fsr{border-top:0;margin-top:10px;}
 #fundStatic .fsr-no{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.64rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:1px;}
@@ -1556,6 +1574,7 @@ section.tint{background:var(--bg-soft);}
 .st-future b{display:block;font-size:.8rem;letter-spacing:-.015em;}
 .st-future span{display:block;margin-top:2px;color:var(--ink-dim);font-size:.66rem;line-height:1.35;}
 .st-future i{display:inline-block;margin-top:6px;color:var(--ink-faint);font-size:.58rem;font-weight:900;font-style:normal;letter-spacing:.1em;}
+.st-future .st-fd{margin:6px 0 0;font-size:.7rem;line-height:1.45;color:var(--ink-dim);}
 .st-note{margin:12px 0 0;text-align:center;color:var(--ink-faint);font-size:.68rem;font-style:italic;}
 @media (max-width:380px){.st-future{grid-template-columns:1fr;}}
 
@@ -3306,7 +3325,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
    so content can never be translated outside the viewport.
    ========================================================================== */
 @media (max-width:900px){
-  html,body{width:100%;max-width:100%;overflow-x:clip;}
+  /* hidden first: iOS 15 Safari ignores clip (falls back to visible); modern
+     browsers take the later valid clip and keep sticky working */
+  html,body{width:100%;max-width:100%;overflow-x:hidden;overflow-x:clip;}
   body,main,section,.wrap,.panel{min-width:0;}
   .wrap{width:100%;max-width:100%;}
   section[data-sec]{overflow-x:clip;}
@@ -3395,15 +3416,24 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   .sm-brand,.sm-brand.more{min-height:44px;padding-block:9px;}
   .sm-morepop{max-width:100%;max-height:none;overflow:visible;}
 
+  /* SELF-HEAL: the courier reveal writes clip-path attributes and .unlit
+     states onto the chart art but only runs while spx is on (>=901px). If a
+     tablet rotates to portrait mid-reveal those attributes would strand lines
+     clipped to nothing — CSS properties beat SVG presentation attributes, so
+     these force everything visible whenever the mobile layout applies. */
+  #growthChart .pt-dot,#growthChart .gc-val,#trajChart .pt-dot{opacity:1 !important;transform:none !important;}
+  #growthChart .gc-line,#growthChart .gc-area,#trajChart .tj-solid,#trajChart .tj-dashed,#trajChart .tj-area{clip-path:none !important;}
   /* Dense chart canvases stay legible: swipe the data, never the page. */
   #growthChart,#projChart,#trajChart{
     width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;
     overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;
     touch-action:pan-x pan-y;scrollbar-gutter:stable;
   }
-  #growthChart > svg{min-width:640px;}
-  #projChart > svg{min-width:760px;}
-  #trajChart > svg{min-width:760px;}
+  /* matches the phones' 560-unit viewBox (renderers pick W=560 <=640px):
+     ~2/3 of the chart is on screen at once and the type is ~1.7x larger */
+  #growthChart > svg{min-width:520px;}
+  #projChart > svg{min-width:560px;}
+  #trajChart > svg{min-width:560px;}
   #growthChart::before,#projChart::before,#trajChart::before{
     content:"Swipe chart \2194";
     position:sticky;left:0;z-index:3;
@@ -3629,21 +3659,21 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <article class="st-co st-active">
         <div class="st-co-top"><i></i><b>Freedom Global Ltd</b><span class="st-status">Active</span></div>
         <span class="st-role">Consumer ecommerce · D2C</span>
-        <p>The group's established commercial engine, scaling owned brands across marketplaces and ecommerce channels. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
+        <p>The group's established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
         <div class="st-meta"><b>Channels</b><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy</span></div>
         <div class="st-meta"><b>Core brands</b><span>Firestorm™ · Voltz™ · Kunergy™ · FXL™ · Skyline™</span></div>
         <span class="st-focus">Today's investment focus</span>
       </article>
 
       <article class="st-co st-planned">
-        <div class="st-co-top"><i></i><b>Freedom Facilities Ltd</b><span class="st-status">Planned</span></div>
+        <div class="st-co-top"><i></i><b>Freedom Facilities Ltd</b><span class="st-status">Planned · 2027</span></div>
         <span class="st-role">Compliance · Servicing · Facilities</span>
         <p>A recurring revenue operation delivering fire safety servicing, installation, compliance and facilities support.</p>
         <div class="st-meta"><b>Core market</b><span>Commercial premises · Education · Warehousing · Construction · Hospitality</span></div>
       </article>
 
       <article class="st-co st-planned st-ember">
-        <div class="st-co-top"><i></i><b>Freedom Distribution Ltd</b><span class="st-status">Planned</span></div>
+        <div class="st-co-top"><i></i><b>Freedom Distribution Ltd</b><span class="st-status">Planned · 2028</span></div>
         <span class="st-role">Trade distribution · B2B</span>
         <p>A wholesale operation supplying the group's owned brands to national retailers, trade partners and commercial distributors.</p>
         <div class="st-meta"><b>Categories</b><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
@@ -3652,10 +3682,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="st-stem" aria-hidden="true"></div>
       <p class="st-lvl">Long term ventures</p>
       <div class="st-future">
-        <div><b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i></div>
-        <div><b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i></div>
-        <div><b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i></div>
-        <div><b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i></div>
+        <div><b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i>
+          <p class="st-fd">A future commercial property platform for the group's premises, acquisitions and growth.</p></div>
+        <div><b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i>
+          <p class="st-fd">A future logistics arm for imports, freight control and supply chain efficiency.</p></div>
+        <div><b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i>
+          <p class="st-fd">A future specialist business focused on surveying, inspection and aerial visual services.</p></div>
+        <div><b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i>
+          <p class="st-fd">A long term ambition to develop or acquire forecourt and convenience retail locations.</p></div>
       </div>
       <p class="st-note">Illustrative long term direction, not part of the current investment case.</p>
     </div>
@@ -3885,6 +3919,36 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     </div>
   </div></div>
 
+  <!-- MOBILE fallback for the 360° globe above: phones never run the canvas
+       set-piece (spx needs >=901px wide), so the same sourcing story renders
+       here as a static section. html.spx hides it the moment the globe runs. -->
+  <section id="opportunity-static" aria-label="The expansion map, sourcing territories">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker">The expansion map</span>
+        <h2>Built in Britain. Sourced globally.<br><span class="grad-text">Designed to scale internationally.</span></h2>
+        <p class="section-sub">Nine territories already power the group's supply chain — where products originate, where they are stored and fulfilled, where customers sit, and where the business goes next.</p>
+      </div>
+      <div class="os-legend reveal">
+        <div><b>Supply</b><span>Where products originate</span></div>
+        <div><b>Infrastructure</b><span>Where products are stored and fulfilled</span></div>
+        <div><b>Demand</b><span>Where customers and future markets sit</span></div>
+        <div><b>Expansion</b><span>Where the business plans to go next</span></div>
+      </div>
+      <div class="os-grid reveal">
+        <article class="os-card"><div class="os-top"><i></i><b>United Kingdom</b><span class="os-pill">HQ</span></div><span class="os-cat">Import &amp; fulfilment</span><p>Bury HQ, stockholding and national dispatch</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Poland</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">Extinguishers</span><p>European production and short haul freight</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Belgium</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">Batteries</span><p>Sourcing for Voltz and Kunergy</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Italy</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">Plastics</span><p>Plastics, housing and fittings</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Turkey</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">PPE</span><p>Gloves, workwear and protective equipment</p></article>
+        <article class="os-card os-primary"><div class="os-top"><i></i><b>China</b><span class="os-pill">PRIMARY</span></div><span class="os-cat">Primary Region of Manufacturing</span><p>30 Plus Suppliers</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Pakistan</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">PPE</span><p>Gloves and protective textiles</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Taiwan</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">PPE</span><p>Precision technical safety equipment</p></article>
+        <article class="os-card"><div class="os-top"><i></i><b>Malaysia</b><span class="os-pill">SUPPLY</span></div><span class="os-cat">PPE</span><p>Gloves, workwear and protective equipment</p></article>
+      </div>
+    </div>
+  </section>
+
   <!-- ====================================================================
        PROJECTIONS (5-YEAR CHANNELS MAP)
        ==================================================================== -->
@@ -4012,7 +4076,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <p class="section-sub">A colour coded organisational matrix. Filter by division or employment type, click anyone for detail, and open the pipeline to see where we're hiring next.</p>
         </div>
         <figure class="photo zoom team-hero">
-          <img loading="lazy" decoding="async" src="journey-photos/team-in-van.webp" alt="The Freedom team on a Martello container lorry at Unit 19">
+          <img loading="lazy" decoding="async" src="journey-photos/team-in-van.webp" alt="The Freedom team on a Martello container lorry at Unit 19"
+               onerror="this.closest('figure')&amp;&amp;this.closest('figure').remove()">
           <figcaption>The team at Unit 19, Freedom Fire &amp; Safety headquarters.</figcaption>
         </figure>
       </div>
@@ -4082,6 +4147,40 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
     </div>
   </div></div>
+
+  <!-- MOBILE / no-spx fallback for the raise climb above: phones read the
+       FULL brief here, in the correct narrative slot (team -> RAISE -> beyond).
+       html.spx hides it while the cloud-climb set-piece runs. -->
+  <section id="fundStaticSec" aria-label="The raise, where it goes">
+    <div class="wrap">
+      <div class="panel reveal" id="fundStatic" style="margin:0 auto;max-width:860px;text-align:left;">
+        <span class="kicker">The raise · where it goes</span>
+        <h3 style="margin:10px 0 6px;">What capital unlocks</h3>
+        <p style="margin:0 0 4px;font-size:.84rem;line-height:1.55;color:var(--ink-dim);">The constraint is no longer demand. It is the working capital, people and infrastructure required to meet that demand consistently. Every pound removes a constraint, not a shortfall.</p>
+        <div class="fsr"><span class="fsr-no">01</span><div class="fsr-body">
+          <div class="fsr-top"><b>Inventory &amp; working capital</b></div>
+          <p>Larger purchasing volumes &middot; Improved supplier pricing &middot; Reduced stockouts &middot; Broader product availability &middot; Faster marketplace growth</p>
+          </div></div>
+        <div class="fsr"><span class="fsr-no">02</span><div class="fsr-body">
+          <div class="fsr-top"><b>People</b></div>
+          <p>Senior ecommerce leadership &middot; Operations management &middot; Purchasing and supply chain support &middot; Customer service capacity &middot; Brand and marketing capability</p>
+          </div></div>
+        <div class="fsr"><span class="fsr-no">03</span><div class="fsr-body">
+          <div class="fsr-top"><b>Infrastructure</b></div>
+          <p>Larger warehouse &middot; Racking and handling systems &middot; Technology &middot; Fulfilment improvements &middot; Automation</p>
+          </div></div>
+        <div class="fsr"><span class="fsr-no">04</span><div class="fsr-body">
+          <div class="fsr-top"><b>Brand expansion</b></div>
+          <p>New product ranges &middot; Packaging &middot; Certification &middot; Trademarks &middot; Launch marketing</p>
+          </div></div>
+        <div class="fsr"><span class="fsr-no">05</span><div class="fsr-body">
+          <div class="fsr-top"><b>Channel expansion</b></div>
+          <p>Amazon Europe &middot; Retail partnerships &middot; B2B distribution &middot; Shopify &middot; New marketplaces</p>
+          </div></div>
+        <p class="fsr-note">The mechanism: capital deployed &rarr; deeper stockholding &rarr; fewer stockouts &rarr; improved marketplace rankings &rarr; increased revenue &amp; margin.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ====================================================================
        BEYOND FREEDOM GLOBAL, the wider group, framed as a flywheel rather
@@ -4168,30 +4267,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <span class="kicker">Mission control</span>
         <h2>Ready for<br><span class="grad-text">liftoff.</span></h2>
         <p>The courier has flown the whole story, hero to horizon. One press puts you back on the launch rail at the very top.</p>
-      </div>
-      <div class="panel reveal" id="fundStatic" style="margin:26px auto 0;max-width:860px;text-align:left;">
-        <span class="kicker">The raise · why we need this money</span>
-        <div class="fsr"><span class="fsr-no">01</span><div class="fsr-body">
-          <div class="fsr-top"><b>Inventory &amp; working capital</b></div>
-          <p>Larger purchasing volumes, improved supplier pricing, fewer stockouts and broader availability.</p>
-          </div></div>
-        <div class="fsr"><span class="fsr-no">02</span><div class="fsr-body">
-          <div class="fsr-top"><b>People</b></div>
-          <p>Senior ecommerce leadership, operations, purchasing, customer service and marketing capability.</p>
-          </div></div>
-        <div class="fsr"><span class="fsr-no">03</span><div class="fsr-body">
-          <div class="fsr-top"><b>Infrastructure</b></div>
-          <p>Larger warehouse, racking and handling, technology, fulfilment improvements and automation.</p>
-          </div></div>
-        <div class="fsr"><span class="fsr-no">04</span><div class="fsr-body">
-          <div class="fsr-top"><b>Brand expansion</b></div>
-          <p>New product ranges, packaging, certification, trademarks and launch marketing.</p>
-          </div></div>
-        <div class="fsr"><span class="fsr-no">05</span><div class="fsr-body">
-          <div class="fsr-top"><b>Channel expansion</b></div>
-          <p>Amazon Europe, retail partnerships, B2B distribution, Shopify and new marketplaces.</p>
-          </div></div>
-        <p class="fsr-note">Capital deployed &rarr; operational change &rarr; commercial outcome. Deployment weighting is set in the data room.</p>
       </div>
     </div>
     <div class="lo-scene" aria-hidden="true">
@@ -4331,8 +4406,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <rect x="1032" y="240" width="74" height="10" rx="3" fill="#1a232d"/>
           <rect x="1030" y="418" width="98" height="8" rx="3" fill="#1a232d"/>
           <rect x="1030" y="540" width="104" height="8" rx="3" fill="#161e27"/>
-          <rect x="1100" y="330" width="64" height="7" rx="3" fill="#1d2731"/>
-          <rect x="1156" y="322" width="10" height="20" rx="2" fill="#232d38"/>
+          <!-- crew-access arm: +94 with the re-seated rocket so it still couples
+               to the upper body exactly as it did before the rocket was lowered -->
+          <rect x="1100" y="424" width="64" height="7" rx="3" fill="#1d2731"/>
+          <rect x="1156" y="416" width="10" height="20" rx="2" fill="#232d38"/>
           <line x1="1069" y1="240" x2="1069" y2="192" stroke="#232d38" stroke-width="3"/>
           <circle cx="1069" cy="188" r="3" fill="#3a4653"/>
           <circle cx="1069" cy="246" r="10" fill="#ff5d5d" opacity=".16"/>
@@ -5272,7 +5349,15 @@ function initChrome() {
   $$("[data-goto]").forEach(btn =>
     btn.addEventListener("click", () => {
       const id = btn.dataset.goto;
-      const el = id === "top" ? document.body : $("#" + id);
+      let el = id === "top" ? document.body : $("#" + id);
+      if (!el) return;
+      /* On phones the scroll set-pieces are display:none (spx needs >=901px),
+         so a goto aimed at one reports a zero rect and the tap goes nowhere.
+         Walk to the next RENDERED sibling — Opportunity lands on the static
+         sourcing section, Investment on the static raise brief — and drop the
+         scrub fraction, which only means something inside a live set-piece. */
+      let usedFallback = false;
+      while (el !== document.body && el && !el.getClientRects().length) { el = el.nextElementSibling; usedFallback = true; }
       if (!el) return;
       // manual tween — native smooth scrolls get cancelled by the scroll
       // choreography's per-frame work, so we write absolute positions ourselves
@@ -5282,7 +5367,7 @@ function initChrome() {
       // Tall scroll set-pieces (the system build, the funding climb) have to
       // land WHERE THEIR CONTENT IS, not on their first pixel — data-goto-at
       // is the fraction of the piece's own scrub to stop at.
-      const at = parseFloat(btn.dataset.gotoAt);
+      const at = usedFallback ? NaN : parseFloat(btn.dataset.gotoAt);
       // the piece that actually owns the scrub may be a child (the system's
       // build stage), so measure THAT — otherwise the fraction lands wrong
       const scrub = el.querySelector(".sys-build") || el;
@@ -9779,7 +9864,11 @@ function renderJourney() {
 function renderGrowthChart() {
   const fig = $("#growthChart");
   const data = FG_DATA.revenue;
-  const W = 960, H = 400, m = { l: 84, r: 30, t: 26, b: 46 };
+  // phones get a NARROWER viewBox: same pixels-per-character but far fewer
+  // viewBox units per screen — type renders ~1.7x larger, most of the chart
+  // fits the first screenful, and the swipe reveals only a short tail
+  const MW = matchMedia("(max-width:640px)").matches;
+  const W = MW ? 560 : 960, H = 400, m = MW ? { l: 58, r: 16, t: 26, b: 46 } : { l: 84, r: 30, t: 26, b: 46 };
   const pw = W - m.l - m.r, ph = H - m.t - m.b;
   const maxV = 1300000;
   const xs = data.map((d, i) => m.l + (i / (data.length - 1)) * pw);
@@ -9941,7 +10030,9 @@ function niceMax(v) {
 function renderProjections() {
   const P = FG_DATA.projection;
   const fig = $("#projChart");
-  const W = 960, m = { l: 84, r: 20, t: 30, b: 44 };
+  // narrower mobile viewBox: bigger relative type, less swiping (see growth)
+  const MW = matchMedia("(max-width:640px)").matches;
+  const W = MW ? 560 : 960, m = MW ? { l: 58, r: 12, t: 30, b: 44 } : { l: 84, r: 20, t: 30, b: 44 };
   let H = 430, ph = H - m.t - m.b;   // the plot GROWS to line the panel's bottom up with the year-breakdown card
   const pw = W - m.l - m.r;
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
@@ -10226,7 +10317,9 @@ function renderYearDetail() {
 function renderTrajectory() {
   const D = FG_DATA.trajectory;
   const fig = $("#trajChart");
-  const W = 960, H = 440, m = { l: 84, r: 34, t: 30, b: 46 };
+  // narrower mobile viewBox: bigger relative type, less swiping (see growth)
+  const MW = matchMedia("(max-width:640px)").matches;
+  const W = MW ? 560 : 960, H = 440, m = MW ? { l: 58, r: 18, t: 30, b: 46 } : { l: 84, r: 34, t: 30, b: 46 };
   const pw = W - m.l - m.r, ph = H - m.t - m.b;
   const years = D.map(d => d.year);
   const minYr = Math.min(...years), maxYr = Math.max(...years);
@@ -11860,6 +11953,26 @@ function initSetpieces() {
         return { pin, leadP, boxP, face: face * sideVis, settle, du, bw, bh, bx, byC, by, rise, px2, py2, ex0 };
       });
 
+      /* PHONE MODE (w < 640): side columns cannot fit beside the globe on a
+         375px screen — a 252px card would bury the disc. The trio becomes
+         pin + tether + ONE full-width card DOCKED at the bottom of the frame,
+         and only the country nearest the middle of its transit shows: the
+         rolling parade becomes one-at-a-time, each card readable at full
+         size while its territory carries across the face. */
+      const PHONE = w < 640;
+      if (PHONE) {
+        let best = null;
+        routes.forEach(r => { const s = r.leadP * r.face; if (s > .02 && (!best || s > best._s)) { r._s = s; best = r; } });
+        routes.forEach(r => { if (r !== best) r.face = 0; });
+        if (best) {
+          best.bw = Math.min(330, w - 20); best.bh = 64;
+          best.bx = (w - best.bw) / 2;
+          best.by = h - 16 - best.bh + best.rise;
+          // tether attaches at the card's top corner nearer the pin
+          best.byC = best.by + 5;
+          best.ex0 = best.px2 < w / 2 ? best.bx + 14 : best.bx + best.bw - 14;
+        }
+      }
       /* DYNAMIC CARD ORDER — the fix for tethers crossing. The cards sit in
          fixed `lift` slots, but the pins move as the globe turns, so their
          order disagrees and tethers cross. Re-slot each side's VISIBLE cards by
@@ -11868,7 +11981,7 @@ function initSetpieces() {
          would still let cross the far ones; the angle folds in that distance).
          Cards dealt top-to-bottom in that angular order can never cross. Only
          cards that will actually draw a tether take a slot. */
-      [-1, 1].forEach(side => {
+      if (!PHONE) [-1, 1].forEach(side => {
         const act = routes.filter(r => r.pin.side === side && r.leadP * r.face > .02);
         if (!act.length) return;          // a side can be fully hidden mid-turn: no cards to de-overlap
         act.sort((a, b) => a.py2 - b.py2);
@@ -11943,7 +12056,10 @@ function initSetpieces() {
         const mapX = cx + dxr * ct - dyr * st2, mapY = cy + dxr * st2 + dyr * ct;
         const px2 = lp(rimX, mapX, settle), py2 = lp(rimY, mapY, settle);
         const la2 = leadA * lp(1, .45 + .55 * Math.cos(lam), settle);
-        const ex = pin.side < 0 ? bx + bw : bx;
+        // phone: the tether drops to the bottom-docked card's top corner
+        // nearer the pin; desktop: the card's globe-facing edge as always
+        const ex = PHONE ? (px2 < w / 2 ? bx + 14 : bx + bw - 14)
+                         : (pin.side < 0 ? bx + bw : bx);
 
         /* One card can own several points — China is pinned at the plant and
            at each export port. Collect the whole family first, then draw it
@@ -12659,6 +12775,11 @@ function runIntro() {
   }
   window.__ffSkipIntro = finish;
   $("#introSkip").addEventListener("click", () => finish());
+  // touch devices have no Escape/Enter: tapping ANYWHERE on the boot terminal
+  // skips it (the pill still works; desktop pointers keep the theatrical feel)
+  if (matchMedia("(pointer:coarse)").matches) {
+    $(".intro").addEventListener("click", e => { if (!e.target.closest("#introSkip")) finish(); });
+  }
   document.addEventListener("keydown", function onKey(e) {
     if (e.key === "Escape" || e.key === "Enter") { finish(); document.removeEventListener("keydown", onKey); }
   });

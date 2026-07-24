@@ -733,6 +733,9 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   filter:drop-shadow(0 0 46px rgba(56,169,255,.42)) drop-shadow(0 0 120px rgba(56,169,255,.24));
 }
 .focus-orb svg{display:block;width:100%;height:100%;overflow:visible;}
+/* phones: the decorative sphere lands square on the intro copy at narrow
+   widths (a dark band behind light text) — the section reads clean without it */
+@media (max-width:900px){.focus-orb{display:none;}}
 /* a soft wash over the body only — the rim stays vivid so the sphere reads,
    while the near-black copy that sits across its middle keeps its contrast */
 .focus-orb::after{
@@ -1117,7 +1120,7 @@ html.spx #opportunity-static{display:none;}
 #opportunity-static .os-top{display:flex;align-items:center;gap:8px;}
 #opportunity-static .os-top i{width:8px;height:8px;border-radius:99px;background:var(--pink);box-shadow:0 0 8px var(--pink);flex:none;}
 #opportunity-static .os-top b{font-size:.9rem;letter-spacing:-.01em;flex:1;min-width:0;}
-#opportunity-static .os-pill{flex:none;font-size:.58rem;font-weight:800;letter-spacing:.1em;padding:3px 9px;border:1px solid rgba(255,61,154,.5);border-radius:99px;color:var(--pink);}
+#opportunity-static .os-pill{flex:none;font-size:.64rem;font-weight:800;letter-spacing:.1em;padding:3px 9px;border:1px solid rgba(255,61,154,.5);border-radius:99px;color:var(--pink);}
 #opportunity-static .os-cat{display:block;margin:7px 0 3px;font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ff56a8;}
 #opportunity-static .os-card p{margin:0;font-size:.78rem;line-height:1.5;color:var(--ink-dim);}
 #opportunity-static .os-primary .os-top i{background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
@@ -2098,6 +2101,9 @@ section.tint{background:var(--bg-soft);}
   .ch-stat + .ch-stat{border-left:0;border-top:1px solid var(--line);padding-top:12px;}
   .ch-quote{margin:-40px 0 0;}
 }
+/* injected only on phones by initChapterCondense(); this default keeps the
+   button inert if a mobile-booted window is later resized past 900px */
+.ch-expand{display:none;}
 
 /* ==========================================================================
    PHOTO FIGURES — real proposal photography with captions.
@@ -3510,6 +3516,99 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      device home indicator. */
   .lo-console{padding-bottom:max(48px,calc(24px + env(safe-area-inset-bottom)));}
   footer{padding-bottom:max(38px,calc(22px + env(safe-area-inset-bottom)));}
+
+  /* ================= JOURNEY CONDENSED =================
+     20 chapters ~41.5k px → ~20k. Double-gated: this media block AND
+     .jl-condensed, set on #jlist by initChapterCondense() only when
+     (max-width:900px) matches. No rule here can touch desktop. */
+  #jlist.jl-condensed{gap:16px;}
+  .jl-condensed .jcard.chapter{padding:20px 16px 18px;}
+  .jl-condensed .ch-toprow{margin-bottom:12px;}
+  .jl-condensed .jcard.chapter h3{font-size:1.32rem;margin:6px 0 8px;}
+  .jl-condensed .jcard .ch-lede{font-size:.97rem;margin:0 0 12px;}
+
+  /* FULL FOLD — a closed chapter is just badge + question + title + a
+     2-line standfirst + the button (~300px). Body, stats, photos and quote
+     all live behind the tap; nothing is removed from the DOM or the
+     accessibility tree. 20 chapters ≈ 7k px instead of 41.5k. */
+  .jl-condensed .ch-body{margin-bottom:0;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-lede{
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-body,
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-stats,
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-side > :not(.ch-next){display:none;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-side{margin:0;}
+  .jl-condensed .ch-open .ch-body,
+  .jl-condensed .ch-open .ch-stats,
+  .jl-condensed .ch-open .ch-side > *{animation:chReveal .4s var(--ease-out);}
+  @keyframes chReveal{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+  /* the injected expander button */
+  .jl-condensed .ch-expand{
+    display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+    margin:10px 0 2px;padding:10px 16px;min-height:44px;
+    border:1px solid var(--line-strong);border-radius:99px;background:var(--bg-soft);
+    color:var(--ink);font:inherit;font-size:.74rem;font-weight:800;
+    letter-spacing:.08em;text-transform:uppercase;
+    cursor:pointer;touch-action:manipulation;
+  }
+  .jl-condensed .ch-expand .xchev{width:15px;height:15px;flex:none;color:var(--pink);transition:transform .25s var(--ease);}
+  .jl-condensed .ch-open .ch-expand .xchev{transform:rotate(180deg);}
+  .jl-condensed .ch-expand .x-less,
+  .jl-condensed .ch-open .ch-expand .x-more{display:none;}
+  .jl-condensed .ch-open .ch-expand .x-less{display:inline;}
+
+  /* STATS — the ≤640px vertical stack (~330px) becomes three compact rows */
+  .jl-condensed .ch-stats{flex-direction:column;align-items:stretch;gap:9px;margin-top:14px;padding:12px 14px;height:auto;min-height:0;}
+  .jl-condensed .ch-stat{flex-direction:row;justify-content:flex-start;text-align:left;gap:10px;padding:0;}
+  .jl-condensed .ch-stat + .ch-stat{border-left:0;border-top:0;padding-top:0;}
+  .jl-condensed .ch-stat .si svg{width:22px;height:22px;}
+  .jl-condensed .ch-stat > div{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 7px;min-width:0;}
+  .jl-condensed .ch-stat b{font-size:.92rem;}
+  .jl-condensed .ch-stat span{margin-top:0;font-size:.7rem;white-space:normal;}
+
+  /* PHOTOS — the 0.86 portrait frame (~300px) becomes a 200px swipe strip.
+     Reuses the exact markup fitChapterFigures builds: .ch-figbox > .ch-fig > img* */
+  .jl-condensed .ch-figbox{aspect-ratio:auto;height:auto;}
+  .jl-condensed .ch-fig{
+    aspect-ratio:auto;height:200px;display:flex;align-items:stretch;gap:8px;padding:8px;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+    overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;
+  }
+  .jl-condensed .ch-fig img{
+    position:static;width:auto;height:100%;max-width:none;flex:none;
+    object-fit:contain;border-radius:10px;scroll-snap-align:center;
+  }
+  /* lone photos centre via auto margins (safe: collapse to 0 when overflowing) */
+  .jl-condensed .ch-fig:not(.cycle) img{margin-inline:auto;}
+  .jl-condensed .ch-fig .ch-blurbg{display:none;}
+  /* the 3.8s cross-fade timer keeps running; force it into a visual no-op */
+  .jl-condensed .ch-fig.cycle img:not(.ch-blurbg){opacity:1;transition:none;}
+  /* multi-photo chapters reuse the deck's established swipe pill (cf. #growthChart::before) */
+  .jl-condensed .ch-fig.cycle::before{
+    content:"Swipe photos \2194";
+    position:sticky;left:8px;z-index:2;align-self:flex-start;flex:none;
+    display:inline-flex;align-items:center;min-height:26px;margin-right:-8px;padding:4px 9px;
+    border-radius:99px;color:var(--ink-dim);background:var(--bg-soft);border:1px solid var(--line);
+    font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;pointer-events:none;
+  }
+  /* if every img 404s the figure self-removes (onerror) — drop the shell */
+  .jl-condensed .ch-figbox:empty{display:none;}
+
+  /* SIDE COLUMN — kill the desktop overlay margins / flex-grow */
+  .jl-condensed .ch-side{margin-top:0;}
+  .jl-condensed .ch-side > .ch-quote{margin:12px 0 0;flex:none;}
+  .jl-condensed .ch-side > .ch-next{margin-top:12px;flex:none;}
+
+  /* DONUTS — an unconstrained svg inside the fixed 320px grid column blew
+     out to ~520px and pushed half the ring off-frame. Hard-clamp and centre. */
+  /* min-width:0 first — the swipe-chart floor (.chart > svg{min-width:520px})
+     otherwise out-muscles any width we set here */
+  #ydDonut svg,#donut35 svg{min-width:0 !important;width:min(240px,72vw) !important;height:auto !important;display:block;margin-inline:auto;}
+  /* FULL DATA MATRIX — a genuine 776px-wide table: swipe it, never clip it */
+  #matrixDisclose .disclose-body{overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-inline:contain;}
+  #matrixTable{min-width:640px;}
 }
 
 @media (max-width:360px){
@@ -5367,10 +5466,15 @@ function initChrome() {
       // Tall scroll set-pieces (the system build, the funding climb) have to
       // land WHERE THEIR CONTENT IS, not on their first pixel — data-goto-at
       // is the fraction of the piece's own scrub to stop at.
-      const at = usedFallback ? NaN : parseFloat(btn.dataset.gotoAt);
       // the piece that actually owns the scrub may be a child (the system's
-      // build stage), so measure THAT — otherwise the fraction lands wrong
-      const scrub = el.querySelector(".sys-build") || el;
+      // build stage), so measure THAT — otherwise the fraction lands wrong.
+      // On mobile the build stage is display:none (the tree fallback shows
+      // instead): a hidden scrub reports a zero rect and the tap went
+      // NOWHERE, so fall back to the section itself and drop the fraction.
+      let scrub = el.querySelector(".sys-build") || el;
+      if (!scrub.getClientRects().length) scrub = el;
+      const at = usedFallback || scrub === el && el.querySelector(".sys-build")
+        ? NaN : parseFloat(btn.dataset.gotoAt);
       const top = y0 + (isNaN(at) ? el : scrub).getBoundingClientRect().top;
       const y1 = id === "top" ? 0
         : !isNaN(at) ? Math.max(0, top + Math.max(0, scrub.offsetHeight - innerHeight) * at)
@@ -6538,7 +6642,11 @@ function initCourier() {
   // Smooth blends bridge the gaps, so the whole flight is one seamless path.
   // The courier holds orbit for the whole planet chapter. Its orbit is
   // deliberately scroll-driven: when scrolling stops, the rocket stops.
-  const ORBIT_REVS = 1;
+  // 1 full lap + a quarter: the courier inserts on the right limb travelling
+  // down, laps the globe once, and RELEASES AT THE BOTTOM of the disc moving
+  // LEFT — the exit tangent aims straight into the left-lane descent corridor
+  // below, so departure never crosses back over the page.
+  const ORBIT_REVS = 1.25;
   let courierSpin = 0;
   const SPIN_W = T2 / 9500;                    // one lap ≈ 9.5s while parked
   // The funding showcase can keep its ambient lap, but the globe must stay
@@ -6771,6 +6879,35 @@ function initCourier() {
         return { x: cx2 + Math.cos(th) * rx2, y: cy2 + Math.sin(th) * ry2 };
     };
     segs.push({ orbit: true, s0: pT - vh * .3, s1: orbitEnd, at: orbitAt });
+    /* ORBIT → TRAJECTORY, the left-lane descent. The lap releases at the
+       globe's BOTTOM moving left (ORBIT_REVS 1.25); this corridor carries
+       that exact tangent into the LEFT gutter and rides it straight down past
+       the projections panel to the trajectory's 2023 landing point. One
+       direction the whole way — the old departure left on the right limb and
+       then slashed across the projections cards to reach the far-left 2023
+       point, which was the worst zig-zag on the page. */
+    const t3c = t3;
+    if (t3c && t3c.s0 - orbitEnd > 80) {
+      segs.push({
+        s0: orbitEnd, s1: t3c.s0,
+        at: q => {
+          const z = cl01(q);
+          const exit0 = orbitAt(1);
+          // the sticky globe releases at orbitEnd — freeze the exit anchor at
+          // its document position so the corridor doesn't ride up with scroll
+          const start = { x: exit0.x, y: exit0.y + (scrollY - orbitEnd) };
+          const lane = Math.max(46, innerWidth * .062);
+          const b = t3c.at(0);
+          return flightSplineKeyed([
+            { t: 0,   x: start.x, y: start.y },
+            { t: .16, x: Math.max(lane + 90, start.x - innerWidth * .18), y: vh * .60 },
+            { t: .34, x: lane, y: vh * .55 },
+            { t: .74, x: lane, y: vh * .52 },
+            { t: 1,   x: b.x, y: b.y }
+          ], z);
+        }
+      });
+    }
     // if the launch pad exists, the long-range descent hands over to a final
     // tail-first LANDING leg: the courier drops out of the funding clouds,
     // rides its own burn down onto the pad slot and becomes the pad rocket
@@ -6837,8 +6974,13 @@ function initCourier() {
       segs.push({
         raise: true, s0: raiseSpan.s0, s1: raiseSpan.s1,
         at: q => {
-          const th = raiseTh(q);
-          return { x: innerWidth / 2 + Math.cos(th) * innerWidth * .3, y: vh * .5 + Math.sin(th) * vh * .27 };
+          /* No more showcase lap — it slashed back and forth across the fund
+             cards (the recorded 35%→89%→3% swings). The courier now stands
+             SENTINEL in the right lane it arrived in, easing gently up the
+             frame as the brief unfolds: alive, weighty, never crossing. */
+          const z = smt(cl01(q));
+          const lane = Math.min(innerWidth - 56, innerWidth * .93);
+          return { x: lane - z * innerWidth * .025, y: vh * (.84 - .34 * z) };
         }
       });
     }
@@ -7357,10 +7499,9 @@ function initCourier() {
             // reads as true motion even with the scroll parked
             const th = focusTh(L0.fq);
             ta = Math.atan2(Math.cos(th) * FOCUS_FLAT, -Math.sin(th));
-          } else if (L0.rq != null) {
-            const th = raiseTh(L0.rq);
-            ta = Math.atan2(Math.cos(th) * ((innerHeight * .27) / (innerWidth * .3)), -Math.sin(th));
           } else {
+            /* the raise sentinel drift is an ordinary slow path now — the
+               free-flight lookahead tangent below owns its heading too */
             /* FREE FLIGHT heading. The lookahead PATH TANGENT (dirState flips
                it on reverse) owns the nose during ordinary on-path flight —
                it IS the direction of travel, immune to scroll-drag. The ship's
@@ -9721,6 +9862,58 @@ function initChapterPhotos() {
       if (bg) bg.setAttribute("src", next.getAttribute("src"));
     });
   }, 3800);
+}
+
+/* JOURNEY CONDENSED (phones only) — flags #jlist and injects one
+   "Read the full chapter" expander per chapter. Runs only when the 900px
+   media query matches, so a desktop boot never touches the DOM; every
+   style is additionally scoped to .jl-condensed inside the ≤900px block. */
+function initChapterCondense() {
+  const mq = matchMedia("(max-width:900px)");
+  const list = document.getElementById("jlist");
+  if (!list) return;
+  let built = false;
+  const onTap = e => {
+    const btn = e.target.closest(".ch-expand");
+    if (!btn) return;
+    const card = btn.closest(".jcard.chapter");
+    if (!card) return;
+    const open = card.classList.toggle("ch-open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (!open) {
+      // collapsing a tall chapter can strand the viewport below the card —
+      // pull its header back ("instant": html scroll-behavior is smooth)
+      const top = card.getBoundingClientRect().top;
+      if (top < 0) window.scrollBy({ top: top - 84, left: 0, behavior: "instant" });
+    }
+    /* The rail dots/fill are positioned from card offsets and re-measure only
+       on window resize (layoutDots). A synthetic resize is exactly what a
+       rotation already fires, so every listener is safe by construction. */
+    dispatchEvent(new Event("resize"));
+  };
+  const build = () => {
+    if (built || !mq.matches) return;
+    built = true;
+    list.classList.add("jl-condensed");
+    list.querySelectorAll(".jcard.chapter").forEach(card => {
+      const body = card.querySelector(".ch-main > .ch-body");
+      if (!body) return;                       // chapter with no body text
+      const id = "chbody-" + card.dataset.ji;
+      body.id = id;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ch-expand";
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-controls", id);
+      btn.innerHTML = '<span class="x-more">Read the full chapter</span>' +
+        '<span class="x-less">Show less</span>' +
+        '<svg class="xchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+      body.after(btn);                         // teaser fade, then the button
+    });
+    list.addEventListener("click", onTap);     // delegated; never matches .ch-next
+  };
+  build();
+  mq.addEventListener ? mq.addEventListener("change", build) : mq.addListener(build);
 }
 
 function renderJourney() {
@@ -12845,6 +13038,7 @@ safeBoot("figureFit", fitChapterFigures);     // shape every frame to its pictur
 safeBoot("chapterPhotos", initChapterPhotos); // after the cards exist
 safeBoot("chapterBalance", balanceChapters);  // then even the two columns up
 safeBoot("chapterQuestions", fitChapterQuestions); // and hold each green question on one line
+safeBoot("chapterCondense", initChapterCondense); // phones: per-chapter expanders (after the cards exist)
 safeBoot("sectionSubs", fitSectionSubs);           // and every section subtitle on exactly two
 /* Web fonts land after first paint and change the measure, so re-fit once the
    real faces are in — otherwise the bisection is solved against the fallback. */

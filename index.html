@@ -1554,6 +1554,33 @@ section.tint{background:var(--bg-soft);}
 .st-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:11px;}
 .st-chips span{padding:5px 10px;border:1px solid var(--line);border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);}
 .st-stem{width:2px;height:26px;margin:0 auto;background:linear-gradient(180deg,rgba(255,61,154,.55),rgba(255,61,154,.12));}
+/* ---- PLANETARY HIERARCHY (mobile system revamp) --------------------------
+   The tree now carries the desktop map's actual celestial cast: the pink
+   Holdings sun at the root, each operating company headed by its own sphere
+   (Global blue, Facilities mint, Distribution ember), the long-term ventures
+   by theirs (gold saturn + gold, violet, violet moon). Pure inline SVG. */
+.st-orb{display:block;flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.5));}
+.st-orb-lg{width:76px;height:76px;margin:2px auto 10px;filter:drop-shadow(0 0 26px rgba(255,61,154,.55)) drop-shadow(0 8px 18px rgba(0,0,0,.5));}
+.st-co-top .st-orb{width:44px;height:44px;margin:-2px 0;}
+.st-future .st-orb{width:36px;height:36px;margin:0 0 8px;}
+@media (prefers-reduced-motion:no-preference){
+  .st-orb{animation:stFloat 7s ease-in-out infinite;}
+  .st-co:nth-of-type(odd) .st-orb{animation-duration:8.5s;animation-delay:-2.4s;}
+  .st-future > div:nth-child(2n) .st-orb{animation-delay:-3.2s;}
+  .st-orb-lg{animation-duration:9.5s;}
+}
+@keyframes stFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+/* scroll-driven entrances, same voice as the desktop reveals — pure CSS view
+   timeline; browsers without support simply show the tree static, and
+   reduced-motion users never see it. It can never hinder use. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion:no-preference){
+    .sys-tree .st-parent,.sys-tree .st-co,.sys-tree .st-future > div{
+      animation:stRise both;animation-timeline:view();animation-range:entry 0% entry 55%;
+    }
+  }
+}
+@keyframes stRise{from{opacity:.18;transform:translateY(24px) scale(.97);}to{opacity:1;transform:none;}}
 .st-lvl{margin:0 0 12px;text-align:center;color:var(--ink-faint);font-size:.62rem;font-weight:900;letter-spacing:.2em;text-transform:uppercase;}
 .st-co{
   position:relative;padding:16px 15px;margin-bottom:12px;border:1px solid var(--line);
@@ -3524,6 +3551,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   #jlist.jl-condensed{gap:16px;}
   .jl-condensed .jcard.chapter{padding:20px 16px 18px;}
   .jl-condensed .ch-toprow{margin-bottom:12px;}
+  /* the pink chapter kicker at desktop size + .16em tracking cannot fit the
+     column beside the badge ("BREAKTHROUGH" alone is ~236px) — smaller type,
+     tighter tracking, and let long words break instead of clipping */
+  .jl-condensed .ch-kick{font-size:.82rem;letter-spacing:.09em;line-height:1.35;overflow-wrap:anywhere;}
+  .jl-condensed .ch-date{font-size:.88rem;}
   .jl-condensed .jcard.chapter h3{font-size:1.32rem;margin:6px 0 8px;}
   .jl-condensed .jcard .ch-lede{font-size:.97rem;margin:0 0 12px;}
 
@@ -3746,6 +3778,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
 
       <div class="st-parent">
+        <svg class="st-orb st-orb-lg" viewBox="0 0 72 72" aria-hidden="true"><defs>
+          <radialGradient id="stoSun" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ff9dcd"/><stop offset=".45" stop-color="#ff5fae"/><stop offset=".8" stop-color="#ee2288"/><stop offset="1" stop-color="#a90a58"/></radialGradient>
+          <radialGradient id="stoGlobal" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#bfe3ff"/><stop offset=".45" stop-color="#54b4ff"/><stop offset=".8" stop-color="#1173cf"/><stop offset="1" stop-color="#083c74"/></radialGradient>
+          <radialGradient id="stoFac" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#b9ffe4"/><stop offset=".45" stop-color="#4ff0b4"/><stop offset=".8" stop-color="#0f9a68"/><stop offset="1" stop-color="#064430"/></radialGradient>
+          <radialGradient id="stoDist" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ffd2b8"/><stop offset=".45" stop-color="#ff8a55"/><stop offset=".8" stop-color="#d34a17"/><stop offset="1" stop-color="#6e1f06"/></radialGradient>
+          <radialGradient id="stoGold" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ffe9b3"/><stop offset=".45" stop-color="#e5bd68"/><stop offset=".8" stop-color="#b07a35"/><stop offset="1" stop-color="#5d3a14"/></radialGradient>
+          <radialGradient id="stoVio" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#e4d8ff"/><stop offset=".45" stop-color="#a988ff"/><stop offset=".8" stop-color="#6f4bd8"/><stop offset="1" stop-color="#2e1d66"/></radialGradient>
+        </defs><circle cx="36" cy="36" r="30" fill="url(#stoSun)"/><ellipse cx="27" cy="24" rx="10" ry="6" fill="rgba(255,255,255,.35)"/></svg>
         <span class="st-tag">Holding company</span>
         <b>Freedom Group Holdings Ltd</b>
         <p>Owner of the group's brands, intellectual property and long term strategic platform.</p>
@@ -3756,7 +3796,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <p class="st-lvl">Operating companies</p>
 
       <article class="st-co st-active">
-        <div class="st-co-top"><i></i><b>Freedom Global Ltd</b><span class="st-status">Active</span></div>
+        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoGlobal)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Global Ltd</b><span class="st-status">Active</span></div>
         <span class="st-role">Consumer ecommerce · D2C</span>
         <p>The group's established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
         <div class="st-meta"><b>Channels</b><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy</span></div>
@@ -3765,14 +3805,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </article>
 
       <article class="st-co st-planned">
-        <div class="st-co-top"><i></i><b>Freedom Facilities Ltd</b><span class="st-status">Planned · 2027</span></div>
+        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoFac)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Facilities Ltd</b><span class="st-status">Planned · 2027</span></div>
         <span class="st-role">Compliance · Servicing · Facilities</span>
         <p>A recurring revenue operation delivering fire safety servicing, installation, compliance and facilities support.</p>
         <div class="st-meta"><b>Core market</b><span>Commercial premises · Education · Warehousing · Construction · Hospitality</span></div>
       </article>
 
       <article class="st-co st-planned st-ember">
-        <div class="st-co-top"><i></i><b>Freedom Distribution Ltd</b><span class="st-status">Planned · 2028</span></div>
+        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoDist)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Distribution Ltd</b><span class="st-status">Planned · 2028</span></div>
         <span class="st-role">Trade distribution · B2B</span>
         <p>A wholesale operation supplying the group's owned brands to national retailers, trade partners and commercial distributors.</p>
         <div class="st-meta"><b>Categories</b><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
@@ -3781,13 +3821,17 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="st-stem" aria-hidden="true"></div>
       <p class="st-lvl">Long term ventures</p>
       <div class="st-future">
-        <div><b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i>
+        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="34" rx="29" ry="8" fill="none" stroke="#c8a25c" stroke-width="3" opacity=".85" transform="rotate(-16 32 34)"/><circle cx="32" cy="32" r="19" fill="url(#stoGold)"/><ellipse cx="26" cy="25" rx="6" ry="3.8" fill="rgba(255,255,255,.32)"/></svg>
+          <b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i>
           <p class="st-fd">A future commercial property platform for the group's premises, acquisitions and growth.</p></div>
-        <div><b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i>
+        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoGold)"/><ellipse cx="25" cy="24" rx="7" ry="4.2" fill="rgba(255,255,255,.32)"/></svg>
+          <b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i>
           <p class="st-fd">A future logistics arm for imports, freight control and supply chain efficiency.</p></div>
-        <div><b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i>
+        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoVio)"/><ellipse cx="25" cy="24" rx="7" ry="4.2" fill="rgba(255,255,255,.32)"/></svg>
+          <b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i>
           <p class="st-fd">A future specialist business focused on surveying, inspection and aerial visual services.</p></div>
-        <div><b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i>
+        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoVio)"/><circle cx="26" cy="28" r="4" fill="rgba(46,29,102,.55)"/><circle cx="38" cy="38" r="3" fill="rgba(46,29,102,.5)"/><ellipse cx="25" cy="23" rx="7" ry="4.2" fill="rgba(255,255,255,.3)"/></svg>
+          <b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i>
           <p class="st-fd">A long term ambition to develop or acquire forecourt and convenience retail locations.</p></div>
       </div>
       <p class="st-note">Illustrative long term direction, not part of the current investment case.</p>
@@ -6895,7 +6939,8 @@ function initCourier() {
           const exit0 = orbitAt(1);
           // the sticky globe releases at orbitEnd — freeze the exit anchor at
           // its document position so the corridor doesn't ride up with scroll
-          const start = { x: exit0.x, y: exit0.y + (scrollY - orbitEnd) };
+          // (effScroll == scrollY live; hook-aware so headless tests are true)
+          const start = { x: exit0.x, y: exit0.y + (effScroll - orbitEnd) };
           const lane = Math.max(46, innerWidth * .062);
           const b = t3c.at(0);
           return flightSplineKeyed([
@@ -6952,7 +6997,7 @@ function initCourier() {
         // 2036 chart's summit (which scrolls normally, so it does not)
         const liveExit = finaleFromOrbit ? orbitAt(1) : band(t3.at(1));
         const start = finaleFromOrbit
-          ? { x: liveExit.x, y: liveExit.y + (scrollY - finaleS0) }
+          ? { x: liveExit.x, y: liveExit.y + (effScroll - finaleS0) }
           : liveExit;
         const rightLane = Math.min(innerWidth - 56, innerWidth * .93);
         const p4 = flightSplineKeyed([
@@ -7250,6 +7295,8 @@ function initCourier() {
   let posRate = 7;         // smoothed posS spring rate (no lurch at leg-kind boundaries)
   let driftW = 1;          // smoothed drift-wobble gate (no 1-frame wobble drop at lock entry)
   let prevPx = null, prevPy = null, prevLockLeg = false;   // path-velocity feed-forward state (lock legs)
+  let effScroll = 0;       // hook-aware scroll (== scrollY live) shared with the seg closures
+  let brT = 1, brX = 0, brY = 0, prevTgX = null, prevTgY = null;   // target-continuity bridge state
   // the chart points the courier ignites as it flies past them (lazy caches —
   // the charts render after the courier boots)
   let gDotsC = [], tDotsC = [];
@@ -7389,6 +7436,9 @@ function initCourier() {
         pd = pd < 0 ? pt : pd + (pt - pd) * k;
         if (Math.abs(pt - pd) < .0005) pd = pt;
         if (pd > .0004) {
+          // effective scroll: identical to scrollY live, but derived from pt so
+          // the __ffCourierPt hook exercises EVERY scroll-anchored leg headlessly
+          effScroll = window.__ffCourierPt != null ? S0 + pt * (S1 - S0) : scrollY;
           const segs = buildSegs(S0, S1, pT, vh, cloudS0, diveA, diveB);
           const orbitSeg = segs.find(s2 => s2.orbit);
           // From the final analytics hand-off through the globe exit, the
@@ -7397,9 +7447,7 @@ function initCourier() {
           // the cursor stopped and was the source of the entry/exit "jump".
           // Start the lock well inside the clear right-gutter approach and
           // keep it through the first part of the departure corridor.
-          // effective scroll: identical to scrollY live, but derived from pt so
-          // the __ffCourierPt test hook exercises the lock paths headlessly too
-          const yScroll = window.__ffCourierPt != null ? S0 + pt * (S1 - S0) : scrollY;
+          const yScroll = effScroll;   // set above, hook-aware
           const globeLocked = !!orbitSeg
             && yScroll >= orbitSeg.s0 - vh * .9
             && yScroll <= orbitSeg.s1 + vh * .75;
@@ -7422,7 +7470,26 @@ function initCourier() {
           } else landT = 0;
           inOrbitPrev = L0.oq != null;
           inRaisePrev = L0.rq != null;
-          const P = L0.p;
+          let P = L0.p;
+          /* TARGET-CONTINUITY BRIDGE — legs hand the sampler over by
+             TELEPORTING the target point (dive lap → rail join, ride summit →
+             next corridor, …). The ship must never see a teleport: any raw
+             target step over 150px in ONE frame latches a ~0.65s eased bridge
+             from the old target to the (live) new one, so every hand-off is
+             FLOWN as a continuous curve instead of a spring-dash dart. The
+             150px gate never triggers on legitimate in-leg motion (the
+             fastest measured in-leg target speed is ~50px/frame). */
+          if (snap) { brT = 1; prevTgX = null; }
+          if (prevTgX != null && !snap && brT >= 1
+              && Math.hypot(P.x - prevTgX, P.y - prevTgY) > 150) {
+            brT = 0; brX = prevTgX; brY = prevTgY;
+          }
+          prevTgX = P.x; prevTgY = P.y;
+          if (brT < 1) {
+            brT = Math.min(1, brT + dt / .65);
+            const eB = brT * brT * (3 - 2 * brT);
+            P = { x: brX + (P.x - brX) * eB, y: brY + (P.y - brY) * eB };
+          }
           /* Looser springs read as flight rather than tracking: the ship is allowed to
              run a little wide through a bend and settle back, instead of being nailed
              to the path sample every frame (which is what made it feel stiff). */

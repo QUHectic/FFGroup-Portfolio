@@ -3674,17 +3674,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <div class="fs-fact"><b>Currently trading as</b><span>Freedom Fire &amp; Safety Ltd</span></div>
           <div class="fs-fact"><b>Core model</b><span>D2C ecommerce</span></div>
         </div>
-        <div class="fs-block">
-          <b>Core channels</b>
-          <ul class="fs-chips">
-            <li class="live"><i aria-hidden="true"></i>eBay<em>Live</em></li>
-            <li class="live"><i aria-hidden="true"></i>Temu<em>Live</em></li>
-            <li class="soon"><i aria-hidden="true"></i>Amazon<em>Launching</em></li>
-            <li class="soon"><i aria-hidden="true"></i>Shopify<em>Launching</em></li>
-            <li class="soon"><i aria-hidden="true"></i>OnBuy<em>Phased rollout</em></li>
-            <li class="next"><i aria-hidden="true"></i>TikTok Shop<em>Roadmap</em></li>
-          </ul>
-        </div>
         <div class="fs-ambition">
           <b>Long term ambition</b>
           <p><strong>&pound;100m</strong><span>Build towards a &pound;100 million target enterprise value</span></p>
@@ -3862,7 +3851,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <div class="stat reveal d1"><div class="num" data-count="3000" data-prefix="£">0</div><div class="lbl">of fire safety per person over a lifetime, about £87 a year</div></div>
         <div class="stat reveal d2"><div class="num" data-count="20.7" data-decimals="1" data-prefix="£" data-suffix="m">0</div><div class="lbl">if just 1% of the UK bought one £30 fire product</div></div>
       </div>
-      <p class="runway-note" style="margin-top:14px;">£6bn across 5.7 million UK private sector businesses is roughly £1,053 each, and by population about £87 a person a year, close to £3,000 each over a lifetime of homes, vehicles and workplaces. At around £30 a product, that is a hundred purchases per person. Turned the other way round, one percent of the UK is 690,000 people, so a single £30 product each is £20.7m of demand, more than 5% of the entire online fire safety market. The category is enormous precisely because the individual purchase is small, repeated and legally required.</p>
+      <p class="runway-note" style="margin-top:14px;">Put simply: the UK spends £6bn a year on fire safety. That works out at about £1,053 per business, or £87 per person every year — around £3,000 each over a lifetime. Most products cost about £30, so if just 1% of the UK bought one, that alone is £20.7m of sales. The market is huge because these are small, repeat purchases that the law requires.</p>
 
     </div>
   </section>
@@ -4931,14 +4920,17 @@ const FG_DATA = {
   projection: {
     years: [2026, 2027, 2028, 2029, 2030, 2031],
     channels: [
+      /* the SIX online marketplaces first, then the TWO direct channels as
+         their own physical block — every consumer (chips, matrix rows,
+         grouped bars, tooltips) keeps the pair together after the online set */
       { name: "eBay",              hex: "#38a9ff", values: [1500000, 2000000, 2500000, 3000000, 4400000, 5000000] },
       { name: "Amazon",            hex: "#ffb020", values: [200000, 600000, 1500000, 2800000, 5800000, 7500000] },
       { name: "Temu",              hex: "#ff6a3d", values: [550000, 850000, 1100000, 1500000, 2800000, 3800000] },
       { name: "Shopify",           hex: "#2fe0a0", values: [80000, 500000, 1200000, 2000000, 3000000, 4000000] },
-      { name: "On Site Servicing", hex: "#ff4fa3", values: [100000, 250000, 500000, 750000, 1100000, 1400000] },
-      { name: "B2B",               hex: "#9aa6bd", values: [25000, 75000, 225000, 500000, 1800000, 2500000] },
       { name: "TikTok +",          hex: "#22d3ee", values: [15000, 100000, 250000, 400000, 800000, 1400000] },
-      { name: "OnBuy",             hex: "#b79bff", values: [10000, 100000, 150000, 200000, 300000, 400000] }
+      { name: "OnBuy",             hex: "#b79bff", values: [10000, 100000, 150000, 200000, 300000, 400000] },
+      { name: "On Site Servicing", hex: "#ff4fa3", values: [100000, 250000, 500000, 750000, 1100000, 1400000] },
+      { name: "B2B",               hex: "#9aa6bd", values: [25000, 75000, 225000, 500000, 1800000, 2500000] }
     ]
   },
 
@@ -4946,14 +4938,16 @@ const FG_DATA = {
   projection2036: {
     year: 2036,
     channels: [
+      /* online marketplaces by size, then the two direct channels together
+         at the end — adjacent donut segments, bottom of every legend */
       { name: "Amazon",            hex: "#ffb020", value: 35000000 },
       { name: "Shopify",           hex: "#2fe0a0", value: 21000000 },
-      { name: "B2B",               hex: "#9aa6bd", value: 14000000 },
       { name: "Temu",              hex: "#ff6a3d", value: 11200000 },
       { name: "eBay",              hex: "#38a9ff", value: 9800000 },
-      { name: "On Site Servicing", hex: "#ff4fa3", value: 4200000 },
       { name: "TikTok +",          hex: "#22d3ee", value: 4200000 },
-      { name: "OnBuy",             hex: "#b79bff", value: 1190000 }
+      { name: "OnBuy",             hex: "#b79bff", value: 1190000 },
+      { name: "B2B",               hex: "#9aa6bd", value: 14000000 },
+      { name: "On Site Servicing", hex: "#ff4fa3", value: 4200000 }
     ]
   },
 
@@ -5041,8 +5035,8 @@ const FG_DATA = {
         key: "web", label: "Web Development", color: "var(--blue)",
         people: [
           { name: "Bill Nebo", role: "Web Developer", type: "Full time",
-            tag: "Secured job · Part time in term", tagKind: "win",
-            bio: "Former T Level student who secured his job with the group. Full time now, moving to part time through the school terms." },
+            tag: "Secured job · Part time at university", tagKind: "win",
+            bio: "Former T Level student who secured his job with the group. Full time now, moving to part time through university." },
           { name: "Gabriel Mroczek", role: "Web Developer", type: "T Level Students", tag: "Summer engineering placement",
             bio: "Summer engineering placement on the web development team." }
         ]
@@ -8826,8 +8820,12 @@ function renderSystem() {
       if (stCls) {
         const st = map.querySelector(".mg-station." + stCls);
         if (!st) return null;
+        // the SMALLEST fc-filled circle is the station's core dot — the thing
+        // the visitor's eye (and cursor) reads as "the station" — not the big
+        // outer shell. The arrow must land on that inner dot precisely.
         body = [...st.querySelectorAll("circle")]
-          .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)[0];
+          .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)
+          .sort((a, b) => (+a.getAttribute("r") || 1e9) - (+b.getAttribute("r") || 1e9))[0];
       } else {
         /* The operating planets' PLANETS.r is the HALO radius, and the halo is
            opacity:0 until hover - so ending on it left the arrow 10-13 units
@@ -8866,13 +8864,22 @@ function renderSystem() {
         if (tr && tr.indexOf("scale") !== -1) { bloomed.push([el, tr]); el.style.transform = ""; }
       });
       try {
-      ["form", "storm", "fly", "ds1", "ds2"].forEach(key => {
+      ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+      } finally {
+        bloomed.forEach(([el, tr]) => { el.style.transform = tr; });
+      }
+    };
+    function landLane(key) {
         const t = laneTarget(key);
         if (!t || !(t.r > 0)) return;
         // #smArr is userSpaceOnUse with an 8-wide viewBox, refX 6.5 and
-        // markerWidth 18, so the tip sits (8-6.5)x(18/8) = 3.375 units past the
-        // path end. Ending 3 units outside the limb rests the tip 0.4 inside
-        // it: kissing the edge, no hairline gap, nothing buried.
+        // markerWidth 18, so the tip extends (8-6.5)x(18/8) = 3.375 units past
+        // the path end ALONG the travel direction — i.e. toward the planet.
+        // Endpoint at r + 3 rests the tip 0.375 inside the limb: the arrowhead
+        // KISSES the visible sphere's edge — touching it exactly, with no gap
+        // and no penetration. The body is measured live (rendered geometry,
+        // re-landed each frame below), so this holds at every scale and while
+        // the stations orbit.
         const bite = t.r + 3;
         [".fl-" + key, ".g-" + key].forEach(sel => {
           const pth = map.querySelector(sel);
@@ -8913,12 +8920,32 @@ function renderSystem() {
             pth.setAttribute("d", "M " + nums[0] + " " + nums[1] + " L " + nx + " " + ny);
           }
         });
-      });
-      } finally {
-        bloomed.forEach(([el, tr]) => { el.style.transform = tr; });
-      }
-    };
+    }
     fitLaneHeads();
+    // headless test hook: the preview pane gets no rAF, so expose one
+    // synchronous pass of EXACTLY what the live tracker below runs each frame
+    // (direct landLane against rendered geometry — same convention as __ffSpx).
+    window.__ffLandLanes = () => ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+    /* Land ALL FIVE lanes live, every frame the map is on screen. The two
+       future stations ORBIT on a motion path, so a one-time fit leaves their
+       arrows pointing at an empty stretch of ring; and the three operating
+       planets are still settling scale during boot, so a one-time fit measures
+       them ~40% too large and the arrows come to rest floating clear of the
+       sphere. Re-landing per frame (5 getCTM reads + 5 path writes — trivial)
+       converges every tip onto the settled body within a frame and keeps the
+       station arrows pinned to their moving cores precisely. */
+    {
+      let mapVisible = false;
+      new IntersectionObserver(es => { es.forEach(e => { mapVisible = e.isIntersecting; }); })
+        .observe(map);
+      const track = () => {
+        if (mapVisible && !map.classList.contains("diving")) {
+          ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+        }
+        requestAnimationFrame(track);
+      };
+      requestAnimationFrame(track);
+    }
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
     // overflow so the shelf is never buried under the next chapter's
@@ -9993,7 +10020,9 @@ function renderProjections() {
         });
       } else {
         let acc = 0;
-        P.channels.forEach(ch => {
+        // stack order: the two DIRECT channels first = the BASE of every bar,
+        // physically below all the online marketplaces stacked above them
+        [...P.channels].sort((a, b) => isDirect(b.name) - isDirect(a.name)).forEach(ch => {
           const r = rects[ch.name + yr];
           if (!projState.active.has(ch.name)) { r.setAttribute("opacity", 0); r.setAttribute("height", 0); r.setAttribute("y", m.t + ph); return; }
           const frac = mode === "share" ? ch.values[yi] / total : ch.values[yi] / maxY;
@@ -10129,8 +10158,10 @@ function renderYearDetail() {
   $("#ydYear").textContent = projState.year;
   $("#ydTotal").textContent = allActive ? fmtCompact(total) + " target" : fmtCompact(total) + " (selected channels)";
 
+  // online marketplaces by value first; the two DIRECT channels always sit
+  // together at the BOTTOM of the list (and as adjacent donut segments)
   const segs = act.map(c => ({ name: c.name, hex: c.hex, value: c.values[yi] }))
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => (isDirect(a.name) - isDirect(b.name)) || (b.value - a.value));
 
   let fig = $("#ydDonut");
   let svg = $("svg", fig);
@@ -11547,31 +11578,22 @@ function initSetpieces() {
   // Every pin begins on the bright rim, then travels to and rotates with its
   // country; there are no permanently planted rim exceptions.
   /* THE EXPANSION MAP — every sourcing, infrastructure and demand territory
-     the group actually trades through. Longitude/latitude drive the pin; the
-     `start` staggers each card so they manifest as the globe turns, and the
-     side/lift pair keeps the two columns of cards from ever colliding. */
+     the group actually trades through. Longitude/latitude drive the pin;
+     `side` fixes which card column a country reports to, and each trio shows
+     only while its territory is on the visible face of the TURNING globe. */
   const geo = (lon, lat) => ({ u: (lon + 180) / 360, v: (1 - Math.sin(lat * Math.PI / 180)) / 2 });
-  /* `lift` (−sin lat) runs north→south per side so each pin materialises on
-     the rim level with its final landing height and card slots deal in pin
-     order — crossings stay geometrically impossible.
-       LEFT  (north→south): UK 54.8, Poland 52, Belgium 49.6, Italy 42, Türkiye 39
-       RIGHT (north→south): China 34, Pakistan 32.5, Taiwan 23.8, Malaysia 3.2
-     `start` is the reveal running order, not position.
-     `tag` / `cat` / `d2` feed the three card rows: pill, category, detail. */
   /* PIN PLACEMENT — REAL geographic coordinates. The land texture is genuine
      world-coastline geometry whose latitude rows are sin()-projected — the SAME
      mapping geo() uses — so these lon/lats land each pin exactly ON its country
-     as drawn. The night globe glides to a HOLD at rotation 0.45 (see PLROT),
-     chosen so all nine countries sit on the visible face at once: Europe +
-     Pakistan on the LEFT half of the disc, China/Taiwan/Malaysia on the RIGHT.
-     Cards join the side their pin occupies at the hold (Pakistan sits
-     essentially ON the centre line — 0.037R right untilted, ~0.049R left after
-     the −0.16 canvas tilt — and is grouped RIGHT with the Asian lanes; the
-     sideVis grace keeps its card fully lit). The level-with-
-     pin de-overlap + 2-opt pass below turns the honest Europe cluster into an
-     ordered, non-crossing fan. `lift` = −sin(lat) so each pin materialises on
-     the rim level with its final landing height. `start` steps 0.016 (≈ one
-     wheel-notch of the 600vh scrub) so the cards land one after another. */
+     as drawn. The night globe KEEPS SPINNING (see PLROT): each country enters
+     on the east limb, carries across the face and exits west, its trio fading
+     in and out with that transit. `side` groups Europe LEFT and Asia RIGHT
+     (sideVis shows a card only while its pin is on the card's half, which is
+     also what makes tether raking impossible); the level-with-pin de-overlap
+     + 2-opt pass below keeps whatever cards are concurrently lit ordered and
+     non-crossing every frame. `lift` is only the card's resting slot bias;
+     `start` is retired (kept for data compatibility).
+     `tag` / `cat` / `d2` feed the three card rows: pill, category, detail. */
   const PL_PINS = [
     /* every coordinate below is point-in-polygon verified against the drawn
        LAND rings (UK nudged to N. Lancashire for 20px+ clearance from the
@@ -11583,22 +11605,22 @@ function initSetpieces() {
     { n: "Poland", ...geo(19.4, 52), start: .697, side: -1, lift: -.79,
       tag: "SUPPLY", cat: "Extinguishers", d2: "European production and short haul freight" },
     { n: "Belgium", ...geo(5.55, 49.62), start: .729, side: -1, lift: -.76,
-      tag: "SUPPLY", cat: "Batteries", d2: "cell sourcing for Voltz and Kunergy" },
+      tag: "SUPPLY", cat: "Batteries", d2: "Sourcing for Voltz and Kunergy" },
     { n: "Italy", ...geo(12.5, 42), start: .761, side: -1, lift: -.67,
-      tag: "SUPPLY", cat: "Plastics", d2: "mouldings, housings, brackets and fittings" },
-    { n: "Türkiye", ...geo(35, 39), start: .793, side: -1, lift: -.63,
-      tag: "SUPPLY", cat: "PPE", d2: "gloves, workwear and protective equipment" },
+      tag: "SUPPLY", cat: "Plastics", d2: "Plastics, housing and fittings" },
+    { n: "Turkey", ...geo(35, 39), start: .793, side: -1, lift: -.63,
+      tag: "SUPPLY", cat: "PPE", d2: "Gloves, workwear and protective equipment" },
     /* ONE pin, distinguished by colour not size — China is the primary
-       manufacturing base, marked gold instead of pink at the same radius. */
+       manufacturing base, marked out in GREEN (pin and card accents). */
     { n: "China", ...geo(114, 34), start: .681, side: 1, lift: -.56,
-      tag: "PRIMARY", cat: "Manufacturing & export",
-      d2: "JinDun, the world's №3 extinguisher maker", distinct: true },
+      tag: "PRIMARY", cat: "Primary Region of Manufacturing",
+      d2: "30 Plus Suppliers", distinct: true },
     { n: "Pakistan", ...geo(74.53, 32.49), start: .713, side: 1, lift: -.54,
-      tag: "SUPPLY", cat: "PPE", d2: "gloves and protective textiles" },
+      tag: "SUPPLY", cat: "PPE", d2: "Gloves and protective textiles" },
     { n: "Taiwan", ...geo(121, 23.8), start: .745, side: 1, lift: -.40,
-      tag: "SUPPLY", cat: "PPE & components", d2: "precision technical safety equipment" },
+      tag: "SUPPLY", cat: "PPE", d2: "Precision technical safety equipment" },
     { n: "Malaysia", ...geo(101.7, 3.15), start: .777, side: 1, lift: -.055,
-      tag: "SUPPLY", cat: "PPE & consolidation", d2: "South East Asian export hub" },
+      tag: "SUPPLY", cat: "PPE", d2: "Gloves, workwear and protective equipment" },
   ];
   let GLland = null, GLcloud = null;
   const GTW = 2048, GTH = 1024;
@@ -11680,21 +11702,13 @@ function initSetpieces() {
      The +.30 phase brings the UK/Europe sourcing lanes round to face the
      camera as soon as the night half opens, so the nine territories spread
      across the whole chapter instead of piling up at the very end. */
-  const PLROT = p => {
-    if (p < 0.5) return (p * 2.0 + .994) % 1;   // day half: the pink globe spins as before
-    // night half: glide the sourcing hemisphere to the FRONT over p .50-.66, then
-    // HOLD it there so every supply pin sits still while its card reveals — a
-    // static globe means no pin ever crosses centre, so the reveal never flickers.
-    // The glide is a Hermite curve whose ENTRY slope matches the day spin's
-    // rotation speed exactly (f'(0)·0.456/0.16 = 2 = d(rot)/dp of the day half)
-    // and whose exit slope is 0 — so the globe decelerates continuously into the
-    // hold with no hitch at p=.5 and no jolt at p=.66. The hold value 0.45 is
-    // the rotation that puts ALL NINE real supply countries on the visible
-    // face at once (UK just inside the west limb → Taiwan just inside the east).
-    const t = cl((p - 0.5) / 0.16, 0, 1);
-    const f = 0.7017544 * t + 1.5964912 * t * t - 1.2982456 * t * t * t;
-    return (0.994 + 0.456 * f) % 1;             // 0.994 → 1.45 → (mod 1) 0.45, then holds
-  };
+  // ONE steady spin, day into night — the globe NEVER parks. At 2 revolutions
+  // per scrub the night half (p .5→1) is exactly one full revolution, so every
+  // supply country carries across the visible face exactly once, and its
+  // pin/tether/card trio lights up only while the territory itself is in view
+  // (see `face` below). Velocity-continuous by construction: same rate as the
+  // day half, no hitch at p=.5.
+  const PLROT = p => (p * 2.0 + .994) % 1;
   let PLover;
   function drawPlanet(ctx, p, w, h) {
     if (!GLland) makeGlobeTex();
@@ -11766,26 +11780,29 @@ function initSetpieces() {
       const rot2 = PLROT(p);
       const ct = Math.cos(-.16), st2 = Math.sin(-.16);
       const routes = PL_PINS.map(pin => {
-        const leadRaw = sm(ph2(p, pin.start, pin.start + .06));   // quick rise; starts stagger 0.016 apart
-        const leadP = leadRaw * pvBase;                            // alpha: fades out only at dawn
-        // pin, tether and card share ONE clock — they manifest together in
-        // every frame, never pin-first-box-later
+        // No scroll ladder any more: GEOGRAPHY is the clock. The trio's whole
+        // alpha comes from `face` — it rises as the territory carries onto the
+        // visible face and dies as it carries off — so pin, tether and card
+        // appear and vanish together, only ever while the country is in view.
+        const leadP = pvBase;                     // dawn is the only other fade
         const boxP = leadP;
         const du = ((pin.u - rot2) % 1 + 1) % 1;
-        const rawCountryFace = sm(cl((du - .005) / .045, 0, 1)) * (1 - sm(cl((du - .38) / .04, 0, 1)));
-        // A rear-hemisphere route is absent, not merely translucent. This
-        // hard floor removes the ghost card/tether (especially China) while
-        // preserving the opening frame on the bright white rim.
-        const countryFace = rawCountryFace < .25 ? 0 : rawCountryFace;
-        // At the first visible frame settle=0, so the map-pin is on the white
-        // circumference. It then hands off quickly to the live country point.
-        const settle = sm(cl((leadRaw - .02) / .16, 0, 1));   // from leadRaw, so the dawn fade never un-settles the pin
-        const face = countryFace === 0 && settle > .48 ? 0 : lp(1, countryFace, settle);
+        // smooth 0→1→0 across the transit — no hard floor: with the globe
+        // spinning, a floor would POP the trio in at 25% instead of fading it.
+        // The window is the CENTRAL BAND of the disc (du .04–.32, full .09–.27),
+        // not the whole face: each trio lives only while its country is well in
+        // view, so the reveal is a rolling parade of 3–6 cards, never all nine.
+        const countryFace = sm(cl((du - .04) / .05, 0, 1)) * (1 - sm(cl((du - .27) / .05, 0, 1)));
+        // settle is pinned to 1: the pin sits DIRECTLY ON its country every
+        // frame — as the globe turns, the pin RIDES the territory across the
+        // face, and pin, tether and card live on the one shared face clock.
+        const settle = 1;
+        const face = countryFace;
         const bw = 252, bh = 64;   // three rows now: name+pill, category, detail
         const sx = pin.side < 0 ? cx - R * 1.58 : cx + R * 1.58;
         let bx = pin.side < 0 ? sx - bw : sx;
         bx = Math.max(10, Math.min(w - bw - 10, bx));
-        const rise = (1 - boxP) * 16;                     // card manifests upward after its lead
+        const rise = (1 - countryFace) * 16;              // card slides up as its country carries into view
         // the pin's landed screen position (same maths as Pass 1), so the
         // cards can be re-slotted to match it just below. rim reduces to
         // lift*R / side*sqrt(1-lift^2)*R since the rim angle is asin(lift)
@@ -11919,8 +11936,10 @@ function initSetpieces() {
         if (pin.extra && settle > .5) {
           pin.extra.forEach(e => {
             const duE = ((e.u - rot2) % 1 + 1) % 1;
-            const faceE = sm(cl((duE - .005) / .045, 0, 1)) * (1 - sm(cl((duE - .38) / .04, 0, 1)));
-            if (faceE < .25) return;                      // rear hemisphere: absent
+            // same central-band window as the main pins, smooth fade — a port
+            // must never outlive (or pop inside) its own card
+            const faceE = sm(cl((duE - .04) / .05, 0, 1)) * (1 - sm(cl((duE - .27) / .05, 0, 1)));
+            if (faceE < .02) return;                      // rear hemisphere: absent
             const lamE = (duE / .5 - .5) * Math.PI;
             const dyE = e.v * 2 - 1;
             const hwE = Math.sqrt(Math.max(0, 1 - dyE * dyE));
@@ -11940,8 +11959,8 @@ function initSetpieces() {
         const spread = 7;
         // a distinct pin (China, the primary manufacturing base) is GOLD, not
         // pink — same radius, so it stands out without being larger
-        const bodyCol = pin.distinct ? "255,190,60" : "255,61,154";
-        const ringCol = pin.distinct ? "255,224,150" : "255,255,255";
+        const bodyCol = pin.distinct ? "47,224,160" : "255,61,154";
+        const ringCol = pin.distinct ? "170,255,220" : "255,255,255";
 
         fan.forEach((f, fi) => {
           const anchorY = byC + (fi - (fan.length - 1) / 2) * spread;
@@ -11991,8 +12010,11 @@ function initSetpieces() {
         ctx.fill(); ctx.stroke();
         ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
 
+        // per-pin accent: China (distinct) runs GREEN, everyone else pink
+        const acc1 = pin.distinct ? "47,224,160" : "255,61,154";
+        const acc2 = pin.distinct ? "110,240,190" : "255,86,168";
         // row 1 — dot, country, role pill hard right
-        ctx.fillStyle = `rgba(255,61,154,${a2.toFixed(3)})`;
+        ctx.fillStyle = `rgba(${acc1},${a2.toFixed(3)})`;
         ctx.beginPath(); ctx.arc(bx + 15, by + 16.5, 3.2, 0, TAU); ctx.fill();
         ctx.font = "800 12.5px system-ui,'Segoe UI',sans-serif";
         ctx.fillStyle = `rgba(255,255,255,${a2.toFixed(3)})`;
@@ -12000,20 +12022,20 @@ function initSetpieces() {
         ctx.font = "800 8.5px system-ui,'Segoe UI',sans-serif";
         const pillW = ctx.measureText(pin.tag).width + 17;
         const pillX = bx + bw - 13 - pillW, pillY = by + 9;
-        ctx.strokeStyle = `rgba(255,61,154,${(.5 * a2).toFixed(3)})`;
+        ctx.strokeStyle = `rgba(${acc1},${(.5 * a2).toFixed(3)})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(pillX, pillY, pillW, 15, 7.5);
         else ctx.rect(pillX, pillY, pillW, 15);
         ctx.stroke();
-        ctx.fillStyle = `rgba(255,61,154,${(.92 * a2).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${acc1},${(.92 * a2).toFixed(3)})`;
         ctx.fillText(pin.tag, pillX + 8.5, pillY + 10.6);
 
         // row 2 — category, tracked out like every other kicker in the deck
         const track = "letterSpacing" in ctx;
         if (track) ctx.letterSpacing = "1.1px";
         ctx.font = "800 9px system-ui,'Segoe UI',sans-serif";
-        ctx.fillStyle = `rgba(255,86,168,${(.95 * a2).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${acc2},${(.95 * a2).toFixed(3)})`;
         ctx.fillText(pin.cat.toUpperCase(), bx + 15, by + 38);
         if (track) ctx.letterSpacing = "0px";
 
@@ -12320,8 +12342,9 @@ function initSetpieces() {
       gl.addColorStop(1, "rgba(122,92,255,0)");
       ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
     }
-    // the moon leads the descent into launch-night
-    const moonA = sm(ph2(p, .84, .94));
+    // the moon presides over the WHOLE raise transition: up as soon as the
+    // entry dark clears, held until the exit fade covers the scene
+    const moonA = sm(ph2(p, .06, .14));
     if (moonA > .01) {
       const mx = w * .24, my = h * .2;
       const mh2 = ctx.createRadialGradient(mx, my, 0, mx, my, h * .18);

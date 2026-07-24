@@ -6756,7 +6756,16 @@ function initCourier() {
      into the flagship sphere until it fills the frame. The sphere grows ~29x
      underneath the courier, so both the circuit and the ship are sized from
      the face's LIVE rect every frame rather than from constants. */
-  const FOCUS_REVS = 1.75, FOCUS_FLAT = .42;      // ry/rx of the lap ellipse
+  /* 1.25 (not 1.75): the lap must END on the BOTTOM of the ellipse (θ=π/2),
+     where the motion is purely LEFTWARD — straight toward the journey rail in
+     the left gutter. At 1.75 it ended at the TOP-CENTRE after its final quarter
+     swung RIGHTWARD back to centre, so the very next thing — the leftward rail
+     hand-off — reversed it: the courier darted to mid-page and back. That was
+     the "zig to the other side just before the timeline". Ending at the bottom
+     moving left means the lap exit and the rail hand-off are one continuous
+     leftward sweep, no reversal. (The wide right-swing is now a full quarter
+     earlier — clearly part of the orbit, not the hand-off.) */
+  const FOCUS_REVS = 1.25, FOCUS_FLAT = .42;      // ry/rx of the lap ellipse
   const focusTh = q => cl01(q) * T2 * FOCUS_REVS;
   let diveFaceEl = null;
   const diveFace = () => {
@@ -6863,8 +6872,17 @@ function initCourier() {
   };
   const buildSegs = (S0, S1, pT, vh, cloudS0, diveA, diveB) => {
     const segs = [];
-    // the sky — dives out beneath the cloud deck
-    segs.push({ sky: true, s0: cloudS0 - 9, s1: cloudS0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
+    /* the sky — dives out beneath the cloud deck. ONLY when the flight starts
+       at the clouds (no dive lap). When the dive lap exists it starts the
+       flight FROM AN EARLIER scroll (S0 = min(diveA, cloudS0) = diveA), which
+       strands this sky point at cloudS0 in the MIDDLE — between the dive-lap
+       exit (bottom-centre) and the journey rail. That routed the courier on a
+       violent detour UP to the off-screen top-right sky point and back, which
+       the spring overshot into a bottom-left dart: the "stutter/glitch" just
+       before the timeline. With a dive, the dive IS the opening and the sky
+       point must not exist. */
+    if (diveA == null)
+      segs.push({ sky: true, s0: cloudS0 - 9, s1: cloudS0, at: q => ({ x: innerWidth * .82, y: vh * (-.14 + q * .1) }) });
     /* the blue planet — one lap of the flagship sphere while the dive zooms
        it up to fill the frame. The circuit is capped at a fraction of the
        viewport: once the sphere is larger than the screen a true 1.5R orbit
@@ -7169,8 +7187,16 @@ function initCourier() {
             b2];
         } else if (toOrbit) {
           const iw = innerWidth, ih = innerHeight;
-          const rightLane = Math.min(iw - 58, iw * .93);
-          const shoulderX = Math.min(rightLane, Math.max(a2.x + 105, iw * .82));
+          /* HUG the content, don't swing to the far gutter and back. The
+             growth summit (~.72iw) and the globe insertion (~.73iw) are both
+             right-of-centre, so the old .93iw lane sent the courier ~400px out
+             to the extreme right and then all the way back to the globe — a
+             wide, looping detour whose return read as a late, delayed swoop.
+             .845iw clears the centred content column by a comfortable margin
+             with roughly half the excursion, so the descent flows into the
+             globe promptly instead of curving back at the last moment. */
+          const rightLane = Math.min(iw - 58, iw * .845);
+          const shoulderX = Math.min(rightLane, Math.max(a2.x + 70, iw * .80));
           const approachX = Math.min(rightLane - 24, Math.max(b2.x + 120, iw * .76));
           const approachY = Math.min(ih * .84, Math.max(b2.y - 84, ih * .66));
           // Carry the graph's summit tangent to the right, settle into one
@@ -7523,15 +7549,18 @@ function initCourier() {
           inRaisePrev = L0.rq != null;
           let P = L0.p;
           /* TARGET-CONTINUITY BRIDGE — legs hand the sampler over by
-             TELEPORTING the target point (dive lap → rail join, ride summit →
-             next corridor, …). The ship must never see a teleport: any raw
-             target step over 150px in ONE frame latches a ~0.65s eased bridge
-             from the old target to the (live) new one, so every hand-off is
-             FLOWN as a continuous curve instead of a spring-dash dart. The
-             150px gate never triggers on legitimate in-leg motion (the
-             fastest measured in-leg target speed is ~50px/frame). */
-          if (snap) { brT = 1; prevTgX = null; }
-          if (prevTgX != null && !snap && brT >= 1
+             TELEPORTING the target point (overlapping-seg boundaries, pad
+             capture, …). The ship must never see a teleport: any raw target
+             step over 150px in ONE frame latches a ~0.65s eased bridge from
+             the old target to the (live) new one, so every hand-off is FLOWN
+             as a continuous curve instead of a spring-dash dart.
+             GATED OFF inside the orbital laps: a lap's arc legitimately moves
+             far more than 150px/frame on a fast flick, and a lap ALWAYS exits
+             through an inter-landmark blend (position-continuous), so it never
+             needs — and must never false-trigger — the bridge. */
+          const inLap = L0.fq != null || L0.oq != null;
+          if (snap || inLap) { brT = 1; prevTgX = null; }
+          if (prevTgX != null && !snap && !inLap && brT >= 1
               && Math.hypot(P.x - prevTgX, P.y - prevTgY) > 150) {
             brT = 0; brX = prevTgX; brY = prevTgY;
           }
@@ -7714,8 +7743,15 @@ function initCourier() {
           const bank = bankS;
           /* Measured from the CLOUD hand-off, not from pd: S0 now reaches
              back to the dive, so a pd-relative ramp would stretch over
-             thousands of pixels. */
-          alpha = smt(cl01((yEffNow - cloudS0) / (vh * .45)));
+             thousands of pixels. When a dive lap precedes this, the courier
+             fades OUT at the lap's end (sphere engulfs the frame) and, with
+             the fade tied to the far cloud-exit, stayed INVISIBLE for ~920px
+             afterwards — long enough to read as the rocket vanishing. Bring
+             the fade-in forward to just after the lap (the sphere has cleared
+             by ~.4vh past diveB), so the courier re-emerges promptly and the
+             flight reads as continuous instead of a disappear/reappear. */
+          const fadeS0 = (diveB != null) ? Math.min(cloudS0, diveB + vh * .4) : cloudS0;
+          alpha = smt(cl01((yEffNow - fadeS0) / (vh * .45)));
           if (L0.fq != null) {
             // the lap arrives and leaves under its own power — in as the
             // sphere grows big enough to circle, out as it engulfs the frame

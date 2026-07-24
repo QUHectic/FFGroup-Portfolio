@@ -1124,10 +1124,12 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
 #liftoff{position:relative;padding:0;min-height:100vh;display:flex;align-items:flex-end;background:linear-gradient(180deg,#07070d 0%,#0a111b 42%,#0b1512 76%,#080e0a 100%);overflow:hidden;}
 /* full-screen cinema: the scene runs edge to edge; the heading floats on the
    starfield and mission control floats on the pad apron */
-#liftoff .lo-head{position:absolute;left:50%;transform:translateX(-50%);top:clamp(14px,3.2vh,44px);width:min(92%,880px);z-index:6;text-align:center;pointer-events:none;}
+/* the mission-control header sits LEFT, its hero message tucked just below
+   the title in a smaller voice — the pad scene keeps the rest of the frame */
+#liftoff .lo-head{position:absolute;left:clamp(18px,4.5vw,72px);transform:none;top:clamp(14px,3.2vh,44px);width:min(92%,760px);z-index:6;text-align:left;pointer-events:none;}
 #liftoff .lo-head .sec-head{margin-bottom:0;}
-#liftoff .lo-head h2{margin-bottom:6px;}
-#liftoff .lo-head p{max-width:64ch;margin-inline:auto;}
+#liftoff .lo-head h2{margin-bottom:8px;}
+#liftoff .lo-head p{max-width:52ch;margin-inline:0;margin-top:2px;font-size:.9rem;line-height:1.55;color:var(--ink-dim);}
 /* the scene is CAPPED so heading + full scene + mission control all share
    one viewport at the final scroll — nothing of the launch night is ever
    cut off again */
@@ -1273,8 +1275,10 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
   backdrop-filter:blur(10px);
 }
 .lo-status{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
-/* closing statement — the narrative sign-off, pinned to the LEFT of the pad */
-#liftoff .lo-closing{position:absolute;left:clamp(16px,2.6vw,48px);top:clamp(96px,17vh,196px);z-index:6;
+/* closing statement — the narrative sign-off, pinned to the LEFT of the pad,
+   clearly BELOW the left-pinned mission-control header (title + hero message
+   end ~300px down at worst): the two left blocks stack, they never overlap */
+#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(330px,44vh,480px);z-index:6;
   max-width:min(42vw,470px);margin:0;text-align:left;pointer-events:none;
   font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:600;letter-spacing:-.01em;color:var(--ink-dim);}
 #liftoff .lo-closing b{color:var(--ink);font-weight:800;}
@@ -2243,6 +2247,9 @@ rect.bar:hover{filter:brightness(1.12);}
    are not online storefronts. A dashed chip, a hatched bar/donut segment and
    a "direct" tag on every name keep the two kinds of revenue apart wherever
    they are listed together. */
+/* hard row break in a flex-wrap chip row: the two direct chips always start
+   their own second line together, under the online marketplaces */
+.chip-brk{flex-basis:100%;height:0;margin:0;padding:0;border:0;}
 .chip-direct{border-style:dashed;}
 .chip-direct .cdot{
   background:repeating-linear-gradient(45deg,var(--c,var(--blue)) 0 3px,rgba(255,255,255,.55) 3px 5px);
@@ -8898,16 +8905,24 @@ function renderSystem() {
           const nums = dAttr.match(/-?[\d.]+/g);
           if (!nums || nums.length < 4) return;
           const ex = +nums[nums.length - 2], ey = +nums[nums.length - 1];
-          /* Move ONLY the endpoint, out along the ray from the planet's centre
-             through where the lane already ended, so it comes to rest on the
-             limb. The control points are left exactly as authored, which is
-             what gives each lane its own approach angle: form and storm keep
-             the lift of arcUp, the two stations keep their long sweeps. An
-             earlier pass also rewrote the second control point to sit radially
-             behind the landing, forcing every arrival square-on to the sphere;
-             that flattened the curves into the planet and has been dropped. */
-          let ux = ex - t.cx, uy = ey - t.cy;
-          const ul = Math.hypot(ux, uy);
+          /* Move ONLY the endpoint. The landing ray runs from the planet's
+             centre through the curve's LAST CONTROL POINT — the direction the
+             lane is actually travelling as it arrives — so the endpoint comes
+             to rest at the exact clock-position the lane visually points to,
+             and the final segment (control → end) is RADIAL: the head strikes
+             the sphere square-on, dead centre of where the eye expects it.
+             (The old ray through the authored ENDPOINT landed at whatever
+             stale angle the endpoint happened to sit at, so heads slid round
+             the limb away from the lane's own approach line.) Control points
+             are left exactly as authored — each lane keeps its own sweep. */
+          let rxB, ryB;
+          if (/C/i.test(dAttr) && nums.length >= 8) { rxB = +nums[nums.length - 4]; ryB = +nums[nums.length - 3]; }
+          else { rxB = +nums[0]; ryB = +nums[1]; }
+          let ux = rxB - t.cx, uy = ryB - t.cy;
+          let ul = Math.hypot(ux, uy);
+          if (ul < t.r * .6) {   // degenerate control (inside the body): fall back
+            ux = ex - t.cx; uy = ey - t.cy; ul = Math.hypot(ux, uy);
+          }
           if (!(ul > .5)) return;
           ux /= ul; uy /= ul;
           const nx = (t.cx + ux * bite).toFixed(1), ny = (t.cy + uy * bite).toFixed(1);
@@ -10053,7 +10068,9 @@ function renderProjections() {
   // channel chips
   // marketplaces first, then the two direct channels, visually set apart
   const chipOrder = [...P.channels].sort((a, b) => isDirect(a.name) - isDirect(b.name));
-  $("#projChips").innerHTML = chipOrder.map(ch => `
+  // a forced break puts BOTH direct chips on their own second row together
+  $("#projChips").innerHTML = chipOrder.map((ch, ci) => `
+    ${isDirect(ch.name) && ci > 0 && !isDirect(chipOrder[ci - 1].name) ? '<span class="chip-brk"></span>' : ""}
     <button class="chip${isDirect(ch.name) ? " chip-direct" : ""}" data-ch="${ch.name}"
             aria-pressed="true" style="--c:${ch.hex}"
             title="${isDirect(ch.name) ? DIRECT_NOTE : "Online marketplace"}">

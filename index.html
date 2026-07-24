@@ -734,7 +734,9 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 }
 .focus-orb svg{display:block;width:100%;height:100%;overflow:visible;}
 /* phones: the decorative sphere lands square on the intro copy at narrow
-   widths (a dark band behind light text) — the section reads clean without it */
+   widths (a dark band behind light text) — the section reads clean without it.
+   (The full dark-mode adaptation lives AFTER the component rules below, so
+   it wins the cascade.) */
 @media (max-width:900px){.focus-orb{display:none;}}
 /* a soft wash over the body only — the rim stays vivid so the sphere reads,
    while the near-black copy that sits across its middle keeps its contrast */
@@ -908,6 +910,23 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   box-shadow:0 8px 26px rgba(20,58,112,.12),inset 0 1px 0 #fff;
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
   transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out),border-color .25s var(--ease-out);}
+/* MOBILE: the whole handoff goes DARK. The white interlude only makes sense
+   as the cinematic dive's landing pad, which phones never see — on the dark
+   deck it read as a jarring white slab. Text, label and glows adapt; the
+   white dossier card stays lit (a premium plate on black). Placed AFTER every
+   component rule above so it wins the cascade at equal specificity. */
+@media (max-width:900px){
+  .focus-handoff{color:var(--ink);background:#07070d;}
+  .focus-handoff::before{background:#07070d;}
+  .focus-handoff::after{background:radial-gradient(circle,rgba(56,169,255,.12),rgba(56,169,255,0) 62%);}
+  .focus-handoff h2{text-shadow:none;}
+  .focus-handoff .focus-subtitle{color:#aab3cf;text-shadow:none;}
+  .focus-handoff .focus-subtitle b{color:var(--ink);}
+  .focus-handoff .focus-label{background:rgba(18,22,34,.85);border-color:rgba(56,169,255,.45);color:#7cc4ff;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;}
+  .focus-handoff h2 .h2-grad{filter:drop-shadow(0 0 18px rgba(90,140,255,.4));}
+  .focus-summary{box-shadow:0 26px 70px rgba(0,0,0,.65),0 0 54px rgba(56,169,255,.28);}
+  .focus-begin{background:#fff;border-color:rgba(56,169,255,.4);box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(56,169,255,.25);-webkit-backdrop-filter:none;backdrop-filter:none;}
+}
 .focus-begin:hover{transform:translateY(-2px);border-color:rgba(255,61,154,.5);
   box-shadow:0 14px 34px rgba(20,58,112,.2),0 0 24px rgba(255,61,154,.28),inset 0 1px 0 #fff;}
 .focus-begin span.chev{position:relative;display:grid;place-items:center;width:28px;height:28px;flex:none;
@@ -1360,7 +1379,14 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
   .lo-scene{max-width:none;overflow:hidden;margin-top:16px;}
   .lo-scene svg.lo-art{width:240%;max-width:none;margin-left:-102.8%;}
   .lo-slot,#padRocket,.lo-flash,.lo-exhaust{left:50% !important;}
-  #liftoff{min-height:0;display:block;}
+  /* stacked as flex so the narrative reads title-first: MISSION CONTROL /
+     Ready for liftoff, THEN the closing statement, then the pad scene —
+     the DOM keeps .lo-closing first for the desktop overlay layout */
+  #liftoff{min-height:0;display:flex;flex-direction:column;}
+  #liftoff .lo-head{order:1;}
+  #liftoff .lo-closing{order:2;position:static;max-width:none;margin:16px 0 0;padding:0 18px;text-align:left;}
+  #liftoff .lo-scene{order:3;}
+  #liftoff .lo-console{order:4;}
   .lo-console{position:static;transform:none;width:auto;max-width:none;margin-top:16px;padding:0 18px 48px;text-align:center;}
   .lo-console .lo-panel{justify-content:center;}
   .lo-panel{padding:14px 16px;gap:10px;}

@@ -910,11 +910,12 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   box-shadow:0 8px 26px rgba(20,58,112,.12),inset 0 1px 0 #fff;
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
   transition:transform .25s var(--ease-out),box-shadow .25s var(--ease-out),border-color .25s var(--ease-out);}
-/* MOBILE: the whole handoff goes DARK. The white interlude only makes sense
-   as the cinematic dive's landing pad, which phones never see — on the dark
-   deck it read as a jarring white slab. Text, label and glows adapt; the
-   white dossier card stays lit (a premium plate on black). Placed AFTER every
-   component rule above so it wins the cascade at equal specificity. */
+/* MOBILE: the whole handoff goes DARK — including the dossier card. The white
+   interlude only makes sense as the cinematic dive's landing pad, which phones
+   never see; on the dark deck it read as a jarring white slab. Every inner
+   surface and every dark-on-light text colour is inverted here; elements that
+   set NO explicit colour correctly inherit the light section ink. Placed AFTER
+   every component rule above so it wins the cascade at equal specificity. */
 @media (max-width:900px){
   .focus-handoff{color:var(--ink);background:#07070d;}
   .focus-handoff::before{background:#07070d;}
@@ -924,7 +925,31 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   .focus-handoff .focus-subtitle b{color:var(--ink);}
   .focus-handoff .focus-label{background:rgba(18,22,34,.85);border-color:rgba(56,169,255,.45);color:#7cc4ff;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;}
   .focus-handoff h2 .h2-grad{filter:drop-shadow(0 0 18px rgba(90,140,255,.4));}
-  .focus-summary{box-shadow:0 26px 70px rgba(0,0,0,.65),0 0 54px rgba(56,169,255,.28);}
+  /* the dossier card itself, now dark */
+  .focus-summary{
+    border-color:rgba(56,169,255,.34);
+    background:linear-gradient(180deg,#121a2b 0%,#0f1626 60%,#0c1220 100%);
+    box-shadow:0 26px 70px rgba(0,0,0,.65),0 0 0 1px rgba(56,169,255,.12),0 0 54px rgba(56,169,255,.24);
+  }
+  .focus-summary::after{background:
+    radial-gradient(80% 120% at 12% -10%,rgba(120,180,255,.14),rgba(120,180,255,0) 55%),
+    radial-gradient(70% 100% at 100% 0%,rgba(255,79,176,.10),rgba(255,79,176,0) 60%),
+    radial-gradient(90% 120% at 50% 115%,rgba(56,169,255,.18),rgba(56,169,255,0) 62%);}
+  .fs-head{background:linear-gradient(180deg,rgba(30,40,60,.7),rgba(20,28,44,.55));border-bottom-color:rgba(56,169,255,.24);}
+  .fs-mark{color:#dceaff;background:linear-gradient(150deg,#1b2740,#0f1c33);border-color:rgba(56,169,255,.5);
+    box-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 3px rgba(56,169,255,.12),0 0 22px rgba(56,169,255,.3);}
+  .fs-status{color:#4fe0a0;background:rgba(38,200,130,.14);border-color:rgba(38,200,130,.5);}
+  .fs-facts{background:rgba(56,169,255,.22);}
+  .fs-fact,.fs-block{background:linear-gradient(180deg,#131b2c,#0f1626);border-top-color:rgba(56,169,255,.2);}
+  .fs-fact:hover{background:linear-gradient(180deg,#17223a,#111a2e);}
+  .fs-fact span{color:#c4d0e6;}
+  .focus-summary b{color:#7cc4ff;}
+  .fs-chips li{color:#dbe4f5;background:#141d2f;border-color:rgba(56,169,255,.32);box-shadow:0 2px 8px rgba(0,0,0,.35);}
+  .fs-chips li:hover{border-color:rgba(56,169,255,.6);box-shadow:0 8px 20px rgba(0,0,0,.45);}
+  .fs-chips em{color:#8fa0b8;}
+  .fs-chips .live em{color:#4fe0a0;}
+  .fs-chips .soon em{color:#ffbe5a;}
+  /* .fs-ambition is already the dark navy band — left as authored */
   .focus-begin{background:#fff;border-color:rgba(56,169,255,.4);box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(56,169,255,.25);-webkit-backdrop-filter:none;backdrop-filter:none;}
 }
 .focus-begin:hover{transform:translateY(-2px);border-color:rgba(255,61,154,.5);

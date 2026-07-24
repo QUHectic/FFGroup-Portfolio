@@ -1126,7 +1126,7 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
    starfield and mission control floats on the pad apron */
 /* the mission-control header sits LEFT, its hero message tucked just below
    the title in a smaller voice — the pad scene keeps the rest of the frame */
-#liftoff .lo-head{position:absolute;left:clamp(18px,4.5vw,72px);transform:none;top:clamp(14px,3.2vh,44px);width:min(92%,760px);z-index:6;text-align:left;pointer-events:none;}
+#liftoff .lo-head{position:absolute;left:clamp(18px,4.5vw,72px);transform:none;top:clamp(48px,8vh,96px);width:min(92%,760px);z-index:6;text-align:left;pointer-events:none;}
 #liftoff .lo-head .sec-head{margin-bottom:0;}
 #liftoff .lo-head h2{margin-bottom:8px;}
 #liftoff .lo-head p{max-width:52ch;margin-inline:0;margin-top:2px;font-size:.9rem;line-height:1.55;color:var(--ink-dim);}
@@ -1135,8 +1135,12 @@ html.spx #fundStatic{display:none;} /* desktop: the brief rides the cloud climb 
    cut off again */
 .lo-scene{position:relative;margin:0 auto;max-width:none;width:100%;--pads:2.2;}
 .lo-scene svg.lo-art{width:100%;height:auto;display:block;}
-.lo-slot{position:absolute;left:63.68%;top:70.9%;width:0;height:0;}
-#padRocket{position:absolute;left:63.68%;top:70.9%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
+/* 79.7%: the rocket's nozzle rests ON the pad disc (was 70.9% — hovering
+   ~85px in the air; measured seat = nozzle at the ellipse's centre line).
+   The slot and the pad rocket move as one so the courier's touchdown target
+   stays exactly where the parked rocket sits. */
+.lo-slot{position:absolute;left:63.68%;top:79.7%;width:0;height:0;}
+#padRocket{position:absolute;left:63.68%;top:79.7%;width:0;height:0;transform:rotate(-90deg) scale(var(--pads,2.2));opacity:1;}
 html.spx.has-courier #padRocket{opacity:0;transition:opacity .35s var(--ease-out);}
 html.spx.has-courier #liftoff.docked #padRocket{opacity:1;}
 /* BOOSTER MANIFEST — after touchdown the pad bird solidifies first, then the

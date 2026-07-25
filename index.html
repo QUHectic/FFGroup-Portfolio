@@ -4104,6 +4104,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
             <linearGradient id="stmLgB" gradientUnits="userSpaceOnUse" x1="195" y1="132" x2="195" y2="234"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/></linearGradient>
             <linearGradient id="stmLgO" gradientUnits="userSpaceOnUse" x1="240" y1="100" x2="316" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+            <linearGradient id="stmLgD1" gradientUnits="userSpaceOnUse" x1="168" y1="122" x2="128" y2="430"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#d7b35f"/></linearGradient>
+            <linearGradient id="stmLgD2" gradientUnits="userSpaceOnUse" x1="222" y1="122" x2="262" y2="430"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/></linearGradient>
           </defs>
           <g fill="#fff" aria-hidden="true">
             <circle cx="28" cy="34" r="1.1" opacity=".5"/><circle cx="88" cy="12" r=".9" opacity=".4"/><circle cx="146" cy="52" r="1" opacity=".45"/>
@@ -4122,15 +4124,16 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <!-- future ventures descend from the operating shell -->
-          <path d="M128 412 L128 438" fill="none" stroke="#d7b35f" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
-          <path d="M262 412 L262 438" fill="none" stroke="#a487df" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
+          <!-- future lanes: Holdings out to both long-term worlds, arrowing
+               onto their crowns exactly like the operating trio's lanes -->
+          <path d="M168.6 121.7 C 135 190, 116 300, 127 426" fill="none" stroke="url(#stmLgD1)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M221.4 121.7 C 255 190, 274 300, 263 427" fill="none" stroke="url(#stmLgD2)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <!-- selection halos -->
           <circle class="stm-ring" data-ring="global" cx="195" cy="276" r="42" fill="none" stroke="#38a9ff" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="form" cx="70" cy="258" r="36" fill="none" stroke="#2fe0a0" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="storm" cx="320" cy="258" r="36" fill="none" stroke="#ff6a3d" stroke-width="1.6"/>
-          <circle class="stm-ring" data-ring="ds1" cx="128" cy="470" r="34" fill="none" stroke="#d7b35f" stroke-width="1.6"/>
-          <circle class="stm-ring" data-ring="ds2" cx="262" cy="470" r="34" fill="none" stroke="#a487df" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds1" cx="128" cy="470" r="42" fill="none" stroke="#d7b35f" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds2" cx="262" cy="470" r="42" fill="none" stroke="#a487df" stroke-width="1.6"/>
           <!-- live art clones land here (initSysMobile) -->
           <g id="stmSun"></g>
           <g id="stmPlForm" data-co="form"></g>
@@ -14916,15 +14919,21 @@ function initSysMobile() {
   mount('.sm-planet[data-key="form"] .mf', "stmPlForm", "translate(70,258) scale(.714)");
   mount('.sm-planet[data-key="fly"] .mf', "stmPlGlobal", "translate(195,276) scale(.75)");
   mount('.sm-planet[data-key="storm"] .mf', "stmPlStorm", "translate(320,258) scale(.833)");
-  mount(".mg-station.fc-destroyer > g", "stmPlDs1", "translate(128,470) scale(.645) translate(-6.3,28.8)");
-  mount(".mg-station.fc-moon > g", "stmPlDs2", "translate(262,470) scale(.615) translate(5.0,28.6)");
+  /* cloneCelestial strips the clone ROOT's transform, and for the stations
+     that root IS the art-scale wrapper — the art therefore arrives at RAW
+     art units, with its body centred near (0,-4.6), not at the map-space
+     offsets the desktop constants describe. These compensations are the
+     MEASURED values that land each body centre exactly on its ring
+     (128,470)/(262,470) — the selection halo sits ON the planet. */
+  mount(".mg-station.fc-destroyer > g", "stmPlDs1", "translate(128,470) scale(.645) translate(0,4.6)");
+  mount(".mg-station.fc-moon > g", "stmPlDs2", "translate(262,470) scale(.615) translate(0,4.7)");
   // detail-card icons: the same art again, tiny
   const ICON = {
     global: ['.sm-planet[data-key="fly"] .mf', "-52 -52 104 104", ""],
     form: ['.sm-planet[data-key="form"] .mf', "-46 -46 92 92", ""],
     storm: ['.sm-planet[data-key="storm"] .mf', "-40 -40 80 80", ""],
-    ds1: [".mg-station.fc-destroyer > g", "-50 -50 100 100", "translate(-6.3,28.8)"],
-    ds2: [".mg-station.fc-moon > g", "-50 -50 100 100", "translate(5.0,28.6)"],
+    ds1: [".mg-station.fc-destroyer > g", "-64 -64 128 128", "translate(0,4.6)"],
+    ds2: [".mg-station.fc-moon > g", "-64 -64 128 128", "translate(0,4.7)"],
   };
   document.querySelectorAll("#stmCards .stm-ico[data-ico]").forEach(slot => {
     if (slot.firstChild) return;

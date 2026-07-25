@@ -409,7 +409,14 @@ p{margin:0 0 1em;}
   background:linear-gradient(92deg,var(--pink) 0%,var(--blue) 55%,var(--mint) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.section-sub{color:var(--ink-dim);font-size:1.04rem;max-width:62ch;}
+.section-sub{
+  color:var(--ink-dim);font-size:1.04rem;max-width:62ch;
+  /* Chromium may defer `pretty` line breaking for distant content, then
+     reflow it as it enters the viewport. These widths are measured by
+     fitSectionSubs(), so keep their wrapping deterministic: otherwise every
+     section below a late reflow moves underneath the scroll-owned courier. */
+  text-wrap:wrap;
+}
 
 /* Screen-reader-only */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
@@ -1232,6 +1239,10 @@ html.spx.has-courier #liftoff.launching #padRocket .lo-boost{opacity:1;transform
 #padRocket svg{position:absolute;left:-78px;top:-35px;width:156px;height:70px;max-width:none;display:block;overflow:visible;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
 /* parked = engines cold: the courier's flight effects stay dark until launch */
 #padRocket .rk-trailline,#padRocket .rk-plume,#padRocket .rk-plume2,#padRocket .rk-nozGlow{opacity:0;transition:opacity .3s ease;}
+/* rkGlow animates opacity and would outrank the cold-engine opacity:0 above
+   (animations beat normal declarations in the cascade) — the parked bird's
+   nozzle pulsed at full glow. Freeze the pulse until ignition. */
+#liftoff:not(.launching) #padRocket .rk-nozGlow{animation:none;}
 #liftoff.launching #padRocket .rk-plume,#liftoff.launching #padRocket .rk-plume2,
 #liftoff.launching #padRocket .rk-nozGlow,#liftoff.launching #padRocket .rk-trailline{opacity:1;}
 #liftoff.launching #padRocket{opacity:1;transition:transform 2.6s cubic-bezier(.58,.02,.86,.36),opacity .2s;transform:translateY(-128vh) rotate(-90deg) scale(var(--pads,2.2));}
@@ -1246,6 +1257,7 @@ html.spx.has-courier #liftoff.launching #padRocket .lo-boost{opacity:1;transform
 @keyframes loSepA{0%{transform:none;opacity:1;}14%{transform:translate(-2px,2.5px) rotate(2.5deg);}100%{transform:translate(-64px,40px) rotate(42deg);opacity:0;}}
 @keyframes loSepB{0%{transform:none;opacity:1;}14%{transform:translate(-2px,-2.5px) rotate(-2.5deg);}100%{transform:translate(-64px,-40px) rotate(-42deg);opacity:0;}}
 html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during the ascent */
+html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track flashing over the dive as the burn rewinds it */
 .lo-flash{position:absolute;left:63.68%;top:85.6%;width:0;height:0;opacity:0;transition:opacity .5s var(--ease-out);pointer-events:none;}
 .lo-flash::before{content:"";position:absolute;left:-190px;top:-60px;width:380px;height:150px;background:radial-gradient(ellipse at center,rgba(255,214,150,.85),rgba(255,120,60,.35) 45%,transparent 72%);filter:blur(6px);}
 #liftoff.launching .lo-flash{opacity:1;}
@@ -1346,8 +1358,14 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
    hidden behind the glass */
 .lo-console{position:absolute;left:clamp(16px,2.6vw,48px);bottom:clamp(14px,3.4vh,38px);z-index:6;text-align:left;padding:0;margin:0;max-width:min(46vw,760px);}
 .lo-console .lo-panel{justify-content:flex-start;}
+/* GRID, not wrapping flex: an inline-flex shrink-to-fit box sizes to
+   MAX-CONTENT — every row laid end to end — so the panel reserved the width
+   of chips + button + clock even though the chips take their own row. That
+   was the dead space to the right of the countdown. A two-column grid is
+   exactly as wide as its widest row, so the panel now ends just past the
+   clock. */
 .lo-panel{
-  display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 22px;
+  display:inline-grid;grid-template-columns:auto auto;align-items:center;justify-content:start;gap:14px 22px;
   padding:16px 26px;border-radius:22px;
   background:rgba(10,13,20,.78);border:1px solid rgba(120,160,210,.22);
   box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
@@ -1357,21 +1375,20 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
 /* closing statement — the narrative sign-off, pinned to the LEFT of the pad,
    clearly BELOW the left-pinned mission-control header (title + hero message
    end ~300px down at worst): the two left blocks stack, they never overlap */
-#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(330px,44vh,480px);z-index:6;
+#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(272px,36vh,410px);z-index:6;
   max-width:min(42vw,470px);margin:0;text-align:left;pointer-events:none;
-  font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:600;letter-spacing:-.01em;color:var(--ink-dim);}
+  font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
 #liftoff .lo-closing b{color:var(--ink);font-weight:800;}
 @media (max-width:900px){
   #liftoff .lo-closing{position:static;max-width:none;margin:14px auto 0;text-align:center;padding:0 18px;}
 }
 .lo-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid rgba(120,160,210,.28);border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.12em;color:rgba(210,226,248,.85);}
 .lo-chip i{width:7px;height:7px;border-radius:50%;background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
-/* the countdown is the console's own bottom row — a big mission-control
-   readout under the chips and the button, spanning the panel */
-.lo-panel .lo-status{order:1;flex-basis:100%;justify-content:flex-start;}
+/* the countdown reads on the button's OWN line, immediately to its right —
+   one compact console row, no divider and no empty gutter beneath it */
+.lo-panel .lo-status{order:1;grid-column:1 / -1;justify-content:flex-start;}
 .lo-panel .liftoff-btn{order:2;}
-.lo-count{order:3;flex-basis:100%;text-align:center;margin-top:4px;padding-top:12px;
-  border-top:1px solid rgba(120,160,210,.18);
+.lo-count{order:3;text-align:left;line-height:1;white-space:nowrap;
   font-family:"Orbitron",system-ui,sans-serif;font-size:1.7rem;font-weight:700;letter-spacing:.18em;color:#dfe9fb;min-width:0;}
 .lo-count b{color:#ff9dce;}
 #liftoff.launching .lo-chip i{background:#f6c66b;box-shadow:0 0 8px #f6c66b;}
@@ -1466,8 +1483,11 @@ html.launching .ff-courier{opacity:0 !important;} /* one rocket at a time during
   to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) translateX(0) scale(1);}
 }
 @keyframes headIn{
-  from{opacity:0;transform:translateY(34px);letter-spacing:.03em;}
-  to{opacity:1;transform:none;letter-spacing:normal;}
+  /* Never animate an inherited metric such as letter-spacing here. It made
+     distant subtitles wrap to an extra line, then collapse as they entered
+     view — shifting every downstream courier waypoint mid-flight. */
+  from{opacity:0;transform:translateY(34px);}
+  to{opacity:1;transform:none;}
 }
 .blobs{position:absolute;inset:0;pointer-events:none;z-index:0;}
 .blob{
@@ -1697,6 +1717,209 @@ section.tint{background:var(--bg-soft);}
 .st-future .st-fd{margin:6px 0 0;font-size:.7rem;line-height:1.45;color:var(--ink-dim);}
 .st-note{margin:12px 0 0;text-align:center;color:var(--ink-faint);font-size:.68rem;font-style:italic;}
 @media (max-width:380px){.st-future{grid-template-columns:1fr;}}
+
+/* ---- PHONE ORBITAL MAP (stm-*) — the mock made real: the map's own cloned
+   planets stacked vertically, licence lanes arrowing from Holdings to each
+   world, tappable planets, and a detail card that follows the selection. */
+@media (max-width:900px){section#system{background:#07070d;}}
+.sys-tree .st-head h2{font-size:clamp(1.42rem,6.4vw,2rem);}
+.stm-stage{position:relative;max-width:460px;margin:6px auto 0;}
+.stm-stage::after{content:"";display:block;padding-top:calc(620 / 390 * 100%);}
+.stm-art{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.stm-art [data-co]{cursor:pointer;}
+.stm-ring{opacity:0;transition:opacity .3s var(--ease-out);filter:drop-shadow(0 0 6px currentColor);pointer-events:none;}
+.stm-stage[data-sel="global"] .stm-ring[data-ring="global"],
+.stm-stage[data-sel="form"] .stm-ring[data-ring="form"],
+.stm-stage[data-sel="storm"] .stm-ring[data-ring="storm"],
+.stm-stage[data-sel="ds1"] .stm-ring[data-ring="ds1"],
+.stm-stage[data-sel="ds2"] .stm-ring[data-ring="ds2"]{opacity:.6;}
+.stm-hold{position:absolute;left:50%;top:21.6%;transform:translateX(-50%);width:max-content;max-width:88%;
+  text-align:center;pointer-events:none;}
+.stm-holdtag{display:inline-block;padding:3px 12px;border:1px solid rgba(255,61,154,.55);border-radius:99px;
+  background:rgba(10,13,20,.85);color:var(--pink);font-size:.56rem;font-weight:900;letter-spacing:.17em;text-transform:uppercase;}
+.stm-hold b{display:block;margin:7px auto 0;padding:7px 16px;width:max-content;max-width:100%;
+  border:1px solid rgba(255,255,255,.22);border-radius:12px;background:rgba(12,14,22,.88);
+  font-size:.82rem;letter-spacing:-.01em;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.stm-chips{display:flex;justify-content:center;gap:5px;margin-top:7px;}
+.stm-chips span{padding:3px 9px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(12,14,22,.82);
+  font-size:.54rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);}
+.stm-pl{position:absolute;transform:translateX(-50%);width:max-content;max-width:150px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;margin:0;
+  background:none;border:0;text-align:center;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent;}
+.stm-pl b{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border:1px solid color-mix(in srgb,var(--c) 75%,transparent);
+  border-radius:99px;background:rgba(10,13,20,.88);color:#fff;font-size:.6rem;font-weight:800;letter-spacing:-.01em;
+  white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4);}
+.stm-pl b i{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 7px var(--c);flex:none;}
+.stm-live{padding:2px 6px;border-radius:99px;background:color-mix(in srgb,var(--c) 24%,transparent);
+  border:1px solid var(--c);color:var(--c);font-size:.47rem;font-weight:900;font-style:normal;letter-spacing:.1em;text-transform:uppercase;}
+.stm-pill{padding:2px 8px;border:1px solid var(--c);border-radius:99px;color:var(--c);
+  font-size:.5rem;font-weight:900;font-style:normal;letter-spacing:.12em;text-transform:uppercase;background:rgba(10,13,20,.8);}
+.stm-pl > span{color:var(--c);font-size:.52rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;line-height:1.35;white-space:nowrap;}
+/* the side stacks HUG the screen edges (their planets sit at the flanks, and
+   centring their labels clipped the pills off-stage), while Global's stack
+   drops onto its own full row beneath them — three stacks, zero collisions,
+   audited at 360/390/414px. */
+.stm-pl-form{--c:#2fe0a0;left:2px;transform:none;align-items:flex-start;text-align:left;top:47.8%;}
+.stm-pl-global{--c:#38a9ff;left:50%;top:59.8%;}
+.stm-pl-storm{--c:#ff6a3d;left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;top:47.8%;}
+.stm-pl-ds1{--c:#d7b35f;left:31.5%;top:81.4%;}
+.stm-pl-ds2{--c:#a487df;left:68.5%;top:81.4%;}
+/* compact phones: smaller pills, wrapping captions, and the Global row
+   drops further so the taller wrapped side stacks still clear it */
+@media (max-width:374px){
+  .stm-pl > span{white-space:normal;}
+  .stm-pl b{font-size:.55rem;padding:3px 7px;}
+  .stm-pill{font-size:.46rem;}
+  .stm-live{font-size:.44rem;}
+  .stm-pl-global{top:63.5%;}
+  .stm-pl-ds1{left:2px;transform:none;align-items:flex-start;text-align:left;}
+  .stm-pl-ds2{left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;}
+}
+.stm-pl:focus-visible b{outline:2px solid var(--c);outline-offset:2px;}
+.stm-details{display:flex;flex-direction:column;align-items:center;gap:2px;margin:10px auto 0;padding:8px 18px;
+  background:none;border:0;color:var(--ink-faint);font-size:.6rem;font-weight:900;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;}
+.stm-chev{width:11px;height:11px;position:relative;}
+.stm-chev::before,.stm-chev::after{content:"";position:absolute;left:0;width:8px;height:8px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .3s var(--ease-out);}
+.stm-chev::after{top:5px;}
+.stm-details[aria-expanded="false"] .stm-chev::before,
+.stm-details[aria-expanded="false"] .stm-chev::after{transform:rotate(-135deg);}
+.stm-cards{display:none;}
+.stm-cards.open{display:block;}
+.stm-card{display:none;position:relative;margin-top:10px;padding:15px 15px 14px;border-radius:18px;
+  border:1px solid color-mix(in srgb,var(--c) 45%,transparent);background:rgba(12,14,22,.92);
+  box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 32px -10px var(--c);}
+.stm-card.on{display:block;animation:stmCardIn .35s var(--ease-out);}
+@keyframes stmCardIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.stm-ch{display:flex;align-items:center;gap:11px;}
+.stm-ico{flex:none;width:46px;height:46px;}
+.stm-ico svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.stm-id{flex:1;min-width:0;}
+.stm-id b{display:block;color:#fff;font-size:.95rem;letter-spacing:-.015em;}
+.stm-id i{display:block;margin-top:2px;color:var(--c);font-size:.6rem;font-weight:900;font-style:normal;letter-spacing:.12em;text-transform:uppercase;}
+.stm-status{flex:none;padding:3px 10px;border:1px solid var(--c);border-radius:99px;color:var(--c);
+  font-size:.55rem;font-weight:900;font-style:normal;letter-spacing:.14em;text-transform:uppercase;}
+.stm-card > p{margin:11px 0 0;color:var(--ink-dim);font-size:.8rem;line-height:1.55;}
+.stm-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.stm-cols > div{padding:10px 11px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.035);}
+.stm-cols b{display:block;color:var(--c);font-size:.56rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase;}
+.stm-cols span{display:block;margin-top:4px;color:var(--ink-dim);font-size:.72rem;line-height:1.45;}
+.stm-rows{margin-top:8px;}
+.stm-rows > div{padding:10px 2px 9px;border-top:1px solid rgba(255,255,255,.09);}
+.stm-rows > div:first-child{border-top:0;}
+.stm-rows b{display:block;color:#fff;font-size:.82rem;letter-spacing:-.01em;}
+.stm-rows i{display:block;margin-top:2px;color:var(--c);font-size:.56rem;font-weight:900;font-style:normal;letter-spacing:.12em;text-transform:uppercase;}
+.stm-rows span{display:block;margin-top:4px;color:var(--ink-dim);font-size:.74rem;line-height:1.5;}
+.stm-cta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:11px 14px;
+  border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(255,255,255,.04);
+  color:#fff;font-size:.74rem;font-weight:700;text-decoration:none;transition:border-color .25s,box-shadow .25s;}
+.stm-cta span{color:var(--c);font-size:1rem;line-height:1;}
+.stm-cta:hover,.stm-cta:focus-visible{border-color:var(--c);box-shadow:0 0 18px -6px var(--c);outline:none;}
+@media (max-width:380px){.stm-cols{grid-template-columns:1fr;}.stm-pl{max-width:128px;}}
+
+/* ---- PHONE STAFF MATRIX (tm-*) — the team mock made real: filter chips in
+   a two-column grid, a how-to card, the MD as a glowing hub with one
+   coloured satellite per division, and per-division accordion rosters with
+   inline person detail. Desktop keeps its spider/matrix views untouched. */
+#teamMobile{display:none;}
+@media (max-width:900px){
+  #teamMobile{display:block;}
+  /* the mock owns the phone layout: reorder the wrap, park the desktop views */
+  #team .wrap{display:flex;flex-direction:column;}
+  #team .team-intro{display:contents;}
+  #team .team-intro .sec-head{order:0;}
+  #team #teamFilters{order:1;}
+  #team #teamMobile{order:2;}
+  #team .head-stats{order:3;margin-top:26px;}
+  #team .team-bar{order:4;}
+  #team .team-intro .team-hero{order:5;margin-top:22px;}
+  #team #orgChart,#team #personDetail,#team .team-bar .seg,#team .sec-head .section-sub{display:none !important;}
+  #team .team-bar{justify-content:center;}
+  #team .pipeline-cta{width:100%;justify-content:center;}
+  /* chips: the mock's two-column pill grid */
+  #team #teamFilters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+  #team #teamFilters .chip{display:flex;align-items:center;gap:9px;width:100%;justify-content:flex-start;
+    padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);
+    font-size:.78rem;font-weight:700;line-height:1.2;text-align:left;}
+  #team #teamFilters .chip .cdot{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
+  #team #teamFilters .chip[aria-pressed="true"]{background:#fff;border-color:#fff;color:#0b0d14;}
+  #team #teamFilters .chip[aria-pressed="true"] .cdot{background:#0b0d14;box-shadow:none;}
+}
+.tm-guide{margin-top:16px;padding:15px 16px 14px;border:1px solid rgba(255,255,255,.14);border-radius:16px;
+  background:rgba(255,255,255,.03);}
+.tm-guide b.h{display:block;text-align:center;margin-bottom:11px;color:var(--ink-faint);
+  font-size:.62rem;font-weight:900;letter-spacing:.3em;text-transform:uppercase;}
+.tm-guide .row{display:flex;align-items:center;gap:11px;padding:5px 0;color:var(--ink-dim);font-size:.8rem;}
+.tm-guide .row svg{flex:none;width:18px;height:18px;}
+.tm-guide .row b{color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px;}
+.tm-guide .cwheel{flex:none;width:16px;height:16px;border-radius:50%;
+  background:conic-gradient(#ff3d9a,#f6c66b,#2fe0a0,#38a9ff,#a78bfa,#ff3d9a);}
+.tm-hub{position:relative;max-width:430px;margin:10px auto 0;}
+.tm-hub::after{content:"";display:block;padding-top:calc(340 / 390 * 100%);}
+.tm-hub svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.tm-hubc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44.2%;aspect-ratio:1;
+  border-radius:50%;border:2px solid var(--pink);cursor:pointer;font:inherit;
+  background:radial-gradient(circle at 38% 30%,rgba(255,61,154,.20),rgba(12,14,22,.94) 70%);
+  box-shadow:0 0 34px rgba(255,61,154,.4),inset 0 0 26px rgba(255,61,154,.14);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px;
+  -webkit-tap-highlight-color:transparent;}
+.tm-hubc b{color:#fff;font-size:.92rem;letter-spacing:-.02em;line-height:1.15;}
+.tm-hubc span{color:var(--ink-dim);font-size:.62rem;}
+.tm-hubc i{margin-top:2px;color:var(--ink-faint);font-size:.5rem;font-weight:900;font-style:normal;letter-spacing:.34em;text-transform:uppercase;}
+.tm-sat{position:absolute;transform:translate(-50%,-50%);width:23.6%;aspect-ratio:1;border-radius:50%;
+  border:1.6px solid var(--c);cursor:pointer;font:inherit;
+  background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--c) 22%,transparent),rgba(12,14,22,.92) 72%);
+  box-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;
+  color:#fff;transition:opacity .25s var(--ease-out),box-shadow .25s var(--ease-out);
+  -webkit-tap-highlight-color:transparent;}
+.tm-sat svg{width:15px;height:15px;color:var(--c);}
+.tm-sat span{font-size:.5rem;font-weight:700;line-height:1.2;text-align:center;}
+.tm-hub.filtered .tm-sat:not(.hot){opacity:.32;}
+.tm-sat.hot{box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent);}
+.tm-hub.filtered.dirsel .tm-sat{opacity:.32;}
+.tm-divs{margin-top:16px;display:flex;flex-direction:column;gap:11px;}
+.tm-div{border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:15px;
+  background:rgba(12,14,22,.8);overflow:hidden;box-shadow:0 0 22px -8px var(--c);}
+.tm-div.away{display:none;}
+.tm-dhead{display:flex;align-items:center;gap:10px;width:100%;padding:14px 15px;background:none;border:0;
+  color:#fff;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.tm-dhead i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);flex:none;}
+.tm-dhead b{flex:1;min-width:0;text-align:left;font-size:.9rem;letter-spacing:-.01em;}
+.tm-dhead .n{flex:none;min-width:26px;padding:2px 8px;border:1px solid color-mix(in srgb,var(--c) 65%,transparent);
+  border-radius:99px;color:var(--ink-dim);font-size:.66rem;font-weight:800;text-align:center;}
+.tm-dhead .ch{flex:none;width:9px;height:9px;border-right:2px solid var(--ink-faint);border-bottom:2px solid var(--ink-faint);
+  transform:rotate(45deg);transition:transform .25s var(--ease-out);margin-top:-3px;}
+.tm-div.open .tm-dhead .ch{transform:rotate(-135deg);margin-top:3px;}
+.tm-dbody{display:none;border-top:1px solid rgba(255,255,255,.08);}
+.tm-div.open .tm-dbody{display:block;}
+.tm-person{display:flex;align-items:center;gap:10px;width:100%;padding:11px 15px;background:none;border:0;
+  border-top:1px solid rgba(255,255,255,.06);color:#fff;font:inherit;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;}
+.tm-person:first-child{border-top:0;}
+.tm-person .av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--c) 18%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
+  color:var(--c);font-size:.6rem;font-weight:800;}
+.tm-person b{flex:none;max-width:38%;font-size:.8rem;letter-spacing:-.01em;line-height:1.25;}
+.tm-person .r{flex:1;min-width:0;color:var(--ink-dim);font-size:.72rem;line-height:1.3;}
+.tm-person .t{flex:none;max-width:30%;color:var(--ink-faint);font-size:.64rem;font-weight:700;text-align:right;line-height:1.3;}
+.tm-person .t.win{color:var(--mint-ink,#2fe0a0);}
+.tm-bio{display:none;padding:2px 15px 14px 55px;}
+.tm-bio.show{display:block;animation:stmCardIn .3s var(--ease-out);}
+.tm-bio p{margin:0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
+.tm-bio .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.tm-bio .pills span{padding:3px 9px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:99px;
+  color:var(--ink-dim);font-size:.6rem;font-weight:800;}
+.tm-bio .pills span.win{border-color:var(--mint-ink,#2fe0a0);color:var(--mint-ink,#2fe0a0);}
+.tm-dir{display:none;margin-top:16px;padding:15px;border:1.6px solid var(--pink);border-radius:16px;
+  background:rgba(12,14,22,.9);box-shadow:0 0 30px -8px var(--pink);}
+.tm-dir.show{display:block;animation:stmCardIn .3s var(--ease-out);}
+.tm-dir .hd{display:flex;align-items:center;gap:11px;}
+.tm-dir .av{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,61,154,.16);border:1.6px solid var(--pink);color:var(--pink);font-size:.8rem;font-weight:800;}
+.tm-dir b{display:block;color:#fff;font-size:.95rem;}
+.tm-dir .rl{display:block;color:var(--pink);font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
+.tm-dir p{margin:10px 0 0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
 
 /* ==========================================================================
    SECTION SEAMS — the deck alternates light and dark chapters, and a hard
@@ -3282,7 +3505,10 @@ html:not(.intro-lock) main{transition:transform .8s var(--ease-out),opacity .8s 
 .rk-trailline{fill:none;stroke-width:1.6;stroke-linecap:round;opacity:.8;}
 .rk-strobe{fill:#fff;animation:rkStrobe 1.6s steps(2,start) infinite;}
 @keyframes rkFlick{from{transform:scaleX(1);}to{transform:scaleX(.7);}}
-@keyframes rkGlow{from{opacity:.5;}to{opacity:1;}}
+/* the pulse rides --nozburn so the courier can dim the glow to engine cut-off
+   WITHOUT pausing/restarting the animation (a restart re-enters at the 50%
+   keyframe — a visible pop on every scrub across the cut-off point) */
+@keyframes rkGlow{from{opacity:calc(.5*var(--nozburn,1));}to{opacity:calc(1*var(--nozburn,1));}}
 @keyframes rkStrobe{50%{opacity:.12;}}
 @media (prefers-reduced-motion:reduce){.rk-plume,.rk-plume2,.rk-nozGlow,.rk-strobe,.st-strobe,.st-spin,.fc-float,.fc-station-float,.fc-engine,.fc-window,.fc-plume,.fc-sweep,.fc-reactor,.fc-debris,.fc2-flow,.fc2-emit,.fc2-weld,.fc2-drone,.fc-bs-thermal,.fc-bs-nav,.fc-beam,.fc-beam-charge,.lo-boost,.lo-boosters{animation:none;}}
 
@@ -3863,66 +4089,151 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap sys-tree" id="sysTree">
       <div class="st-head">
         <span class="kicker">The Freedom System</span>
-        <h2>One group.<br><span class="grad-text">One commercial engine.</span></h2>
+        <h2>One Group. One Commercial Engine.<br><span class="grad-text">Multiple Paths to Growth.</span></h2>
         <p class="section-sub">Freedom Group Holdings sits at the centre, owning the brands, trademarks and IP, and licensing them to each specialist operating company.</p>
       </div>
 
-      <div class="st-parent">
-        <svg class="st-orb st-orb-lg" viewBox="0 0 72 72" aria-hidden="true"><defs>
-          <radialGradient id="stoSun" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ff9dcd"/><stop offset=".45" stop-color="#ff5fae"/><stop offset=".8" stop-color="#ee2288"/><stop offset="1" stop-color="#a90a58"/></radialGradient>
-          <radialGradient id="stoGlobal" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#bfe3ff"/><stop offset=".45" stop-color="#54b4ff"/><stop offset=".8" stop-color="#1173cf"/><stop offset="1" stop-color="#083c74"/></radialGradient>
-          <radialGradient id="stoFac" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#b9ffe4"/><stop offset=".45" stop-color="#4ff0b4"/><stop offset=".8" stop-color="#0f9a68"/><stop offset="1" stop-color="#064430"/></radialGradient>
-          <radialGradient id="stoDist" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ffd2b8"/><stop offset=".45" stop-color="#ff8a55"/><stop offset=".8" stop-color="#d34a17"/><stop offset="1" stop-color="#6e1f06"/></radialGradient>
-          <radialGradient id="stoGold" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#ffe9b3"/><stop offset=".45" stop-color="#e5bd68"/><stop offset=".8" stop-color="#b07a35"/><stop offset="1" stop-color="#5d3a14"/></radialGradient>
-          <radialGradient id="stoVio" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="#e4d8ff"/><stop offset=".45" stop-color="#a988ff"/><stop offset=".8" stop-color="#6f4bd8"/><stop offset="1" stop-color="#2e1d66"/></radialGradient>
-        </defs><circle cx="36" cy="36" r="30" fill="url(#stoSun)"/><ellipse cx="27" cy="24" rx="10" ry="6" fill="rgba(255,255,255,.35)"/></svg>
-        <span class="st-tag">Holding company</span>
-        <b>Freedom Group Holdings Ltd</b>
-        <p>Owner of the group's brands, intellectual property and long term strategic platform.</p>
-        <div class="st-chips"><span>Brands</span><span>IP</span><span>Strategy</span><span>Capital</span></div>
+      <!-- THE PHONE'S OWN ORBITAL MAP — the desktop map's actual celestial
+           cast, recomposed vertically. Every sphere is a live CLONE of the
+           map's art (initSysMobile), so the two views can never drift apart.
+           Tap any planet (or its name) to load its detail card below. -->
+      <div class="stm-stage" id="stmStage" data-sel="global">
+        <svg class="stm-art" viewBox="0 0 390 620" aria-hidden="true">
+          <defs>
+            <marker id="stmArr" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
+            <linearGradient id="stmLgB" gradientUnits="userSpaceOnUse" x1="195" y1="132" x2="195" y2="234"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/></linearGradient>
+            <linearGradient id="stmLgO" gradientUnits="userSpaceOnUse" x1="240" y1="100" x2="316" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+          </defs>
+          <g fill="#fff" aria-hidden="true">
+            <circle cx="28" cy="34" r="1.1" opacity=".5"/><circle cx="88" cy="12" r=".9" opacity=".4"/><circle cx="146" cy="52" r="1" opacity=".45"/>
+            <circle cx="255" cy="20" r="1.2" opacity=".55"/><circle cx="318" cy="48" r=".9" opacity=".4"/><circle cx="366" cy="16" r="1" opacity=".45"/>
+            <circle cx="20" cy="120" r="1" opacity=".4"/><circle cx="362" cy="128" r="1.1" opacity=".5"/><circle cx="42" cy="205" r=".9" opacity=".35"/>
+            <circle cx="352" cy="210" r="1" opacity=".4"/><circle cx="16" cy="300" r="1" opacity=".4"/><circle cx="376" cy="308" r=".9" opacity=".38"/>
+            <circle cx="30" cy="392" r="1.1" opacity=".45"/><circle cx="356" cy="400" r="1" opacity=".4"/><circle cx="66" cy="470" r=".9" opacity=".35"/>
+            <circle cx="330" cy="474" r="1" opacity=".42"/><circle cx="196" cy="418" r=".9" opacity=".35"/><circle cx="102" cy="560" r="1" opacity=".4"/>
+            <circle cx="292" cy="568" r="1" opacity=".4"/><circle cx="196" cy="598" r=".9" opacity=".33"/><circle cx="130" cy="18" r=".8" opacity=".3"/>
+            <circle cx="232" cy="64" r=".8" opacity=".3"/><circle cx="70" cy="86" r=".8" opacity=".3"/><circle cx="330" cy="86" r=".8" opacity=".3"/>
+          </g>
+          <!-- the operating shell + Global's own orbit, like the big map -->
+          <ellipse cx="195" cy="266" rx="176" ry="62" fill="none" stroke="rgba(226,240,255,.25)" stroke-width="1.1" stroke-dasharray="5 9"/>
+          <circle cx="195" cy="276" r="52" fill="none" stroke="rgba(56,169,255,.45)" stroke-width="1.2"/>
+          <!-- licence lanes: Holdings out to each operating world -->
+          <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <!-- future ventures descend from the operating shell -->
+          <path d="M128 412 L128 438" fill="none" stroke="#d7b35f" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
+          <path d="M262 412 L262 438" fill="none" stroke="#a487df" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
+          <!-- selection halos -->
+          <circle class="stm-ring" data-ring="global" cx="195" cy="276" r="42" fill="none" stroke="#38a9ff" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="form" cx="70" cy="258" r="36" fill="none" stroke="#2fe0a0" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="storm" cx="320" cy="258" r="36" fill="none" stroke="#ff6a3d" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds1" cx="128" cy="470" r="34" fill="none" stroke="#d7b35f" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds2" cx="262" cy="470" r="34" fill="none" stroke="#a487df" stroke-width="1.6"/>
+          <!-- live art clones land here (initSysMobile) -->
+          <g id="stmSun"></g>
+          <g id="stmPlForm" data-co="form"></g>
+          <g id="stmPlGlobal" data-co="global"></g>
+          <g id="stmPlStorm" data-co="storm"></g>
+          <g id="stmPlDs1" data-co="ds1"></g>
+          <g id="stmPlDs2" data-co="ds2"></g>
+        </svg>
+        <div class="stm-hold">
+          <span class="stm-holdtag">Holding company</span>
+          <b>Freedom Group Holdings Ltd</b>
+          <div class="stm-chips"><span>Brands</span><span>IP</span><span>Strategy</span><span>Capital</span></div>
+        </div>
+        <button class="stm-pl stm-pl-form" data-co="form" type="button">
+          <b><i></i>Freedom Facilities Ltd</b>
+          <em class="stm-pill">Planned</em>
+          <span>Compliance · Facilities</span>
+        </button>
+        <button class="stm-pl stm-pl-global" data-co="global" type="button">
+          <b><i></i>Freedom Global Ltd <em class="stm-live">Active</em></b>
+          <span>Consumer ecommerce · D2C</span>
+        </button>
+        <button class="stm-pl stm-pl-storm" data-co="storm" type="button">
+          <b><i></i>Freedom Distribution Ltd</b>
+          <em class="stm-pill">Planned</em>
+          <span>Trade distribution · B2B</span>
+        </button>
+        <button class="stm-pl stm-pl-ds1" data-co="ds1" type="button">
+          <b><i></i>Freedom Form Ltd</b>
+          <em class="stm-pill">Future · 2029</em>
+          <span>Property · Design</span>
+        </button>
+        <button class="stm-pl stm-pl-ds2" data-co="ds2" type="button">
+          <b><i></i>Freedom Fly Ltd</b>
+          <em class="stm-pill">Future · 2030+</em>
+          <span>Drone tech · Aerial</span>
+        </button>
       </div>
 
-      <div class="st-stem" aria-hidden="true"></div>
-      <p class="st-lvl">Operating companies</p>
-
-      <article class="st-co st-active">
-        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoGlobal)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Global Ltd</b><span class="st-status">Active</span></div>
-        <span class="st-role">Consumer ecommerce · D2C</span>
-        <p>The group's established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
-        <div class="st-meta"><b>Channels</b><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy</span></div>
-        <div class="st-meta"><b>Core brands</b><span>Firestorm™ · Voltz™ · Kunergy™ · FXL™ · Skyline™</span></div>
-        <span class="st-focus">Today's investment focus</span>
-      </article>
-
-      <article class="st-co st-planned">
-        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoFac)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Facilities Ltd</b><span class="st-status">Planned · 2027</span></div>
-        <span class="st-role">Compliance · Servicing · Facilities</span>
-        <p>A recurring revenue operation delivering fire safety servicing, installation, compliance and facilities support.</p>
-        <div class="st-meta"><b>Core market</b><span>Commercial premises · Education · Warehousing · Construction · Hospitality</span></div>
-      </article>
-
-      <article class="st-co st-planned st-ember">
-        <div class="st-co-top"><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="url(#stoDist)"/><ellipse cx="24" cy="21" rx="9" ry="5.5" fill="rgba(255,255,255,.32)"/></svg><b>Freedom Distribution Ltd</b><span class="st-status">Planned · 2028</span></div>
-        <span class="st-role">Trade distribution · B2B</span>
-        <p>A wholesale operation supplying the group's owned brands to national retailers, trade partners and commercial distributors.</p>
-        <div class="st-meta"><b>Categories</b><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
-      </article>
-
-      <div class="st-stem" aria-hidden="true"></div>
-      <p class="st-lvl">Long term ventures</p>
-      <div class="st-future">
-        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="34" rx="29" ry="8" fill="none" stroke="#c8a25c" stroke-width="3" opacity=".85" transform="rotate(-16 32 34)"/><circle cx="32" cy="32" r="19" fill="url(#stoGold)"/><ellipse cx="26" cy="25" rx="6" ry="3.8" fill="rgba(255,255,255,.32)"/></svg>
-          <b>Freedom Form Ltd</b><span>Property · Development</span><i>2029</i>
-          <p class="st-fd">A future commercial property platform for the group's premises, acquisitions and growth.</p></div>
-        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoGold)"/><ellipse cx="25" cy="24" rx="7" ry="4.2" fill="rgba(255,255,255,.32)"/></svg>
-          <b>Freedom Freight Ltd</b><span>Freight · Imports</span><i>2029</i>
-          <p class="st-fd">A future logistics arm for imports, freight control and supply chain efficiency.</p></div>
-        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoVio)"/><ellipse cx="25" cy="24" rx="7" ry="4.2" fill="rgba(255,255,255,.32)"/></svg>
-          <b>Freedom Fly Ltd</b><span>Drone tech · Aerial</span><i>2030+</i>
-          <p class="st-fd">A future specialist business focused on surveying, inspection and aerial visual services.</p></div>
-        <div><svg class="st-orb" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="url(#stoVio)"/><circle cx="26" cy="28" r="4" fill="rgba(46,29,102,.55)"/><circle cx="38" cy="38" r="3" fill="rgba(46,29,102,.5)"/><ellipse cx="25" cy="23" rx="7" ry="4.2" fill="rgba(255,255,255,.3)"/></svg>
-          <b>Freedom Fuel Ltd</b><span>Forecourts · Energy</span><i>2036+</i>
-          <p class="st-fd">A long term ambition to develop or acquire forecourt and convenience retail locations.</p></div>
+      <button class="stm-details" id="stmDetails" type="button" aria-expanded="true" aria-controls="stmCards">Details<span class="stm-chev" aria-hidden="true"></span></button>
+      <div class="stm-cards open" id="stmCards">
+        <article class="stm-card on" data-co="global" style="--c:#38a9ff">
+          <div class="stm-ch">
+            <span class="stm-ico" data-ico="global" aria-hidden="true"></span>
+            <span class="stm-id"><b>Freedom Global Ltd</b><i>Consumer ecommerce · D2C</i></span>
+            <em class="stm-status">Active</em>
+          </div>
+          <p>The group&rsquo;s established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts. Currently trading as Freedom Fire &amp; Safety Ltd.</p>
+          <div class="stm-cols">
+            <div><b>Commerce ecosystem</b><span>Amazon · eBay · Shopify · Temu · TikTok Shop · OnBuy · Specialist storefronts</span></div>
+            <div><b>Core brands</b><span>Firestorm™ · Voltz™ · Kunergy™ · T3™ · Crystal Cleaning Solutions™ · Emerging brands</span></div>
+          </div>
+          <a class="stm-cta" href="#investment-focus">View full company profile<span aria-hidden="true">&rsaquo;</span></a>
+        </article>
+        <article class="stm-card" data-co="form" style="--c:#2fe0a0">
+          <div class="stm-ch">
+            <span class="stm-ico" data-ico="form" aria-hidden="true"></span>
+            <span class="stm-id"><b>Freedom Facilities Ltd</b><i>Compliance · Servicing · Facilities</i></span>
+            <em class="stm-status">Planned</em>
+          </div>
+          <p>A recurring revenue operation delivering fire safety servicing, installation, compliance and facilities support.</p>
+          <div class="stm-cols">
+            <div><b>Core market</b><span>Commercial premises · Education · Warehousing · Construction · Hospitality · Public sector</span></div>
+          </div>
+          <a class="stm-cta" href="#beyond">See the wider group plan<span aria-hidden="true">&rsaquo;</span></a>
+        </article>
+        <article class="stm-card" data-co="storm" style="--c:#ff6a3d">
+          <div class="stm-ch">
+            <span class="stm-ico" data-ico="storm" aria-hidden="true"></span>
+            <span class="stm-id"><b>Freedom Distribution Ltd</b><i>Trade distribution · B2B</i></span>
+            <em class="stm-status">Planned</em>
+          </div>
+          <p>A wholesale operation supplying the group&rsquo;s owned brands to national retailers, trade partners and commercial distributors.</p>
+          <div class="stm-cols">
+            <div><b>Core categories</b><span>Fire safety · Batteries · PPE · Cleaning · Automotive</span></div>
+            <div><b>Target channels</b><span>National retailers · Electrical wholesalers · Commercial distributors · Export partners</span></div>
+          </div>
+          <a class="stm-cta" href="#beyond">See the wider group plan<span aria-hidden="true">&rsaquo;</span></a>
+        </article>
+        <article class="stm-card" data-co="ds1" style="--c:#d7b35f">
+          <div class="stm-ch">
+            <span class="stm-ico" data-ico="ds1" aria-hidden="true"></span>
+            <span class="stm-id"><b>Future ventures</b><i>Property · Freight · 2029</i></span>
+            <em class="stm-status">Future</em>
+          </div>
+          <div class="stm-rows">
+            <div><b>Freedom Form Ltd</b><i>Property · Development · Design</i><span>A future commercial property platform for the group&rsquo;s premises, acquisitions and growth.</span></div>
+            <div><b>Freedom Freight Ltd</b><i>Freight · Imports · Logistics</i><span>A future logistics arm for imports, freight control and supply chain efficiency.</span></div>
+          </div>
+          <a class="stm-cta" href="#beyond">See the wider group plan<span aria-hidden="true">&rsaquo;</span></a>
+        </article>
+        <article class="stm-card" data-co="ds2" style="--c:#a487df">
+          <div class="stm-ch">
+            <span class="stm-ico" data-ico="ds2" aria-hidden="true"></span>
+            <span class="stm-id"><b>Future ventures</b><i>Aerial · Energy · 2030+</i></span>
+            <em class="stm-status">Future</em>
+          </div>
+          <div class="stm-rows">
+            <div><b>Freedom Fly Ltd</b><i>Drone tech · Aerial services</i><span>A future specialist business focused on surveying, inspection and aerial visual services.</span></div>
+            <div><b>Freedom Fuel Ltd</b><i>Forecourts · Energy · Retail</i><span>A long term ambition to develop or acquire forecourt and convenience-retail locations.</span></div>
+          </div>
+          <a class="stm-cta" href="#beyond">See the wider group plan<span aria-hidden="true">&rsaquo;</span></a>
+        </article>
       </div>
       <p class="st-note">Illustrative long term direction, not part of the current investment case.</p>
     </div>
@@ -4309,8 +4620,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <p class="section-sub">A colour coded organisational matrix. Filter by division or employment type, click anyone for detail, and open the pipeline to see where we're hiring next.</p>
         </div>
         <figure class="photo zoom team-hero">
-          <img loading="lazy" decoding="async" src="journey-photos/team-in-van.webp" alt="The Freedom team on a Martello container lorry at Unit 19"
-               onerror="this.closest('figure')&amp;&amp;this.closest('figure').remove()">
+          <img loading="lazy" decoding="async" width="900" height="1200" src="journey-photos/team-in-van.webp" alt="The Freedom team on a Martello container lorry at Unit 19"
+               onerror="this.style.visibility='hidden';this.setAttribute('aria-hidden','true')">
           <figcaption>The team at Unit 19, Freedom Fire &amp; Safety headquarters.</figcaption>
         </figure>
       </div>
@@ -4494,12 +4805,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        the visitor back to the very top under full burn.
        ==================================================================== -->
   <section data-sec="liftoff" id="liftoff" aria-label="Mission control, press for liftoff">
-    <p class="lo-closing reveal">One second-hand extinguisher created the first opportunity. <b>Freedom Global proved the ecommerce model.</b> Investment accelerates the next stage <span class="grad-text">&mdash; and lays the foundation for everything that follows.</span></p>
+    <p class="lo-closing reveal">It started with one second-hand extinguisher and a refusal to stand still. <b>Freedom Global turned that into a proven ecommerce engine.</b> Investment is the fuel for the next stage <span class="grad-text">and the foundation beneath everything still to come.</span></p>
     <div class="wrap lo-head">
       <div class="sec-head reveal">
         <span class="kicker">Mission control</span>
-        <h2>Ready for<br><span class="grad-text">liftoff.</span></h2>
-        <p>The courier has flown the whole story, hero to horizon. One press puts you back on the launch rail at the very top.</p>
+        <h2>Ready for <span class="grad-text">liftoff</span></h2>
       </div>
     </div>
     <div class="lo-scene" aria-hidden="true">
@@ -4535,6 +4845,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <linearGradient id="loShoot" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="rgba(255,255,255,0)"/><stop offset=".7" stop-color="rgba(235,242,255,.5)"/><stop offset="1" stop-color="#fff"/>
           </linearGradient>
+          <radialGradient id="loFgHalo" cx=".5" cy=".5" r=".5">
+            <stop offset=".42" stop-color="rgba(255,61,154,.30)"/>
+            <stop offset=".72" stop-color="rgba(255,61,154,.12)"/>
+            <stop offset="1" stop-color="rgba(255,61,154,0)"/>
+          </radialGradient>
           <linearGradient id="loHorizon" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="rgba(96,138,182,0)"/><stop offset=".72" stop-color="rgba(96,138,182,.16)"/><stop offset="1" stop-color="rgba(96,138,182,.05)"/>
           </linearGradient>
@@ -4573,6 +4888,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <circle cx="1642" cy="128" r="30" fill="none" stroke="#dfe6f6" stroke-width="1" opacity=".18"/>
         <circle cx="1634" cy="122" r="4.5" fill="#c9d2e6" opacity=".5"/><circle cx="1652" cy="136" r="3" fill="#c9d2e6" opacity=".45"/>
         <circle cx="1646" cy="118" r="2" fill="#c9d2e6" opacity=".4"/><circle cx="1635" cy="134" r="1.6" fill="#c9d2e6" opacity=".35"/>
+        <!-- THE FREEDOM GROUP PLANET — the pink world the whole story orbits,
+             hanging in the launch-night sky opposite the moon. Populated by
+             initLiftoff with a live CLONE of the system map's Holdings planet
+             (sphere gradient, drifting world belt, shade and rim), so the two
+             are always the exact same model. -->
+        <g class="lo-fgplanet" aria-hidden="true"></g>
         <!-- a rare shooting star streaks the upper sky -->
         <g class="lo-shooter"><line x1="0" y1="0" x2="54" y2="14" stroke="url(#loShoot)" stroke-width="2" stroke-linecap="round"/></g>
         <!-- slow high clouds -->
@@ -4797,12 +5118,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="lo-console">
       <div class="lo-panel">
         <div class="lo-status" aria-hidden="true">
-          <span class="lo-chip"><i></i>GUIDANCE ALIGNED</span>
           <span class="lo-chip"><i></i>FUEL 100%</span>
           <span class="lo-chip"><i></i>RANGE CLEAR</span>
           <span class="lo-chip"><i></i>WEATHER GO</span>
         </div>
-        <span class="lo-count" id="loCount">T-<b>00:10</b></span>
+        <span class="lo-count" id="loCount">T-<b>00:03</b></span>
         <button class="liftoff-btn" id="liftoffBtn" type="button" aria-label="Press for liftoff, return to the top of the page"><i></i>PRESS FOR LIFTOFF</button>
       </div>
       <span class="lo-hint">Full burn back to the top of the story.</span>
@@ -6566,7 +6886,28 @@ function mountStation(stage, g) {
       ? sr.width - pw - sr.width * (g.panelDock.right || 0)
       : ((g.panelSide || 1) < 0 ? x - pw - 44 : x + 44) + (g.panelNudgeX || 0);
     const maxLeft = Math.max(8, sr.width - pw - 8);
-    const left = Math.max(8, Math.min(maxLeft, desiredLeft));
+    let left = Math.max(8, Math.min(maxLeft, desiredLeft));
+    /* THE FUTURE BOXES CLEAR THE FLAGSHIP SHELF. Both align their tops to the
+       CORE BRANDS box, so they always share its band vertically — and their
+       authored nudge is a fixed number of map units. On narrower panes the
+       columns close in and the box overlapped the very shelf it lines up
+       with. Step OUTWARD by the exact shortfall, away from the centre column,
+       so wide viewports keep the authored placement untouched. */
+    if (below && below.alignBrands) {
+      const flagShelf = stage.querySelector('.sm-sub[data-for="fly"]');
+      if (flagShelf && flagShelf.offsetWidth) {
+        const sL = flagShelf.offsetLeft, sR = sL + flagShelf.offsetWidth, GAP = 18;
+        /* Clamp in OFFSET space. maxLeft above is derived from the stage's
+           screen rect, which #sysMap's perspective shrinks by ~28% — using it
+           here would pull the box back left, straight into the shelf it is
+           trying to clear. */
+        const maxLeftOff = Math.max(8, (stage.clientWidth || sr.width) - pw - 8);
+        if (left < sR + GAP && left + pw > sL - GAP)
+          left = left + pw / 2 < (sL + sR) / 2
+            ? Math.max(8, sL - GAP - pw)
+            : Math.min(maxLeftOff, sR + GAP);
+      }
+    }
     const craftHalf = rr.height / 2;
     let desiredTop = below
       ? (below.topY != null
@@ -6724,7 +7065,7 @@ function mountStation(stage, g) {
    scrub begins. Scroll-driven and fully reversible; once it has left the
    group system it is pure scenery (pointer-events:none — never clickable).
    ========================================================================= */
-function initCourier() {
+function initCourierLegacy() {
   if (REDUCED) return;
   const clouds = $(".tr2-clouds"), planet = $(".tr2-planet");
   const pStage = planet && planet.querySelector(".tr2-stage");
@@ -7905,6 +8246,1017 @@ function initCourier() {
 }
 
 /* =========================================================================
+   COURIER FLIGHT V2
+   One scroll position owns the entire flight. Geometry is compiled only when
+   layout changes; every rendered property is sampled from the same route.
+   There is no autonomous positional drift, landing clock, target bridge,
+   progress spring, lock-mode speed change, or per-frame route reconstruction.
+   ========================================================================= */
+function initCourier() {
+  if (REDUCED || document.querySelector(".ff-courier")) return;
+
+  const clouds = $(".tr2-clouds");
+  const planet = $(".tr2-planet");
+  const pStage = planet && planet.querySelector(".tr2-stage");
+  const art = $("#sysMap .mg-rocket .rk-size");
+  if (!clouds || !planet || !pStage || !art) return;
+
+  const wrap = document.createElement("div");
+  wrap.className = "ff-courier";
+  wrap.setAttribute("aria-hidden", "true");
+  wrap.innerHTML = `<svg viewBox="-119 -35 156 70" width="468" height="210">${
+    art.outerHTML.replace(/rk\d+-/g, "fcrk2-")}</svg>`;
+  document.body.appendChild(wrap);
+  document.documentElement.classList.add("has-courier");
+
+  const shipSvg = wrap.querySelector("svg");
+  shipSvg.style.transformOrigin = "50% 50%";
+  shipSvg.style.willChange = "transform";
+
+  const lapTrack = document.createElement("div");
+  lapTrack.className = "ff-orbitline";
+  lapTrack.setAttribute("aria-hidden", "true");
+  lapTrack.innerHTML = '<svg><ellipse cx="0" cy="0" rx="1" ry="1"/></svg>';
+  document.body.appendChild(lapTrack);
+  const lapEllipse = lapTrack.querySelector("ellipse");
+
+  const T2 = Math.PI * 2;
+  const cl01 = v => Math.min(1, Math.max(0, v));
+  const smt = t => t * t * (3 - 2 * t);
+  const smt5 = t => t * t * t * (t * (t * 6 - 15) + 10);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const unwrap = (a, b) => {
+    let d = b - a;
+    while (d > Math.PI) d -= T2;
+    while (d < -Math.PI) d += T2;
+    return a + d;
+  };
+  const docTop = el => {
+    let y = 0;
+    for (let n = el; n; n = n.offsetParent) y += n.offsetTop || 0;
+    return y;
+  };
+  const docLeft = el => {
+    let x = 0;
+    for (let n = el; n; n = n.offsetParent) x += n.offsetLeft || 0;
+    return x;
+  };
+  const layoutRect = el => {
+    if (!el) return null;
+    const left = docLeft(el), top = docTop(el);
+    return { left, top, width: el.offsetWidth, height: el.offsetHeight,
+      right: left + el.offsetWidth, bottom: top + el.offsetHeight,
+      cx: left + el.offsetWidth / 2, cy: top + el.offsetHeight / 2 };
+  };
+  const derivativeSmooth = t => 6 * t * (1 - t);
+  const derivativeSmoother = t => 30 * t * t * (t * (t - 2) + 1);
+
+  let diveFaceEl = null;
+  const diveFace = () => {
+    if (!diveFaceEl || !diveFaceEl.isConnected)
+      diveFaceEl = document.querySelector('#sysMap .sm-planet[data-key="fly"] circle[fill^="url(#smp-"]');
+    const r = diveFaceEl && diveFaceEl.getBoundingClientRect();
+    return r && r.width ? { cx: r.left + r.width / 2, cy: r.top + r.height / 2, R: r.width / 2 } : null;
+  };
+  const diveLap = () => {
+    const F = diveFace();
+    if (!F) return null;
+    const rx = Math.min(F.R * 1.5, Math.min(innerWidth, innerHeight) * .36);
+    const ry = rx * .42;
+    return { rx, ry, R: F.R,
+      cx: Math.max(rx + 30, Math.min(innerWidth - rx - 30, F.cx)),
+      cy: Math.max(ry + 60, Math.min(innerHeight - ry - 60, F.cy)) };
+  };
+
+  /* A document-space lookup table for an SVG graph. Unlike getScreenCTM(),
+     client/offset geometry is unaffected by the section's view-timeline tilt,
+     so compiling while the graph is off-screen cannot bake a transformed
+     coordinate system into the route. */
+  const graphRide = (selectors, figSelector, kind) => {
+    const paths = selectors.map(s => document.querySelector(s))
+      .filter(p => p && p.getTotalLength && p.ownerSVGElement);
+    const fig = document.querySelector(figSelector);
+    if (!paths.length || !fig) return null;
+    const svg = paths[0].ownerSVGElement;
+    const vb = svg.viewBox.baseVal;
+    const sw = svg.clientWidth || svg.getBoundingClientRect().width;
+    const sh = svg.clientHeight || svg.getBoundingClientRect().height;
+    if (!sw || !sh || !vb.width || !vb.height) return null;
+    const sx = sw / vb.width, sy = sh / vb.height;
+    /* SVG elements do not expose a reliable offsetParent chain in Chromium.
+       The chart SVG is the figure's direct drawing surface, so anchor its
+       viewBox to the figure's stable document box instead of accidentally
+       treating the SVG as if it began at document (0,0). */
+    const ox = docLeft(fig) - vb.x * sx, oy = docTop(fig) - vb.y * sy;
+    const points = [];
+    paths.forEach((path, pathIndex) => {
+      const L = path.getTotalLength();
+      const n = Math.max(24, Math.ceil(L / 5));
+      for (let i = 0; i <= n; i++) {
+        if (pathIndex && i === 0) continue;
+        const p = path.getPointAtLength(L * i / n);
+        points.push({ x: ox + p.x * sx, y: oy + p.y * sy,
+          localX: p.x, path, pathD: L * i / n });
+      }
+    });
+    if (points.length < 2) return null;
+    const cum = [0];
+    for (let i = 1; i < points.length; i++)
+      cum.push(cum[i - 1] + Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y));
+    const total = cum[cum.length - 1] || 1;
+    const vh = innerHeight;
+    /* Begin with the first point just inside the lower edge — and have the
+       ship SUMMIT while the chart is still at its natural reading position.
+       The old .12 end meant the ride only completed once the summit had been
+       pushed to the very top of the screen: at the scroll where the panel
+       sits comfortably in view (summit ≈ .45vh) the rocket was still mid
+       line. Ending at .42vh puts it on top of the graph right there. The
+       220px floor keeps a real runway (the ride compresses, it never snaps). */
+    const s1 = points[points.length - 1].y - vh * .42;
+    const s0 = Math.min(points[0].y - vh * .90, s1 - 220);
+    const atDistance = d => {
+      d = Math.max(0, Math.min(total, d));
+      let lo = 0, hi = cum.length - 1;
+      while (lo + 1 < hi) {
+        const m = (lo + hi) >> 1;
+        if (cum[m] <= d) lo = m; else hi = m;
+      }
+      const span = Math.max(.0001, cum[hi] - cum[lo]);
+      const u = (d - cum[lo]) / span;
+      return { x: lerp(points[lo].x, points[hi].x, u),
+        y: lerp(points[lo].y, points[hi].y, u),
+        localX: lerp(points[lo].localX, points[hi].localX, u) };
+    };
+    const sample = (q, scroll) => {
+      q = cl01(q);
+      /* Preserve the graph's exact first/last-point timing, but enter and
+         leave at 65% of cruise speed. The symmetric Hermite timing curve
+         repays that distance gradually through the middle (only 1.175x), so
+         there is no few-pixel launch burst at either endpoint and no
+         perceptible pause. Because this is derived from scroll q, it is fully
+         reversible and cannot keep moving after scrolling stops. */
+      const edgeSlope = .65;
+      const q2 = q * q, q3 = q2 * q;
+      const rideQ = (-2 * q3 + 3 * q2) +
+        edgeSlope * (2 * q3 - 3 * q2 + q);
+      const rideD = (-6 * q2 + 6 * q) +
+        edgeSlope * (6 * q2 - 6 * q + 1);
+      const p = atDistance(total * rideQ);
+      const eps = Math.max(2, total * .003);
+      const A = atDistance(total * rideQ - eps), B = atDistance(total * rideQ + eps);
+      const dl = Math.max(.0001, Math.hypot(B.x - A.x, B.y - A.y));
+      const pathPerScroll = total / Math.max(1, s1 - s0) * rideD;
+      return { p: { x: p.x, y: p.y - scroll },
+        d: { x: (B.x - A.x) / dl * pathPerScroll,
+          y: (B.y - A.y) / dl * pathPerScroll - 1 },
+        q, localX: p.localX };
+    };
+    return { name: kind, kind, s0, s1, sample, points, cum, total, paths, svg };
+  };
+
+  /* C1-continuous Hermite route through authored screen-space gates.
+     Derivatives are expressed in screen pixels per scroll pixel, so adjacent
+     phases can share the exact same velocity as well as the same endpoint. */
+  const keyedPhase = (name, rawKeys) => {
+    let authored = rawKeys.filter(k => k && Number.isFinite(k.s) &&
+      Number.isFinite(k.x) && Number.isFinite(k.y));
+    if (authored.length < 2 || authored[authored.length - 1].s <= authored[0].s + 2) return null;
+    /* Keep the visual gate order exactly as authored. Sorting crossed times
+       used to turn an intended S-curve into a spatial loop; silently dropping
+       close gates could add a cusp. Clamp interior times into a monotonic
+       schedule, or fall back to the exact two endpoints when the available
+       scroll runway is genuinely too short. */
+    if (authored[authored.length - 1].s - authored[0].s < (authored.length - 1) * 3)
+      authored = [authored[0], authored[authored.length - 1]];
+    const keys = [{ ...authored[0] }];
+    for (let i = 1; i < authored.length - 1; i++) {
+      const lo = keys[i - 1].s + 3;
+      const hi = authored[authored.length - 1].s - (authored.length - 1 - i) * 3;
+      keys.push({ ...authored[i], s: Math.max(lo, Math.min(hi, authored[i].s)) });
+    }
+    keys.push({ ...authored[authored.length - 1] });
+    if (keys.length < 2) return null;
+    keys.forEach((k, i) => {
+      if (k.d) return;
+      if (!i) {
+        const n = keys[1], ds = Math.max(1, n.s - k.s);
+        k.d = { x: (n.x - k.x) / ds, y: (n.y - k.y) / ds };
+      } else if (i === keys.length - 1) {
+        const p = keys[i - 1], ds = Math.max(1, k.s - p.s);
+        k.d = { x: (k.x - p.x) / ds, y: (k.y - p.y) / ds };
+      } else {
+        const p = keys[i - 1], n = keys[i + 1], ds = Math.max(1, n.s - p.s);
+        k.d = { x: (n.x - p.x) / ds * .82, y: (n.y - p.y) / ds * .82 };
+      }
+    });
+    const sampleScroll = scroll => {
+      let i = 0;
+      while (i < keys.length - 2 && scroll > keys[i + 1].s) i++;
+      const A = keys[i], B = keys[i + 1], ds = Math.max(1, B.s - A.s);
+      const u = cl01((scroll - A.s) / ds);
+      const u2 = u * u, u3 = u2 * u;
+      const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u;
+      const h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+      const dh00 = (6 * u2 - 6 * u) / ds, dh10 = 3 * u2 - 4 * u + 1;
+      const dh01 = (-6 * u2 + 6 * u) / ds, dh11 = 3 * u2 - 2 * u;
+      return {
+        p: { x: h00 * A.x + h10 * ds * A.d.x + h01 * B.x + h11 * ds * B.d.x,
+          y: h00 * A.y + h10 * ds * A.d.y + h01 * B.y + h11 * ds * B.d.y },
+        d: { x: dh00 * A.x + dh10 * A.d.x + dh01 * B.x + dh11 * B.d.x,
+          y: dh00 * A.y + dh10 * A.d.y + dh01 * B.y + dh11 * B.d.y }
+      };
+    };
+    return { name, s0: keys[0].s, s1: keys[keys.length - 1].s,
+      keys, sample: (q, scroll) => ({ ...sampleScroll(scroll), q: cl01(q) }) };
+  };
+
+  let route = null, routeDirty = true, compileTimer = 0, compileRetries = 0;
+  let graphClips = new Map();
+  let growthDots = [], growthVals = [], trajDots = [];
+  /* A rejected compile keeps the last valid route, but the layout that caused
+     the rejection is usually transient (fonts mid-load, a panel mid-collapse).
+     Retry a few times on a quiet timer so the courier re-anchors itself
+     instead of flying an outdated map until the next unrelated dirty event. */
+  const retryCompile = () => {
+    if (compileRetries++ < 3)
+      setTimeout(() => { routeDirty = true; schedule(); }, 350);
+  };
+  const compileRoute = () => {
+    routeDirty = false;
+    const vh = innerHeight, iw = innerWidth;
+    const sysBuild = document.querySelector(".sys-build");
+    const rail = document.getElementById("jrail");
+    const trajectoryFig = document.getElementById("trajChart");
+    const liftoff = document.getElementById("liftoff");
+    const padSlot = document.getElementById("padSlot");
+    if (!sysBuild || !rail || !trajectoryFig || !liftoff || !padSlot) { route = null; return; }
+
+    const bTop = docTop(sysBuild), bSpan = Math.max(1, sysBuild.offsetHeight - vh);
+    const diveA = bTop + bSpan * .9245, diveB = bTop + bSpan * .9995;
+    const cloudS0 = docTop(clouds) + clouds.offsetHeight - vh + vh * .12;
+    const S0 = Math.min(diveA, cloudS0);
+    const pageEnd = Math.max(S0 + vh, document.documentElement.scrollHeight - vh);
+
+    /* The exact geometry diveLap() converges to at the dive's final frame:
+       the ×~29 planet face lands dead-centre at (iw/2, .52vh) with R far past
+       every clamp, so all four clamped fields become pure viewport functions.
+       Compiling the bridge's entry key from focus.sample(1,…) used to bake
+       whatever rect the planet happened to have AT COMPILE TIME (usually the
+       undived map, hundreds of px away) — the exit key never matched the live
+       lap, which corrupted the seam's position AND the smoothed heading chord
+       that spans it (a visible spin while the ship was still fading). */
+    const lapEndRx = Math.min(iw, vh) * .36, lapEndRy = lapEndRx * .42;
+    const lapEnd = { rx: lapEndRx, ry: lapEndRy, R: Math.hypot(iw, vh) * .53,
+      cx: Math.max(lapEndRx + 30, Math.min(iw - lapEndRx - 30, iw * .5)),
+      cy: Math.max(lapEndRy + 60, Math.min(vh - lapEndRy - 60, vh * .52)) };
+    const focus = {
+      name: "focus-orbit", focus: true, s0: diveA, s1: diveB,
+      sample: (q, scroll) => {
+        q = cl01(q);
+        const L = diveLap() || lapEnd;
+        /* Converge the LIVE geometry onto the closed-form end pose over the
+           lap's final stretch, so the sampler's q=1 output is deterministic no
+           matter what state the dive transform is in when it is read. */
+        const settle = smt(cl01((q - .86) / .14));
+        const G = settle <= 0 ? L : {
+          cx: lerp(L.cx, lapEnd.cx, settle), cy: lerp(L.cy, lapEnd.cy, settle),
+          rx: lerp(L.rx, lapEnd.rx, settle), ry: lerp(L.ry, lapEnd.ry, settle),
+          R: lerp(L.R, lapEnd.R, settle) };
+        const th = q * T2 * 1.25, w = T2 * 1.25 / Math.max(1, diveB - diveA);
+        return { p: { x: G.cx + Math.cos(th) * G.rx, y: G.cy + Math.sin(th) * G.ry },
+          d: { x: -Math.sin(th) * G.rx * w, y: Math.cos(th) * G.ry * w },
+          q, geom: G };
+      }
+    };
+
+    const railTop = docTop(rail), railX = docLeft(rail) + rail.offsetWidth / 2;
+    const railS0 = railTop - vh * .55 + 50;
+    const railS1 = Math.max(railS0 + vh, railTop + rail.offsetHeight - vh * .55 - 30);
+    const railPhase = {
+      name: "journey-rail", rail: true, s0: railS0, s1: railS1,
+      sample: (q, scroll) => ({ p: { x: railX, y: vh * (.55 + q * .04) },
+        d: { x: 0, y: vh * .04 / Math.max(1, railS1 - railS0) }, q })
+    };
+
+    const growth = graphRide(["#growthChart svg .gc-line"], "#growthChart", "growth");
+    const traj = graphRide(["#trajChart svg .tj-solid", "#trajChart svg .tj-dashed"], "#trajChart", "traj");
+    if (!growth || !traj) { route = null; return; }
+
+    const pTop = docTop(planet);
+    const orbitS0 = pTop - vh * .3;
+    const orbitS1 = pTop + Math.max(vh * .9, planet.offsetHeight - vh);
+    /* The canvas globe holds (w/2, .52h) of its STICKY STAGE — but the orbit
+       begins .3vh before the stage pins (and can outlive the unpin on short
+       sections). Anchoring the ellipse to a fixed viewport point had the
+       courier circling empty sky up to ~270px above the still-rising globe.
+       Track the stage's actual viewport offset so the orbit is glued to the
+       drawn planet for every frame of the phase. */
+    const orbitUnpin = pTop + Math.max(0, planet.offsetHeight - vh);
+    const orbit = {
+      name: "globe-orbit", orbit: true, s0: orbitS0, s1: orbitS1,
+      sample: (q, scroll) => {
+        q = cl01(q);
+        const R = Math.min(iw, vh) * .33, th = q * T2 * 1.25;
+        const e = smt(q), de = derivativeSmooth(q);
+        const rx = R * (1.52 - .4 * e), dr = R * -.4 * de;
+        const ry = rx * .46, dry = dr * .46;
+        const w = T2 * 1.25;
+        const stageY = Math.max(0, pTop - scroll) - Math.max(0, scroll - orbitUnpin);
+        const dStage = (scroll < pTop || scroll > orbitUnpin) ? -1 : 0;
+        return { p: { x: iw / 2 + Math.cos(th) * rx, y: vh * .52 + stageY + Math.sin(th) * ry },
+          d: { x: (dr * Math.cos(th) - rx * Math.sin(th) * w) / Math.max(1, orbitS1 - orbitS0),
+            y: (dry * Math.sin(th) + ry * Math.cos(th) * w) / Math.max(1, orbitS1 - orbitS0) + dStage },
+          q, th, geom: { cx: iw / 2, cy: vh * .52 + stageY, rx, ry, R } };
+      }
+    };
+
+    const funding = document.querySelector(".tr2-funding");
+    const fTop = funding ? docTop(funding) : docTop(liftoff) - vh * 6;
+    const raiseS0 = funding ? Math.max(traj.s1 + vh * .8, fTop + vh * .55) : traj.s1 + vh * 2;
+    const raiseS1 = funding ? Math.max(raiseS0 + vh, fTop + funding.offsetHeight - vh * 1.15) : raiseS0 + vh * 1.2;
+    const rightLane = Math.max(100, iw - 100);
+    const raise = {
+      name: "raise-sentinel", raise: true, s0: raiseS0, s1: raiseS1,
+      sample: (q, scroll) => ({ p: { x: rightLane - q * iw * .025, y: vh * (.84 - .34 * q) },
+        d: { x: -iw * .025 / Math.max(1, raiseS1 - raiseS0),
+          y: -vh * .34 / Math.max(1, raiseS1 - raiseS0) }, q })
+    };
+
+    const loTop = docTop(liftoff);
+    const slotR = layoutRect(padSlot);
+    const padEnd = Math.min(pageEnd - 4, loTop - 8);
+    /* Begin the authored landing approach shortly after the funding sentinel
+       instead of holding the courier almost still for ~1,600 scroll pixels
+       and cramming the whole descent into the last viewport. */
+    const padStart = Math.max(raiseS1 + 90,
+      Math.min(raiseS1 + vh * .72, padEnd - vh * .62));
+    const slotEnd = { x: slotR.left, y: slotR.top - padEnd };
+    const landingGutterX = iw - 34;
+    const pad = keyedPhase("landing", [
+      { s: padStart, x: rightLane, y: vh * .46, d: { x: -.12, y: .12 } },
+      /* Stay in the open right gutter until the Beyond cards have cleared;
+         cutting diagonally here sent the enlarged ship across the flywheel
+         rows and the £500m panel. */
+      { s: lerp(padStart, padEnd, .34), x: landingGutterX, y: vh * .56 },
+      { s: lerp(padStart, padEnd, .58), x: landingGutterX, y: vh * .74 },
+      { s: lerp(padStart, padEnd, .72), x: slotEnd.x + iw * .09, y: vh * .70 },
+      { s: padEnd, x: slotEnd.x, y: slotEnd.y, d: { x: 0, y: .18 } }
+    ]);
+    /* A layout squeezed to the point of no landing runway must not crash the
+       whole courier — keep the last valid route, like the seam guard below. */
+    if (!pad) { console.warn("Courier route: landing runway too short"); retryCompile(); return; }
+    pad.pad = true;
+
+    const phases = [focus];
+    const focusExit = focus.sample(1, focus.s1);
+    const railEntry = railPhase.sample(0, railPhase.s0);
+    phases.push(keyedPhase("focus-to-journey", [
+      /* Continue from the lap's exact point and tangent. The old viewport
+         clamp silently teleported the courier almost 100px upward at this
+         seam, which was visible as a one-frame snap on quick/reverse scroll. */
+      { s: focus.s1, x: focusExit.p.x, y: focusExit.p.y, d: focusExit.d },
+      { s: lerp(focus.s1, railPhase.s0, .45), x: iw * .22, y: vh * .26 },
+      { s: lerp(focus.s1, railPhase.s0, .78), x: railX, y: vh * .36 },
+      { s: railPhase.s0, x: railEntry.p.x, y: railEntry.p.y, d: railEntry.d }
+    ]));
+    phases.push(railPhase);
+
+    const railExit = railPhase.sample(1, railPhase.s1);
+    const growthEntry = growth.sample(0, growth.s0);
+    phases.push(keyedPhase("journey-to-growth", [
+      { s: railPhase.s1, x: railExit.p.x, y: railExit.p.y, d: railExit.d },
+      { s: lerp(railPhase.s1, growth.s0, .48), x: Math.max(92, growthEntry.p.x - 48), y: vh * .74 },
+      { s: growth.s0, x: growthEntry.p.x, y: growthEntry.p.y, d: growthEntry.d }
+    ]));
+    phases.push(growth);
+
+    const growthExit = growth.sample(1, growth.s1);
+    const orbitEntry = orbit.sample(0, orbit.s0);
+    const stat29 = layoutRect(document.querySelector("#growth .stat-row .stat:last-child"));
+    const market = layoutRect(document.getElementById("market"));
+    const between = [];
+    if (stat29) {
+      const s = Math.max(growth.s1 + 36, Math.min(orbit.s0 - vh * .9, stat29.bottom - vh * .42));
+      between.push({ s, x: rightLane, y: vh * .52 });
+    }
+    if (market) {
+      const s = Math.max(growth.s1 + vh * .55, Math.min(orbit.s0 - vh * .48, market.cy - vh * .50));
+      between.push({ s, x: rightLane, y: vh * .56 });
+    }
+    between.push({ s: orbit.s0 - vh * .25, x: Math.min(rightLane, orbitEntry.p.x + 118), y: orbitEntry.p.y - 92 });
+    phases.push(keyedPhase("growth-to-globe", [
+      { s: growth.s1, x: growthExit.p.x, y: growthExit.p.y, d: growthExit.d },
+      ...between,
+      { s: orbit.s0, x: orbitEntry.p.x, y: orbitEntry.p.y, d: orbitEntry.d }
+    ]));
+    phases.push(orbit);
+
+    const orbitExit = orbit.sample(1, orbit.s1);
+    const trajEntry = traj.sample(0, traj.s0);
+    const tikTok = [...document.querySelectorAll("#projChips button")].find(el => /TikTok/i.test(el.textContent));
+    const tt = layoutRect(tikTok), cg = layoutRect(document.getElementById("cagrChip"));
+    const gateDocY = tt && cg ? (tt.bottom + cg.top) / 2 : docTop(document.getElementById("projections")) + vh * .72;
+    /* Aim through the open air between the TikTok chip row and the CAGR
+       pill. .36h put the courier directly through the CAGR label at common
+       laptop heights; .29h centres the actual measured gap. */
+    const gateY = vh * .29;
+    const projectionGap = Math.max(12, traj.s0 - orbit.s1);
+    const gateDesired = gateDocY - gateY;
+    const gateT = Math.max(.30, Math.min(.50, (gateDesired - orbit.s1) / projectionGap));
+    const gateS = orbit.s1 + projectionGap * gateT;
+    const atProjection = t => orbit.s1 + projectionGap * t;
+    const controlsShareRow = tt && cg &&
+      Math.abs(tt.cy - cg.cy) < Math.max(tt.height, cg.height) * 1.35;
+    const gateX = tt && cg
+      ? (controlsShareRow ? (tt.right + cg.left) / 2 : cg.cx)
+      : iw * .56;
+    const approachX = Math.min(iw - 110, gateX + Math.max(110, iw * .09));
+    const approachT = Math.max(.23, gateT - .10);
+    /* All post-corridor gates are scheduled relative to the measured
+       corridor, not at hard-coded absolute fractions. If the graph gets more
+       runway (or fonts move its controls), gateT can legitimately approach
+       .50; the old fixed .50 clear-point then occupied essentially the same
+       scroll frame and produced a 100px+ lateral burst. Relative spacing
+       preserves the exact visual corridor without ever compressing the turn. */
+    const clearT = gateT + (1 - gateT) * .19;
+    const leftT = gateT + (1 - gateT) * .43;
+    const downT = gateT + (1 - gateT) * .68;
+    const preT = gateT + (1 - gateT) * .88;
+    /* Join the trajectory through a short, exact backward extension of its
+       own tangent. An arbitrary last gate plus a fast graph endpoint tangent
+       can make a cubic Hermite segment overshoot below the viewport before
+       snapping back to the first point. This capture segment is collinear
+       with the plotted line, so its position, velocity and heading all meet
+       the graph without a loop or last-frame correction. */
+    const captureSpan = 8;
+    const capture = {
+      s: traj.s0 - captureSpan,
+      x: trajEntry.p.x - trajEntry.d.x * captureSpan,
+      y: trajEntry.p.y - trajEntry.d.y * captureSpan,
+      d: trajEntry.d
+    };
+    const projectionBridge = keyedPhase("globe-to-projection", [
+      { s: orbit.s1, x: orbitExit.p.x, y: orbitExit.p.y, d: orbitExit.d },
+      /* Approach from the panel's empty right shoulder. Coming diagonally
+         from the left allowed the moving chip row to catch the rocket before
+         it reached the intended TikTok/CAGR gap. */
+      { s: atProjection(.18), x: approachX, y: vh * .48 },
+      { s: atProjection(approachT), x: approachX, y: gateY - vh * .07 },
+      { s: gateS, x: gateX, y: gateY },
+      /* Clear the controls upward first; only descend after reaching the
+         empty left gutter. Descending immediately after the gap made the
+         moving TikTok/OnBuy row and CAGR pill sweep through the hull. */
+      { s: atProjection(clearT), x: iw * .38, y: vh * .24 },
+      { s: atProjection(leftT), x: 96, y: vh * .47 },
+      { s: atProjection(downT), x: 96, y: vh * .67 },
+      { s: atProjection(preT), x: Math.max(76, trajEntry.p.x - 72), y: Math.min(vh * .84, trajEntry.p.y + 36) },
+      capture,
+      { s: traj.s0, x: trajEntry.p.x, y: trajEntry.p.y, d: trajEntry.d }
+    ]);
+    if (projectionBridge) {
+      projectionBridge.projection = true;
+      projectionBridge.gateQ = gateT;
+      phases.push(projectionBridge);
+    }
+    phases.push(traj);
+
+    const trajExit = traj.sample(1, traj.s1);
+    const raiseEntry = raise.sample(0, raise.s0);
+    /* The intro has reserved media geometry and is stable. Using the centre
+       of the whole interactive team section let filters and view changes
+       silently reroute this leg while the user was scrolling. */
+    const team = layoutRect(document.querySelector("#team .team-intro"));
+    const postKeys = [
+      { s: traj.s1, x: trajExit.p.x, y: trajExit.p.y, d: trajExit.d },
+      { s: traj.s1 + vh * .28, x: Math.min(rightLane, trajExit.p.x + 92), y: Math.max(trajExit.p.y + 44, vh * .34) }
+    ];
+    if (team) postKeys.push({ s: Math.max(traj.s1 + vh * .7, Math.min(raise.s0 - vh * .38, team.cy - vh * .52)),
+      x: rightLane, y: vh * .72 });
+    postKeys.push({ s: raise.s0, x: raiseEntry.p.x, y: raiseEntry.p.y, d: raiseEntry.d });
+    phases.push(keyedPhase("trajectory-to-raise", postKeys));
+    phases.push(raise);
+
+    const raiseExit = raise.sample(1, raise.s1);
+    const padEntry = pad.sample(0, pad.s0);
+    const bridgeFirst = {
+      x: Math.max(72, raiseExit.p.x - 28),
+      y: Math.max(96, Math.min(raiseExit.p.y, padEntry.p.y) - vh * .10)
+    };
+    const bridgeApex = {
+      x: Math.min(iw - 92, padEntry.p.x + 36),
+      y: Math.max(82, Math.min(raiseExit.p.y, padEntry.p.y) - vh * .16)
+    };
+    phases.push(keyedPhase("raise-to-landing", [
+      { s: raise.s1, x: raiseExit.p.x, y: raiseExit.p.y, d: raiseExit.d },
+      /* A compact right-gutter bank carries real velocity through the turn.
+         The old near-static bridge changed heading while moving only hundredths
+         of a pixel, which read as a spin/glitch. */
+      { s: lerp(raise.s1, pad.s0, .32), x: bridgeFirst.x, y: bridgeFirst.y },
+      { s: lerp(raise.s1, pad.s0, .62), x: bridgeApex.x, y: bridgeApex.y },
+      { s: pad.s0, x: padEntry.p.x, y: padEntry.p.y, d: padEntry.d }
+    ]));
+    phases.push(pad);
+
+    const clean = phases.filter(Boolean);
+    /* Bounds are part of each sampler's mathematics and must never be edited
+       after construction. Metadata-only clipping was a hidden jump because
+       keyed samplers still closed over their original key times. Reject an
+       impossible compressed layout and keep the last valid route instead. */
+    for (let i = 1; i < clean.length; i++) {
+      if (clean[i].s0 < clean[i - 1].s1 - .5 || clean[i].s1 <= clean[i].s0) {
+        console.warn("Courier route rejected a compressed phase", clean[i - 1].name, clean[i].name);
+        retryCompile();
+        return;
+      }
+    }
+    compileRetries = 0;
+    route = { phases: clean, s0: clean[0].s0, s1: clean[clean.length - 1].s1,
+      cloudS0, diveA, diveB, pageEnd, growth, traj, orbit, focus, pad };
+    graphClips = new Map();
+    growthDots = [...document.querySelectorAll("#growthChart .pt-dot")];
+    growthVals = [...document.querySelectorAll("#growthChart .gc-val")];
+    trajDots = [...document.querySelectorAll("#trajChart .pt-dot")];
+  };
+
+  const sampleRoute = scroll => {
+    if (!route) return null;
+    const phases = route.phases;
+    if (scroll <= phases[0].s0) {
+      const s = phases[0], r = s.sample(0, s.s0);
+      return { ...r, phase: s, q: 0 };
+    }
+    for (const s of phases) {
+      if (scroll <= s.s1 + .001) {
+        const q = cl01((scroll - s.s0) / Math.max(1, s.s1 - s.s0));
+        const r = s.sample(q, scroll);
+        return { ...r, phase: s, q };
+      }
+    }
+    const s = phases[phases.length - 1], r = s.sample(1, s.s1);
+    return { ...r, phase: s, q: 1 };
+  };
+
+  /* A centred chord is a deterministic low-pass tangent. SVG chart paths are
+     assembled from straight point-to-point segments; their mathematical
+     tangent changes instantly at a data point even though the drawn line is
+     visually continuous. Looking a small, fixed scroll distance to either
+     side turns those corners progressively without reintroducing a clock or
+     any state that can lag behind on reverse scroll. */
+  const displayHeadingAt = scroll => {
+    const C = sampleRoute(scroll);
+    if (!C) return 0;
+    /* A single centred chord is ill-conditioned wherever the route slows to a
+       crawl: with the ship moving hundredths of a pixel per scroll pixel, the
+       chord direction is numerical noise and the ship SPUN IN PLACE (measured
+       1.16rad in one 6px step mid focus-to-journey at full visibility). Sum
+       average-velocity chords over a ladder of widths instead — each term is
+       displacement/scrollspan, so where the local chord is genuinely fast it
+       dominates and the heading stays crisp, and where it collapses to zero
+       the wider windows take over with the path's broader direction. Still
+       stateless and scroll-owned: reverse scrolling retraces identical poses,
+       and nothing can keep turning after the wheel stops. */
+    /* One base for every phase: a per-kind width (28 vs 24) stepped the
+       whole ladder discretely at each graph seam — a one-frame angle tick. */
+    const base = 26;
+    let vx = 0, vy = 0, w = 1;
+    for (const m of [1, 2.4, 5.4, 11]) {
+      const spread = base * m;
+      const A = sampleRoute(scroll - spread), B = sampleRoute(scroll + spread);
+      if (A && B) {
+        const inv = w / (2 * spread);
+        vx += (B.p.x - A.p.x) * inv;
+        vy += (B.p.y - A.p.y) * inv;
+      }
+      w *= .42;
+    }
+    let h = Math.hypot(vx, vy) > 1e-4
+      ? Math.atan2(vy, vx)
+      : Math.atan2(C.d.y, C.d.x);
+    if (C.phase.pad) {
+      const flare = smt(cl01((C.q - .50) / .46));
+      /* Flip to the pad's nose-up pose by a fixed counterclockwise delta.
+         The old nearest-branch unwrap flipped its target by 2π whenever the
+         travel heading crossed straight-down — which IS the gutter-descent
+         heading — an instant half-turn waiting to fire on the wrong viewport.
+         The approach only ever travels down/down-left, so a delta wrapped
+         into [0,2π) has its cut at straight-up, which the descent never hits. */
+      const flip = (((-Math.PI / 2 - h) % T2) + T2) % T2;
+      h += flip * flare;
+    }
+    return h;
+  };
+
+  const graphClip = phase => {
+    if (!phase || !phase.paths || !phase.paths.length) return null;
+    const cached = graphClips.get(phase.kind);
+    if (cached) return cached;
+    const svg = phase.svg;
+    let defs = svg.querySelector("defs");
+    if (!defs) { defs = document.createElementNS("http://www.w3.org/2000/svg", "defs"); svg.prepend(defs); }
+    const id = "ffCourierClip2-" + phase.kind;
+    let cp = svg.querySelector("#" + id);
+    if (!cp) { cp = document.createElementNS("http://www.w3.org/2000/svg", "clipPath"); cp.id = id; defs.appendChild(cp); }
+    let rect = cp.querySelector("rect");
+    if (!rect) { rect = document.createElementNS("http://www.w3.org/2000/svg", "rect"); cp.appendChild(rect); }
+    const vb = svg.viewBox.baseVal;
+    const first = phase.paths[0].getPointAtLength(0).x;
+    rect.setAttribute("x", String(first - 8));
+    rect.setAttribute("y", String(vb.y - 40));
+    rect.setAttribute("height", String(vb.height + 80));
+    const selector = phase.kind === "growth" ? ".gc-line,.gc-area" : ".tj-solid,.tj-dashed,.tj-area";
+    svg.querySelectorAll(selector).forEach(el => el.setAttribute("clip-path", `url(#${id})`));
+    const state = { rect, first, full: vb.width - first + 16 };
+    graphClips.set(phase.kind, state);
+    return state;
+  };
+  const updateGraph = (phase, scroll, dots, vals, riddenX = null) => {
+    if (!phase) return;
+    const q = cl01((scroll - phase.s0) / Math.max(1, phase.s1 - phase.s0));
+    const state = graphClip(phase);
+    const revealX = Number.isFinite(riddenX)
+      ? riddenX
+      : state ? state.first + state.full * q : null;
+    if (state) {
+      const width = q <= 0 ? 0 : q >= 1 ? state.full :
+        Math.max(0, Math.min(state.full, revealX - state.first + 8));
+      state.rect.setAttribute("width", String(width));
+    }
+    const light = list => list.forEach((el, i) => {
+      const elementX = parseFloat(el.getAttribute(el.tagName.toLowerCase() === "circle" ? "cx" : "x"));
+      const fallback = list.length <= 1 ? q : i / (list.length - 1);
+      const reveal = Number.isFinite(revealX) && Number.isFinite(elementX)
+        ? smt(cl01((revealX - elementX + 24) / 48))
+        : smt(cl01((q - fallback + .03) / .06));
+      /* Manifest is scrubbed by scroll, not a .4s CSS clock that keeps moving
+         after the user stops. */
+      el.style.transition = "none";
+      el.style.opacity = reveal.toFixed(3);
+      el.style.transform = `scale(${(.25 + .75 * reveal).toFixed(3)})`;
+      el.classList.remove("unlit");
+    });
+    light(dots);
+    light(vals || []);
+  };
+
+  const plumeEls = [...wrap.querySelectorAll(".rk-plume,.rk-plume2,.rk-nozGlow,.rk-trailline")];
+  const flamePlume = wrap.querySelector(".rk-plume");
+  const flamePlume2 = wrap.querySelector(".rk-plume2");
+  const flameTrail = wrap.querySelector(".rk-trailline");
+  if (flamePlume) flamePlume.style.animation = "none";
+  if (flamePlume2) flamePlume2.style.animation = "none";
+  if (flameTrail) { flameTrail.style.transformBox = "fill-box"; flameTrail.style.transformOrigin = "right center"; }
+
+  const liftoff = document.getElementById("liftoff");
+  const padRocket = document.getElementById("padRocket");
+  let raf = 0, lastTime = 0, lastScroll = scrollY;
+  let angle = 0, bank = 0, flame = .62;
+  let auditY = null;
+  let lapSig = "";
+  /* Continuity across recompiles. A layout shift (a lazy image landing, the
+     trajectory chart re-morphing, a panel growing) moves every docTop below
+     it, and the freshly compiled route TELEPORTED the visible courier to its
+     new position — measured as a pose snap while the page sat still. Capture
+     the on-screen pose delta at recompile time and pay it back over the next
+     ~260px of SCROLL, not time: while the user is stopped the offset simply
+     holds (nothing may move without scroll input), and as they scroll it
+     drains away invisibly. Viewport changes skip this — after a resize the
+     old pose is in dead coordinates, so those recompiles snap as before. */
+  let contOff = null, pendingHard = false, lastPose = null;
+
+  const schedule = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  const markDirty = () => {
+    clearTimeout(compileTimer);
+    /* Wait until layout has been quiet before recompiling. The previous
+       immediate dirty flag allowed an already-scheduled animation frame to
+       cache an intermediate font/media/panel layout and then jump again when
+       the debounce elapsed. */
+    compileTimer = setTimeout(() => {
+      routeDirty = true;
+      lastScroll = scrollY;
+      schedule();
+    }, 120);
+  };
+  const markDirtyHard = () => { pendingHard = true; markDirty(); };
+  window.__ffCourierInvalidate = markDirty;
+
+  function frame(now, snap = false) {
+    raf = 0;
+    if (innerWidth <= 900 || !document.documentElement.classList.contains("spx")) {
+      wrap.style.opacity = "0";
+      lapTrack.style.opacity = "0";
+      contOff = null; lastPose = null;
+      /* Leaving cinematic mode mid-story must hand the charts back whole: the
+         ride's clip rect and unlit dots would otherwise strand the graphs
+         half-hidden on a narrow viewport, with no frame ever restoring them.
+         The pad bird too — a resize during the landing crossfade would leave
+         it at inline opacity 0, an empty launch pad on the phone layout. */
+      graphClips.forEach(st => st.rect.setAttribute("width", String(st.full)));
+      [...growthDots, ...growthVals, ...trajDots].forEach(el => {
+        el.style.transition = ""; el.style.opacity = ""; el.style.transform = "";
+        el.classList.remove("unlit");
+      });
+      if (padRocket) { padRocket.style.opacity = ""; padRocket.style.transition = ""; }
+      lastTime = now;
+      return;
+    }
+    if (routeDirty || !route) {
+      const hadRoute = route, pose = lastPose;
+      compileRoute();
+      /* Only a NEW route invalidates a decaying offset — a rejected compile
+         keeps the old route, and the old correction stays valid against it. */
+      if (route !== hadRoute) contOff = null;
+      if (route && hadRoute && route !== hadRoute && pose && pose.alpha > .01 && !pendingHard) {
+        const s = sampleRoute(pose.scroll);
+        if (s) {
+          const dx = pose.x - s.p.x, dy = pose.y - s.p.y;
+          const newH = displayHeadingAt(pose.scroll);
+          let da = unwrap(newH, pose.angle) - newH;
+          if (Math.abs(da) > 1.2) da = 0;
+          if (Math.abs(dx) < innerHeight * .5 && Math.abs(dy) < innerHeight * .5)
+            contOff = { dx, dy, da, ds: 0, at: pose.scroll, t0: now, pending: true };
+        }
+      }
+      pendingHard = false;
+    }
+    if (!route) { lastTime = now; return; }
+
+    const scroll = auditY == null ? scrollY : auditY;
+    const rawDt = lastTime ? (now - lastTime) / 1000 : 1 / 60;
+    const dt = Math.min(.05, Math.max(.001, rawDt));
+    /* A dropped/hidden frame is not permission to snap. Keep orientation and
+       flame integration continuous; visibility/pageshow handlers explicitly
+       reset state when a true resynchronisation is required. */
+    const resync = snap;
+    const delta = scroll - lastScroll;
+
+    const sample = sampleRoute(scroll);
+    if (!sample) return;
+    const phase = sample.phase, q = sample.q;
+    const tangentMag = Math.hypot(sample.d.x, sample.d.y);
+    const targetAngle = displayHeadingAt(scroll);
+    /* Position was already scroll-owned; orientation still used a time-based
+       catch-up loop, so the ship could keep rotating after the wheel/cursor
+       stopped and a reverse scroll could inherit stale angular momentum.
+       Follow the C1 route tangent exactly instead. Reverse scrolling retraces
+       the same authored pose, giving a genuinely deterministic film strip. */
+    angle = targetAngle;
+    const h0 = displayHeadingAt(scroll - 6), h1 = displayHeadingAt(scroll + 6);
+    bank = Math.max(-.18, Math.min(.18, (unwrap(h0, h1) - h0) * .72));
+    /* Engine intensity is also a pure route property. There is no decay RAF
+       and therefore no visible animation continuing after scrolling stops. */
+    flame = Math.min(1.34, .62 + Math.max(0, tangentMag - .35) * .11);
+
+    let alpha = 0;
+    if (scroll >= route.s0 && scroll <= route.s1 + innerHeight * .06) alpha = 1;
+    if (phase.focus) {
+      alpha = smt(cl01(q / .07)) * (1 - smt(cl01((q - .88) / .12)));
+    } else if (scroll < route.cloudS0) {
+      const fadeStart = route.diveB + innerHeight * .34;
+      alpha = smt(cl01((scroll - fadeStart) / (innerHeight * .46)));
+    }
+
+    let scale = 1;
+    if (phase.focus) {
+      const G = sample.geom || diveLap();
+      if (G) scale = Math.min(3 * (G.R * 2 * .42) / 468, 3 * (innerWidth * .24) / 468);
+    }
+    if (phase.projection) {
+      /* The two controls leave a deliberate but compact flight corridor.
+         Tuck the wings in only while crossing it, with a fully scroll-owned
+         symmetric scale curve, then restore normal size before graph entry. */
+      const nearGate = 1 - smt(cl01(Math.abs(q - phase.gateQ) / .20));
+      scale *= 1 - .28 * nearGate;
+    }
+    if (phase.pad) {
+      const ps = window.__ffPadScale ? window.__ffPadScale() : 2.2;
+      /* Keep the travelling craft compact while it clears the final content
+         cards. Grow it only over the open mission-control approach, where the
+         vector art can meet the standing pad rocket without clipping through
+         the Beyond panels. */
+      const landingScaleQ = smt5(cl01((q - .70) / .30));
+      const tuckIn = smt(cl01(q / .10));
+      const tuckOut = smt(cl01((q - .62) / .08));
+      const approachScale = 1 - .28 * tuckIn * (1 - tuckOut);
+      scale *= approachScale + (ps - approachScale) * landingScaleQ;
+      /* Crossfade only once both rockets occupy the pad. The earlier .84
+         handoff exposed two birds at visibly different positions. */
+      const padAlpha = smt(cl01((q - .965) / .035));
+      alpha *= 1 - padAlpha;
+      /* NEVER touch the pad bird during the liftoff burn. The burn scrolls
+         the page while this frame still ran in the pad phase for its first
+         beats, and the per-frame transition:'none' write cancelled the 2.6s
+         climb transition mid-flight — the launching rocket teleported off
+         screen. ignite() clears the inline styles once; CSS owns the ascent. */
+      const launching = document.documentElement.classList.contains("launching");
+      if (padRocket && !launching) {
+        /* transition stays 'none' for the whole crossfade — restoring it at
+           the dock pixel let a fast final slam replay the fade on the .35s
+           CSS clock over an empty pad instead of scroll-owned and instant. */
+        padRocket.style.transition = "none";
+        padRocket.style.opacity = padAlpha.toFixed(3);
+      }
+      /* Hysteresis: dock at .997 but only UNDOCK below .958, where the pad
+         bird has fully faded. Without it, tiny scrubs around the touchdown
+         pixel flapped .docked on and off — each flap replayed the 2s dust/
+         shake touchdown choreography and cut it mid-animation on the way out. */
+      if (liftoff && !launching) liftoff.classList.toggle("docked",
+        q >= .997 || (liftoff.classList.contains("docked") && q > .958));
+    } else {
+      if (padRocket) {
+        padRocket.style.opacity = "";
+        padRocket.style.transition = "";
+      }
+      if (liftoff && liftoff.classList.contains("docked")) liftoff.classList.remove("docked");
+    }
+
+    let lapAlpha = 0, lapGeom = null;
+    if (phase.focus) {
+      lapGeom = sample.geom;
+      lapAlpha = alpha * .6;
+      /* The lap is compressed into ~800px of scroll, so -sin sweeps its full
+         range fast: the old .02/.20 window crossed in ~20 scroll px — the ship
+         BLINKED out behind the planet (alpha stepped ~.4 per wheel notch)
+         instead of fading. Starting slightly before the limb and spanning .55
+         stretches each fade over ~60px of scroll while still reaching a full
+         hide across the back of the lap. */
+      const occ = smt(cl01((-Math.sin(q * T2 * 1.25) + .08) / .55));
+      const surf = 1 - smt(cl01((lapGeom ? lapGeom.R * 2 / innerHeight : 0) - .9));
+      alpha *= 1 - occ * .92 * surf;
+      scale *= 1 - .05 * occ * surf;
+    }
+    if (phase.orbit) {
+      const occult = smt(cl01((-Math.sin(sample.th) - .02) / .18)) * smt(cl01(q / .07));
+      alpha *= 1 - occult;
+      scale *= 1 - .08 * occult;
+      wrap.style.zIndex = occult > .55 ? "1" : "70";
+    } else wrap.style.zIndex = "70";
+
+    const scrollLife = scroll * .031;
+    const flicker1 = 1 - .13 * (.5 + .5 * Math.sin(scrollLife * .77));
+    const flicker2 = 1 - .17 * (.5 + .5 * Math.sin(scrollLife * 1.19 + 2));
+    const burn = phase.pad ? Math.max(0, 1 - smt(cl01((q - .52) / .46))) : 1;
+    if (flamePlume) {
+      flamePlume.style.transform = `scaleX(${(flame * flicker1).toFixed(3)})`;
+      flamePlume.style.opacity = (burn * .92 * Math.min(1, .45 + .55 * flame)).toFixed(3);
+    }
+    if (flamePlume2) {
+      flamePlume2.style.transform = `scaleX(${(flame * flicker2).toFixed(3)})`;
+      flamePlume2.style.opacity = (burn * .85 * Math.min(1, .45 + .55 * flame)).toFixed(3);
+    }
+    if (flameTrail) {
+      flameTrail.style.transform = `scaleX(${(.35 + .65 * flame).toFixed(3)})`;
+      flameTrail.style.opacity = (burn * .8 * cl01((flame - .72) / .6)).toFixed(3);
+    }
+    plumeEls.filter(el => el !== flamePlume && el !== flamePlume2 && el !== flameTrail)
+      .forEach(el => {
+        /* .rk-nozGlow's rkGlow keyframes animate OPACITY, and CSS animations
+           outrank inline declarations — a plain opacity write was silently
+           ignored, so the nozzle kept pulsing at full glow straight through
+           engine cut-off on the landing. The keyframes read --nozburn, so the
+           burn scales the pulse smoothly without ever restarting it. */
+        if (burn >= .997) el.style.removeProperty("--nozburn");
+        else el.style.setProperty("--nozburn", burn.toFixed(3));
+      });
+
+    /* Drain any recompile pose delta with scroll distance (see contOff). */
+    let ox = 0, oy = 0, oa = 0, os = 0;
+    if (contOff) {
+      if (contOff.pending) {
+        contOff.ds = lastPose ? lastPose.scale - scale : 0;
+        if (Math.abs(contOff.ds) > .8) contOff.ds = 0;
+        contOff.pending = false;
+      }
+      let keep = 1 - smt(cl01(Math.abs(scroll - contOff.at) / 260));
+      /* A PARKED courier must also settle: after the trajectory's Log/Linear
+         morph (or any layout shift) a scroll-only drain left the ship hovering
+         beside the line it rides until the next wheel tick. The layout change
+         was user-initiated, so a short one-time glide onto the corrected route
+         is the intended motion — bounded at ~.8s, then provably static. */
+      keep *= 1 - smt(cl01((now - contOff.t0) / 800));
+      /* The dock must be pixel-true: whatever is left of the offset drains
+         across the landing approach, before the enlarge/crossfade begins. */
+      if (phase.pad) keep *= 1 - smt(cl01((q - .45) / .25));
+      if (keep <= 0) contOff = null;
+      else {
+        ox = contOff.dx * keep; oy = contOff.dy * keep;
+        oa = contOff.da * keep; os = contOff.ds * keep;
+        schedule();   // keep the decay running while the page is stationary
+      }
+    }
+    const apX = sample.p.x + ox, apY = sample.p.y + oy;
+    const apAngle = angle + oa, apScale = Math.max(.05, scale + os);
+    shipSvg.style.transform = `scaleY(${(1 - Math.abs(bank) * .22).toFixed(4)}) skewY(${(bank * .24).toFixed(4)}rad)`;
+    wrap.style.transform = `translate3d(${apX.toFixed(2)}px,${apY.toFixed(2)}px,0) rotate(${apAngle.toFixed(5)}rad) scale(${(apScale / 3).toFixed(5)})`;
+    wrap.style.opacity = alpha > .003 ? alpha.toFixed(3) : "0";
+    wrap.dataset.phase = phase.name;
+    wrap.dataset.scroll = scroll.toFixed(1);
+    lastPose = { x: apX, y: apY, angle: apAngle, scale: apScale, alpha, scroll };
+
+    if (lapAlpha > .004 && lapGeom) {
+      lapEllipse.setAttribute("cx", lapGeom.cx.toFixed(1));
+      lapEllipse.setAttribute("cy", lapGeom.cy.toFixed(1));
+      lapEllipse.setAttribute("rx", lapGeom.rx.toFixed(1));
+      lapEllipse.setAttribute("ry", lapGeom.ry.toFixed(1));
+      lapTrack.style.opacity = lapAlpha.toFixed(3);
+    } else lapTrack.style.opacity = "0";
+    /* The lap reads the diving planet's LIVE rect, which other rAF handlers
+       may still be moving (a ResizeObserver tick, a canvas resize). Whenever
+       the measured geometry differs from the previous frame's, run one more
+       settle frame; once the rect is stable this writes identical values and
+       stops, so a parked page never loops. */
+    if (phase.focus && lapGeom) {
+      const sig = lapGeom.cx.toFixed(1) + "," + lapGeom.cy.toFixed(1) + "," + lapGeom.rx.toFixed(1);
+      if (sig !== lapSig) { lapSig = sig; schedule(); }
+    } else lapSig = "";
+
+    updateGraph(route.growth, scroll, growthDots, growthVals,
+      phase === route.growth ? sample.localX : null);
+    updateGraph(route.traj, scroll, trajDots, [],
+      phase === route.traj ? sample.localX : null);
+
+    lastScroll = scroll;
+    lastTime = now;
+  }
+
+  /* WINDOW, not document: the dive (renderSystem) and the set-piece painters
+     subscribe on window earlier in boot, so their rAF callbacks are queued
+     before ours within the same scroll dispatch. Listening on document ran
+     this frame() FIRST and it sampled the PREVIOUS frame's planet transform —
+     a one-frame lag that, on a fast jump with no follow-up scroll event, left
+     the courier parked ~200px off its lap until the next wheel tick. */
+  window.addEventListener("scroll", schedule, { passive: true });
+  document.addEventListener("ff:courier-layout", markDirty);
+  window.addEventListener("resize", markDirtyHard, { passive: true });
+  window.addEventListener("orientationchange", markDirtyHard, { passive: true });
+  window.addEventListener("pageshow", () => {
+    routeDirty = true; angle = 0;
+    pendingHard = true; contOff = null; lastPose = null;
+    lastTime = 0; lastScroll = scrollY; schedule();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      routeDirty = true; angle = 0;
+      pendingHard = true; contOff = null; lastPose = null;
+      lastTime = 0; lastScroll = scrollY; schedule();
+    }
+  });
+  window.addEventListener("load", markDirty, { once: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(markDirty);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(markDirty);
+    ["#journey", "#growth", "#market", ".tr2-planet", "#projections", "#trajChart",
+      "#team", ".tr2-funding", "#beyond", "#liftoff"].forEach(s => {
+      const el = document.querySelector(s); if (el) ro.observe(el);
+    });
+  }
+
+  /* Deterministic verification hooks. They use the same production sampler,
+     not a snap-only alternative. */
+  window.__ffCourierSample = sy => {
+    if (routeDirty || !route) compileRoute();
+    const s = sampleRoute(+sy);
+    if (!s) return null;
+    const a = displayHeadingAt(+sy);
+    let visualScale = 1;
+    if (s.phase.projection)
+      visualScale *= 1 - .28 * (1 - smt(cl01(Math.abs(s.q - s.phase.gateQ) / .20)));
+    return { phase: s.phase.name, q: s.q, x: s.p.x, y: s.p.y, angle: a,
+      scale: visualScale, opacity: +wrap.style.opacity || 0 };
+  };
+  /* Kept for external diagnostics, but deliberately pure: the old hook
+     scrolled the page and mutated direction, flame and landing state. */
+  window.__ffCourier = sy => window.__ffCourierSample(sy == null ? scrollY : +sy, 1);
+  window.__ffCourierTrace = (step = 8) => {
+    if (routeDirty || !route) compileRoute();
+    const rows = [], seams = [];
+    let prev = null, prevSpeed = null;
+    for (let y = route.s0; y <= route.s1; y += Math.max(1, +step || 8)) {
+      const s = sampleRoute(y);
+      const speed = prev ? Math.hypot(s.p.x - prev.x, s.p.y - prev.y) / Math.max(1, y - prev.yScroll) : 0;
+      const accel = prevSpeed == null ? 0 : Math.abs(speed - prevSpeed);
+      rows.push({ y, phase: s.phase.name, x: s.p.x, py: s.p.y, speed, accel,
+        angle: Math.atan2(s.d.y, s.d.x) });
+      prev = { x: s.p.x, y: s.p.y, yScroll: y }; prevSpeed = speed;
+    }
+    for (let i = 1; i < route.phases.length; i++) {
+      const y = route.phases[i].s0;
+      const A = sampleRoute(y - .01), B = sampleRoute(y + .01);
+      let da = Math.atan2(B.d.y, B.d.x) - Math.atan2(A.d.y, A.d.x);
+      while (da > Math.PI) da -= T2; while (da < -Math.PI) da += T2;
+      seams.push({ at: y, from: route.phases[i - 1].name, to: route.phases[i].name,
+        gap: Math.hypot(B.p.x - A.p.x, B.p.y - A.p.y), angle: Math.abs(da) });
+    }
+    const worst = rows.slice().sort((a, b) => b.accel - a.accel).slice(0, 20);
+    return { range: [route.s0, route.s1], count: rows.length,
+      phases: route.phases.map(p => ({ name: p.name, s0: p.s0, s1: p.s1 })),
+      maxSpeed: Math.max(...rows.map(r => r.speed)),
+      maxAccel: Math.max(...rows.map(r => r.accel)), seams, worst };
+  };
+
+  schedule();
+}
+
+/* =========================================================================
    LIFTOFF FINALE — mounts the standing pad rocket (the courier's own art at
    launch scale), keeps its size in lockstep with the scene, and wires PRESS
    FOR LIFTOFF: ignition, a beat to clear the tower, then an accelerating
@@ -7950,6 +9302,31 @@ function initLiftoff() {
         ${boost(1)}${boost(-1)}
       </g>`);
   }
+  /* THE SKY'S FREEDOM GROUP PLANET — a live clone of the system map's pink
+     Holdings planet, so the launch-night world IS the map's world: same
+     sphere gradient, same drifting white continents, same shade and rim.
+     url(#…) paint servers and clip paths resolve document-wide even though
+     the map's svg is hidden on phones, and the sun's clip circle lives at
+     (950,350) in its own space, so the wrapper maps that exact point to the
+     sky position and scales the whole body down (84 → ~34 units). */
+  const skySun = $('#sysMap .sm-planet[data-key="fire"]');
+  const skyArt = scene && scene.querySelector(".lo-art");
+  const skySlot = scene && scene.querySelector(".lo-fgplanet");
+  if (skySun && skyArt && skySlot && !skySlot.firstChild) {
+    const NS = "http://www.w3.org/2000/svg";
+    const halo = document.createElementNS(NS, "circle");
+    halo.setAttribute("cx", "884"); halo.setAttribute("cy", "104");
+    halo.setAttribute("r", "78"); halo.setAttribute("fill", "url(#loFgHalo)");
+    skySlot.appendChild(halo);
+    const clone = cloneCelestial(skySun, skyArt, "losun-");
+    if (clone) {
+      const wrapG = document.createElementNS(NS, "g");
+      wrapG.setAttribute("transform", "translate(884,104) scale(.405) translate(-950,-350)");
+      wrapG.appendChild(clone);
+      skySlot.appendChild(wrapG);
+    }
+  }
+
   // the rocket's LENGTH tracks the scene ART: 620 scene-units nose-to-trail
   // on the pad, whatever the viewport (on phones the art is wider than its
   // box — a pad-centred crop — so the svg's own layout width is the truth).
@@ -8000,6 +9377,11 @@ function initLiftoff() {
   });
   function ignite() {
     const de = document.documentElement;
+    /* the courier's dock crossfade parks inline opacity/transition on the pad
+       bird; hand them back to the stylesheet BEFORE .launching lands, or the
+       inline transition:'none' cancels the 2.6s climb and the rocket blinks
+       off-screen instead of flying */
+    if (host) { host.style.transition = ""; host.style.opacity = ""; }
     lo.classList.add("launching");      // fires the pad exhaust + the climb
     de.classList.add("launching");      // hides the courier — one rocket owns the sky
     const y0 = de.scrollTop;
@@ -8026,7 +9408,7 @@ function initLiftoff() {
     };
     setTimeout(begin, 640);             // ignition — let the bird clear the tower first
     // restore the console readout for the next visitor to the pad
-    setTimeout(() => { if (count) count.innerHTML = "T-<b>00:10</b>"; }, dur + 3200);
+    setTimeout(() => { if (count) count.innerHTML = "T-<b>00:03</b>"; }, dur + 3200);
   }
 }
 
@@ -9425,13 +10807,24 @@ function renderSystem() {
         if (cr.left < 12) nudge(card, 12 - cr.left, 0);
         if (cr.right > innerWidth - 12) nudge(card, innerWidth - 12 - cr.right, 0);
       });
+      /* THE FUTURE SHELF DROP — the flagship's detail shelf carries the CORE
+         BRANDS box, and BOTH future panels align their tops to that box, so
+         one offset moves all three as a set. Without it the aurora planet sat
+         almost ON its own panel (measured 87 map-units of clearance against
+         the gold station's 198), and its dash-dot tether was too short to
+         read as a connection at all. Expressed in map units and converted
+         through the planet's own rendered radius, so the drop scales with the
+         map instead of being a magic pixel count at one viewport. */
+      const FUTURE_DROP = 54;
+      const flyR = rect(planetFace("fly")).height / 2;
+      const dropPx = FUTURE_DROP * (flyR / 48);
       for (let pass = 0; pass < 3; pass++) PLANETS.forEach(p => {
         const face = planetFace(p.key), card = cardFor(p.key);
         const shelf = map.querySelector(`.sm-sub[data-for="${p.key}"]`);
         if (!face || !card || !shelf) return;
         const cr = rect(card), sr = rect(shelf);
         shelf.style.left = (card.offsetLeft + (card.offsetWidth - shelf.offsetWidth) / 2) + "px";
-        nudge(shelf, 0, cr.bottom + detailGap - sr.top);
+        nudge(shelf, 0, cr.bottom + detailGap + (p.key === "fly" ? dropPx : 0) - sr.top);
       });
       // Mirror the green column's viewport inset to the orange column's inset.
       // Moving the whole family preserves its card-to-shelf alignment and paths.
@@ -9453,6 +10846,27 @@ function renderSystem() {
         const gapNow = Math.max(0, rect(formFace2).left - rect(formCard).right);
         nudge(formCard, gapNow * .5, 0);
         nudge(formShelf, gapNow * .5, 0);
+      }
+      /* MATCHED SIDE SEPARATIONS — the two side families must stand off their
+         planets by the SAME measured distance. Every step above works on page
+         insets, so the green column ended ~75 map-units clear of its planet
+         while the orange one sat at ~15 (and, once the viewport clamp fired,
+         actually overlapped it). Green is the reference; orange moves out to
+         match, and only if the page edge genuinely refuses the room do both
+         settle on the largest gap that fits — equal either way. */
+      const stormFace2 = planetFace("storm");
+      if (formFace2 && stormFace2 && formCard && formShelf && stormCard && stormShelf) {
+        const EDGE = 12;
+        const greenGap = rect(formFace2).left - Math.max(rect(formCard).right, rect(formShelf).right);
+        const orangeGap = Math.min(rect(stormCard).left, rect(stormShelf).left) - rect(stormFace2).right;
+        const orangeRoom = (innerWidth - EDGE) - Math.max(rect(stormCard).right, rect(stormShelf).right);
+        const target = Math.max(0, Math.min(greenGap, orangeGap + orangeRoom));
+        nudge(stormCard, target - orangeGap, 0);
+        nudge(stormShelf, target - orangeGap, 0);
+        if (target < greenGap - .5) {          // orange hit the page edge — bring green in to match
+          nudge(formCard, greenGap - target, 0);
+          nudge(formShelf, greenGap - target, 0);
+        }
       }
       // Recalculate every endpoint after the projection-correction nudges.
       updateFamilyPaths();
@@ -9670,7 +11084,14 @@ function renderSystem() {
       const safeTop = Math.min(sh * .12, navH + 8);
       const safeBottom = 10;
       const naturalH = Math.max(1, map.offsetHeight);
-      fitScale = Math.max(.72, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
+      /* .62 floor (was .72): the map's natural height now carries the dropped
+         future panels, and the old floor stopped the fit short of them — the
+         bottom of the FUTURE boxes was clipped by the fold (~40px at 900px
+         tall, and more on 768px laptops). Measured across 1280..1920 wide,
+         .62 is the value at which the deepest box clears the fold on every
+         one. The floor only binds on short viewports; taller ones never
+         reach it, so nothing else in the composition changes. */
+      fitScale = Math.max(.62, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
       const originY = naturalH * .22;
       const stageTop = Math.max(0, stage?.getBoundingClientRect().top || 0);
       fitRest = safeTop - stageTop - originY * (1 - fitScale);
@@ -9879,7 +11300,6 @@ function fitChapterFigures() {
     const take = im => {
       if (!im.naturalWidth || !im.naturalHeight) return;
       im.dataset.ar = (im.naturalWidth / im.naturalHeight).toFixed(4);
-      if (window.__ffBalanceSoon) window.__ffBalanceSoon();
     };
     imgs.forEach(im => {
       if (im.complete) take(im);
@@ -10174,7 +11594,7 @@ function renderJourney() {
     const shots = (m.photos && m.photos.length) ? m.photos : (m.photo ? [m.photo] : null);
     const side = shots
       ? `<figure class="ch-fig${shots.length > 1 ? " cycle" : ""}">${shots.map((src, k) =>
-          `<img loading="lazy" decoding="async" src="${src}" alt="${m.alt || m.kick || ""}"${k === 0 ? ' class="on"' : ""} onerror="this.closest('.ch-fig')&&this.closest('.ch-fig').remove()">`
+          `<img loading="lazy" decoding="async" src="${src}" alt="${m.alt || m.kick || ""}"${k === 0 ? ' class="on"' : ""} onerror="const f=this.closest('.ch-fig');this.remove();const n=f&&f.querySelector('img:not(.ch-blurbg)');if(n)n.classList.add('on')">`
         ).join("")}</figure>${quote}`
       : `<div class="ch-ph" aria-hidden="true"><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b>${m.summary ? `<span class="ch-summary"><i>Timeline summary</i><strong>${m.summary}</strong></span>` : ""}</div>${quote}`;
     return `
@@ -10825,10 +12245,15 @@ function renderTrajectory() {
     });
   }
 
-  let cur = D.map(() => m.t + ph); // current animated y positions
   let scale = "linear";
 
   function targetYs() { return D.map(d => (scale === "log" ? yLog(d.value) : yLin(d.value))); }
+  /* Keep the route geometry truthful from the first paint. The former
+     baseline-to-curve entrance tween meant the courier cached a flat graph,
+     then the path silently changed underneath it when the panel revealed.
+     Visual revelation is owned by the courier's clip; geometry itself is
+     final and stable before the courier compiles its document-space route. */
+  let cur = targetYs();
 
   function drawGrid() {
     gGrid.innerHTML = "";
@@ -10858,20 +12283,25 @@ function renderTrajectory() {
     dots.forEach((dot, i) => dot.setAttribute("cy", ys[i]));
   }
 
-  function morphTo() {
+  function morphTo(animate = true) {
     const from = cur.slice(), to = targetYs();
     drawGrid();
     placeLabels(to);          // labels snap to their final, collision-free spots
-    tween(500, t => {
+    tween(animate ? 500 : 0, t => {
       cur = from.map((f, i) => f + (to[i] - f) * t);
       paint(cur);
+    }, () => {
+      /* A user-triggered scale change alters the path without resizing the
+         SVG, so ResizeObserver cannot see it. Tell the courier to rebuild
+         only after the morph is complete—never against a moving target. */
+      if (animate) document.dispatchEvent(new Event("ff:courier-layout"));
     });
   }
 
   drawGrid();
   paint(cur);
   placeLabels(targetYs());
-  observeReveal(fig.closest(".panel"), morphTo);
+  observeReveal(fig.closest(".panel"), () => morphTo(false));
 
   // scale toggle
   $$("#trajScale button").forEach(btn =>
@@ -11326,6 +12756,29 @@ function renderView() {
 function applyTeamFilter() {
   const key = teamState.filter;
 
+  /* the phone staff matrix rides the same chips: highlight the chosen
+     satellite, keep only that division's roster (opened), and swap in the
+     MD's own card when Director is the filter. Runs on every width — the
+     desktop stylesheet keeps #teamMobile hidden, so this is free there. */
+  const tm = document.getElementById("teamMobile");
+  if (tm) {
+    const dir = key === "director";
+    const hub = tm.querySelector(".tm-hub");
+    hub.classList.toggle("filtered", key !== "all");
+    hub.classList.toggle("dirsel", dir);
+    tm.querySelectorAll(".tm-sat").forEach(s => s.classList.toggle("hot", s.dataset.f === key));
+    tm.querySelectorAll(".tm-div").forEach(d => {
+      const mine = d.dataset.div === key;
+      d.classList.toggle("away", dir || (key !== "all" && !mine));
+      if (mine) {
+        d.classList.add("open");
+        d.querySelector(".tm-dhead").setAttribute("aria-expanded", "true");
+      }
+    });
+    const dc = tm.querySelector(".tm-dir");
+    if (dc) dc.classList.toggle("show", dir);
+  }
+
   if (teamState.view === "spider") {
     const spider = $("#spider");
     if (!spider) return;
@@ -11447,6 +12900,145 @@ function renderTeam() {
   );
 
   renderView(); // the global counter pass (boot) animates #headStats
+  renderTeamMobile();
+}
+
+/* --- PHONE STAFF MATRIX --------------------------------------------------
+   The mock made real: the same divisions, people and colours as the desktop
+   matrix, recomposed for a thumb. A glowing hub (the MD) ringed by one
+   satellite per division, a how-to card, and per-division accordions whose
+   rows expand into each person's full detail. Filtering rides the SAME
+   #teamFilters chips as the desktop views — satellites just click them. */
+function renderTeamMobile() {
+  const chips = document.getElementById("teamFilters");
+  if (!chips || document.getElementById("teamMobile")) return;
+  const flat = flattenTeam();
+  const root = flat.find(p => p.root) || flat[0];
+  const divs = FG_DATA.team.divisions.filter(d => d.key !== "director");
+  const PPL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="6.2" cy="6.8" r="2.5"/><circle cx="13.8" cy="6.8" r="2.5"/><path d="M1.8 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3zM9.4 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3z"/></svg>';
+  const SHORT = { core: "Core Ops &amp; Leadership", finance: "Finance &amp; Accounts" };
+  /* hexagon of satellites around the hub — centre (195,170), orbit 140 */
+  const SAT = [
+    { key: "finance", a: -120 }, { key: "core", a: -60 },
+    { key: "it", a: 180 }, { key: "web", a: 0 },
+    { key: "ecom", a: 120 }, { key: "partners", a: 60 },
+  ];
+  const pos = a => {
+    const r = a * Math.PI / 180;
+    return [195 + 140 * Math.cos(r), 170 + 140 * Math.sin(r)];
+  };
+  const spokes = SAT.map(s => {
+    const d = divs.find(x => x.key === s.key);
+    const r = s.a * Math.PI / 180, ux = Math.cos(r), uy = Math.sin(r);
+    return `<line x1="${(195 + 87 * ux).toFixed(1)}" y1="${(170 + 87 * uy).toFixed(1)}"
+      x2="${(195 + 93 * ux).toFixed(1)}" y2="${(170 + 93 * uy).toFixed(1)}"
+      stroke="${d ? d.color : "#fff"}" stroke-width="2.2" opacity=".85"/>`;
+  }).join("");
+  const sats = SAT.map(s => {
+    const d = divs.find(x => x.key === s.key);
+    if (!d) return "";
+    const [x, y] = pos(s.a);
+    return `<button class="tm-sat" type="button" data-f="${d.key}" style="--c:${d.color};left:${(x / 390 * 100).toFixed(2)}%;top:${(y / 340 * 100).toFixed(2)}%"
+      aria-label="${d.label}, filter this division">${PPL}<span>${SHORT[d.key] || d.label}</span></button>`;
+  }).join("");
+  const rightTxt = p => (p.tag || p.type);
+  const rows = d => d.people.map(p => {
+    const pi = flat.find(f => f.name === p.name && f.divKey === d.key).pi;
+    return `
+    <button class="tm-person" type="button" data-pi="${pi}" aria-expanded="false"
+      aria-label="${p.name}, ${p.role}, full detail">
+      <span class="av">${p.org ? "◆" : initials(p.name)}</span>
+      <b>${p.name}</b>
+      <span class="r">${p.role}</span>
+      <span class="t ${p.tagKind === "win" ? "win" : ""}">${rightTxt(p)}</span>
+    </button>
+    <div class="tm-bio" data-pi="${pi}">
+      <p>${p.bio || ""}</p>
+      <span class="pills">
+        <span>${p.type}</span>
+        ${p.tag ? `<span class="${p.tagKind === "win" ? "win" : ""}">${p.tag}</span>` : ""}
+        ${p.badge ? `<span>${p.badge}</span>` : ""}
+        ${p.lead ? "<span>Division lead</span>" : ""}
+      </span>
+    </div>`;
+  }).join("");
+  const accordions = divs.map((d, i) => `
+    <section class="tm-div ${i < 2 ? "open" : ""}" data-div="${d.key}" style="--c:${d.color}">
+      <button class="tm-dhead" type="button" aria-expanded="${i < 2}">
+        <i></i><b>${d.label}</b><span class="n">${d.people.length}</span><span class="ch"></span>
+      </button>
+      <div class="tm-dbody">${rows(d)}</div>
+    </section>`).join("");
+
+  const tm = document.createElement("div");
+  tm.id = "teamMobile";
+  tm.innerHTML = `
+    <div class="tm-guide">
+      <b class="h">How to explore</b>
+      <div class="row"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.4 7.8 15.6 10.7l-3.4 1.1-1 3.4z" fill="var(--pink)"/><path d="M3.4 3.6 5 5.2M2.8 8.8h2.2M8.8 2.8v2.2" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><span><b>Tap</b> a division to filter the view</span></div>
+      <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="var(--blue)" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="6.6" r="3"/><path d="M3.8 16.4c0-3 2.8-5.2 6.2-5.2s6.2 2.2 6.2 5.2" stroke-linecap="round"/></svg><span><b>Tap</b> a person for full detail</span></div>
+      <div class="row"><span class="cwheel" aria-hidden="true"></span><span><b>Follow</b> the colour to trace the team</span></div>
+    </div>
+    <div class="tm-hub" aria-label="Division hub around ${root.name}">
+      <svg viewBox="0 0 390 340" aria-hidden="true">
+        <circle cx="195" cy="170" r="140" fill="none" stroke="rgba(226,240,255,.22)" stroke-width="1.1" stroke-dasharray="4 8"/>
+        ${spokes}
+      </svg>
+      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}, the hub">
+        <b>${root.name}</b><span>${root.role}</span><i>The hub</i>
+      </button>
+      ${sats}
+    </div>
+    <div class="tm-divs">${accordions}</div>
+    <div class="tm-dir" style="--c:var(--pink)">
+      <div class="hd">
+        <span class="av">${initials(root.name)}</span>
+        <span><b>${root.name}</b><span class="rl">${root.role} · The hub</span></span>
+      </div>
+      <p>${root.bio || ""}</p>
+    </div>`;
+  chips.insertAdjacentElement("afterend", tm);
+
+  // satellites and the hub drive the same chips the desktop views use
+  tm.querySelectorAll("[data-f]").forEach(el =>
+    el.addEventListener("click", () => {
+      const chip = chips.querySelector(`.chip[data-f="${el.dataset.f}"]`);
+      const target = teamState.filter === el.dataset.f ? "all" : el.dataset.f;
+      const c2 = chips.querySelector(`.chip[data-f="${target}"]`);
+      (c2 || chip)?.click();
+    }));
+  tm.querySelectorAll(".tm-dhead").forEach(h =>
+    h.addEventListener("click", () => {
+      const open = !h.closest(".tm-div").classList.contains("open");
+      h.closest(".tm-div").classList.toggle("open", open);
+      h.setAttribute("aria-expanded", String(open));
+    }));
+  tm.querySelectorAll(".tm-person").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const bio = tm.querySelector(`.tm-bio[data-pi="${btn.dataset.pi}"]`);
+      const show = !bio.classList.contains("show");
+      btn.closest(".tm-dbody").querySelectorAll(".tm-bio.show").forEach(b => b.classList.remove("show"));
+      btn.closest(".tm-dbody").querySelectorAll(".tm-person").forEach(b => b.setAttribute("aria-expanded", "false"));
+      bio.classList.toggle("show", show);
+      btn.setAttribute("aria-expanded", String(show));
+    }));
+
+  /* the mock's own header, phones only — the desktop wording is stored and
+     restored the moment the viewport crosses back over 900px */
+  const head = document.querySelector("#team .sec-head");
+  const kick = head && head.querySelector(".kicker");
+  const h2 = head && head.querySelector("h2");
+  if (kick && h2) {
+    const desk = { k: kick.innerHTML, h: h2.innerHTML };
+    const applyHead = () => {
+      const m = innerWidth <= 900;
+      kick.innerHTML = m ? "The Staff Matrix" : desk.k;
+      h2.innerHTML = m ? "Explore the People<br>Powering the Group" : desk.h;
+    };
+    applyHead();
+    let t = 0;
+    addEventListener("resize", () => { clearTimeout(t); t = setTimeout(applyHead, 150); }, { passive: true });
+  }
 }
 
 /* --- "Join the Movement" drawer ----------------------------------------- */
@@ -13107,6 +14699,269 @@ document.addEventListener("visibilitychange", () => {
 });
 addEventListener("pageshow", () => { if (window.__ffIntroDone) clearIntroZoom(true); });
 
+/* =========================================================================
+   MOBILE COPY — the same story, tightened for a phone screen.
+
+   The deck is written for a desk read, where a 300-character subtitle is a
+   paragraph. On a 390px screen it is a wall. Every entry below keeps the
+   facts, the figures and the meaning intact and cuts only connective
+   tissue; nothing is dropped that a reader needs.
+
+   Deliberately untouched: the journey TIMELINE (its chapters are the
+   narrative and already carry their own phone expanders), and the fire
+   safety market paragraph, which is quoted verbatim by request.
+
+   Matching is by the element's own desktop text, not by a DOM path: if the
+   deck's copy is ever edited upstream the entry simply stops matching and
+   the desktop wording shows through, rather than a stale phone version
+   silently contradicting it.
+   ========================================================================= */
+const MOBILE_COPY = [
+  // ---- hero + investment focus -------------------------------------------
+  { find: "Freedom Global is being built into a £100 million ecommerce business, and the first major value creation engine within a much wider group.",
+    html: "Freedom Global is being built into a £100 million ecommerce business, and the first value engine of a much wider group." },
+  { find: "Freedom Fire & Safety Ltd (soon to become Freedom Global Ltd) is the group's established direct to consumer ecommerce business and the focus of this investment case.",
+    html: "Freedom Fire &amp; Safety Ltd (soon Freedom Global Ltd) is the group's established D2C ecommerce business, and the focus of this investment case." },
+  // ---- the system --------------------------------------------------------
+  { find: "Freedom Group Holdings owns the group's brands, trademarks and intellectual property, licensing them to specialist operating companies. Freedom Global is the established operating company today, the immediate investment focus, with further businesses planned as the group develops. Hover a planet to explore.",
+    html: "Holdings owns the group's brands, trademarks and IP, and licenses them to each operating company. Freedom Global is the one trading today and the immediate investment focus. Further businesses are planned. Tap a planet to explore." },
+  { find: "Freedom Group Holdings sits at the centre, owning the brands, trademarks and IP, and licensing them to each specialist operating company.",
+    html: "Holdings sits at the centre, owning the brands, trademarks and IP and licensing them to each operating company." },
+  { find: "The group's established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts. Currently trading as Freedom Fire & Safety Ltd.",
+    html: "The established commercial engine, scaling owned brands across marketplaces and specialist storefronts. Trading today as Freedom Fire &amp; Safety Ltd." },
+  { find: "The group's established commercial engine, scaling owned brands across marketplaces, ecommerce channels and specialist online storefronts.",
+    html: "The established commercial engine, scaling owned brands across marketplaces and specialist storefronts." },
+  { find: "A wholesale operation supplying the group's owned brands to national retailers, trade partners and commercial distributors.",
+    html: "Wholesale supply of the group's owned brands to national retailers, trade partners and distributors." },
+  { find: "A recurring revenue operation delivering fire safety servicing, installation, compliance and facilities support.",
+    html: "Recurring revenue from fire safety servicing, installation, compliance and facilities support." },
+  // ---- traction ----------------------------------------------------------
+  { find: "The ecommerce model is no longer theoretical. It has already been tested across thousands of orders, multiple channels and an expanding owned-brand portfolio.",
+    html: "The model is proven, not theoretical: tested across thousands of orders, multiple channels and a growing owned-brand portfolio." },
+  // ---- market + opportunity ---------------------------------------------
+  { find: "UK fire & safety market: ~£6bn today, projected £8.5bn by 2030. Drag the timeline to watch Freedom's share of it climb.",
+    html: "UK fire &amp; safety market: ~£6bn today, £8.5bn by 2030. Drag the timeline to watch Freedom's share climb." },
+  { find: "The slice of that market already bought online, £380m in 2026 · drag to move through the years",
+    html: "The slice already bought online: £380m in 2026 · drag through the years" },
+  { find: "Management estimate: the £1.81bn equipment market at manufacturer prices, uplifted to end customer value, at a 16% online share. Grown 8% a year, ahead of the 5% market but below general retail.",
+    html: "Management estimate: the £1.81bn equipment market at manufacturer prices, uplifted to end customer value, at a 16% online share. Grown 8% a year." },
+  { find: "ONS internet retail sales: about £132bn of physical products bought online in 2026, nearly 29% of all UK retail spending. Fire safety ecommerce (£380m) is around 0.3% of that, roughly £1 in every £347 spent online.",
+    html: "ONS: about £132bn bought online in 2026, nearly 29% of UK retail. Fire safety ecommerce (£380m) is ~0.3% of that — £1 in every £347." },
+  { find: "Nine territories already power the group's supply chain — where products originate, where they are stored and fulfilled, where customers sit, and where the business goes next.",
+    html: "Nine territories already power the supply chain: where products originate, where they are stored and fulfilled, where customers sit, and where we go next." },
+  // ---- growth plan -------------------------------------------------------
+  { find: "Six online marketplaces, eBay, Amazon, Temu, Shopify, TikTok Shop and OnBuy, plus two direct channels that are not storefronts at all: On Site Servicing and B2B trade supply, shown hatched throughout. Toggle channels, switch views, and click any year to break down its mix. Targets: £2.48m in 2026 scaling to £26m by 2031.",
+    html: "Six marketplaces (eBay, Amazon, Temu, Shopify, TikTok Shop, OnBuy) plus two direct channels that are not storefronts: On Site Servicing and B2B trade supply, shown hatched. Tap any year for its mix. Targets: £2.48m in 2026 to £26m by 2031." },
+  { find: "A long term value creation target, not a current valuation. Reaching it depends on all of the following holding true.",
+    html: "A long term target, not a current valuation. It depends on all of the following holding true." },
+  { find: "£100 million is a target enterprise value, an illustrative future figure based on successful execution of the plan above. It is not a professional valuation and should not be read as one.",
+    html: "£100m is an illustrative target enterprise value, based on executing the plan above. It is not a professional valuation." },
+  { find: "Long term projected group value, Freedom Group Holdings with all of its operating companies at maturity, of which the £100 million Freedom Global ambition is the first and nearest component.",
+    html: "Long term projected group value at maturity, of which the £100m Freedom Global ambition is the first and nearest component." },
+  // ---- beyond ------------------------------------------------------------
+  { find: "The immediate investment builds one company. Its success creates the platform, capital and capabilities from which the wider group can grow.",
+    html: "The investment builds one company. Its success creates the platform, capital and capability for the wider group." },
+  { find: "The ten-year vision is not simply to sell more fire extinguishers. It is to build the infrastructure capable of launching, owning and scaling multiple consumer brands.",
+    html: "The ten-year vision is not to sell more extinguishers. It is infrastructure to launch, own and scale multiple consumer brands." },
+  { find: "Freedom Global trading today, the only company inside the current investment case, with the actuals and projections shown throughout this deck.",
+    html: "Freedom Global trading today: the only company in the current investment case, and the source of every figure here." },
+  { find: "Freedom Distribution and Freedom Facilities, planned specialist businesses already defined in the group structure, dependent on Freedom Global reaching scale first.",
+    html: "Freedom Distribution and Freedom Facilities: planned businesses already defined in the structure, dependent on Freedom Global reaching scale first." },
+  // ---- team --------------------------------------------------------------
+  { find: "A colour coded organisational matrix. Filter by division or employment type, click anyone for detail, and open the pipeline to see where we're hiring next.",
+    html: "A colour coded org matrix. Filter by division or type, tap anyone for detail, and open the pipeline to see where we're hiring." },
+  { find: "Jojo bikes 2 to 3 hours to work every day, rain, snow or shine. He embodies the spirit of Freedom Fire: honesty, heart and unwavering dedication. No excuses, just determination.",
+    html: "Jojo bikes 2 to 3 hours to work every day, rain, snow or shine. He embodies the spirit of Freedom Fire: honesty, heart and no excuses." },
+  // ---- the raise ---------------------------------------------------------
+  { find: "The constraint is no longer demand. It is the working capital, people and infrastructure required to meet that demand consistently. Every pound removes a constraint, not a shortfall.",
+    html: "The constraint is not demand. It is the working capital, people and infrastructure to meet it consistently. Every pound removes a constraint." },
+  { find: "Senior ecommerce leadership · Operations management · Purchasing and supply chain support · Customer service capacity · Brand and marketing capability",
+    html: "Senior ecommerce leadership · Operations · Purchasing and supply chain · Customer service · Brand and marketing" },
+  { find: "Larger purchasing volumes · Improved supplier pricing · Reduced stockouts · Broader product availability · Faster marketplace growth",
+    html: "Larger volumes · Better supplier pricing · Fewer stockouts · Broader availability · Faster growth" },
+  { find: "Larger warehouse · Racking and handling systems · Technology · Fulfilment improvements · Automation",
+    html: "Larger warehouse · Racking and handling · Technology · Fulfilment · Automation" },
+  { find: "The mechanism: capital deployed → deeper stockholding → fewer stockouts → improved marketplace rankings → increased revenue & margin.",
+    html: "The mechanism: capital → deeper stock → fewer stockouts → better rankings → more revenue &amp; margin." },
+  // ---- liftoff (keeps its emphasis + gradient tail) -----------------------
+  { find: "It started with one second-hand extinguisher and a refusal to stand still. Freedom Global turned that into a proven ecommerce engine. Investment is the fuel for the next stage and the foundation beneath everything still to come.",
+    html: "It started with one second-hand extinguisher. <b>Freedom Global turned that into a proven ecommerce engine.</b> Investment is the fuel for <span class=\"grad-text\">everything still to come.</span>" },
+];
+
+function initMobileCopy() {
+  /* Curly/straight quotes differ between hand-written markup and generated
+     strings, so both sides are normalised before they are compared. */
+  const norm = s => (s || "").replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+    .replace(/\s+/g, " ").trim();
+  const table = new Map(MOBILE_COPY.map(r => [norm(r.find), r.html]));
+  const SEL = "p,.section-sub,.psub,.ch,.note,.runway-note,.assume-note,.fsr-note," +
+    ".focus-subtitle,.fund-sub,.grp-val span,.sm-head p,.st-head p";
+  const desk = new WeakMap();
+  const mq = matchMedia("(max-width:900px)");
+  const apply = () => {
+    const on = mq.matches;
+    document.querySelectorAll(SEL).forEach(el => {
+      if (el.closest("#jlist")) return;          // the timeline reads in full, always
+      const stored = desk.has(el);
+      if (on && !stored) {
+        const short = table.get(norm(el.textContent));
+        if (short == null) return;
+        desk.set(el, el.innerHTML);
+        el.innerHTML = short;
+      } else if (!on && stored) {
+        el.innerHTML = desk.get(el);
+        desk.delete(el);
+      }
+    });
+  };
+  apply();
+  /* Several of these blocks are rendered by the deck's own builders, and a
+     couple re-render on interaction, so the pass is repeated once the page
+     has settled and whenever the breakpoint is crossed. It is idempotent:
+     a condensed element no longer matches any key. */
+  setTimeout(apply, 400);
+  setTimeout(apply, 1400);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+  let t = 0;
+  addEventListener("resize", () => { clearTimeout(t); t = setTimeout(apply, 150); }, { passive: true });
+  if (mq.addEventListener) mq.addEventListener("change", apply);
+  window.__ffMobileCopy = apply;
+}
+
+/* =========================================================================
+   PHONE ORBITAL MAP — populate #stmStage with live clones of the desktop
+   map's celestial art and wire the tap-to-select detail cards. The desktop
+   map is always in the DOM (renderSystem runs on every width; CSS hides it
+   on phones), and url(#…) gradients/clips resolve document-wide even from a
+   hidden svg, so the clones render pixel-identical to the real thing.
+   ========================================================================= */
+/* Clone a celestial body out of the (possibly hidden) desktop map into
+   another svg. Gradients referenced across the document survive a
+   display:none source, but Chromium refuses to resolve CLIP PATHS and
+   FILTERS from an unrendered tree — a bare clone painted its whole
+   360° texture belt as an unclipped world-map smear. So every def the
+   art references (clips, grains, gradients, and defs-of-defs) is ported
+   into the destination svg under a prefixed id, and the clone is
+   rewritten to point at the ported copies — the courier's re-uid trick,
+   generalised. Same-prefix repeats share the already-ported defs. */
+function cloneCelestial(src, destSvg, prefix) {
+  if (!src || !destSvg) return null;
+  const NS = "http://www.w3.org/2000/svg";
+  const refRe = /url\(#([^)"']+)\)/g;
+  const ids = new Set();
+  const collect = h => { let m; refRe.lastIndex = 0; while ((m = refRe.exec(h))) ids.add(m[1]); };
+  const artHTML = src.outerHTML;
+  collect(artHTML);
+  let defsHTML = "";
+  const done = new Set();
+  const grab = id => {
+    if (done.has(id)) return;
+    done.add(id);
+    const d = document.getElementById(id);
+    if (!d) return;
+    const h = d.outerHTML;
+    let m; refRe.lastIndex = 0;
+    while ((m = refRe.exec(h))) grab(m[1]);
+    if (!document.getElementById(prefix + id)) defsHTML += h;
+  };
+  [...ids].forEach(grab);
+  const rewrite = s => {
+    done.forEach(id => {
+      s = s.split("url(#" + id + ")").join("url(#" + prefix + id + ")")
+        .split('id="' + id + '"').join('id="' + prefix + id + '"');
+    });
+    return s;
+  };
+  let defs = destSvg.querySelector("defs");
+  if (!defs) { defs = document.createElementNS(NS, "defs"); destSvg.insertBefore(defs, destSvg.firstChild); }
+  if (defsHTML) defs.insertAdjacentHTML("beforeend", rewrite(defsHTML));
+  const holder = document.createElementNS(NS, "g");
+  holder.innerHTML = rewrite(artHTML);
+  const el = holder.firstElementChild;
+  ["role", "tabindex", "aria-label", "id", "style", "data-key", "class", "transform"]
+    .forEach(a => el.removeAttribute(a));
+  el.querySelectorAll(".halo").forEach(n => n.remove());
+  return el;
+}
+
+function initSysMobile() {
+  const stage = document.getElementById("stmStage");
+  const map = document.getElementById("sysMap");
+  if (!stage || !map) return;
+  const NS = "http://www.w3.org/2000/svg";
+  const art = stage.querySelector(".stm-art");
+  const mount = (sel, slotId, tf) => {
+    const src = map.querySelector(sel), slot = stage.querySelector("#" + slotId);
+    if (!src || !slot || slot.firstChild) return;
+    const el = cloneCelestial(src, art, "stm-");
+    if (!el) return;
+    const w = document.createElementNS(NS, "g");
+    w.setAttribute("transform", tf);
+    w.appendChild(el);
+    slot.appendChild(w);
+  };
+  /* the sun's art lives at (950,350) r84 in its own space; the .mf planet
+     groups and station bodies are origin-centred (stations offset by their
+     authored body offset). Each wrapper maps that centre onto the phone
+     layout and scales the body to the layout's radius. */
+  mount('.sm-planet[data-key="fire"]', "stmSun", "translate(195,84) scale(.5476) translate(-950,-350)");
+  const sunSlot = stage.querySelector("#stmSun");
+  if (sunSlot && sunSlot.firstChild && sunSlot.children.length === 1) {
+    // the map's pink ambience, UNDER the cloned body
+    const glow = document.createElementNS(NS, "circle");
+    glow.setAttribute("cx", "195"); glow.setAttribute("cy", "84");
+    glow.setAttribute("r", "104"); glow.setAttribute("fill", "url(#smSunGlow)");
+    sunSlot.insertBefore(glow, sunSlot.firstChild);
+  }
+  mount('.sm-planet[data-key="form"] .mf', "stmPlForm", "translate(70,258) scale(.714)");
+  mount('.sm-planet[data-key="fly"] .mf', "stmPlGlobal", "translate(195,276) scale(.75)");
+  mount('.sm-planet[data-key="storm"] .mf', "stmPlStorm", "translate(320,258) scale(.833)");
+  mount(".mg-station.fc-destroyer > g", "stmPlDs1", "translate(128,470) scale(.645) translate(-6.3,28.8)");
+  mount(".mg-station.fc-moon > g", "stmPlDs2", "translate(262,470) scale(.615) translate(5.0,28.6)");
+  // detail-card icons: the same art again, tiny
+  const ICON = {
+    global: ['.sm-planet[data-key="fly"] .mf', "-52 -52 104 104", ""],
+    form: ['.sm-planet[data-key="form"] .mf', "-46 -46 92 92", ""],
+    storm: ['.sm-planet[data-key="storm"] .mf', "-40 -40 80 80", ""],
+    ds1: [".mg-station.fc-destroyer > g", "-50 -50 100 100", "translate(-6.3,28.8)"],
+    ds2: [".mg-station.fc-moon > g", "-50 -50 100 100", "translate(5.0,28.6)"],
+  };
+  document.querySelectorAll("#stmCards .stm-ico[data-ico]").forEach(slot => {
+    if (slot.firstChild) return;
+    const def = ICON[slot.dataset.ico];
+    const src = def && map.querySelector(def[0]);
+    if (!src) return;
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", def[1]);
+    svg.setAttribute("aria-hidden", "true");
+    const el = cloneCelestial(src, svg, "stmi" + slot.dataset.ico + "-");
+    if (!el) return;
+    if (def[2]) {
+      const w = document.createElementNS(NS, "g");
+      w.setAttribute("transform", def[2]);
+      w.appendChild(el);
+      svg.appendChild(w);
+    } else svg.appendChild(el);
+    slot.appendChild(svg);
+  });
+  // selection: planets and name pills both drive the same card swap
+  const cards = document.getElementById("stmCards");
+  const details = document.getElementById("stmDetails");
+  const select = co => {
+    stage.dataset.sel = co;
+    cards.querySelectorAll(".stm-card").forEach(c => c.classList.toggle("on", c.dataset.co === co));
+    if (cards.classList.contains("open"))
+      cards.scrollIntoView({ block: "nearest", behavior: REDUCED ? "auto" : "smooth" });
+  };
+  stage.querySelectorAll("[data-co]").forEach(el =>
+    el.addEventListener("click", () => select(el.dataset.co)));
+  if (details && cards) details.addEventListener("click", () => {
+    const open = !cards.classList.contains("open");
+    cards.classList.toggle("open", open);
+    details.setAttribute("aria-expanded", String(open));
+  });
+}
+
 function runIntro() {
   const intro = $("#intro");
   if (!intro) return;
@@ -13215,8 +15070,8 @@ safeBoot("blackhole", initBlackhole); // after hero+logo render — it measures 
 safeBoot("setpieces", initSetpieces);
 safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
-safeBoot("courier", initCourier); // after system — it clones the mounted rocket's art
 safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones the same art
+safeBoot("sysMobile", initSysMobile); // after system too — the phone map clones its planets
 safeBoot("focusHandoff", initFocusHandoff);
 safeBoot("focusPlanet", initFocusPlanet); // clones the map's blue planet behind the focus screen
 safeBoot("journey", renderJourney);
@@ -13230,7 +15085,15 @@ safeBoot("sectionSubs", fitSectionSubs);           // and every section subtitle
 /* Web fonts land after first paint and change the measure, so re-fit once the
    real faces are in — otherwise the bisection is solved against the fallback. */
 if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(() => { try { fitSectionSubs(); } catch (e) {} });
+  document.fonts.ready.then(() => {
+    try {
+      balanceChapters();
+      fitChapterQuestions();
+      fitChapterStats();
+      fitSectionSubs();
+      window.__ffCourierInvalidate?.();
+    } catch (e) {}
+  });
 }
 /* Refit a subtitle the first time it becomes measurable — the system section's
    tree view starts display:none, so its subtitle has no width at boot. Only
@@ -13250,11 +15113,13 @@ safeBoot("projections", renderProjections);
 safeBoot("trajectory", renderTrajectory);
 safeBoot("h2036", render2036);
 safeBoot("runway", renderRunway);
+safeBoot("courier", initCourier); // after every chart and the pad exist — route geometry compiles once from final layout
 safeBoot("team", renderTeam);
 safeBoot("pipeline", initPipelineDrawer);
 safeBoot("chrome", initChrome);
 safeBoot("reveals", () => $$(".reveal").forEach(el => observeReveal(el)));
 safeBoot("counters", () => initCounters());
+safeBoot("mobileCopy", initMobileCopy); // last: it edits copy every builder above has produced
 
 /* Debug hook for automated verification: force-complete reveals/entrances */
 window.__ffRevealAll = () => {

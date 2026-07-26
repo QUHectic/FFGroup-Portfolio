@@ -1531,7 +1531,7 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
      the DOM keeps .lo-closing first for the desktop overlay layout */
   #liftoff{min-height:0;display:flex;flex-direction:column;}
   #liftoff .lo-head{order:1;}
-  #liftoff .lo-closing{order:2;position:static;max-width:none;margin:16px 0 0;padding:0 18px;text-align:left;}
+  #liftoff .lo-closing{order:2;position:static;max-width:none;margin:16px auto 0;padding:0 18px;text-align:center;}
   #liftoff .lo-scene{order:3;}
   #liftoff .lo-console{order:4;}
   .lo-console{position:static;transform:none;width:auto;max-width:none;margin-top:16px;padding:0 18px 48px;text-align:center;}
@@ -1572,6 +1572,19 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
   /* the six assumption cards: grey copy on two lines each */
   .assume > div{padding:22px 12px 18px;}
   .assume > div span{font-size:.76rem !important;line-height:1.45;}
+  /* SLIDERS — the base input[type="range"] selector (0,1,1) out-ranked the
+     .runway-slider/.bp-slider phone fixes (0,1,0): min-height:44px won but
+     the slim repaint lost, leaving a fat 44px gradient pill. Matched at
+     (0,2,1), the rail keeps its 44px touch target with the track condensed
+     back to the slim 8px line it has on desktop. */
+  input[type="range"].runway-slider,input[type="range"].bp-slider{
+    height:44px;min-height:44px;padding:0;box-shadow:none;border-radius:99px;
+    background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint)) 50% 50%/100% 8px no-repeat;
+  }
+  /* nine 4-digit year labels collide on a phone — the '23-style short form
+     (already emitted as data-short) reads clean at every phone width */
+  .runway-years span{font-size:0;}
+  .runway-years span::after{content:attr(data-short);font-size:.68rem;}
 }
 
 @keyframes secRiseAlt{
@@ -4037,6 +4050,38 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   .jl-condensed .ch-side{margin-top:0;}
   .jl-condensed .ch-side > .ch-quote{margin:12px 0 0;flex:none;}
   .jl-condensed .ch-side > .ch-next{margin-top:12px;flex:none;}
+
+  /* COLLAPSED CARD, remixed — the title keeps the LEFT of its own row, the
+     chapter's lead photo sits beside it as a RIGHT-hand thumbnail (the
+     .ch-side is moved into .ch-titlerow by initChapterCondense, phones
+     only, and moved back the moment the chapter opens), and the italic
+     standfirst folds away with the body so it only reads once opened.
+     Opening restores the usual condensed layout untouched. */
+  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:13px;min-width:0;}
+  .jl-condensed .ch-titlerow h3{flex:1;min-width:0;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-titlerow .ch-side{flex:none;width:92px;margin:0;}
+  .jl-condensed .jcard.chapter:not(.ch-open):has(.ch-expand) .ch-lede{display:none;}
+  /* the fold above hides every .ch-side child — surface just the figure */
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-side > .ch-figbox,
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-side > .ch-fig{display:block;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-figbox{aspect-ratio:auto;height:auto;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig{
+    display:block;position:relative;width:92px;height:92px;padding:0;overflow:hidden;
+    border-radius:14px;border:1px solid var(--line);
+  }
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0;margin:0;
+  }
+  /* thumb shows the lead shot only; the cross-fade timer still ticks safely */
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig.cycle img:not(.on):not(.ch-blurbg){opacity:0;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig.cycle::before{display:none;}
+  /* photo-less chapters keep their ghost number as the thumbnail */
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-side > .ch-ph{
+    display:grid;place-items:center;width:92px;height:92px;min-height:0;border-radius:14px;
+  }
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-ph b{position:static;font-size:1.9rem;line-height:1;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-ph .ph-kick,
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-ph .ch-summary{display:none;}
 
   /* DONUTS — an unconstrained svg inside the fixed 320px grid column blew
      out to ~520px and pushed half the ring off-frame. Hard-clamp and centre. */
@@ -11564,6 +11609,18 @@ function initChapterCondense() {
   const list = document.getElementById("jlist");
   if (!list) return;
   let built = false;
+  /* the collapsed card sits the chapter's figure beside its TITLE; open (or
+     desktop) parks the aside back as the card's last child — its original
+     slot — so the usual layout is byte-identical */
+  const placeSides = () => {
+    list.querySelectorAll(".jcard.chapter").forEach(card => {
+      const row = card.querySelector(".ch-titlerow"), side = card.querySelector(".ch-side");
+      if (!row || !side) return;
+      const inRow = mq.matches && !card.classList.contains("ch-open");
+      if (inRow && side.parentElement !== row) row.appendChild(side);
+      else if (!inRow && side.parentElement === row) card.appendChild(side);
+    });
+  };
   const onTap = e => {
     const btn = e.target.closest(".ch-expand");
     if (!btn) return;
@@ -11571,6 +11628,7 @@ function initChapterCondense() {
     if (!card) return;
     const open = card.classList.toggle("ch-open");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
+    placeSides();
     if (!open) {
       // collapsing a tall chapter can strand the viewport below the card —
       // pull its header back ("instant": html scroll-behavior is smooth)
@@ -11601,6 +11659,18 @@ function initChapterCondense() {
         '<svg class="xchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
       body.after(btn);                         // teaser fade, then the button
     });
+    // every chapter (with or without body text) gets a title row so the
+    // collapsed thumb has a flex slot to sit in
+    list.querySelectorAll(".jcard.chapter").forEach(card => {
+      if (card.querySelector(".ch-titlerow")) return;
+      const h3 = card.querySelector(".ch-main > h3"), side = card.querySelector(".ch-side");
+      if (!h3 || !side) return;
+      const row = document.createElement("div");
+      row.className = "ch-titlerow";
+      h3.before(row);
+      row.appendChild(h3);
+    });
+    placeSides();
     list.addEventListener("click", onTap);     // delegated; never matches .ch-next
   };
   build();
@@ -11609,6 +11679,7 @@ function initChapterCondense() {
   // miss the change event — build() is idempotent (built flag), so retrying
   // on resize and two short timers is free and closes the race everywhere
   addEventListener("resize", build);
+  addEventListener("resize", placeSides);      // crossing 900px re-homes the asides
   setTimeout(build, 400); setTimeout(build, 1600);
 }
 
@@ -13148,6 +13219,11 @@ function initExpansionMobile() {
   // customers sit; every sourcing country is supply; expansion is the
   // horizon story itself — no invented geography.
   const catsOf = p => p.n === "United Kingdom" ? ["infrastructure", "demand"] : ["supply"];
+  /* each country's east-west half-extent in texture-u units (degrees/360),
+     measured off the drawn coastline — a pin pops the moment its WHOLE
+     country is on the visible face and drops the moment any of it leaves */
+  const OSX_EXT = { "United Kingdom": .014, "Poland": .014, "Belgium": .006, "Italy": .017,
+    "Turkey": .027, "China": .086, "Pakistan": .023, "Taiwan": .005, "Malaysia": .027 };
   const CHIPS = [["all", "All"], ["supply", "Supply"], ["infrastructure", "Infrastructure"],
     ["demand", "Demand"], ["expansion", "Expansion"]];
   const star = (x, y, r, fill) => {
@@ -13233,8 +13309,9 @@ function initExpansionMobile() {
       }
       c.closePath();
     }
-    c.fillStyle = "rgba(255,61,154,.26)"; c.fill();
-    c.strokeStyle = "rgba(255,153,205,.42)"; c.lineWidth = 1.8; c.stroke();
+    /* the Holdings planet's land treatment: clean WHITE silhouettes, no
+       border grid — same as .sm-world-country on the system map's sun */
+    c.fillStyle = "#fff"; c.fill();
   }
 
   const TAU2 = Math.PI * 2;
@@ -13265,18 +13342,24 @@ function initExpansionMobile() {
     let g = ctx.createRadialGradient(CX, CY, R * .9, CX, CY, R * 1.5);
     g.addColorStop(0, "rgba(255,61,154,.22)"); g.addColorStop(1, "rgba(255,61,154,0)");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R * 1.5, 0, TAU2); ctx.fill();
-    g = ctx.createRadialGradient(CX - R * .34, CY - R * .36, R * .1, CX, CY, R * 1.02);
-    g.addColorStop(0, "#41163f"); g.addColorStop(.5, "#250b2c"); g.addColorStop(1, "#120618");
+    /* the system map's Holdings sphere, verbatim: #smHoldingsSphere gradient,
+       white world belt, #smHoldingsShade rim, highlight ellipse, white rim */
+    g = ctx.createRadialGradient(CX - R * .38, CY - R * .52, R * .06, CX, CY, R * 1.02);
+    g.addColorStop(0, "#ff82c4"); g.addColorStop(.48, "#f31b98");
+    g.addColorStop(.82, "#b8076a"); g.addColorStop(1, "#69023b");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R, 0, TAU2); ctx.fill();
     ctx.save();
     ctx.beginPath(); ctx.arc(CX, CY, R, 0, TAU2); ctx.clip();
     strips(rot);
-    g = ctx.createRadialGradient(CX + R * .5, CY + R * .42, R * .25, CX, CY, R * 1.42);
-    g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(.55, "rgba(6,2,12,.05)"); g.addColorStop(1, "rgba(6,2,12,.6)");
+    g = ctx.createRadialGradient(CX - R * .44, CY - R * .56, R * .1, CX, CY, R);
+    g.addColorStop(0, "rgba(255,255,255,.18)"); g.addColorStop(.42, "rgba(255,255,255,0)");
+    g.addColorStop(.76, "rgba(49,0,27,.04)"); g.addColorStop(1, "rgba(36,0,20,.58)");
     ctx.fillStyle = g; ctx.fillRect(CX - R, CY - R, R * 2, R * 2);
-    ctx.strokeStyle = "rgba(255,120,190,.3)"; ctx.lineWidth = 5;
-    ctx.beginPath(); ctx.arc(CX, CY, R - 2, 0, TAU2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(CX - R * .3, CY - R * .37, R * .3, R * .18, 0, 0, TAU2);
+    ctx.fillStyle = "rgba(255,255,255,.14)"; ctx.fill();
     ctx.restore();
+    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, TAU2); ctx.stroke();
     ctx.save();
     ctx.strokeStyle = "rgba(255,61,154,.18)"; ctx.lineWidth = 8;
     ctx.beginPath(); ctx.arc(CX, CY, R * 1.015, 0, TAU2); ctx.stroke();
@@ -13296,13 +13379,14 @@ function initExpansionMobile() {
       const p = PINS[i];
       const fm = ((p.u - rot) % 1 + 1) % 1;
       if (fm >= .5) { el.style.opacity = "0"; el.style.pointerEvents = "none"; return; }
+      const du = OSX_EXT[p.n] || .012;
+      const vis = fm >= du && fm <= .5 - du;   // the whole country is on the face
       const f = fm / .5;
       const x = CX + Math.sin((f - .5) * Math.PI) * R;
       const y = CY + (p.v - .5) * 2 * R;
-      const eop = Math.max(0, Math.min(1, Math.min(fm, .5 - fm) / .05));
       const sc = (.8 + .26 * Math.sin(f * Math.PI)) * (i === hotI ? 1.22 : 1);
-      el.style.opacity = (eop * (dimmed(i) ? .22 : 1)).toFixed(3);
-      el.style.pointerEvents = eop > .5 ? "" : "none";
+      el.style.opacity = vis ? (dimmed(i) ? ".22" : "1") : "0";
+      el.style.pointerEvents = vis ? "" : "none";
       el.style.zIndex = i === hotI ? 3 : 2;
       el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-96%) scale(${sc.toFixed(3)})`;
     });

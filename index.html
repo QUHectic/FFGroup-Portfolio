@@ -1834,7 +1834,7 @@ section.tint{background:var(--bg-soft);}
 @media (max-width:900px){section#system{background:#07070d;}}
 .sys-tree .st-head h2{font-size:clamp(1.42rem,6.4vw,2rem);}
 .stm-stage{position:relative;max-width:460px;margin:6px auto 0;}
-.stm-stage::after{content:"";display:block;padding-top:calc(620 / 390 * 100%);}
+.stm-stage::after{content:"";display:block;padding-top:calc(740 / 390 * 100%);}
 .stm-art{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
 .stm-art [data-co]{cursor:pointer;}
 .stm-ring{opacity:0;transition:opacity .3s var(--ease-out);filter:drop-shadow(0 0 6px currentColor);pointer-events:none;}
@@ -1843,7 +1843,7 @@ section.tint{background:var(--bg-soft);}
 .stm-stage[data-sel="storm"] .stm-ring[data-ring="storm"],
 .stm-stage[data-sel="ds1"] .stm-ring[data-ring="ds1"],
 .stm-stage[data-sel="ds2"] .stm-ring[data-ring="ds2"]{opacity:.6;}
-.stm-hold{position:absolute;left:50%;top:21.6%;transform:translateX(-50%);width:max-content;max-width:88%;
+.stm-hold{position:absolute;left:50%;top:.8%;transform:translateX(-50%);width:max-content;max-width:88%;
   text-align:center;pointer-events:none;}
 .stm-holdtag{display:inline-block;padding:3px 12px;border:1px solid rgba(255,61,154,.55);border-radius:99px;
   background:rgba(10,13,20,.85);color:var(--pink);font-size:.56rem;font-weight:900;letter-spacing:.17em;text-transform:uppercase;}
@@ -1869,11 +1869,11 @@ section.tint{background:var(--bg-soft);}
    centring their labels clipped the pills off-stage), while Global's stack
    drops onto its own full row beneath them — three stacks, zero collisions,
    audited at 360/390/414px. */
-.stm-pl-form{--c:#2fe0a0;left:2px;transform:none;align-items:flex-start;text-align:left;top:47.8%;}
-.stm-pl-global{--c:#38a9ff;left:50%;top:59.8%;}
-.stm-pl-storm{--c:#ff6a3d;left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;top:47.8%;}
-.stm-pl-ds1{--c:#d7b35f;left:31.5%;top:81.4%;}
-.stm-pl-ds2{--c:#a487df;left:68.5%;top:81.4%;}
+.stm-pl-form{--c:#2fe0a0;left:2px;transform:none;align-items:flex-start;text-align:left;top:56.3%;}
+.stm-pl-global{--c:#38a9ff;left:50%;top:40.8%;}   /* ABOVE its planet, per the mock */
+.stm-pl-storm{--c:#ff6a3d;left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;top:56.3%;}
+.stm-pl-ds1{--c:#d7b35f;left:31.5%;top:84.4%;}
+.stm-pl-ds2{--c:#a487df;left:68.5%;top:84.4%;}
 /* compact phones: smaller pills, wrapping captions, and the Global row
    drops further so the taller wrapped side stacks still clear it */
 @media (max-width:374px){
@@ -1881,11 +1881,12 @@ section.tint{background:var(--bg-soft);}
   .stm-pl b{font-size:.55rem;padding:3px 7px;}
   .stm-pill{font-size:.46rem;}
   .stm-live{font-size:.44rem;}
-  .stm-pl-global{top:63.5%;}
+  .stm-pl-global{top:40.4%;}
   .stm-pl-ds1{left:2px;transform:none;align-items:flex-start;text-align:left;}
   .stm-pl-ds2{left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;}
 }
 .stm-pl:focus-visible b{outline:2px solid var(--c);outline-offset:2px;}
+.stm-hint{margin:9px auto 0;text-align:center;color:var(--ink-faint);font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;}
 .stm-details{display:flex;flex-direction:column;align-items:center;gap:2px;margin:10px auto 0;padding:8px 18px;
   background:none;border:0;color:var(--ink-faint);font-size:.6rem;font-weight:900;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;}
 .stm-chev{width:11px;height:11px;position:relative;}
@@ -4157,6 +4158,20 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   .grp-val b{font-size:1.4rem;}
   .grp-val span{margin-top:4px;font-size:.75rem;line-height:1.45;}
   .grp-val i{margin-top:7px;}
+  /* the FG monogram tile goes; the summary head centres in its place */
+  #investment-focus .fs-mark{display:none;}
+  #investment-focus .fs-head{justify-content:center;text-align:center;flex-wrap:wrap;}
+  #investment-focus .fs-id{text-align:center;}
+  /* projection channel chips: tighter so OnBuy joins the second row and
+     the two hatched direct channels rise a row */
+  #projChips .chip{padding:7px 11px;font-size:.73rem;gap:6px;}
+  /* line graphs must never clip their summit dot / top value label */
+  #growthChart svg,#trajChart svg,#projChart svg{overflow:visible !important;}
+  /* every collapsed chapter box the same size (tallest measured at 390px) */
+  .jl-condensed .jcard.chapter:not(.ch-open){min-height:374px;}
+  /* the launch-night moon rides ~1642 of the 1900 viewBox — the phone crop
+     ends at ~1606, so the whole moon sat off-frame right */
+  .lo-scene .lo-moon{transform:translateX(-190px);}
   /* UNIFORM SECTION TITLES — every white+gradient key title at ONE size,
      wrapped to two lines (three only where an authored 33-char first line
      physically cannot fit two: #journey, #system). 5.66vw = 1.38rem at
@@ -4168,6 +4183,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   #horizon .sec-head h2,#liftoff .lo-head h2{
     font-size:clamp(1.26rem,5.66vw,1.38rem);line-height:1.16;white-space:normal;
   }
+  /* the one deliberate exception: "Built in Britain. Designed to Scale
+     Globally" runs on a single line, sized to fit the phone column */
+  #opportunity-static .sec-head h2{white-space:nowrap;max-width:none;font-size:clamp(.8rem,3.9vw,1.38rem);letter-spacing:-.02em;}
 }
 </style>
 </head>
@@ -4293,7 +4311,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
            map's art (initSysMobile), so the two views can never drift apart.
            Tap any planet (or its name) to load its detail card below. -->
       <div class="stm-stage" id="stmStage" data-sel="global">
-        <svg class="stm-art" viewBox="0 0 390 620" aria-hidden="true">
+        <svg class="stm-art" viewBox="0 -120 390 740" aria-hidden="true">
           <defs>
             <marker id="stmArr" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
             <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
@@ -4342,29 +4360,30 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <button class="stm-pl stm-pl-form" data-co="form" type="button">
           <b><i></i>Freedom Facilities Ltd</b>
           <em class="stm-pill">Planned</em>
-          <span>Compliance · Facilities</span>
+          <span>Facilities</span>
         </button>
         <button class="stm-pl stm-pl-global" data-co="global" type="button">
           <b><i></i>Freedom Global Ltd <em class="stm-live">Active</em></b>
-          <span>Consumer ecommerce · D2C</span>
+          <span>D2C</span>
         </button>
         <button class="stm-pl stm-pl-storm" data-co="storm" type="button">
           <b><i></i>Freedom Distribution Ltd</b>
           <em class="stm-pill">Planned</em>
-          <span>Trade distribution · B2B</span>
+          <span>B2B</span>
         </button>
         <button class="stm-pl stm-pl-ds1" data-co="ds1" type="button">
           <b><i></i>Freedom Form Ltd</b>
           <em class="stm-pill">Future · 2029</em>
-          <span>Property · Design</span>
+          <span>Property · Freight</span>
         </button>
         <button class="stm-pl stm-pl-ds2" data-co="ds2" type="button">
           <b><i></i>Freedom Fly Ltd</b>
           <em class="stm-pill">Future · 2030+</em>
-          <span>Drone tech · Aerial</span>
+          <span>Tech · Fuel</span>
         </button>
       </div>
 
+      <p class="stm-hint">Tap the planets for information</p>
       <button class="stm-details" id="stmDetails" type="button" aria-expanded="true" aria-controls="stmCards">Details<span class="stm-chev" aria-hidden="true"></span></button>
       <div class="stm-cards open" id="stmCards">
         <article class="stm-card on" data-co="global" style="--c:#38a9ff">
@@ -4665,7 +4684,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The expansion map</span>
-        <h2>Built in Britain, <span class="grad-text">Designed to Scale Globally</span></h2>
+        <h2>Built in Britain. <span class="grad-text">Designed to Scale Globally</span></h2>
         <p class="section-sub">Nine territories already power the group's supply chain — where products originate, where they are stored and fulfilled, where customers sit, and where the business goes next.</p>
       </div>
       <div class="os-legend reveal">
@@ -4935,7 +4954,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 
       <div class="beyond-grid">
         <div class="panel reveal">
-          <h3>What Freedom Global creates</h3>
+          <h3>What Freedom Global Creates</h3>
           <div class="psub">Assets earned by trading, not bought</div>
           <div class="by-tags">
             <span>Cash generation</span><span>Brand-building capability</span><span>Import infrastructure</span>
@@ -4945,7 +4964,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           </div>
         </div>
         <div class="panel reveal d1">
-          <h3>What those assets can support</h3>
+          <h3>What Those Assets Can Support</h3>
           <div class="psub">Specialist operating companies, launched off the same base</div>
           <div class="by-cos">
             <span>Freedom Distribution</span><span>Freedom Facilities</span><span>Freedom Form</span>
@@ -4955,7 +4974,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       </div>
 
       <div class="panel reveal" style="margin-top:18px;">
-        <h3>The group value creation flywheel</h3>
+        <h3>The Group Value Creation Flywheel</h3>
         <div class="psub">Not a combined forecast, a compounding loop. Each turn funds the next.</div>
         <ol class="flywheel">
           <li><b>Freedom Global scales</b></li>
@@ -4976,17 +4995,17 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="scen-grid">
         <article class="panel reveal scen s-now">
           <span class="scen-tag">Scenario 1</span>
-          <h4>Established businesses</h4>
+          <h4>Established Businesses</h4>
           <p>Freedom Global trading today, the only company inside the current investment case, with the actuals and projections shown throughout this deck.</p>
         </article>
         <article class="panel reveal d1 scen s-next">
           <span class="scen-tag">Scenario 2</span>
-          <h4>Approved future ventures</h4>
+          <h4>Approved Future Ventures</h4>
           <p>Freedom Distribution and Freedom Facilities, planned specialist businesses already defined in the group structure, dependent on Freedom Global reaching scale first.</p>
         </article>
         <article class="panel reveal d2 scen s-opt">
           <span class="scen-tag">Scenario 3</span>
-          <h4>Long term strategic optionality</h4>
+          <h4>Long Term Strategic Optionality</h4>
           <p>Freedom Form, Freight, Fly and Fuel, directions the platform could support in time.</p>
           <b class="scen-warn">Illustrative only, not part of the current investment case.</b>
         </article>
@@ -5078,11 +5097,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <!-- searchlight beams sweeping the launch sky -->
         <g class="lo-search"><polygon points="1140,652 1180,652 1310,60 1210,60" fill="url(#loBeam)" opacity=".5"/></g>
         <g class="lo-search s2"><polygon points="1290,656 1322,656 1490,110 1400,110" fill="url(#loBeam)" opacity=".38"/></g>
-        <circle cx="1642" cy="128" r="86" fill="url(#loMoonHalo)"/>
+        <g class="lo-moon"><circle cx="1642" cy="128" r="86" fill="url(#loMoonHalo)"/>
         <circle cx="1642" cy="128" r="24" fill="#eef2fc" opacity=".92"/>
         <circle cx="1642" cy="128" r="30" fill="none" stroke="#dfe6f6" stroke-width="1" opacity=".18"/>
         <circle cx="1634" cy="122" r="4.5" fill="#c9d2e6" opacity=".5"/><circle cx="1652" cy="136" r="3" fill="#c9d2e6" opacity=".45"/>
-        <circle cx="1646" cy="118" r="2" fill="#c9d2e6" opacity=".4"/><circle cx="1635" cy="134" r="1.6" fill="#c9d2e6" opacity=".35"/>
+        <circle cx="1646" cy="118" r="2" fill="#c9d2e6" opacity=".4"/><circle cx="1635" cy="134" r="1.6" fill="#c9d2e6" opacity=".35"/></g>
         <!-- THE FREEDOM GROUP PLANET — the pink world the whole story orbits,
              hanging in the launch-night sky opposite the moon. Populated by
              initLiftoff with a live CLONE of the system map's Holdings planet
@@ -11888,9 +11907,11 @@ function renderJourney() {
 
   const onScroll = rafScroll(() => {
     const r = rail.getBoundingClientRect();
-    // .61 keeps the fill's leading edge right at the courier's nose while it
-    // rides the rail (the rocket holds .55-.59vh + its own nose length)
-    const focus = window.innerHeight * 0.61;
+    // .55 = the courier's holding line. At .61 the fill's leading edge ran
+    // ~6vh AHEAD of the rocket — the coloured line flashed on below the ship
+    // before it had even joined the rail. Anchored at the nose, the rocket
+    // now paints the line as it flies and nothing lights up before it.
+    const focus = window.innerHeight * 0.55;
     const progress = Math.max(0, Math.min(1, (focus - r.top) / r.height));
     fill.style.height = (progress * 100) + "%";
     const railTop = r.top;
@@ -13282,7 +13303,7 @@ function renderTeamMobile() {
     const applyHead = () => {
       const m = innerWidth <= 900;
       kick.innerHTML = m ? "The Staff Matrix" : desk.k;
-      h2.innerHTML = m ? "Explore the People<br>Powering the Group" : desk.h;
+      h2.innerHTML = m ? 'Explore the People<br><span class="grad-text">Powering The Group</span>' : desk.h;
     };
     applyHead();
     let t = 0;
@@ -13485,14 +13506,36 @@ function initExpansionMobile() {
      honours reduced motion by holding the Europe-facing frame */
   const OSX_REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let phase = .277, lastT = null, playing = false, inView = false, raf = 0;
+  let dragX = null;   // finger-spin: while set, the auto-spin yields
   const frame = t => {
     raf = 0;
     if (!playing) { lastT = null; return; }
-    if (lastT !== null && !OSX_REDUCED) phase = (phase + (t - lastT) / 28000) % 1;
+    if (lastT !== null && !OSX_REDUCED && dragX === null) phase = (phase + (t - lastT) / 28000) % 1;
     lastT = t;
     size(); draw(phase); place(phase);
     if (!OSX_REDUCED) raf = requestAnimationFrame(frame);
   };
+  /* INTERACTIVE SPIN — drag the globe to turn it yourself instead of
+     waiting for the auto-rotation. A full swipe across the disc turns
+     roughly half a revolution; vertical scrolling stays untouched
+     (touch-action pan-y). Auto-spin resumes the moment the finger lifts. */
+  stage.style.touchAction = "pan-y";
+  stage.addEventListener("pointerdown", e => {
+    if (e.target.closest(".osx-pin")) return;
+    dragX = e.clientX;
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  stage.addEventListener("pointermove", e => {
+    if (dragX === null) return;
+    const dx = e.clientX - dragX;
+    if (!dx) return;
+    dragX = e.clientX;
+    phase = ((phase - dx / Math.max(80, R * 12.6)) % 1 + 1) % 1;
+    size(); draw(phase); place(phase);
+  });
+  const endDrag = () => { dragX = null; };
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
   const play = () => {
     const on = inView && !document.hidden;
     if (on === playing) return;

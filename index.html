@@ -1470,8 +1470,12 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
   #liftoff .lo-console{order:4;}
   .lo-console{position:static;transform:none;width:auto;max-width:none;margin-top:16px;padding:0 18px 48px;text-align:center;}
   .lo-console .lo-panel{justify-content:center;}
-  .lo-panel{padding:14px 16px;gap:10px;}
-  .lo-count{min-width:0;}
+  /* ONE column on phones: the desktop parks the countdown beside the button,
+     which clipped the clock at the panel's edge ("T-00:" and nothing more).
+     Stack instead — chips, button, then the full clock centred beneath. */
+  .lo-panel{padding:14px 16px;gap:10px;grid-template-columns:1fr;justify-items:center;width:100%;}
+  .lo-panel .lo-status{justify-content:center;}
+  .lo-count{min-width:0;grid-column:auto;text-align:center;font-size:1.45rem;}
   .liftoff-btn{padding:16px 24px;font-size:.9rem;}
   /* the projections data matrix scrolls sideways instead of bursting the page */
   .disclose-body{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -1816,110 +1820,6 @@ section.tint{background:var(--bg-soft);}
 .stm-cta span{color:var(--c);font-size:1rem;line-height:1;}
 .stm-cta:hover,.stm-cta:focus-visible{border-color:var(--c);box-shadow:0 0 18px -6px var(--c);outline:none;}
 @media (max-width:380px){.stm-cols{grid-template-columns:1fr;}.stm-pl{max-width:128px;}}
-
-/* ---- PHONE STAFF MATRIX (tm-*) — the team mock made real: filter chips in
-   a two-column grid, a how-to card, the MD as a glowing hub with one
-   coloured satellite per division, and per-division accordion rosters with
-   inline person detail. Desktop keeps its spider/matrix views untouched. */
-#teamMobile{display:none;}
-@media (max-width:900px){
-  #teamMobile{display:block;}
-  /* the mock owns the phone layout: reorder the wrap, park the desktop views */
-  #team .wrap{display:flex;flex-direction:column;}
-  #team .team-intro{display:contents;}
-  #team .team-intro .sec-head{order:0;}
-  #team #teamFilters{order:1;}
-  #team #teamMobile{order:2;}
-  #team .head-stats{order:3;margin-top:26px;}
-  #team .team-bar{order:4;}
-  #team .team-intro .team-hero{order:5;margin-top:22px;}
-  #team #orgChart,#team #personDetail,#team .team-bar .seg,#team .sec-head .section-sub{display:none !important;}
-  #team .team-bar{justify-content:center;}
-  #team .pipeline-cta{width:100%;justify-content:center;}
-  /* chips: the mock's two-column pill grid */
-  #team #teamFilters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
-  #team #teamFilters .chip{display:flex;align-items:center;gap:9px;width:100%;justify-content:flex-start;
-    padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);
-    font-size:.78rem;font-weight:700;line-height:1.2;text-align:left;}
-  #team #teamFilters .chip .cdot{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
-  #team #teamFilters .chip[aria-pressed="true"]{background:#fff;border-color:#fff;color:#0b0d14;}
-  #team #teamFilters .chip[aria-pressed="true"] .cdot{background:#0b0d14;box-shadow:none;}
-}
-.tm-guide{margin-top:16px;padding:15px 16px 14px;border:1px solid rgba(255,255,255,.14);border-radius:16px;
-  background:rgba(255,255,255,.03);}
-.tm-guide b.h{display:block;text-align:center;margin-bottom:11px;color:var(--ink-faint);
-  font-size:.62rem;font-weight:900;letter-spacing:.3em;text-transform:uppercase;}
-.tm-guide .row{display:flex;align-items:center;gap:11px;padding:5px 0;color:var(--ink-dim);font-size:.8rem;}
-.tm-guide .row svg{flex:none;width:18px;height:18px;}
-.tm-guide .row b{color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px;}
-.tm-guide .cwheel{flex:none;width:16px;height:16px;border-radius:50%;
-  background:conic-gradient(#ff3d9a,#f6c66b,#2fe0a0,#38a9ff,#a78bfa,#ff3d9a);}
-.tm-hub{position:relative;max-width:430px;margin:10px auto 0;}
-.tm-hub::after{content:"";display:block;padding-top:calc(340 / 390 * 100%);}
-.tm-hub svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.tm-hubc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44.2%;aspect-ratio:1;
-  border-radius:50%;border:2px solid var(--pink);cursor:pointer;font:inherit;
-  background:radial-gradient(circle at 38% 30%,rgba(255,61,154,.20),rgba(12,14,22,.94) 70%);
-  box-shadow:0 0 34px rgba(255,61,154,.4),inset 0 0 26px rgba(255,61,154,.14);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px;
-  -webkit-tap-highlight-color:transparent;}
-.tm-hubc b{color:#fff;font-size:.92rem;letter-spacing:-.02em;line-height:1.15;}
-.tm-hubc span{color:var(--ink-dim);font-size:.62rem;}
-.tm-hubc i{margin-top:2px;color:var(--ink-faint);font-size:.5rem;font-weight:900;font-style:normal;letter-spacing:.34em;text-transform:uppercase;}
-.tm-sat{position:absolute;transform:translate(-50%,-50%);width:23.6%;aspect-ratio:1;border-radius:50%;
-  border:1.6px solid var(--c);cursor:pointer;font:inherit;
-  background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--c) 22%,transparent),rgba(12,14,22,.92) 72%);
-  box-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;
-  color:#fff;transition:opacity .25s var(--ease-out),box-shadow .25s var(--ease-out);
-  -webkit-tap-highlight-color:transparent;}
-.tm-sat svg{width:15px;height:15px;color:var(--c);}
-.tm-sat span{font-size:.5rem;font-weight:700;line-height:1.2;text-align:center;}
-.tm-hub.filtered .tm-sat:not(.hot){opacity:.32;}
-.tm-sat.hot{box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent);}
-.tm-hub.filtered.dirsel .tm-sat{opacity:.32;}
-.tm-divs{margin-top:16px;display:flex;flex-direction:column;gap:11px;}
-.tm-div{border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:15px;
-  background:rgba(12,14,22,.8);overflow:hidden;box-shadow:0 0 22px -8px var(--c);}
-.tm-div.away{display:none;}
-.tm-dhead{display:flex;align-items:center;gap:10px;width:100%;padding:14px 15px;background:none;border:0;
-  color:#fff;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.tm-dhead i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);flex:none;}
-.tm-dhead b{flex:1;min-width:0;text-align:left;font-size:.9rem;letter-spacing:-.01em;}
-.tm-dhead .n{flex:none;min-width:26px;padding:2px 8px;border:1px solid color-mix(in srgb,var(--c) 65%,transparent);
-  border-radius:99px;color:var(--ink-dim);font-size:.66rem;font-weight:800;text-align:center;}
-.tm-dhead .ch{flex:none;width:9px;height:9px;border-right:2px solid var(--ink-faint);border-bottom:2px solid var(--ink-faint);
-  transform:rotate(45deg);transition:transform .25s var(--ease-out);margin-top:-3px;}
-.tm-div.open .tm-dhead .ch{transform:rotate(-135deg);margin-top:3px;}
-.tm-dbody{display:none;border-top:1px solid rgba(255,255,255,.08);}
-.tm-div.open .tm-dbody{display:block;}
-.tm-person{display:flex;align-items:center;gap:10px;width:100%;padding:11px 15px;background:none;border:0;
-  border-top:1px solid rgba(255,255,255,.06);color:#fff;font:inherit;text-align:left;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;}
-.tm-person:first-child{border-top:0;}
-.tm-person .av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
-  background:color-mix(in srgb,var(--c) 18%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
-  color:var(--c);font-size:.6rem;font-weight:800;}
-.tm-person b{flex:none;max-width:38%;font-size:.8rem;letter-spacing:-.01em;line-height:1.25;}
-.tm-person .r{flex:1;min-width:0;color:var(--ink-dim);font-size:.72rem;line-height:1.3;}
-.tm-person .t{flex:none;max-width:30%;color:var(--ink-faint);font-size:.64rem;font-weight:700;text-align:right;line-height:1.3;}
-.tm-person .t.win{color:var(--mint-ink,#2fe0a0);}
-.tm-bio{display:none;padding:2px 15px 14px 55px;}
-.tm-bio.show{display:block;animation:stmCardIn .3s var(--ease-out);}
-.tm-bio p{margin:0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
-.tm-bio .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
-.tm-bio .pills span{padding:3px 9px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:99px;
-  color:var(--ink-dim);font-size:.6rem;font-weight:800;}
-.tm-bio .pills span.win{border-color:var(--mint-ink,#2fe0a0);color:var(--mint-ink,#2fe0a0);}
-.tm-dir{display:none;margin-top:16px;padding:15px;border:1.6px solid var(--pink);border-radius:16px;
-  background:rgba(12,14,22,.9);box-shadow:0 0 30px -8px var(--pink);}
-.tm-dir.show{display:block;animation:stmCardIn .3s var(--ease-out);}
-.tm-dir .hd{display:flex;align-items:center;gap:11px;}
-.tm-dir .av{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
-  background:rgba(255,61,154,.16);border:1.6px solid var(--pink);color:var(--pink);font-size:.8rem;font-weight:800;}
-.tm-dir b{display:block;color:#fff;font-size:.95rem;}
-.tm-dir .rl{display:block;color:var(--pink);font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
-.tm-dir p{margin:10px 0 0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
 
 /* ==========================================================================
    SECTION SEAMS — the deck alternates light and dark chapters, and a hard
@@ -3628,7 +3528,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
    ========================================================================== */
 @media (max-width:1020px){
   .hero-inner{grid-template-columns:1fr;}
-  .hero h1{white-space:normal;font-size:clamp(1.5rem,6vw,2rem);}
+  /* the two hero lines each hold ONE line on phones: keep the desktop's
+     nowrap and size by viewport so the longest line ("to a group built
+     beyond £100 million.") always fits the screen with margin to spare */
+  .hero h1{white-space:nowrap;font-size:clamp(.86rem,4.5vw,2rem);}
   .group-grid{grid-template-columns:1fr;}
   .proj-grid{grid-template-columns:1fr;}
   .h35-grid{grid-template-columns:1fr;}
@@ -4104,8 +4007,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
             <linearGradient id="stmLgB" gradientUnits="userSpaceOnUse" x1="195" y1="132" x2="195" y2="234"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/></linearGradient>
             <linearGradient id="stmLgO" gradientUnits="userSpaceOnUse" x1="240" y1="100" x2="316" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
-            <linearGradient id="stmLgD1" gradientUnits="userSpaceOnUse" x1="168" y1="122" x2="128" y2="430"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#d7b35f"/></linearGradient>
-            <linearGradient id="stmLgD2" gradientUnits="userSpaceOnUse" x1="222" y1="122" x2="262" y2="430"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/></linearGradient>
           </defs>
           <g fill="#fff" aria-hidden="true">
             <circle cx="28" cy="34" r="1.1" opacity=".5"/><circle cx="88" cy="12" r=".9" opacity=".4"/><circle cx="146" cy="52" r="1" opacity=".45"/>
@@ -4124,16 +4025,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <!-- future lanes: Holdings out to both long-term worlds, arrowing
-               onto their crowns exactly like the operating trio's lanes -->
-          <path d="M168.6 121.7 C 135 190, 116 300, 127 426" fill="none" stroke="url(#stmLgD1)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <path d="M221.4 121.7 C 255 190, 274 300, 263 427" fill="none" stroke="url(#stmLgD2)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <!-- future ventures descend from the operating shell -->
+          <path d="M128 412 L128 438" fill="none" stroke="#d7b35f" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
+          <path d="M262 412 L262 438" fill="none" stroke="#a487df" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
           <!-- selection halos -->
           <circle class="stm-ring" data-ring="global" cx="195" cy="276" r="42" fill="none" stroke="#38a9ff" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="form" cx="70" cy="258" r="36" fill="none" stroke="#2fe0a0" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="storm" cx="320" cy="258" r="36" fill="none" stroke="#ff6a3d" stroke-width="1.6"/>
-          <circle class="stm-ring" data-ring="ds1" cx="128" cy="470" r="42" fill="none" stroke="#d7b35f" stroke-width="1.6"/>
-          <circle class="stm-ring" data-ring="ds2" cx="262" cy="470" r="42" fill="none" stroke="#a487df" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds1" cx="128" cy="470" r="34" fill="none" stroke="#d7b35f" stroke-width="1.6"/>
+          <circle class="stm-ring" data-ring="ds2" cx="262" cy="470" r="34" fill="none" stroke="#a487df" stroke-width="1.6"/>
           <!-- live art clones land here (initSysMobile) -->
           <g id="stmSun"></g>
           <g id="stmPlForm" data-co="form"></g>
@@ -12759,29 +12659,6 @@ function renderView() {
 function applyTeamFilter() {
   const key = teamState.filter;
 
-  /* the phone staff matrix rides the same chips: highlight the chosen
-     satellite, keep only that division's roster (opened), and swap in the
-     MD's own card when Director is the filter. Runs on every width — the
-     desktop stylesheet keeps #teamMobile hidden, so this is free there. */
-  const tm = document.getElementById("teamMobile");
-  if (tm) {
-    const dir = key === "director";
-    const hub = tm.querySelector(".tm-hub");
-    hub.classList.toggle("filtered", key !== "all");
-    hub.classList.toggle("dirsel", dir);
-    tm.querySelectorAll(".tm-sat").forEach(s => s.classList.toggle("hot", s.dataset.f === key));
-    tm.querySelectorAll(".tm-div").forEach(d => {
-      const mine = d.dataset.div === key;
-      d.classList.toggle("away", dir || (key !== "all" && !mine));
-      if (mine) {
-        d.classList.add("open");
-        d.querySelector(".tm-dhead").setAttribute("aria-expanded", "true");
-      }
-    });
-    const dc = tm.querySelector(".tm-dir");
-    if (dc) dc.classList.toggle("show", dir);
-  }
-
   if (teamState.view === "spider") {
     const spider = $("#spider");
     if (!spider) return;
@@ -12903,145 +12780,6 @@ function renderTeam() {
   );
 
   renderView(); // the global counter pass (boot) animates #headStats
-  renderTeamMobile();
-}
-
-/* --- PHONE STAFF MATRIX --------------------------------------------------
-   The mock made real: the same divisions, people and colours as the desktop
-   matrix, recomposed for a thumb. A glowing hub (the MD) ringed by one
-   satellite per division, a how-to card, and per-division accordions whose
-   rows expand into each person's full detail. Filtering rides the SAME
-   #teamFilters chips as the desktop views — satellites just click them. */
-function renderTeamMobile() {
-  const chips = document.getElementById("teamFilters");
-  if (!chips || document.getElementById("teamMobile")) return;
-  const flat = flattenTeam();
-  const root = flat.find(p => p.root) || flat[0];
-  const divs = FG_DATA.team.divisions.filter(d => d.key !== "director");
-  const PPL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="6.2" cy="6.8" r="2.5"/><circle cx="13.8" cy="6.8" r="2.5"/><path d="M1.8 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3zM9.4 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3z"/></svg>';
-  const SHORT = { core: "Core Ops &amp; Leadership", finance: "Finance &amp; Accounts" };
-  /* hexagon of satellites around the hub — centre (195,170), orbit 140 */
-  const SAT = [
-    { key: "finance", a: -120 }, { key: "core", a: -60 },
-    { key: "it", a: 180 }, { key: "web", a: 0 },
-    { key: "ecom", a: 120 }, { key: "partners", a: 60 },
-  ];
-  const pos = a => {
-    const r = a * Math.PI / 180;
-    return [195 + 140 * Math.cos(r), 170 + 140 * Math.sin(r)];
-  };
-  const spokes = SAT.map(s => {
-    const d = divs.find(x => x.key === s.key);
-    const r = s.a * Math.PI / 180, ux = Math.cos(r), uy = Math.sin(r);
-    return `<line x1="${(195 + 87 * ux).toFixed(1)}" y1="${(170 + 87 * uy).toFixed(1)}"
-      x2="${(195 + 93 * ux).toFixed(1)}" y2="${(170 + 93 * uy).toFixed(1)}"
-      stroke="${d ? d.color : "#fff"}" stroke-width="2.2" opacity=".85"/>`;
-  }).join("");
-  const sats = SAT.map(s => {
-    const d = divs.find(x => x.key === s.key);
-    if (!d) return "";
-    const [x, y] = pos(s.a);
-    return `<button class="tm-sat" type="button" data-f="${d.key}" style="--c:${d.color};left:${(x / 390 * 100).toFixed(2)}%;top:${(y / 340 * 100).toFixed(2)}%"
-      aria-label="${d.label}, filter this division">${PPL}<span>${SHORT[d.key] || d.label}</span></button>`;
-  }).join("");
-  const rightTxt = p => (p.tag || p.type);
-  const rows = d => d.people.map(p => {
-    const pi = flat.find(f => f.name === p.name && f.divKey === d.key).pi;
-    return `
-    <button class="tm-person" type="button" data-pi="${pi}" aria-expanded="false"
-      aria-label="${p.name}, ${p.role}, full detail">
-      <span class="av">${p.org ? "◆" : initials(p.name)}</span>
-      <b>${p.name}</b>
-      <span class="r">${p.role}</span>
-      <span class="t ${p.tagKind === "win" ? "win" : ""}">${rightTxt(p)}</span>
-    </button>
-    <div class="tm-bio" data-pi="${pi}">
-      <p>${p.bio || ""}</p>
-      <span class="pills">
-        <span>${p.type}</span>
-        ${p.tag ? `<span class="${p.tagKind === "win" ? "win" : ""}">${p.tag}</span>` : ""}
-        ${p.badge ? `<span>${p.badge}</span>` : ""}
-        ${p.lead ? "<span>Division lead</span>" : ""}
-      </span>
-    </div>`;
-  }).join("");
-  const accordions = divs.map((d, i) => `
-    <section class="tm-div ${i < 2 ? "open" : ""}" data-div="${d.key}" style="--c:${d.color}">
-      <button class="tm-dhead" type="button" aria-expanded="${i < 2}">
-        <i></i><b>${d.label}</b><span class="n">${d.people.length}</span><span class="ch"></span>
-      </button>
-      <div class="tm-dbody">${rows(d)}</div>
-    </section>`).join("");
-
-  const tm = document.createElement("div");
-  tm.id = "teamMobile";
-  tm.innerHTML = `
-    <div class="tm-guide">
-      <b class="h">How to explore</b>
-      <div class="row"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.4 7.8 15.6 10.7l-3.4 1.1-1 3.4z" fill="var(--pink)"/><path d="M3.4 3.6 5 5.2M2.8 8.8h2.2M8.8 2.8v2.2" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><span><b>Tap</b> a division to filter the view</span></div>
-      <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="var(--blue)" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="6.6" r="3"/><path d="M3.8 16.4c0-3 2.8-5.2 6.2-5.2s6.2 2.2 6.2 5.2" stroke-linecap="round"/></svg><span><b>Tap</b> a person for full detail</span></div>
-      <div class="row"><span class="cwheel" aria-hidden="true"></span><span><b>Follow</b> the colour to trace the team</span></div>
-    </div>
-    <div class="tm-hub" aria-label="Division hub around ${root.name}">
-      <svg viewBox="0 0 390 340" aria-hidden="true">
-        <circle cx="195" cy="170" r="140" fill="none" stroke="rgba(226,240,255,.22)" stroke-width="1.1" stroke-dasharray="4 8"/>
-        ${spokes}
-      </svg>
-      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}, the hub">
-        <b>${root.name}</b><span>${root.role}</span><i>The hub</i>
-      </button>
-      ${sats}
-    </div>
-    <div class="tm-divs">${accordions}</div>
-    <div class="tm-dir" style="--c:var(--pink)">
-      <div class="hd">
-        <span class="av">${initials(root.name)}</span>
-        <span><b>${root.name}</b><span class="rl">${root.role} · The hub</span></span>
-      </div>
-      <p>${root.bio || ""}</p>
-    </div>`;
-  chips.insertAdjacentElement("afterend", tm);
-
-  // satellites and the hub drive the same chips the desktop views use
-  tm.querySelectorAll("[data-f]").forEach(el =>
-    el.addEventListener("click", () => {
-      const chip = chips.querySelector(`.chip[data-f="${el.dataset.f}"]`);
-      const target = teamState.filter === el.dataset.f ? "all" : el.dataset.f;
-      const c2 = chips.querySelector(`.chip[data-f="${target}"]`);
-      (c2 || chip)?.click();
-    }));
-  tm.querySelectorAll(".tm-dhead").forEach(h =>
-    h.addEventListener("click", () => {
-      const open = !h.closest(".tm-div").classList.contains("open");
-      h.closest(".tm-div").classList.toggle("open", open);
-      h.setAttribute("aria-expanded", String(open));
-    }));
-  tm.querySelectorAll(".tm-person").forEach(btn =>
-    btn.addEventListener("click", () => {
-      const bio = tm.querySelector(`.tm-bio[data-pi="${btn.dataset.pi}"]`);
-      const show = !bio.classList.contains("show");
-      btn.closest(".tm-dbody").querySelectorAll(".tm-bio.show").forEach(b => b.classList.remove("show"));
-      btn.closest(".tm-dbody").querySelectorAll(".tm-person").forEach(b => b.setAttribute("aria-expanded", "false"));
-      bio.classList.toggle("show", show);
-      btn.setAttribute("aria-expanded", String(show));
-    }));
-
-  /* the mock's own header, phones only — the desktop wording is stored and
-     restored the moment the viewport crosses back over 900px */
-  const head = document.querySelector("#team .sec-head");
-  const kick = head && head.querySelector(".kicker");
-  const h2 = head && head.querySelector("h2");
-  if (kick && h2) {
-    const desk = { k: kick.innerHTML, h: h2.innerHTML };
-    const applyHead = () => {
-      const m = innerWidth <= 900;
-      kick.innerHTML = m ? "The Staff Matrix" : desk.k;
-      h2.innerHTML = m ? "Explore the People<br>Powering the Group" : desk.h;
-    };
-    applyHead();
-    let t = 0;
-    addEventListener("resize", () => { clearTimeout(t); t = setTimeout(applyHead, 150); }, { passive: true });
-  }
 }
 
 /* --- "Join the Movement" drawer ----------------------------------------- */
@@ -14919,21 +14657,15 @@ function initSysMobile() {
   mount('.sm-planet[data-key="form"] .mf', "stmPlForm", "translate(70,258) scale(.714)");
   mount('.sm-planet[data-key="fly"] .mf', "stmPlGlobal", "translate(195,276) scale(.75)");
   mount('.sm-planet[data-key="storm"] .mf', "stmPlStorm", "translate(320,258) scale(.833)");
-  /* cloneCelestial strips the clone ROOT's transform, and for the stations
-     that root IS the art-scale wrapper — the art therefore arrives at RAW
-     art units, with its body centred near (0,-4.6), not at the map-space
-     offsets the desktop constants describe. These compensations are the
-     MEASURED values that land each body centre exactly on its ring
-     (128,470)/(262,470) — the selection halo sits ON the planet. */
-  mount(".mg-station.fc-destroyer > g", "stmPlDs1", "translate(128,470) scale(.645) translate(0,4.6)");
-  mount(".mg-station.fc-moon > g", "stmPlDs2", "translate(262,470) scale(.615) translate(0,4.7)");
+  mount(".mg-station.fc-destroyer > g", "stmPlDs1", "translate(128,470) scale(.645) translate(-6.3,28.8)");
+  mount(".mg-station.fc-moon > g", "stmPlDs2", "translate(262,470) scale(.615) translate(5.0,28.6)");
   // detail-card icons: the same art again, tiny
   const ICON = {
     global: ['.sm-planet[data-key="fly"] .mf', "-52 -52 104 104", ""],
     form: ['.sm-planet[data-key="form"] .mf', "-46 -46 92 92", ""],
     storm: ['.sm-planet[data-key="storm"] .mf', "-40 -40 80 80", ""],
-    ds1: [".mg-station.fc-destroyer > g", "-64 -64 128 128", "translate(0,4.6)"],
-    ds2: [".mg-station.fc-moon > g", "-64 -64 128 128", "translate(0,4.7)"],
+    ds1: [".mg-station.fc-destroyer > g", "-50 -50 100 100", "translate(-6.3,28.8)"],
+    ds2: [".mg-station.fc-moon > g", "-50 -50 100 100", "translate(5.0,28.6)"],
   };
   document.querySelectorAll("#stmCards .stm-ico[data-ico]").forEach(slot => {
     if (slot.firstChild) return;

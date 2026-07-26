@@ -4108,6 +4108,48 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   .vac{gap:10px;padding:12px;}
   .vac .v-tag{width:100%;margin-left:46px;text-align:center;}
 }
+
+/* ============ PHONE CONDENSE — stat tiles on one row, the raise / beyond
+   panels tightened. Deliberately the LAST block in the sheet so it wins
+   every equal-specificity stacking rule above it at phone widths. ============ */
+@media (max-width:900px){
+  /* growth + market stat tiles: one row of three, dead space trimmed */
+  .stat-row{grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px;}
+  .stat{padding:11px 9px 10px;}
+  .stat .num{font-size:clamp(1rem,4.8vw,1.4rem);}
+  .stat .lbl{font-size:.58rem;line-height:1.4;margin-top:3px;}
+  /* team headcount tiles: one row of four */
+  .head-stats{grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px;}
+  .hstat{padding:10px 8px 9px;}
+  .hstat .n{font-size:clamp(.95rem,4.4vw,1.3rem);}
+  .hstat .l{font-size:.56rem;line-height:1.4;margin-top:2px;}
+  /* the raise: five unlock rows condensed */
+  #fundStatic{padding:18px 16px;}
+  #fundStatic .fsr{gap:10px;padding:9px 0 8px;}
+  #fundStatic .fsr-no{width:26px;height:26px;border-radius:8px;font-size:.56rem;}
+  #fundStatic .fsr-top b{font-size:.84rem;}
+  #fundStatic .fsr p{margin:2px 0 0;font-size:.74rem;line-height:1.5;}
+  #fundStatic .fsr-note{margin-top:10px;font-size:.7rem;line-height:1.5;}
+  /* beyond: asset pills + company chips tightened */
+  #beyond .panel{padding:17px 15px;}
+  #beyond .panel h3{font-size:1rem;}
+  #beyond .panel .psub{font-size:.74rem;margin-bottom:10px;}
+  .beyond-grid{gap:11px;}
+  .by-tags,.by-cos{gap:6px;margin-top:0;}
+  .by-tags span{padding:5px 10px;}
+  .by-cos span{padding:7px 11px;font-size:.74rem;}
+  /* the flywheel: six beats + the £500m card, tightened */
+  .flywheel{gap:6px;margin-top:10px;}
+  .flywheel li{padding:9px 12px 9px 42px;font-size:.78rem;border-radius:11px;}
+  .flywheel li::before{left:10px;width:22px;height:22px;font-size:.62rem;}
+  .flywheel li:not(:last-child)::after{left:21px;bottom:-6px;height:6px;}
+  .fly-loop{margin:9px 0 0;gap:8px;}
+  .fly-loop span{width:16px;height:16px;}
+  .grp-val{margin-top:12px;padding:13px 14px;}
+  .grp-val b{font-size:1.4rem;}
+  .grp-val span{margin-top:4px;font-size:.75rem;line-height:1.45;}
+  .grp-val i{margin-top:7px;}
+}
 </style>
 </head>
 <body>

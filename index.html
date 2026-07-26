@@ -967,7 +967,9 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   .fs-chips .live em{color:#4fe0a0;}
   .fs-chips .soon em{color:#ffbe5a;}
   /* .fs-ambition is already the dark navy band — left as authored */
-  .focus-begin{background:#fff;border-color:rgba(56,169,255,.4);box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(56,169,255,.25);-webkit-backdrop-filter:none;backdrop-filter:none;}
+  .focus-begin{background:rgba(13,20,38,.88);color:#eaf2ff;border-color:rgba(126,182,255,.5);
+    box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 26px rgba(56,169,255,.3),inset 0 1px 0 rgba(255,255,255,.08);
+    -webkit-backdrop-filter:none;backdrop-filter:none;}
 }
 .focus-begin:hover{transform:translateY(-2px);border-color:rgba(255,61,154,.5);
   box-shadow:0 14px 34px rgba(20,58,112,.2),0 0 24px rgba(255,61,154,.28),inset 0 1px 0 #fff;}
@@ -1187,6 +1189,70 @@ html.spx #opportunity-static{display:none;}
 #opportunity-static .os-primary .os-top i{background:#2fe0a0;box-shadow:0 0 8px #2fe0a0;}
 #opportunity-static .os-primary .os-pill{border-color:rgba(47,224,160,.55);color:#2fe0a0;}
 #opportunity-static .os-primary .os-cat{color:#6ef0be;}
+/* PHONE EXPANSION GLOBE — the mock made real: the same nine PL_PINS
+   territories, now on a live spinning neon globe with tappable pins, filter
+   chips, a swipe-card rail with dots, and the one-network banner. Phones
+   only; >900px keeps the static legend + grid this widget replaces. */
+#osx{display:none;}
+@media (max-width:900px){
+  #opportunity-static .os-legend,#opportunity-static .os-grid{display:none;}
+  #osx{display:block;}
+}
+#osx .osx-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:2px 0 4px;}
+#osx .osx-chips button{padding:8px 16px;border:1px solid rgba(255,255,255,.3);border-radius:99px;
+  background:rgba(12,14,24,.6);color:#e8edfa;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;
+  transition:border-color .25s,box-shadow .25s,background .25s;}
+#osx .osx-chips button.on{border-color:var(--pink);background:rgba(255,61,154,.16);color:#fff;font-weight:800;
+  box-shadow:0 0 16px rgba(255,61,154,.4),inset 0 0 10px rgba(255,61,154,.14);}
+#osx .osx-stage{position:relative;width:100%;aspect-ratio:1/.94;margin:2px 0 0;}
+#osx .osx-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+#osx .osx-pin{position:absolute;left:0;top:0;width:26px;height:32px;padding:0;border:0;background:none;
+  cursor:pointer;transition:opacity .2s linear;will-change:transform;--pc:#ff3d9a;}
+#osx .osx-pin svg{display:block;width:100%;height:100%;overflow:visible;
+  filter:drop-shadow(0 0 6px color-mix(in srgb,var(--pc) 65%,transparent)) drop-shadow(0 3px 6px rgba(0,0,0,.55));}
+#osx .osx-hint{display:flex;align-items:center;justify-content:center;gap:11px;margin:6px 0 14px;
+  color:#d9e0f2;font-size:.86rem;}
+#osx .osx-hint::before,#osx .osx-hint::after{content:"";flex:none;width:44px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,61,154,.75));}
+#osx .osx-hint::after{background:linear-gradient(90deg,rgba(255,61,154,.75),transparent);}
+#osx .osx-hint svg{flex:none;width:17px;height:17px;color:var(--pink);}
+#osx .osx-rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 8px;
+  scrollbar-width:none;-ms-overflow-style:none;}
+#osx .osx-rail::-webkit-scrollbar{display:none;}
+#osx .osx-card{flex:none;width:min(76%,290px);scroll-snap-align:center;border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;background:linear-gradient(180deg,rgba(21,25,42,.92),rgba(13,16,29,.95));
+  padding:15px 15px 16px;transition:border-color .3s,box-shadow .3s;--pc:var(--pink);}
+#osx .osx-card.on{border-color:rgba(255,61,154,.55);box-shadow:0 0 26px rgba(255,61,154,.16);}
+#osx .osx-card.green{--pc:#2fe0a0;}
+#osx .osx-card.green.on{border-color:rgba(47,224,160,.55);box-shadow:0 0 26px rgba(47,224,160,.15);}
+#osx .osx-card .top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+#osx .osx-card .flag{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.28),0 3px 9px rgba(0,0,0,.45);}
+#osx .osx-card .flag svg{display:block;width:100%;height:100%;}
+#osx .osx-card .flag.xg{display:grid;place-items:center;overflow:visible;color:var(--pink);
+  background:rgba(255,61,154,.08);box-shadow:0 0 0 1.5px rgba(255,61,154,.5),0 3px 9px rgba(0,0,0,.45);}
+#osx .osx-card .flag.xg svg{width:19px;height:19px;}
+#osx .osx-card .pill{flex:none;font-size:.6rem;font-weight:800;letter-spacing:.12em;padding:4px 11px;
+  border:1px solid color-mix(in srgb,var(--pc) 55%,transparent);border-radius:99px;color:var(--pc);}
+#osx .osx-card > b{display:block;margin-top:11px;font-size:1.04rem;letter-spacing:-.01em;color:#fff;}
+#osx .osx-card .cat{display:block;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.13);
+  font-size:.64rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--pc) 82%,#fff);}
+#osx .osx-card p{margin:6px 0 0;font-size:.79rem;line-height:1.5;color:#aab3c8;}
+#osx .osx-dots{display:flex;justify-content:center;gap:8px;margin-top:11px;}
+#osx .osx-dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.24);transition:background .25s,box-shadow .25s;}
+#osx .osx-dots button.on{background:var(--pink);box-shadow:0 0 8px rgba(255,61,154,.8);}
+#osx .osx-banner{display:flex;align-items:center;gap:13px;width:100%;margin-top:18px;padding:13px 15px;
+  border:1px solid rgba(255,255,255,.15);border-radius:16px;background:rgba(15,18,32,.72);
+  color:inherit;font:inherit;text-align:left;cursor:pointer;}
+#osx .osx-banner .ic{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(255,61,154,.55);color:var(--pink);box-shadow:0 0 12px rgba(255,61,154,.28);}
+#osx .osx-banner .ic svg{width:20px;height:20px;}
+#osx .osx-banner .tx{flex:1;min-width:0;}
+#osx .osx-banner .tx b{display:block;font-size:.9rem;color:#fff;letter-spacing:-.01em;}
+#osx .osx-banner .tx span{display:block;margin-top:2px;font-size:.76rem;line-height:1.4;color:#aab3c8;}
+#osx .osx-banner > svg{flex:none;width:18px;height:18px;color:var(--pink);}
 #fundStatic .fsr{display:flex;gap:12px;align-items:flex-start;padding:12px 0 11px;border-top:1px solid rgba(255,255,255,.08);}
 #fundStatic .kicker + .fsr{border-top:0;margin-top:10px;}
 #fundStatic .fsr-no{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:"Orbitron",system-ui,sans-serif;font-size:.64rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#ff3d9a,#38a9ff);margin-top:1px;}
@@ -1482,6 +1548,32 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
   .matrix{min-width:620px;}
 }
 
+/* PHONE POLISH — hero stats on one row with their dead space trimmed;
+   the timeline's next-chapter teasers retired; the market research chapter's
+   grey copy lifted toward white (not fully — just lighter on the black). */
+@media (max-width:900px){
+  #heroKpis .kpi{padding:11px 9px 9px;border-radius:14px;}
+  #heroKpis .kpi .num{font-size:clamp(.98rem,4.6vw,1.3rem);}
+  #heroKpis .kpi .lbl{font-size:.6rem;line-height:1.3;margin-top:4px;}
+  #heroKpis .kpi .lbl2{font-size:.54rem;margin-top:4px;line-height:1.3;}
+  #heroKpis .kpi .spark{height:16px;margin:6px 0 2px;}
+  #jlist .ch-next{display:none !important;}
+  #market{--ink-dim:#c9d1e4;--ink-faint:#aab3c8;}
+  /* the growth-plan intro sits on three tidy lines */
+  #projections .sec-head .section-sub{font-size:.76rem;line-height:1.5;}
+  /* donut figures fit whole — no side scrollbars on the pie charts */
+  #ydDonut,#donut35{width:auto !important;height:auto !important;max-height:none !important;overflow:visible !important;}
+  /* the "becomes" pill row retires on phones */
+  #horizon .becomes{display:none !important;}
+  /* line-graph axes read pure white */
+  #growthChart .axis-tick,#growthChart .axis-note,#trajChart .axis-tick,#trajChart .axis-note{fill:#fff;}
+  /* the horizon headline holds its two authored lines */
+  #horizon .sec-head h2{white-space:nowrap;font-size:clamp(1rem,5.6vw,2rem);}
+  /* the six assumption cards: grey copy on two lines each */
+  .assume > div{padding:22px 12px 18px;}
+  .assume > div span{font-size:.76rem !important;line-height:1.45;}
+}
+
 @keyframes secRiseAlt{
   from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
   to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) translateX(0) scale(1);}
@@ -1619,7 +1711,8 @@ section.tint{background:var(--bg-soft);}
   /* one column everywhere it still matters */
   .pillars,.scen-grid,.assume,.globe-legend,.bp-points,
   .beyond-grid,.bp-pair,.st-future{grid-template-columns:1fr !important;}
-  #heroKpis{grid-template-columns:1fr !important;}
+  /* the three proof tiles ride ONE row on phones (was a 1fr stack) */
+  #heroKpis{grid-template-columns:repeat(3,1fr) !important;gap:9px !important;}
 
   /* trim the vertical padding — 20 chapters is a long enough scroll already */
   section[data-sec]{padding:52px 0;}
@@ -1820,6 +1913,110 @@ section.tint{background:var(--bg-soft);}
 .stm-cta span{color:var(--c);font-size:1rem;line-height:1;}
 .stm-cta:hover,.stm-cta:focus-visible{border-color:var(--c);box-shadow:0 0 18px -6px var(--c);outline:none;}
 @media (max-width:380px){.stm-cols{grid-template-columns:1fr;}.stm-pl{max-width:128px;}}
+
+/* ---- PHONE STAFF MATRIX (tm-*) — the team mock made real: filter chips in
+   a two-column grid, a how-to card, the MD as a glowing hub with one
+   coloured satellite per division, and per-division accordion rosters with
+   inline person detail. Desktop keeps its spider/matrix views untouched. */
+#teamMobile{display:none;}
+@media (max-width:900px){
+  #teamMobile{display:block;}
+  /* the mock owns the phone layout: reorder the wrap, park the desktop views */
+  #team .wrap{display:flex;flex-direction:column;}
+  #team .team-intro{display:contents;}
+  #team .team-intro .sec-head{order:0;}
+  #team #teamFilters{order:1;}
+  #team #teamMobile{order:2;}
+  #team .head-stats{order:3;margin-top:26px;}
+  #team .team-bar{order:4;}
+  #team .team-intro .team-hero{order:5;margin-top:22px;}
+  #team #orgChart,#team #personDetail,#team .team-bar .seg,#team .sec-head .section-sub{display:none !important;}
+  #team .team-bar{justify-content:center;}
+  #team .pipeline-cta{width:100%;justify-content:center;}
+  /* chips: the mock's two-column pill grid */
+  #team #teamFilters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+  #team #teamFilters .chip{display:flex;align-items:center;gap:9px;width:100%;justify-content:flex-start;
+    padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);
+    font-size:.78rem;font-weight:700;line-height:1.2;text-align:left;}
+  #team #teamFilters .chip .cdot{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none;}
+  #team #teamFilters .chip[aria-pressed="true"]{background:#fff;border-color:#fff;color:#0b0d14;}
+  #team #teamFilters .chip[aria-pressed="true"] .cdot{background:#0b0d14;box-shadow:none;}
+}
+.tm-guide{margin-top:16px;padding:15px 16px 14px;border:1px solid rgba(255,255,255,.14);border-radius:16px;
+  background:rgba(255,255,255,.03);}
+.tm-guide b.h{display:block;text-align:center;margin-bottom:11px;color:var(--ink-faint);
+  font-size:.62rem;font-weight:900;letter-spacing:.3em;text-transform:uppercase;}
+.tm-guide .row{display:flex;align-items:center;gap:11px;padding:5px 0;color:var(--ink-dim);font-size:.8rem;}
+.tm-guide .row svg{flex:none;width:18px;height:18px;}
+.tm-guide .row b{color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px;}
+.tm-guide .cwheel{flex:none;width:16px;height:16px;border-radius:50%;
+  background:conic-gradient(#ff3d9a,#f6c66b,#2fe0a0,#38a9ff,#a78bfa,#ff3d9a);}
+.tm-hub{position:relative;max-width:430px;margin:10px auto 0;}
+.tm-hub::after{content:"";display:block;padding-top:calc(340 / 390 * 100%);}
+.tm-hub svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.tm-hubc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44.2%;aspect-ratio:1;
+  border-radius:50%;border:2px solid var(--pink);cursor:pointer;font:inherit;
+  background:radial-gradient(circle at 38% 30%,rgba(255,61,154,.20),rgba(12,14,22,.94) 70%);
+  box-shadow:0 0 34px rgba(255,61,154,.4),inset 0 0 26px rgba(255,61,154,.14);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px;
+  -webkit-tap-highlight-color:transparent;}
+.tm-hubc b{color:#fff;font-size:.92rem;letter-spacing:-.02em;line-height:1.15;}
+.tm-hubc span{color:var(--ink-dim);font-size:.62rem;}
+.tm-hubc i{margin-top:2px;color:var(--ink-faint);font-size:.5rem;font-weight:900;font-style:normal;letter-spacing:.34em;text-transform:uppercase;}
+.tm-sat{position:absolute;transform:translate(-50%,-50%);width:23.6%;aspect-ratio:1;border-radius:50%;
+  border:1.6px solid var(--c);cursor:pointer;font:inherit;
+  background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--c) 22%,transparent),rgba(12,14,22,.92) 72%);
+  box-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;
+  color:#fff;transition:opacity .25s var(--ease-out),box-shadow .25s var(--ease-out);
+  -webkit-tap-highlight-color:transparent;}
+.tm-sat svg{width:15px;height:15px;color:var(--c);}
+.tm-sat span{font-size:.5rem;font-weight:700;line-height:1.2;text-align:center;}
+.tm-hub.filtered .tm-sat:not(.hot){opacity:.32;}
+.tm-sat.hot{box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent);}
+.tm-hub.filtered.dirsel .tm-sat{opacity:.32;}
+.tm-divs{margin-top:16px;display:flex;flex-direction:column;gap:11px;}
+.tm-div{border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:15px;
+  background:rgba(12,14,22,.8);overflow:hidden;box-shadow:0 0 22px -8px var(--c);}
+.tm-div.away{display:none;}
+.tm-dhead{display:flex;align-items:center;gap:10px;width:100%;padding:14px 15px;background:none;border:0;
+  color:#fff;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.tm-dhead i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);flex:none;}
+.tm-dhead b{flex:1;min-width:0;text-align:left;font-size:.9rem;letter-spacing:-.01em;}
+.tm-dhead .n{flex:none;min-width:26px;padding:2px 8px;border:1px solid color-mix(in srgb,var(--c) 65%,transparent);
+  border-radius:99px;color:var(--ink-dim);font-size:.66rem;font-weight:800;text-align:center;}
+.tm-dhead .ch{flex:none;width:9px;height:9px;border-right:2px solid var(--ink-faint);border-bottom:2px solid var(--ink-faint);
+  transform:rotate(45deg);transition:transform .25s var(--ease-out);margin-top:-3px;}
+.tm-div.open .tm-dhead .ch{transform:rotate(-135deg);margin-top:3px;}
+.tm-dbody{display:none;border-top:1px solid rgba(255,255,255,.08);}
+.tm-div.open .tm-dbody{display:block;}
+.tm-person{display:flex;align-items:center;gap:10px;width:100%;padding:11px 15px;background:none;border:0;
+  border-top:1px solid rgba(255,255,255,.06);color:#fff;font:inherit;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;}
+.tm-person:first-child{border-top:0;}
+.tm-person .av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--c) 18%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
+  color:var(--c);font-size:.6rem;font-weight:800;}
+.tm-person b{flex:none;max-width:38%;font-size:.8rem;letter-spacing:-.01em;line-height:1.25;}
+.tm-person .r{flex:1;min-width:0;color:var(--ink-dim);font-size:.72rem;line-height:1.3;}
+.tm-person .t{flex:none;max-width:30%;color:var(--ink-faint);font-size:.64rem;font-weight:700;text-align:right;line-height:1.3;}
+.tm-person .t.win{color:var(--mint-ink,#2fe0a0);}
+.tm-bio{display:none;padding:2px 15px 14px 55px;}
+.tm-bio.show{display:block;animation:stmCardIn .3s var(--ease-out);}
+.tm-bio p{margin:0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
+.tm-bio .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.tm-bio .pills span{padding:3px 9px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:99px;
+  color:var(--ink-dim);font-size:.6rem;font-weight:800;}
+.tm-bio .pills span.win{border-color:var(--mint-ink,#2fe0a0);color:var(--mint-ink,#2fe0a0);}
+.tm-dir{display:none;margin-top:16px;padding:15px;border:1.6px solid var(--pink);border-radius:16px;
+  background:rgba(12,14,22,.9);box-shadow:0 0 30px -8px var(--pink);}
+.tm-dir.show{display:block;animation:stmCardIn .3s var(--ease-out);}
+.tm-dir .hd{display:flex;align-items:center;gap:11px;}
+.tm-dir .av{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,61,154,.16);border:1.6px solid var(--pink);color:var(--pink);font-size:.8rem;font-weight:800;}
+.tm-dir b{display:block;color:#fff;font-size:.95rem;}
+.tm-dir .rl{display:block;color:var(--pink);font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
+.tm-dir p{margin:10px 0 0;color:var(--ink-dim);font-size:.78rem;line-height:1.55;}
 
 /* ==========================================================================
    SECTION SEAMS — the deck alternates light and dark chapters, and a hard
@@ -3681,20 +3878,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;
     touch-action:pan-x pan-y;scrollbar-gutter:stable;
   }
-  /* matches the phones' 560-unit viewBox (renderers pick W=560 <=640px):
-     ~2/3 of the chart is on screen at once and the type is ~1.7x larger */
-  #growthChart > svg{min-width:520px;}
-  #projChart > svg{min-width:560px;}
-  #trajChart > svg{min-width:560px;}
-  #growthChart::before,#projChart::before,#trajChart::before{
-    content:"Swipe chart \2194";
-    position:sticky;left:0;z-index:3;
-    display:inline-flex;align-items:center;min-height:28px;
-    margin:0 0 6px;padding:4px 9px;border-radius:99px;
-    color:var(--ink-dim);background:var(--bg-soft);border:1px solid var(--line);
-    font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-    pointer-events:none;
-  }
+  /* every graph fits the screen WHOLE — no sideways swiping. The 560-unit
+     viewBox simply scales down to the container. */
+  #growthChart > svg,#projChart > svg,#trajChart > svg{min-width:0;width:100%;height:auto;}
   .controls,.team-bar{align-items:stretch;gap:12px;}
   .controls > *,.team-bar > *{min-width:0;}
   .controls .right,.team-bar .right{width:100%;margin-left:0;}
@@ -4373,7 +4559,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="kicker">The expansion map</span>
-        <h2>Built in Britain. Sourced globally.<br><span class="grad-text">Designed to scale internationally.</span></h2>
+        <h2>Built in Britain, <span class="grad-text">Designed to Scale Globally</span></h2>
         <p class="section-sub">Nine territories already power the group's supply chain — where products originate, where they are stored and fulfilled, where customers sit, and where the business goes next.</p>
       </div>
       <div class="os-legend reveal">
@@ -12659,6 +12845,29 @@ function renderView() {
 function applyTeamFilter() {
   const key = teamState.filter;
 
+  /* the phone staff matrix rides the same chips: highlight the chosen
+     satellite, keep only that division's roster (opened), and swap in the
+     MD's own card when Director is the filter. Runs on every width — the
+     desktop stylesheet keeps #teamMobile hidden, so this is free there. */
+  const tm = document.getElementById("teamMobile");
+  if (tm) {
+    const dir = key === "director";
+    const hub = tm.querySelector(".tm-hub");
+    hub.classList.toggle("filtered", key !== "all");
+    hub.classList.toggle("dirsel", dir);
+    tm.querySelectorAll(".tm-sat").forEach(s => s.classList.toggle("hot", s.dataset.f === key));
+    tm.querySelectorAll(".tm-div").forEach(d => {
+      const mine = d.dataset.div === key;
+      d.classList.toggle("away", dir || (key !== "all" && !mine));
+      if (mine) {
+        d.classList.add("open");
+        d.querySelector(".tm-dhead").setAttribute("aria-expanded", "true");
+      }
+    });
+    const dc = tm.querySelector(".tm-dir");
+    if (dc) dc.classList.toggle("show", dir);
+  }
+
   if (teamState.view === "spider") {
     const spider = $("#spider");
     if (!spider) return;
@@ -12780,6 +12989,415 @@ function renderTeam() {
   );
 
   renderView(); // the global counter pass (boot) animates #headStats
+  renderTeamMobile();
+}
+
+/* --- PHONE STAFF MATRIX --------------------------------------------------
+   The mock made real: the same divisions, people and colours as the desktop
+   matrix, recomposed for a thumb. A glowing hub (the MD) ringed by one
+   satellite per division, a how-to card, and per-division accordions whose
+   rows expand into each person's full detail. Filtering rides the SAME
+   #teamFilters chips as the desktop views — satellites just click them. */
+function renderTeamMobile() {
+  const chips = document.getElementById("teamFilters");
+  if (!chips || document.getElementById("teamMobile")) return;
+  const flat = flattenTeam();
+  const root = flat.find(p => p.root) || flat[0];
+  const divs = FG_DATA.team.divisions.filter(d => d.key !== "director");
+  const PPL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="6.2" cy="6.8" r="2.5"/><circle cx="13.8" cy="6.8" r="2.5"/><path d="M1.8 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3zM9.4 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3z"/></svg>';
+  const SHORT = { core: "Core Ops &amp; Leadership", finance: "Finance &amp; Accounts" };
+  /* hexagon of satellites around the hub — centre (195,170), orbit 140 */
+  const SAT = [
+    { key: "finance", a: -120 }, { key: "core", a: -60 },
+    { key: "it", a: 180 }, { key: "web", a: 0 },
+    { key: "ecom", a: 120 }, { key: "partners", a: 60 },
+  ];
+  const pos = a => {
+    const r = a * Math.PI / 180;
+    return [195 + 140 * Math.cos(r), 170 + 140 * Math.sin(r)];
+  };
+  const spokes = SAT.map(s => {
+    const d = divs.find(x => x.key === s.key);
+    const r = s.a * Math.PI / 180, ux = Math.cos(r), uy = Math.sin(r);
+    return `<line x1="${(195 + 87 * ux).toFixed(1)}" y1="${(170 + 87 * uy).toFixed(1)}"
+      x2="${(195 + 93 * ux).toFixed(1)}" y2="${(170 + 93 * uy).toFixed(1)}"
+      stroke="${d ? d.color : "#fff"}" stroke-width="2.2" opacity=".85"/>`;
+  }).join("");
+  const sats = SAT.map(s => {
+    const d = divs.find(x => x.key === s.key);
+    if (!d) return "";
+    const [x, y] = pos(s.a);
+    return `<button class="tm-sat" type="button" data-f="${d.key}" style="--c:${d.color};left:${(x / 390 * 100).toFixed(2)}%;top:${(y / 340 * 100).toFixed(2)}%"
+      aria-label="${d.label}, filter this division">${PPL}<span>${SHORT[d.key] || d.label}</span></button>`;
+  }).join("");
+  const rightTxt = p => (p.tag || p.type);
+  const rows = d => d.people.map(p => {
+    const pi = flat.find(f => f.name === p.name && f.divKey === d.key).pi;
+    return `
+    <button class="tm-person" type="button" data-pi="${pi}" aria-expanded="false"
+      aria-label="${p.name}, ${p.role}, full detail">
+      <span class="av">${p.org ? "◆" : initials(p.name)}</span>
+      <b>${p.name}</b>
+      <span class="r">${p.role}</span>
+      <span class="t ${p.tagKind === "win" ? "win" : ""}">${rightTxt(p)}</span>
+    </button>
+    <div class="tm-bio" data-pi="${pi}">
+      <p>${p.bio || ""}</p>
+      <span class="pills">
+        <span>${p.type}</span>
+        ${p.tag ? `<span class="${p.tagKind === "win" ? "win" : ""}">${p.tag}</span>` : ""}
+        ${p.badge ? `<span>${p.badge}</span>` : ""}
+        ${p.lead ? "<span>Division lead</span>" : ""}
+      </span>
+    </div>`;
+  }).join("");
+  const accordions = divs.map((d, i) => `
+    <section class="tm-div ${i < 2 ? "open" : ""}" data-div="${d.key}" style="--c:${d.color}">
+      <button class="tm-dhead" type="button" aria-expanded="${i < 2}">
+        <i></i><b>${d.label}</b><span class="n">${d.people.length}</span><span class="ch"></span>
+      </button>
+      <div class="tm-dbody">${rows(d)}</div>
+    </section>`).join("");
+
+  const tm = document.createElement("div");
+  tm.id = "teamMobile";
+  tm.innerHTML = `
+    <div class="tm-guide">
+      <b class="h">How to explore</b>
+      <div class="row"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.4 7.8 15.6 10.7l-3.4 1.1-1 3.4z" fill="var(--pink)"/><path d="M3.4 3.6 5 5.2M2.8 8.8h2.2M8.8 2.8v2.2" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><span><b>Tap</b> a division to filter the view</span></div>
+      <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="var(--blue)" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="6.6" r="3"/><path d="M3.8 16.4c0-3 2.8-5.2 6.2-5.2s6.2 2.2 6.2 5.2" stroke-linecap="round"/></svg><span><b>Tap</b> a person for full detail</span></div>
+      <div class="row"><span class="cwheel" aria-hidden="true"></span><span><b>Follow</b> the colour to trace the team</span></div>
+    </div>
+    <div class="tm-hub" aria-label="Division hub around ${root.name}">
+      <svg viewBox="0 0 390 340" aria-hidden="true">
+        <circle cx="195" cy="170" r="140" fill="none" stroke="rgba(226,240,255,.22)" stroke-width="1.1" stroke-dasharray="4 8"/>
+        ${spokes}
+      </svg>
+      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}, the hub">
+        <b>${root.name}</b><span>${root.role}</span><i>The hub</i>
+      </button>
+      ${sats}
+    </div>
+    <div class="tm-divs">${accordions}</div>
+    <div class="tm-dir" style="--c:var(--pink)">
+      <div class="hd">
+        <span class="av">${initials(root.name)}</span>
+        <span><b>${root.name}</b><span class="rl">${root.role} · The hub</span></span>
+      </div>
+      <p>${root.bio || ""}</p>
+    </div>`;
+  chips.insertAdjacentElement("afterend", tm);
+
+  // satellites and the hub drive the same chips the desktop views use
+  tm.querySelectorAll("[data-f]").forEach(el =>
+    el.addEventListener("click", () => {
+      const chip = chips.querySelector(`.chip[data-f="${el.dataset.f}"]`);
+      const target = teamState.filter === el.dataset.f ? "all" : el.dataset.f;
+      const c2 = chips.querySelector(`.chip[data-f="${target}"]`);
+      (c2 || chip)?.click();
+    }));
+  tm.querySelectorAll(".tm-dhead").forEach(h =>
+    h.addEventListener("click", () => {
+      const open = !h.closest(".tm-div").classList.contains("open");
+      h.closest(".tm-div").classList.toggle("open", open);
+      h.setAttribute("aria-expanded", String(open));
+    }));
+  tm.querySelectorAll(".tm-person").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const bio = tm.querySelector(`.tm-bio[data-pi="${btn.dataset.pi}"]`);
+      const show = !bio.classList.contains("show");
+      btn.closest(".tm-dbody").querySelectorAll(".tm-bio.show").forEach(b => b.classList.remove("show"));
+      btn.closest(".tm-dbody").querySelectorAll(".tm-person").forEach(b => b.setAttribute("aria-expanded", "false"));
+      bio.classList.toggle("show", show);
+      btn.setAttribute("aria-expanded", String(show));
+    }));
+
+  /* the mock's own header, phones only — the desktop wording is stored and
+     restored the moment the viewport crosses back over 900px */
+  const head = document.querySelector("#team .sec-head");
+  const kick = head && head.querySelector(".kicker");
+  const h2 = head && head.querySelector("h2");
+  if (kick && h2) {
+    const desk = { k: kick.innerHTML, h: h2.innerHTML };
+    const applyHead = () => {
+      const m = innerWidth <= 900;
+      kick.innerHTML = m ? "The Staff Matrix" : desk.k;
+      h2.innerHTML = m ? "Explore the People<br>Powering the Group" : desk.h;
+    };
+    applyHead();
+    let t = 0;
+    addEventListener("resize", () => { clearTimeout(t); t = setTimeout(applyHead, 150); }, { passive: true });
+  }
+}
+
+/* --- PHONE EXPANSION GLOBE ----------------------------------------------
+   The static sourcing grid, recomposed for a thumb as a live set-piece: the
+   SAME nine PL_PINS territories (via __ffGlobeKit) on a small spinning neon
+   globe — pins carry across the visible face exactly like the desktop
+   planet — with legend-word filter chips, a swipe-card rail whose active
+   card and pin highlight each other, pagination dots, and a one-network
+   banner. Purely additive: >900px keeps the legend + grid this replaces. */
+function initExpansionMobile() {
+  const host = document.getElementById("opportunity-static");
+  const head = host && host.querySelector(".sec-head");
+  const kit = window.__ffGlobeKit;
+  if (!host || !head || !kit || document.getElementById("osx")) return;
+  const PINS = kit.PINS;
+  const PINK = "#ff3d9a", GREEN = "#2fe0a0";
+  // legend semantics → chips: the UK is the group's warehouse AND where its
+  // customers sit; every sourcing country is supply; expansion is the
+  // horizon story itself — no invented geography.
+  const catsOf = p => p.n === "United Kingdom" ? ["infrastructure", "demand"] : ["supply"];
+  const CHIPS = [["all", "All"], ["supply", "Supply"], ["infrastructure", "Infrastructure"],
+    ["demand", "Demand"], ["expansion", "Expansion"]];
+  const star = (x, y, r, fill) => {
+    let d = "";
+    for (let k = 0; k < 10; k++) {
+      const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r * .42 : r;
+      d += (k ? "L" : "M") + (x + Math.cos(a) * rr).toFixed(2) + " " + (y + Math.sin(a) * rr).toFixed(2);
+    }
+    return `<path d="${d}Z" fill="${fill}"/>`;
+  };
+  const flag = (id, body) => `<svg viewBox="0 0 20 20" aria-hidden="true"><clipPath id="osxf-${id}"><circle cx="10" cy="10" r="10"/></clipPath><g clip-path="url(#osxf-${id})">${body}</g></svg>`;
+  const FLAGS = {
+    "United Kingdom": flag("uk", `<rect width="20" height="20" fill="#1e3282"/><path d="M0 0 20 20M20 0 0 20" stroke="#f4f6fb" stroke-width="4.6"/><path d="M0 0 20 20M20 0 0 20" stroke="#d21f3c" stroke-width="1.9"/><path d="M10 0v20M0 10h20" stroke="#f4f6fb" stroke-width="6.4"/><path d="M10 0v20M0 10h20" stroke="#d21f3c" stroke-width="3.6"/>`),
+    "Poland": flag("pl", `<rect width="20" height="10" fill="#f4f6fb"/><rect y="10" width="20" height="10" fill="#d21f3c"/>`),
+    "Belgium": flag("be", `<rect width="7" height="20" fill="#17161b"/><rect x="7" width="6.6" height="20" fill="#ffd458"/><rect x="13.6" width="6.4" height="20" fill="#e23b46"/>`),
+    "Italy": flag("it", `<rect width="7" height="20" fill="#39a45e"/><rect x="7" width="6.6" height="20" fill="#f4f6fb"/><rect x="13.6" width="6.4" height="20" fill="#d21f3c"/>`),
+    "Turkey": flag("tr", `<rect width="20" height="20" fill="#d21f3c"/><circle cx="8.4" cy="10" r="4.6" fill="#f4f6fb"/><circle cx="9.7" cy="10" r="3.7" fill="#d21f3c"/>` + star(14.2, 10, 2, "#f4f6fb")),
+    "China": flag("cn", `<rect width="20" height="20" fill="#dd2c2c"/>` + star(6.6, 7.4, 3.1, "#ffd458") + `<circle cx="11.4" cy="4.4" r=".8" fill="#ffd458"/><circle cx="12.8" cy="7" r=".8" fill="#ffd458"/><circle cx="12.8" cy="9.8" r=".8" fill="#ffd458"/><circle cx="11.4" cy="12.2" r=".8" fill="#ffd458"/>`),
+    "Pakistan": flag("pk", `<rect width="20" height="20" fill="#1d6b43"/><rect width="5" height="20" fill="#f4f6fb"/><circle cx="12.2" cy="10.6" r="4.4" fill="#f4f6fb"/><circle cx="13.6" cy="9.6" r="3.7" fill="#1d6b43"/>` + star(15, 6.6, 1.7, "#f4f6fb")),
+    "Taiwan": flag("tw", `<rect width="20" height="20" fill="#d21f3c"/><rect width="11" height="10" fill="#1e3282"/>` + star(5.5, 5, 3, "#f4f6fb") + `<circle cx="5.5" cy="5" r="1.5" fill="#1e3282"/><circle cx="5.5" cy="5" r="1.1" fill="#f4f6fb"/>`),
+    "Malaysia": flag("my", `<rect width="20" height="20" fill="#d21f3c"/><rect y="2.9" width="20" height="2.9" fill="#f4f6fb"/><rect y="8.6" width="20" height="2.9" fill="#f4f6fb"/><rect y="14.3" width="20" height="2.9" fill="#f4f6fb"/><rect width="11" height="10" fill="#1e3282"/><circle cx="4.4" cy="5" r="3" fill="#ffd458"/><circle cx="5.7" cy="4.5" r="2.5" fill="#1e3282"/>` + star(7.5, 5.4, 1.9, "#ffd458")),
+  };
+  const GLOBE_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2M12 3.4c2.8 2.4 4.2 5.3 4.2 8.6 0 3.3-1.4 6.2-4.2 8.6-2.8-2.4-4.2-5.3-4.2-8.6 0-3.3 1.4-6.2 4.2-8.6z"/></svg>';
+  const TAP_IC = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 9V4.6a1.6 1.6 0 0 1 3.2 0V9m0-1.2a1.5 1.5 0 0 1 3 .3v2c0 3.3-1.5 5.9-4.4 5.9-2.3 0-3.3-.9-4.6-3.1L3.9 10.6c-.5-.8.5-1.8 1.4-1.3l1.4 1" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const cardHTML = (p, i) => `
+    <article class="osx-card${p.distinct ? " green" : ""}" data-i="${i}" data-cats="${catsOf(p).join(" ")}">
+      <div class="top"><span class="flag">${FLAGS[p.n] || ""}</span><span class="pill">${p.tag}</span></div>
+      <b>${p.n}</b><span class="cat">${p.cat}</span><p>${p.d2}</p>
+    </article>`;
+  const xCard = `
+    <article class="osx-card" data-i="x" data-cats="expansion">
+      <div class="top"><span class="flag xg">${GLOBE_IC}</span><span class="pill">NEXT</span></div>
+      <b>Global brand platform</b><span class="cat">Where the business plans to go next</span>
+      <p>From ecommerce business to global brand platform — the owned brands carry the model worldwide.</p>
+    </article>`;
+  const osx = document.createElement("div");
+  osx.id = "osx";
+  osx.innerHTML = `
+    <div class="osx-chips" role="group" aria-label="Filter the territories">
+      ${CHIPS.map(([k, l], i) => `<button type="button" data-f="${k}" class="${i ? "" : "on"}" aria-pressed="${i ? "false" : "true"}">${l}</button>`).join("")}
+    </div>
+    <div class="osx-stage">
+      <canvas aria-hidden="true"></canvas>
+      ${PINS.map((p, i) => `<button class="osx-pin" type="button" data-i="${i}" style="--pc:${p.distinct ? GREEN : PINK};opacity:0" aria-label="${p.n}: ${p.cat}">
+        <svg viewBox="0 0 24 30"><path d="M12 29C17 22 22 17.4 22 12A10 10 0 1 0 2 12c0 5.4 5 10 10 17z" fill="var(--pc)" stroke="rgba(255,255,255,.85)" stroke-width="1.3"/><circle cx="12" cy="12" r="4" fill="#140618"/></svg>
+      </button>`).join("")}
+    </div>
+    <div class="osx-hint">${TAP_IC}<span>Tap pins or swipe cards</span></div>
+    <div class="osx-rail" aria-label="Territory cards">${PINS.map(cardHTML).join("")}${xCard}</div>
+    <div class="osx-dots" aria-label="Card position"></div>
+    <button class="osx-banner" type="button" aria-label="One network, global reach — continue to the projections">
+      <span class="ic">${GLOBE_IC}</span>
+      <span class="tx"><b>One network. Global reach.</b><span>Strategic partners. Trusted quality. Built for growth.</span></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>`;
+  head.insertAdjacentElement("afterend", osx);
+
+  const stage = osx.querySelector(".osx-stage");
+  const cv = stage.querySelector("canvas");
+  const ctx = cv.getContext("2d");
+  const pinEls = [...stage.querySelectorAll(".osx-pin")];
+  const rail = osx.querySelector(".osx-rail");
+  const cards = [...rail.querySelectorAll(".osx-card")];
+  const dotsBox = osx.querySelector(".osx-dots");
+
+  /* the land texture — the SAME coastline rings and wrap handling as the
+     desktop planet, restruck in night-globe colours */
+  const TW = 1536, TH = 768;
+  const tex = document.createElement("canvas"); tex.width = TW; tex.height = TH;
+  {
+    const c = tex.getContext("2d");
+    c.beginPath();
+    for (const ring of kit.LAND) for (const off of [0, -TW, TW]) {
+      const ys = ring.filter((_, ix) => ix % 2 === 1);
+      if (Math.min(...ys) > .92 || Math.max(...ys) < .08) continue;
+      let pu = null, wrap = 0;
+      for (let i = 0; i < ring.length; i += 2) {
+        const u = ring[i];
+        if (pu !== null) { const j = u - pu; if (j > .5) wrap -= 1; else if (j < -.5) wrap += 1; }
+        const px = (u + wrap) * TW + off, py = ring[i + 1] * TH;
+        i ? c.lineTo(px, py) : c.moveTo(px, py);
+        pu = u;
+      }
+      c.closePath();
+    }
+    c.fillStyle = "rgba(255,61,154,.26)"; c.fill();
+    c.strokeStyle = "rgba(255,153,205,.42)"; c.lineWidth = 1.8; c.stroke();
+  }
+
+  const TAU2 = Math.PI * 2;
+  let W = 0, H = 0, CX = 0, CY = 0, R = 0;
+  const size = () => {
+    const r = stage.getBoundingClientRect();
+    const w = Math.max(2, Math.round(r.width)), h = Math.max(2, Math.round(r.height));
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    if (w === W && h === H && cv.width === Math.round(w * dpr)) return;
+    W = w; H = h;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    CX = W / 2; CY = H * .5; R = Math.min(W * .37, H * .46);
+  };
+  const strips = rot => {
+    const K = 200, su = TW * .5 / K;
+    for (let i = 0; i < K; i++) {
+      const f0 = i / K, f1 = (i + 1) / K;
+      const x0 = CX + Math.sin((f0 - .5) * Math.PI) * R;
+      const x1 = CX + Math.sin((f1 - .5) * Math.PI) * R;
+      const u = ((rot + f0 * .5) % 1 + 1) % 1;
+      ctx.drawImage(tex, u * TW, 0, su, TH, x0, CY - R, Math.max(1.2, x1 - x0 + 1.1), R * 2);
+    }
+  };
+  const draw = rot => {
+    if (R < 8) return;
+    ctx.clearRect(0, 0, W, H);
+    let g = ctx.createRadialGradient(CX, CY, R * .9, CX, CY, R * 1.5);
+    g.addColorStop(0, "rgba(255,61,154,.22)"); g.addColorStop(1, "rgba(255,61,154,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R * 1.5, 0, TAU2); ctx.fill();
+    g = ctx.createRadialGradient(CX - R * .34, CY - R * .36, R * .1, CX, CY, R * 1.02);
+    g.addColorStop(0, "#41163f"); g.addColorStop(.5, "#250b2c"); g.addColorStop(1, "#120618");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R, 0, TAU2); ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, TAU2); ctx.clip();
+    strips(rot);
+    g = ctx.createRadialGradient(CX + R * .5, CY + R * .42, R * .25, CX, CY, R * 1.42);
+    g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(.55, "rgba(6,2,12,.05)"); g.addColorStop(1, "rgba(6,2,12,.6)");
+    ctx.fillStyle = g; ctx.fillRect(CX - R, CY - R, R * 2, R * 2);
+    ctx.strokeStyle = "rgba(255,120,190,.3)"; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.arc(CX, CY, R - 2, 0, TAU2); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,61,154,.18)"; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.arc(CX, CY, R * 1.015, 0, TAU2); ctx.stroke();
+    ctx.shadowColor = "#ff3d9a"; ctx.shadowBlur = 16;
+    ctx.strokeStyle = "rgba(255,97,178,.95)"; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.arc(CX, CY, R * 1.015, 0, TAU2); ctx.stroke();
+    ctx.restore();
+  };
+
+  let filter = "all", hotI = 0;
+  const dimmed = i => filter !== "all" && !catsOf(PINS[i]).includes(filter);
+  /* pins ride the SAME strip mapping the texture uses, so each one sits
+     exactly on its country while it carries across the visible face */
+  const place = rot => {
+    if (R < 8) return;
+    pinEls.forEach((el, i) => {
+      const p = PINS[i];
+      const fm = ((p.u - rot) % 1 + 1) % 1;
+      if (fm >= .5) { el.style.opacity = "0"; el.style.pointerEvents = "none"; return; }
+      const f = fm / .5;
+      const x = CX + Math.sin((f - .5) * Math.PI) * R;
+      const y = CY + (p.v - .5) * 2 * R;
+      const eop = Math.max(0, Math.min(1, Math.min(fm, .5 - fm) / .05));
+      const sc = (.8 + .26 * Math.sin(f * Math.PI)) * (i === hotI ? 1.22 : 1);
+      el.style.opacity = (eop * (dimmed(i) ? .22 : 1)).toFixed(3);
+      el.style.pointerEvents = eop > .5 ? "" : "none";
+      el.style.zIndex = i === hotI ? 3 : 2;
+      el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-96%) scale(${sc.toFixed(3)})`;
+    });
+  };
+
+  /* ONE slow steady revolution (~28s) — pauses offscreen and in hidden tabs;
+     honours reduced motion by holding the Europe-facing frame */
+  const OSX_REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let phase = .277, lastT = null, playing = false, inView = false, raf = 0;
+  const frame = t => {
+    raf = 0;
+    if (!playing) { lastT = null; return; }
+    if (lastT !== null && !OSX_REDUCED) phase = (phase + (t - lastT) / 28000) % 1;
+    lastT = t;
+    size(); draw(phase); place(phase);
+    if (!OSX_REDUCED) raf = requestAnimationFrame(frame);
+  };
+  const play = () => {
+    const on = inView && !document.hidden;
+    if (on === playing) return;
+    playing = on;
+    if (on && !raf) raf = requestAnimationFrame(frame);
+  };
+  new IntersectionObserver(es => { inView = es.some(e => e.isIntersecting); play(); },
+    { rootMargin: "60px" }).observe(stage);
+  document.addEventListener("visibilitychange", play);
+
+  const visCards = () => cards.filter(c => c.style.display !== "none");
+  const buildDots = () => {
+    dotsBox.innerHTML = visCards().map((c, k) =>
+      `<button type="button" data-k="${k}"${k ? "" : ' class="on"'} aria-label="Card ${k + 1}"></button>`).join("");
+  };
+  const centerCard = (card, smooth) => {
+    rail.scrollTo({ left: card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" });
+  };
+  const setActive = () => {
+    const vc = visCards();
+    if (!vc.length) return;
+    const mid = rail.scrollLeft + rail.clientWidth / 2;
+    let best = 0, bd = 1e9;
+    vc.forEach((c, k) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = k; } });
+    vc.forEach((c, k) => c.classList.toggle("on", k === best));
+    [...dotsBox.children].forEach((d, k) => d.classList.toggle("on", k === best));
+    const di = vc[best].dataset.i;
+    hotI = di === "x" ? -1 : +di;
+  };
+  let railRaf = 0;
+  rail.addEventListener("scroll", () => {
+    if (railRaf) return;
+    railRaf = requestAnimationFrame(() => { railRaf = 0; setActive(); if (!playing || OSX_REDUCED) place(phase); });
+  }, { passive: true });
+  dotsBox.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const c = visCards()[+b.dataset.k]; if (c) centerCard(c, true);
+  });
+  pinEls.forEach((el, i) => el.addEventListener("click", () => {
+    if (dimmed(i)) applyFilter("all");
+    hotI = i;
+    centerCard(cards[i], true);
+    if (!playing || OSX_REDUCED) place(phase);
+  }));
+  const applyFilter = f => {
+    filter = f;
+    osx.querySelectorAll(".osx-chips button").forEach(b => {
+      const on = b.dataset.f === f;
+      b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on));
+    });
+    cards.forEach(c => {
+      const show = f === "all" ? c.dataset.i !== "x" : c.dataset.cats.split(" ").includes(f);
+      c.style.display = show ? "" : "none";
+    });
+    buildDots();
+    rail.scrollLeft = 0;
+    setActive();
+    if (!playing || OSX_REDUCED) place(phase);
+  };
+  osx.querySelector(".osx-chips").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (b) applyFilter(b.dataset.f);
+  });
+  osx.querySelector(".osx-banner").addEventListener("click", () => {
+    const t = document.getElementById("projections");
+    if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  applyFilter("all");
+  // first paint + desktop→phone resizes: the observer fires on observe(),
+  // and again whenever display flips the stage's box on or off
+  if (window.ResizeObserver) new ResizeObserver(() => { size(); draw(phase); place(phase); }).observe(stage);
+  else { size(); draw(phase); place(phase); }
+  // deterministic single-step for verification harnesses
+  window.__ffOsx = {
+    setPhase: v => { phase = v; size(); draw(phase); place(phase); },
+    applyFilter,
+    state: () => ({ phase, filter, hotI, playing, R, W, H }),
+  };
 }
 
 /* --- "Join the Movement" drawer ----------------------------------------- */
@@ -13449,6 +14067,9 @@ function initSetpieces() {
     { n: "Malaysia", ...geo(101.7, 3.15), start: .777, side: 1, lift: -.055,
       tag: "SUPPLY", cat: "PPE", d2: "Gloves, workwear and protective equipment" },
   ];
+  /* the phone expansion widget re-renders this same geography on its own
+     little spinning globe — hand it the coastlines and the verified pins */
+  window.__ffGlobeKit = { LAND, PINS: PL_PINS };
   let GLland = null, GLcloud = null;
   const GTW = 2048, GTH = 1024;
   function makeGlobeTex() {
@@ -14458,6 +15079,17 @@ addEventListener("pageshow", () => { if (window.__ffIntroDone) clearIntroZoom(tr
    silently contradicting it.
    ========================================================================= */
 const MOBILE_COPY = [
+  // ---- the six £100m assumptions: two tidy lines per card on a phone ------
+  { find: "Amazon, Shopify, OnBuy and TikTok Shop all launch and scale on plan, alongside eBay and Temu.",
+    html: "Amazon, Shopify, OnBuy and TikTok Shop scale on plan, with eBay and Temu." },
+  { find: "Stock funding keeps pace with demand, so availability and marketplace ranking are never the constraint.",
+    html: "Stock funding keeps pace with demand, so availability is never the constraint." },
+  { find: "The owned brands repeat the Firestorm model across batteries, PPE, aerosols, cleaning and automotive.",
+    html: "Owned brands repeat the Firestorm model across batteries, PPE and automotive." },
+  { find: "Warehousing, fulfilment and headcount scale ahead of order volume, not behind it.",
+    html: "Warehousing, fulfilment and headcount scale ahead of order volume." },
+  { find: "The continued migration of regulated safety and consumable categories online.",
+    html: "Regulated safety and consumable categories keep migrating online." },
   // ---- hero + investment focus -------------------------------------------
   { find: "Freedom Global is being built into a £100 million ecommerce business, and the first major value creation engine within a much wider group.",
     html: "Freedom Global is being built into a £100 million ecommerce business, and the first value engine of a much wider group." },
@@ -14492,7 +15124,7 @@ const MOBILE_COPY = [
     html: "Nine territories already power the supply chain: where products originate, where they are stored and fulfilled, where customers sit, and where we go next." },
   // ---- growth plan -------------------------------------------------------
   { find: "Six online marketplaces, eBay, Amazon, Temu, Shopify, TikTok Shop and OnBuy, plus two direct channels that are not storefronts at all: On Site Servicing and B2B trade supply, shown hatched throughout. Toggle channels, switch views, and click any year to break down its mix. Targets: £2.48m in 2026 scaling to £26m by 2031.",
-    html: "Six marketplaces (eBay, Amazon, Temu, Shopify, TikTok Shop, OnBuy) plus two direct channels that are not storefronts: On Site Servicing and B2B trade supply, shown hatched. Tap any year for its mix. Targets: £2.48m in 2026 to £26m by 2031." },
+    html: "Six marketplaces (eBay, Amazon, Temu, Shopify, TikTok Shop, OnBuy) plus two hatched direct channels. Tap any year for its mix. £2.48m in 2026 to £26m by 2031." },
   { find: "A long term value creation target, not a current valuation. Reaching it depends on all of the following holding true.",
     html: "A long term target, not a current valuation. It depends on all of the following holding true." },
   { find: "£100 million is a target enterprise value, an illustrative future figure based on successful execution of the plan above. It is not a professional valuation and should not be read as one.",
@@ -14535,7 +15167,7 @@ function initMobileCopy() {
   const norm = s => (s || "").replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
     .replace(/\s+/g, " ").trim();
   const table = new Map(MOBILE_COPY.map(r => [norm(r.find), r.html]));
-  const SEL = "p,.section-sub,.psub,.ch,.note,.runway-note,.assume-note,.fsr-note," +
+  const SEL = "p,.section-sub,.psub,.ch,.note,.runway-note,.assume-note,.fsr-note,.assume > div > span," +
     ".focus-subtitle,.fund-sub,.grp-val span,.sm-head p,.st-head p";
   const desk = new WeakMap();
   const mq = matchMedia("(max-width:900px)");
@@ -14813,6 +15445,7 @@ safeBoot("brands", renderBrands);
 safeBoot("system", renderSystem);
 safeBoot("liftoff", initLiftoff); // after system too — the pad rocket clones the same art
 safeBoot("sysMobile", initSysMobile); // after system too — the phone map clones its planets
+safeBoot("expansionMobile", initExpansionMobile); // after setpieces — it reads __ffGlobeKit
 safeBoot("focusHandoff", initFocusHandoff);
 safeBoot("focusPlanet", initFocusPlanet); // clones the map's blue planet behind the focus screen
 safeBoot("journey", renderJourney);

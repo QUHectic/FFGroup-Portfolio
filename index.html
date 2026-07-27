@@ -9435,8 +9435,18 @@ function initCourier() {
 
     let alpha = 0;
     if (scroll >= route.s0 && scroll <= route.s1 + innerHeight * .06) alpha = 1;
-    if (phase.focus) {
-      alpha = smt(cl01(q / .07)) * (1 - smt(cl01((q - .88) / .12)));
+if (phase.focus) {
+      /* ONE PASS, THEN THE PLANET KEEPS IT. th = q·T2·1.25 leaves the ellipse's
+         right edge at q = 0 and crosses the far limb at th = π — q = .40 exactly.
+         The old envelope held the ship lit to q = .88, so the 1.25-revolution lap
+         brought it back out over the near face for a stray quarter turn before the
+         bridge faded it: two front passes, reading as an unfinished orbit. Retire it
+         AT the limb instead, over ~.085q (≈68px of the 800px dive) so it sinks
+         rather than blinks. The geometry deliberately keeps running to q = 1 —
+         focusExit anchors the keys that bridge into the journey rail — only the
+         opacity ends early. */
+      const hideQ = .40;
+      alpha = smt(cl01(q / .07)) * (1 - smt(cl01((q - hideQ) / .085)));
     } else if (scroll < route.cloudS0) {
       const fadeStart = route.diveB + innerHeight * .34;
       alpha = smt(cl01((scroll - fadeStart) / (innerHeight * .46)));

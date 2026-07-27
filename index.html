@@ -8836,11 +8836,118 @@ function initCourier() {
     const raiseS0 = funding ? Math.max(traj.s1 + vh * .8, fTop + vh * .55) : traj.s1 + vh * 2;
     const raiseS1 = funding ? Math.max(raiseS0 + vh, fTop + funding.offsetHeight - vh * 1.15) : raiseS0 + vh * 1.2;
     const rightLane = Math.max(100, iw - 100);
+    /* THE RAISE - orbit the copy instead of parking beside it.
+       The funding chapter pins one ~800px column of copy for roughly four
+       viewports of scroll. The authored sentinel moved the ship ~300px in
+       total across all of it, so the courier read as parked next to static
+       text. Fly one closed lap around the OUTSIDE of that column instead,
+       then peel back into the right gutter at the same point and heading the
+       landing bridge below was already authored against - the whole chapter
+       change stays local to this phase. */
+    const fundStage = funding && funding.querySelector(".tr2-stage");
+    const fundCopy = funding && funding.querySelector(".fund-inner");
+    /* Stage-relative geometry, never getBoundingClientRect(): the stage is
+       sticky, so its offsetTop already carries the pin displacement and a
+       client rect read at compile time depends on where the reader happens
+       to be standing. Measured from the stage the box is scroll-invariant
+       for the whole pinned run, which is exactly this phase's extent. */
+    const raiseCopyBox = (() => {
+      if (!fundStage || !fundCopy || !fundCopy.offsetWidth) return null;
+      let x = 0, y = 0;
+      for (let n = fundCopy; n && n !== fundStage; n = n.offsetParent) {
+        x += n.offsetLeft || 0; y += n.offsetTop || 0;
+      }
+      return { cx: x + fundCopy.offsetWidth / 2, cy: y + fundCopy.offsetHeight / 2,
+        hw: fundCopy.offsetWidth / 2, hh: fundCopy.offsetHeight / 2 };
+    })();
+    /* A superellipse, not an ellipse. An ellipse wide enough to clear the
+       column's corners will not fit the gutters, and one that fits the
+       gutters passes INSIDE those corners and saws across the cards. The
+       exponent buys the corner clearance that width cannot. */
+    const RAISE_N = 4.6, RAISE_K = 2 / 4.6;
+    const raiseLap = (() => {
+      const Z = raiseCopyBox;
+      if (!Z) return null;
+      /* The sticky masthead outranks the courier (z 80 vs 70), so the top of
+         the lap is measured from the header, not from the viewport. */
+      const hdrEl = document.querySelector("header.nav");
+      const hdrH = hdrEl ? hdrEl.offsetHeight || 0 : 0;
+      const ax = Math.min(Z.hw + 112, Z.cx - 26, iw - Z.cx - 26);
+      const ay = Math.min(Z.hh + 56, Z.cy - hdrH - 26, vh - Z.cy - 38);
+      if (!(ax > Z.hw + 24) || !(ay > Z.hh + 20)) return null;
+      /* On a short or narrow viewport the screen-edge clamps above win and
+         the ring would cut the copy. Containment is the gate, not the
+         clamps: fail it and keep the authored gutter climb. */
+      if (Math.pow(Z.hw / ax, RAISE_N) + Math.pow(Z.hh / ay, RAISE_N) > .94) return null;
+      return { cx: Z.cx, cy: Z.cy, ax, ay };
+    })();
+
+    const raiseSpan = Math.max(1, raiseS1 - raiseS0);
+    const raiseExitP = { x: rightLane - iw * .025, y: vh * .50 };
+    let raisePos = q => ({ x: rightLane - q * iw * .025, y: vh * (.84 - .34 * q) });
+    if (raiseLap) {
+      /* Enter and leave on the right flank just below centre, travelling
+         anticlockwise: the leg above arrives up the right gutter and the
+         landing bridge below leaves from it, so both hand-offs are a bank,
+         never a reversal. */
+      const T0 = .26;
+      const QLAP = .86;
+      const supPt = t => {
+        const c = Math.cos(t), s = Math.sin(t);
+        return { x: raiseLap.cx + raiseLap.ax * Math.sign(c) * Math.pow(Math.abs(c), RAISE_K),
+          y: raiseLap.cy + raiseLap.ay * Math.sign(s) * Math.pow(Math.abs(s), RAISE_K) };
+      };
+      /* Arc length, not angle. The |cos|^k parametrisation of a superellipse
+         has unbounded speed at every axis crossing - four scroll-locked
+         streaks per lap. Walk a table by distance so the lap holds one
+         constant speed the whole way round. */
+      const LUT = (() => {
+        const pts = [], STEPS = 900, cum = [0];
+        for (let i = 0; i <= STEPS; i++) pts.push(supPt(T0 - T2 * (i / STEPS)));
+        for (let i = 1; i < pts.length; i++)
+          cum.push(cum[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+        return { pts, cum, total: cum[cum.length - 1] || 1 };
+      })();
+      const lapAt = k => {
+        const target = cl01(k) * LUT.total;
+        let lo = 0, hi = LUT.cum.length - 1;
+        while (lo < hi - 1) { const mid = (lo + hi) >> 1; if (LUT.cum[mid] <= target) lo = mid; else hi = mid; }
+        const seg = Math.max(1e-6, LUT.cum[hi] - LUT.cum[lo]);
+        const f = (target - LUT.cum[lo]) / seg;
+        return { x: lerp(LUT.pts[lo].x, LUT.pts[hi].x, f), y: lerp(LUT.pts[lo].y, LUT.pts[hi].y, f) };
+      };
+      const uSpan = 1 - QLAP, hK = 1 / 600;
+      const P0 = lapAt(1), PB = lapAt(1 - hK);
+      /* Leave the ring on its own tangent and arrive on the chord: the peel
+         out is one continuous bank out of the lap, and it lands on the exact
+         point and heading the raise-to-landing bridge already expects. */
+      const m0 = { x: (P0.x - PB.x) / hK * uSpan, y: (P0.y - PB.y) / hK * uSpan };
+      const m1 = { x: raiseExitP.x - P0.x, y: raiseExitP.y - P0.y };
+      raisePos = q => {
+        if (q <= QLAP) return lapAt(q / QLAP);
+        const u = cl01((q - QLAP) / uSpan), u2 = u * u, u3 = u2 * u;
+        const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u,
+          h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+        return { x: h00 * P0.x + h10 * m0.x + h01 * raiseExitP.x + h11 * m1.x,
+          y: h00 * P0.y + h10 * m0.y + h01 * raiseExitP.y + h11 * m1.y };
+      };
+    }
+    /* The lap is authored in stage space, so carry the same unpin offset the
+       dive lap uses. Inside this phase the term is zero by construction;
+       it only keeps the ring attached to the copy if a future layout lets
+       the sentinel overhang the pin. */
+    const fPinEnd = funding ? fTop + funding.offsetHeight - vh : raiseS1;
     const raise = {
       name: "raise-sentinel", raise: true, s0: raiseS0, s1: raiseS1,
-      sample: (q, scroll) => ({ p: { x: rightLane - q * iw * .025, y: vh * (.84 - .34 * q) },
-        d: { x: -iw * .025 / Math.max(1, raiseS1 - raiseS0),
-          y: -vh * .34 / Math.max(1, raiseS1 - raiseS0) }, q })
+      sample: (q, scroll) => {
+        const e = 1 / 900, lo = Math.max(0, q - e), hi = Math.min(1, q + e);
+        const A = raisePos(lo), B = raisePos(hi), P = raisePos(q);
+        const w = Math.max(1e-4, hi - lo) * raiseSpan;
+        const shift = Math.max(0, fTop - scroll) - Math.max(0, scroll - fPinEnd);
+        const dStage = (scroll < fTop || scroll > fPinEnd) ? -1 : 0;
+        return { p: { x: P.x, y: P.y + shift },
+          d: { x: (B.x - A.x) / w, y: (B.y - A.y) / w + dStage }, q };
+      }
     };
 
     const loTop = docTop(liftoff);
@@ -9008,7 +9115,7 @@ function initCourier() {
       { s: traj.s1 + vh * .28, x: Math.min(rightLane, trajExit.p.x + 92), y: Math.max(trajExit.p.y + 44, vh * .34) }
     ];
     if (team) postKeys.push({ s: Math.max(traj.s1 + vh * .7, Math.min(raise.s0 - vh * .38, team.cy - vh * .52)),
-      x: rightLane, y: vh * .72 });
+      x: rightLane, y: vh * .88 });
     postKeys.push({ s: raise.s0, x: raiseEntry.p.x, y: raiseEntry.p.y, d: raiseEntry.d });
     phases.push(keyedPhase("trajectory-to-raise", postKeys));
     phases.push(raise);

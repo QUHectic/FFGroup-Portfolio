@@ -8545,7 +8545,19 @@ function initCourier() {
   const cl01 = v => Math.min(1, Math.max(0, v));
   const smt = t => t * t * (3 - 2 * t);
   const smt5 = t => t * t * t * (t * (t * 6 - 15) + 10);
-  const lerp = (a, b, t) => a + (b - a) * t;
+const lerp = (a, b, t) => a + (b - a) * t;
+  /* SOFT FENCE. The courier must stay on screen, and it must not teleport to
+     get there. A hard clamp does both wrongly: it snaps the pose, then parks
+     the ship dead on the edge for as long as the route stays outside. This maps
+     the last FENCE_K px of approach onto an asymptote instead - anything deeper
+     inside is returned bit-identical, and at d = FENCE_K the value AND its first
+     derivative match, so the route stays C1 and purely scroll-driven. */
+  const FENCE_K = 56;
+  const softIn = d => d >= FENCE_K ? d : FENCE_K * Math.exp(d / FENCE_K - 1);
+  const fenceAxis = (v, lo, hi) => {
+    if (hi - lo < FENCE_K * 2) return (lo + hi) / 2;      // no room: hold the centre
+    return hi - softIn(hi - (lo + softIn(v - lo)));
+  };
   const unwrap = (a, b) => {
     let d = b - a;
     while (d > Math.PI) d -= T2;
@@ -8731,7 +8743,8 @@ function initCourier() {
       keys, sample: (q, scroll) => ({ ...sampleScroll(scroll), q: cl01(q) }) };
   };
 
-  let route = null, routeDirty = true, compileTimer = 0, compileRetries = 0;
+let route = null, routeDirty = true, compileTimer = 0, compileRetries = 0;
+  let fenceHdrH = 0;
   let graphClips = new Map();
   let growthDots = [], growthVals = [], trajDots = [];
   /* A rejected compile keeps the last valid route, but the layout that caused
@@ -8744,7 +8757,11 @@ function initCourier() {
   };
   const compileRoute = () => {
     routeDirty = false;
-    const vh = innerHeight, iw = innerWidth;
+const vh = innerHeight, iw = innerWidth;
+    /* The masthead is sticky and outranks the courier (z 80 vs 70), so the top
+       of the fence is the header's underside, not y = 0. */
+    const hdrNav = document.querySelector("header.nav");
+    fenceHdrH = hdrNav ? hdrNav.offsetHeight || 0 : 0;
     const sysBuild = document.querySelector(".sys-build");
     const rail = document.getElementById("jrail");
     const trajectoryFig = document.getElementById("trajChart");
@@ -8891,27 +8908,41 @@ function initCourier() {
     })();
 
     const raiseSpan = Math.max(1, raiseS1 - raiseS0);
-    const raiseExitP = { x: rightLane - iw * .025, y: vh * .50 };
+let raiseExitP = { x: rightLane - iw * .025, y: vh * .50 };
     let raisePos = q => ({ x: rightLane - q * iw * .025, y: vh * (.84 - .34 * q) });
     if (raiseLap) {
-      /* Enter and leave on the right flank just below centre, travelling
-         anticlockwise: the leg above arrives up the right gutter and the
-         landing bridge below leaves from it, so both hand-offs are a bank,
-         never a reversal. */
-      const T0 = .26;
-      const QLAP = .86;
+/* THE DESCENDING PASS, not a lap. A CLOSED loop cannot exist without
+         climbing back up one flank, and the journey's direction of travel
+         through this chapter is DOWN - so the courier no longer completes a
+         circuit. It joins the ring on the right flank where the lane hands over
+         and sweeps CLOCKWISE (screen space: y grows downward, so an INCREASING
+         angle runs right -> down -> left) round the copy's bottom-right corner,
+         then glides out into the right gutter for the landing. y is monotonic
+         for the whole chapter by construction, and both hand-offs still read
+         their tangent off this table, so every seam stays C1. */
+const T0 = .26;      // join on the right flank, where the lane hands over
+      const SWEEP = T2;    // ONE FULL CLOCKWISE REVOLUTION around the copy
+      const QARC = .82;    // the rest of the chapter is the dive out to the lane
       const supPt = t => {
         const c = Math.cos(t), s = Math.sin(t);
         return { x: raiseLap.cx + raiseLap.ax * Math.sign(c) * Math.pow(Math.abs(c), RAISE_K),
           y: raiseLap.cy + raiseLap.ay * Math.sign(s) * Math.pow(Math.abs(s), RAISE_K) };
       };
-      /* Arc length, not angle. The |cos|^k parametrisation of a superellipse
-         has unbounded speed at every axis crossing - four scroll-locked
-         streaks per lap. Walk a table by distance so the lap holds one
-         constant speed the whole way round. */
+      /* Arc length, not angle - the |cos|^k parametrisation of a superellipse
+         has unbounded speed at every axis crossing. Walk the table by distance
+         so the pass holds one speed. The running floor is the no-climb
+         guarantee: where the superellipse would turn back UP a flank the arc
+         flattens into a glide along the copy's underside instead of reversing
+         the journey. */
+/* No y-floor: a circuit has to rise up one flank, and that IS the circle
+         the chapter is for. What must never happen is a rise on the way OUT -
+         the old peel-out climbed to .50vh and flew right, which read as the ship
+         turning back. The revolution closes on the right flank still heading
+         DOWN (the same pose it entered on), so the dive-out below simply
+         continues that heading into the lane. */
       const LUT = (() => {
         const pts = [], STEPS = 900, cum = [0];
-        for (let i = 0; i <= STEPS; i++) pts.push(supPt(T0 - T2 * (i / STEPS)));
+        for (let i = 0; i <= STEPS; i++) pts.push(supPt(T0 + SWEEP * (i / STEPS)));
         for (let i = 1; i < pts.length; i++)
           cum.push(cum[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
         return { pts, cum, total: cum[cum.length - 1] || 1 };
@@ -8924,16 +8955,22 @@ function initCourier() {
         const f = (target - LUT.cum[lo]) / seg;
         return { x: lerp(LUT.pts[lo].x, LUT.pts[hi].x, f), y: lerp(LUT.pts[lo].y, LUT.pts[hi].y, f) };
       };
-      const uSpan = 1 - QLAP, hK = 1 / 600;
-      const P0 = lapAt(1), PB = lapAt(1 - hK);
-      /* Leave the ring on its own tangent and arrive on the chord: the peel
-         out is one continuous bank out of the lap, and it lands on the exact
-         point and heading the raise-to-landing bridge already expects. */
+      /* Leave on the arc's own tangent and land in the lane BELOW it, so the
+         hand-off to the pad is still a descent. The arc stops while it is still
+         heading DOWN - never past the ring's underside - so the glide out is a
+         bank to the right, not the reversal a completed lap would force. */
+/* Out and DOWN, never out and up: the lap's closing tangent is straight
+         down, so m0 carries the dive vertically off the ring and only then banks
+         into the lane. Below the ring, so the hand-off to the pad is a descent. */
+      const arcEnd = lapAt(1);
+      raiseExitP = { x: rightLane - iw * .06, y: Math.min(vh * .80, arcEnd.y + vh * .14) };
+      const uSpan = 1 - QARC, hK = 1 / 600;
+      const P0 = arcEnd, PB = lapAt(1 - hK);
       const m0 = { x: (P0.x - PB.x) / hK * uSpan, y: (P0.y - PB.y) / hK * uSpan };
       const m1 = { x: raiseExitP.x - P0.x, y: raiseExitP.y - P0.y };
       raisePos = q => {
-        if (q <= QLAP) return lapAt(q / QLAP);
-        const u = cl01((q - QLAP) / uSpan), u2 = u * u, u3 = u2 * u;
+        if (q <= QARC) return lapAt(q / QARC);
+        const u = cl01((q - QARC) / uSpan), u2 = u * u, u3 = u2 * u;
         const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u,
           h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
         return { x: h00 * P0.x + h10 * m0.x + h01 * raiseExitP.x + h11 * m1.x,
@@ -8968,14 +9005,20 @@ function initCourier() {
       Math.min(raiseS1 + vh * .72, padEnd - vh * .62));
     const slotEnd = { x: slotR.left, y: slotR.top - padEnd };
     const landingGutterX = iw - 34;
+/* THE APPROACH CANNOT CLIMB TO MEET THE PAD. These gates were authored
+       against a chapter that ENDED HIGH - the old lap peeled out at .50vh - so
+       .46vh read as a descent. The pass now leaves low, so every approach gate
+       is floored at the exit height and only the pad slot itself may pull the
+       ship back up: a docking flare of a few px, not a 300px backtrack. */
+    const landIn = raiseExitP.y;
     const pad = keyedPhase("landing", [
-      { s: padStart, x: rightLane, y: vh * .46, d: { x: -.12, y: .12 } },
+      { s: padStart, x: rightLane, y: Math.max(vh * .46, landIn), d: { x: -.12, y: .12 } },
       /* Stay in the open right gutter until the Beyond cards have cleared;
          cutting diagonally here sent the enlarged ship across the flywheel
          rows and the £500m panel. */
-      { s: lerp(padStart, padEnd, .34), x: landingGutterX, y: vh * .56 },
-      { s: lerp(padStart, padEnd, .58), x: landingGutterX, y: vh * .74 },
-      { s: lerp(padStart, padEnd, .72), x: slotEnd.x + iw * .09, y: vh * .70 },
+      { s: lerp(padStart, padEnd, .34), x: landingGutterX, y: Math.max(vh * .56, landIn) },
+      { s: lerp(padStart, padEnd, .58), x: landingGutterX, y: Math.max(vh * .74, landIn) },
+      { s: lerp(padStart, padEnd, .72), x: slotEnd.x + iw * .09, y: Math.max(vh * .70, landIn - vh * .02) },
       { s: padEnd, x: slotEnd.x, y: slotEnd.y, d: { x: 0, y: .18 } }
     ]);
     /* A layout squeezed to the point of no landing runway must not crash the
@@ -9167,15 +9210,50 @@ const toGlobe = keyedPhase("growth-to-globe", [
       turnUx.push(turnUx[i - 1] + (Math.cos(hA) + Math.cos(hB)) / (2 * STEPS));
       turnUy.push(turnUy[i - 1] + (Math.sin(hA) + Math.sin(hB)) / (2 * STEPS));
     }
-    const turnLen = Math.max(150, Math.min(360, (rightLane - trajExit.p.x) / Math.max(.25, turnUx[STEPS])));
-    const turnSpan = vh * .58;
-    const turnEase = u => .33 * u + .67 * u * u;
-    const pullOut = { s0: traj.s1, span: turnSpan, h0: exitH, h1: Math.PI / 2, ea: .33, eb: .67, fade: vh * 1.5 };
+/* SETTLE INTO THE LANE, DON'T CRUISE SIDEWAYS INTO IT. The chart hands over
+       climbing up-right, so the turn to vertical is ~137deg; on the old .58vh
+       span with a .33/.67 ease the courier held a near-horizontal, nose-RIGHT
+       pose for most of a viewport while it drifted across to the gutter. Front
+       loading the ease puts the bulk of the rotation in the first third, and the
+       shorter arc means less lateral run, so the ship is pointing DOWN the lane
+       almost immediately and simply descends from there. */
+    const turnLen = Math.max(120, Math.min(200, (rightLane - trajExit.p.x) / Math.max(.25, turnUx[STEPS])));
+    const turnSpan = vh * .34;
+    const turnEase = u => .62 * u + .38 * u * u;
+    const pullOut = { s0: traj.s1, span: turnSpan, h0: exitH, h1: Math.PI / 2, ea: .62, eb: .38, fade: vh * 1.5 };
     const postKeys = [{ s: traj.s1, x: trajExit.p.x, y: trajExit.p.y, d: trajExit.d }];
     for (let i = 3; i <= STEPS; i += 3) postKeys.push({ s: traj.s1 + turnSpan * turnEase(i / STEPS),
       x: trajExit.p.x + turnLen * turnUx[i], y: trajExit.p.y + turnLen * turnUy[i] });
-    if (team) postKeys.push({ s: Math.max(traj.s1 + vh * .7, Math.min(raise.s0 - vh * .38, team.cy - vh * .52)),
-      x: rightLane, y: vh * .88 });
+/* HOLD THE LANE, THEN TURN IN. One gate left the whole ~2,850px approach
+       free to drift, so the bank into the funding chapter began back in the team
+       section. Two gutter gates with EXPLICITLY VERTICAL tangents (d.x = 0) give
+       the Hermite no lateral budget at all until the second one, so every pixel
+       of turn-in happens inside the last .55vh before the chapter. Their height
+       is derived from the pass's own entry, so the lane always descends INTO the
+       arc instead of hooking up to meet it. */
+    const turnInS = raise.s0 - vh * .55;
+    const gutterA = { s: Math.max(traj.s1 + vh * .7,
+        Math.min(turnInS - vh * .5, team ? team.cy - vh * .52 : turnInS - vh * .5)),
+      x: rightLane, y: Math.max(vh * .34, raiseEntry.p.y - vh * .20) };
+    const gutterB = { s: turnInS, x: rightLane,
+      y: Math.max(vh * .40, raiseEntry.p.y - vh * .09) };
+    const gutterRate = (gutterB.y - gutterA.y) / Math.max(1, gutterB.s - gutterA.s);
+    gutterA.d = { x: 0, y: gutterRate };
+    gutterB.d = { x: 0, y: gutterRate };
+    postKeys.push(gutterA, gutterB);
+/* PUT THE RING'S TANGENT ON A SHORT SEGMENT, NOT A 2,850px ONE. keyedPhase
+       scales each authored derivative by its own segment's scroll span, so
+       handing the lap entry tangent (~1.04 px per scroll px) to the long team
+       leg built a ~2,960px control vector; h11 bottoms at -.148 and the courier
+       sank to y 1112 on an 881px viewport - below the fold for the whole team
+       section - before snapping back up into the ring. Same idiom as the
+       trajectory `capture` gate above: a short collinear gate carries the
+       tangent and the long approach runs on bounded chord tangents.
+       Deliberately no `d` here, so this gate takes the chord. */
+    const raiseCapture = 10;
+    postKeys.push({ s: raise.s0 - raiseCapture,
+      x: raiseEntry.p.x - raiseEntry.d.x * raiseCapture,
+      y: raiseEntry.p.y - raiseEntry.d.y * raiseCapture });
     postKeys.push({ s: raise.s0, x: raiseEntry.p.x, y: raiseEntry.p.y, d: raiseEntry.d });
 const postPhase = keyedPhase("trajectory-to-raise", postKeys);
     if (postPhase) postPhase.pullOut = pullOut;
@@ -9706,8 +9784,20 @@ if (phase.focus) {
         schedule();   // keep the decay running while the page is stationary
       }
     }
-    const apX = sample.p.x + ox, apY = sample.p.y + oy;
+let apX = sample.p.x + ox, apY = sample.p.y + oy;
     const apAngle = angle + oa, apScale = Math.max(.05, scale + os);
+    /* THE ROCKET IS ALWAYS VISIBLE. Authored geometry can legitimately follow
+       something off-screen - the trajectory ride tracks the plotted line past
+       the fold (y 930 of 881) and globe-to-projection reaches 975 - so this is
+       the one guard that owns visibility, at the last possible point, after the
+       continuity offset. Margins scale with the ship so the hull stays inside,
+       and the landing is exempt: the pad dock is pixel-true and enlarges to
+       ~2.2x, where a fence margin would shift the touchdown. */
+    if (!phase.pad) {
+      const mX = 40 * apScale, mY = 34 * apScale;
+      apX = fenceAxis(apX, mX, innerWidth - mX);
+      apY = fenceAxis(apY, Math.max(mY, fenceHdrH + 6), innerHeight - mY);
+    }
     shipSvg.style.transform = `scaleY(${(1 - Math.abs(bank) * .22).toFixed(4)}) skewY(${(bank * .24).toFixed(4)}rad)`;
     wrap.style.transform = `translate3d(${apX.toFixed(2)}px,${apY.toFixed(2)}px,0) rotate(${apAngle.toFixed(5)}rad) scale(${(apScale / 3).toFixed(5)})`;
     wrap.style.opacity = alpha > .003 ? alpha.toFixed(3) : "0";

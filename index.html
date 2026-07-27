@@ -9004,21 +9004,36 @@ const T0 = .26;      // join on the right flank, where the lane hands over
     const padStart = Math.max(raiseS1 + 90,
       Math.min(raiseS1 + vh * .72, padEnd - vh * .62));
     const slotEnd = { x: slotR.left, y: slotR.top - padEnd };
-    const landingGutterX = iw - 34;
+/* iw - 34 put the hull half off the right edge, and the two equal-x gates
+       below bulged the Hermite another ~30px past even that (measured peak
+       iw - 2). Continue down the lane the ship already arrived in: clear of
+       the Beyond content column (which ends at ~1352) and inside the fence. */
+    const landingGutterX = rightLane;
 /* THE APPROACH CANNOT CLIMB TO MEET THE PAD. These gates were authored
        against a chapter that ENDED HIGH - the old lap peeled out at .50vh - so
        .46vh read as a descent. The pass now leaves low, so every approach gate
        is floored at the exit height and only the pad slot itself may pull the
        ship back up: a docking flare of a few px, not a 300px backtrack. */
-    const landIn = raiseExitP.y;
+const landIn = raiseExitP.y;
+    /* KEEP DESCENDING. The .46/.56/.74vh gates are all ABOVE the height the
+       raise now exits at, so the landIn floor collapsed them to one constant
+       y: the ship stopped going down and the only motion left in the phase
+       was the lateral drift, which walked it off the right edge. Spread the
+       remaining drop (landIn -> the pad) across the same gates instead —
+       monotonic, and still never a climb. */
+    const landDrop = Math.max(0, slotEnd.y - landIn);
+    const glideY   = f => Math.max(vh * (.46 + .28 * f), landIn + landDrop * f);
+    /* dx = 0: a dead-straight vertical rail, so no pair of equal-x gates can
+       bulge the spline outward again. */
+    const laneD    = { x: 0, y: landDrop / Math.max(1, padEnd - padStart) };
     const pad = keyedPhase("landing", [
-      { s: padStart, x: rightLane, y: Math.max(vh * .46, landIn), d: { x: -.12, y: .12 } },
+      { s: padStart, x: rightLane, y: glideY(0), d: laneD },
       /* Stay in the open right gutter until the Beyond cards have cleared;
          cutting diagonally here sent the enlarged ship across the flywheel
          rows and the £500m panel. */
-      { s: lerp(padStart, padEnd, .34), x: landingGutterX, y: Math.max(vh * .56, landIn) },
-      { s: lerp(padStart, padEnd, .58), x: landingGutterX, y: Math.max(vh * .74, landIn) },
-      { s: lerp(padStart, padEnd, .72), x: slotEnd.x + iw * .09, y: Math.max(vh * .70, landIn - vh * .02) },
+      { s: lerp(padStart, padEnd, .34), x: landingGutterX, y: glideY(.34), d: laneD },
+      { s: lerp(padStart, padEnd, .58), x: landingGutterX, y: glideY(.58), d: laneD },
+      { s: lerp(padStart, padEnd, .72), x: slotEnd.x + iw * .09, y: glideY(.72) },
       { s: padEnd, x: slotEnd.x, y: slotEnd.y, d: { x: 0, y: .18 } }
     ]);
     /* A layout squeezed to the point of no landing runway must not crash the
@@ -9793,10 +9808,15 @@ let apX = sample.p.x + ox, apY = sample.p.y + oy;
        continuity offset. Margins scale with the ship so the hull stays inside,
        and the landing is exempt: the pad dock is pixel-true and enlarges to
        ~2.2x, where a fence margin would shift the touchdown. */
-    if (!phase.pad) {
+{
       const mX = 40 * apScale, mY = 34 * apScale;
+      /* X is fenced on EVERY phase, landing included — the pad slot sits far
+         inside the right edge, so the dock stays pixel-true while the gutter
+         run loses its only route off the page. Y remains exempt on the pad
+         phase: the touchdown height must not be shifted by a fence margin. */
       apX = fenceAxis(apX, mX, innerWidth - mX);
-      apY = fenceAxis(apY, Math.max(mY, fenceHdrH + 6), innerHeight - mY);
+      if (!phase.pad)
+        apY = fenceAxis(apY, Math.max(mY, fenceHdrH + 6), innerHeight - mY);
     }
     shipSvg.style.transform = `scaleY(${(1 - Math.abs(bank) * .22).toFixed(4)}) skewY(${(bank * .24).toFixed(4)}rad)`;
     wrap.style.transform = `translate3d(${apX.toFixed(2)}px,${apY.toFixed(2)}px,0) rotate(${apAngle.toFixed(5)}rad) scale(${(apScale / 3).toFixed(5)})`;

@@ -9269,12 +9269,33 @@ h = down + (hOut - down) * hand;
        so the chords that straddle the seam cannot pick the drift up one frame
        early. Same shape as the journey-rail handoff above: a pure function of
        q, so reverse scrolling retraces identical poses. */
-    if (C.phase.preOrbit && route && route.orbit) {
-      const E = route.orbit.sample(0, route.orbit.s0);
-      if (E && E.dLocal) {
-        const band = Math.min(.34, 190 / Math.max(1, C.phase.s1 - C.phase.s0));
-        const hand2 = smt(cl01((C.q - (1 - band)) / band));
-        h += (unwrap(h, Math.atan2(E.dLocal.y, E.dLocal.x)) - h) * hand2;
+if (C.phase.preOrbit) {
+      /* RIGHT-LANE HOLD — the stat29 and market waypoints both sit at
+         x: rightLane, .52-.56vh, so between them the route is screen-static:
+         measured 35px of travel across 1200 scroll px, bottoming out at
+         .009px/px beside the evidence pillars. Every chord in the ladder above
+         is then rounding noise and the nose wandered 91°/28°/20°/44°/90° — a
+         ship visibly tilted to the RIGHT while it should simply be riding down
+         the gutter towards the planet. Same remedy as the journey rail: where
+         the local speed collapses, hold straight down. The measured heading
+         fades back in from .05px/px and owns the pose again by .20px/px, so
+         the real down-left drift into the globe (measured 127°) is untouched.
+         Speed is a ±40px probe of THIS scroll, so poses stay deterministic and
+         reverse scrolling retraces them exactly. */
+      const LANE = 40;
+      const L = sampleRoute(scroll - LANE), N = sampleRoute(scroll + LANE);
+      if (L && N) {
+        const sp = Math.hypot(N.p.x - L.p.x, N.p.y - L.p.y) / (2 * LANE);
+        const hold = 1 - smt(cl01((sp - .05) / .15));
+        if (hold > 0) h += (unwrap(h, Math.PI / 2) - h) * hold;
+      }
+      if (route && route.orbit) {
+        const E = route.orbit.sample(0, route.orbit.s0);
+        if (E && E.dLocal) {
+          const band = Math.min(.34, 190 / Math.max(1, C.phase.s1 - C.phase.s0));
+          const hand2 = smt(cl01((C.q - (1 - band)) / band));
+          h += (unwrap(h, Math.atan2(E.dLocal.y, E.dLocal.x)) - h) * hand2;
+        }
       }
     }
     if (C.phase.pad) {

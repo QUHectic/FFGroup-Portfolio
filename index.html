@@ -998,7 +998,11 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
 }
 @media (max-width:700px){
   .focus-handoff{min-height:100svh;padding:82px 16px 36px;overflow:visible;}
-  .focus-handoff h2{font-size:clamp(1.9rem,10vw,3rem);}
+  /* "Explore the Company" must hold ONE line: at 10vw it measured ~356px in
+     the 358px column and text-wrap:balance then split it evenly in two.
+     8.6vw keeps the whole phrase comfortably on one line down to 320px
+     screens, and balance is off so only the gradient line wraps naturally. */
+  .focus-handoff h2{font-size:clamp(1.7rem,8.6vw,3rem);text-wrap:wrap;}
   .focus-handoff .focus-subtitle{font-size:.93rem;line-height:1.55;}
   .focus-summary{padding:17px 14px;margin-top:22px;border-radius:17px;}
   /* three columns leaves 91px per chip on a phone, and four of the six
@@ -2154,6 +2158,9 @@ section.tint{background:var(--bg-soft);}
   background:linear-gradient(180deg,var(--pink),var(--blue),var(--mint));
   border-radius:99px;transition:height .2s linear;
 }
+/* desktop: the courier writes the fill EVERY FRAME from its rendered nose —
+   already physics-smooth; a transition would only trail behind the ship */
+html.spx .rail-fill{transition:none;}
 .rail-dot{
   position:absolute;left:50%;width:14px;height:14px;border-radius:99px;
   transform:translate(-50%,-50%);background:#fff;border:3px solid var(--line-strong);
@@ -3977,7 +3984,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      (max-width:900px) matches. No rule here can touch desktop. */
   #jlist.jl-condensed{gap:16px;}
   .jl-condensed .jcard.chapter{padding:20px 16px 18px;}
-  .jl-condensed .ch-toprow{margin-bottom:12px;}
+  /* EVERY variable row is pinned to its own worst case, so real-device font
+     wrapping (which differs from desktop metrics) can never change a card's
+     height: badge row fits a TWO-line kicker, the green question fits TWO
+     lines, the title row (below) fits FIVE lines. Cards are equal-height by
+     construction at any phone width, not by coincidence. */
+  .jl-condensed .ch-toprow{margin-bottom:12px;min-height:82px;}
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-q{min-height:56px;}   /* longest question runs THREE lines on phones */
   /* the pink chapter kicker at desktop size + .16em tracking cannot fit the
      column beside the badge ("BREAKTHROUGH" alone is ~236px) — smaller type,
      tighter tracking, and let long words break instead of clipping */
@@ -4066,8 +4079,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      only, and moved back the moment the chapter opens), and the italic
      standfirst folds away with the body so it only reads once opened.
      Opening restores the usual condensed layout untouched. */
-  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:13px;min-width:0;}
-  .jl-condensed .ch-titlerow h3{flex:1;min-width:0;}
+  /* UNIFORM CLOSED CARDS — the title row is pinned to the TRUE tallest case:
+     five lines of 1.32rem/1.14 title beside the 92px thumb (real-device font
+     metrics wrap "One Store Became the Freedom Global Blueprint" to five
+     lines — desktop-browser metrics measure narrower, so never trust a
+     four-line assumption). Every chapter box is exactly the same height;
+     shorter titles centre in the space. */
+  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:13px;min-width:0;min-height:128px;}
+  /* margin:0 — the h3's own 6/8px vertical margins pushed a five-line title
+     past the 128px envelope (134px) and broke equality; the flex row's
+     min-height + centring provide all the spacing the title needs. The
+     .jcard.chapter in the selector is required: the condensed h3 sizing rule
+     above carries three classes and out-specifies anything weaker. */
+  .jl-condensed .jcard.chapter .ch-titlerow h3{flex:1;min-width:0;margin:0;}
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-titlerow .ch-side{flex:none;width:92px;margin:0;}
   .jl-condensed .jcard.chapter:not(.ch-open):has(.ch-expand) .ch-lede{display:none;}
   /* the fold above hides every .ch-side child — surface just the figure */
@@ -4100,6 +4124,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   /* FULL DATA MATRIX — a genuine 776px-wide table: swipe it, never clip it */
   #matrixDisclose .disclose-body{overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-inline:contain;}
   #matrixTable{min-width:640px;}
+}
+
+/* narrow phones: slightly smaller chapter titles so even the longest one
+   stays within the uniform title row, and a smaller kicker so "BREAKTHROUGH"
+   never splits mid-word into a third line — box heights never diverge */
+@media (max-width:380px){
+  .jl-condensed .jcard.chapter h3{font-size:1.16rem;}
+  .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
 }
 
 @media (max-width:360px){
@@ -4317,6 +4349,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
             <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
             <linearGradient id="stmLgB" gradientUnits="userSpaceOnUse" x1="195" y1="132" x2="195" y2="234"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/></linearGradient>
             <linearGradient id="stmLgO" gradientUnits="userSpaceOnUse" x1="240" y1="100" x2="316" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+            <linearGradient id="stmLgD1" gradientUnits="userSpaceOnUse" x1="163" y1="112" x2="128" y2="431"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#d7b35f"/></linearGradient>
+            <linearGradient id="stmLgD2" gradientUnits="userSpaceOnUse" x1="227" y1="112" x2="262" y2="431"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/></linearGradient>
           </defs>
           <g fill="#fff" aria-hidden="true">
             <circle cx="28" cy="34" r="1.1" opacity=".5"/><circle cx="88" cy="12" r=".9" opacity=".4"/><circle cx="146" cy="52" r="1" opacity=".45"/>
@@ -4335,9 +4369,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <!-- future ventures descend from the operating shell -->
-          <path d="M128 412 L128 438" fill="none" stroke="#d7b35f" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
-          <path d="M262 412 L262 438" fill="none" stroke="#a487df" stroke-width="1.4" stroke-dasharray="3 6" opacity=".75"/>
+          <!-- future ventures hang from HOLDINGS exactly like the operating
+               trio: the same solid gradient licence lanes, leaving the sun's
+               lower flanks and sweeping down the clear x=128/262 corridors
+               (between the operating worlds) to land arrow-first on each
+               future planet. Same stroke, same marker, same visual grammar —
+               pink at the sun, fading to each venture's own colour. -->
+          <path d="M163 112 C 118 190, 128 300, 128 440" fill="none" stroke="url(#stmLgD1)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M227 112 C 272 190, 262 300, 262 441" fill="none" stroke="url(#stmLgD2)" stroke-width="1.8" marker-end="url(#stmArr)"/>
           <!-- selection halos -->
           <circle class="stm-ring" data-ring="global" cx="195" cy="276" r="42" fill="none" stroke="#38a9ff" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="form" cx="70" cy="258" r="36" fill="none" stroke="#2fe0a0" stroke-width="1.6"/>
@@ -9386,6 +9425,19 @@ function initCourier() {
     wrap.dataset.phase = phase.name;
     wrap.dataset.scroll = scroll.toFixed(1);
     lastPose = { x: apX, y: apY, angle: apAngle, scale: apScale, alpha, scroll };
+    /* THE SHIP PAINTS THE RAIL. The journey fill used to follow raw scroll
+       while the ship follows the compiled route — so on a brisk entry the
+       coloured line lit up ahead of a ship that had not reached the rail
+       yet. Driven from the RENDERED nose each frame, the line is literally
+       drawn from under the nozzle and drains the same way in reverse; an
+       invisible ship paints nothing. Strictly gated to the cinematic mode:
+       this renderer still ticks on phones (ship hidden) and must never
+       fight the scroll-driven fallback that owns the rail there. */
+    if (window.__ffPaintRail
+        && document.documentElement.classList.contains("spx") && innerWidth > 900) {
+      window.__ffRailByCourier = true;
+      window.__ffPaintRail(alpha > .12 ? apY - 22 : -1e9);
+    } else window.__ffRailByCourier = false;
 
     if (lapAlpha > .004 && lapGeom) {
       lapEllipse.setAttribute("cx", lapGeom.cx.toFixed(1));
@@ -11905,20 +11957,39 @@ function renderJourney() {
     tops.forEach((t, i) => { dots[i].style.top = t + "px"; });
   }
 
-  const onScroll = rafScroll(() => {
-    const r = rail.getBoundingClientRect();
-    // .55 = the courier's holding line. At .61 the fill's leading edge ran
-    // ~6vh AHEAD of the rocket — the coloured line flashed on below the ship
-    // before it had even joined the rail. Anchored at the nose, the rocket
-    // now paints the line as it flies and nothing lights up before it.
-    const focus = window.innerHeight * 0.55;
-    const progress = Math.max(0, Math.min(1, (focus - r.top) / r.height));
+  /* TRANSFORM-IMMUNE rail geometry. The section-entry cinematic puts
+     perspective(1300px) rotateX(7deg) on the section's .wrap for the whole
+     entry window — the exact moment the rail first appears — and the
+     PROJECTED bounding rect of a 7°-tilted, ~33,000px-tall element is
+     garbage (heights explode, tops shift). Reading it made
+     (focus−top)/height clamp to 1: the recorded "fill flashes full the
+     moment the line appears". Offset-chain geometry ignores transforms. */
+  const railTopViewport = () => {
+    let y = 0, e = rail;
+    while (e) { y += e.offsetTop; e = e.offsetParent; }
+    return y - window.scrollY;
+  };
+  const paintRail = leadY => {
+    const top = railTopViewport();
+    const progress = Math.max(0, Math.min(1, (leadY - top) / (rail.offsetHeight || 1)));
     fill.style.height = (progress * 100) + "%";
-    const railTop = r.top;
     dots.forEach(d => {
       const dy = parseFloat(d.style.top || "0");
-      d.classList.toggle("lit", railTop + dy <= focus);
+      d.classList.toggle("lit", top + dy <= leadY);
     });
+  };
+  /* Desktop: the COURIER paints the rail per-frame from its rendered nose
+     (see the __ffPaintRail call in the flight renderer) — physics-true, so
+     the fill can never run ahead of a ship that is still easing in. */
+  window.__ffPaintRail = paintRail;
+  const onScroll = rafScroll(() => {
+    // the ship owns the rail while the cinematic mode flies it
+    if (window.__ffRailByCourier
+        && document.documentElement.classList.contains("spx")
+        && innerWidth > 900) return;
+    // no courier (phones / reduced motion): the fill tracks the reader's
+    // focus line directly, anchored where the courier would hold
+    paintRail(window.innerHeight * 0.55);
   });
 
   window.addEventListener("resize", layoutDots);

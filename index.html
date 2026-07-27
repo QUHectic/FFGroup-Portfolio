@@ -9091,12 +9091,34 @@ const toGlobe = keyedPhase("growth-to-globe", [
       y: trajEntry.p.y - trajEntry.d.y * captureSpan,
       d: trajEntry.d
     };
+/* DEPARTURE UNDER THE LIMB — the lap ends at the BOTTOM of the ellipse
+       (th = 1.25 turns ≡ 90°), where its tangent is exactly straight LEFT. The
+       bridge's first control used to sit up and to the RIGHT, so the path
+       doubled back on itself: x measured 767 → 760 → 827 inside 100 scroll px.
+       Getting from heading-left to heading-up-right is 240° through DOWN or
+       120° over the TOP, and the chord ladder took the short way — the nose
+       snapped 179° → 298° in 72px and then held straight up in open black
+       space for the rest of the climb.
+       Peel off with a quarter-loop under the limb instead. The keys sit on a
+       circle tangent to the lap's exit heading and are spaced by equal arc
+       length, so the whole turn is taken through STRAIGHT-DOWN at a constant
+       ~18°/24px (measured 179/136/68/33/1/-33/-59) instead of as a hairpin.
+       The radius is clamped to the gutter beneath the exit, so a short
+       viewport can never push the hull off the bottom of the screen. */
+    const depR = Math.max(60, Math.min(88, (vh - 78 - orbitExit.p.y) / 2));
+    const depCY = orbitExit.p.y + depR;
+    const depAt = (t, deg) => ({ s: atProjection(t),
+      x: orbitExit.p.x + depR * Math.cos(deg * Math.PI / 180),
+      y: depCY + depR * Math.sin(deg * Math.PI / 180) });
     const projectionBridge = keyedPhase("globe-to-projection", [
       { s: orbit.s1, x: orbitExit.p.x, y: orbitExit.p.y, d: orbitExit.d },
+      depAt(.045, -150), depAt(.09, -210), depAt(.135, -270), depAt(.17, -320),
       /* Approach from the panel's empty right shoulder. Coming diagonally
          from the left allowed the moving chip row to catch the rocket before
-         it reached the intended TikTok/CAGR gap. */
-      { s: atProjection(.18), x: approachX, y: vh * .48 },
+         it reached the intended TikTok/CAGR gap. Held back from the old .18 so
+         the pull-up out of the departure arc keeps the departure's own pace
+         (~1.1px/px) — at .18 it climbed 1.9px/px and clipped the section copy. */
+      { s: atProjection(.27), x: approachX, y: vh * .48 },
       { s: atProjection(approachT), x: approachX, y: gateY - vh * .07 },
       { s: gateS, x: gateX, y: gateY },
       /* Clear the controls upward first; only descend after reaching the

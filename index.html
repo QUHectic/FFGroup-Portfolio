@@ -8871,13 +8871,29 @@ function initCourier() {
     const phases = [focus];
     const focusExit = focus.sample(1, focus.s1);
     const railEntry = railPhase.sample(0, railPhase.s0);
+/* SMOOTH RE-ENTRY (was a pirouette). The old apex key sat above AND right
+       of the next key, so the ship climbed to it and then had to reverse ~220°
+       to fall back onto the rail — on screen that read as a twirl at the exact
+       moment it re-entered the frame. Author the key just off the left edge
+       with an explicit, already-descending tangent instead: the bridge becomes
+       one monotonic bank (in from the top-left at ~26°, rolling to a clean 90°)
+       and the ship simply keeps going down into the rail. */
+    const bJ1s = lerp(focus.s1, railPhase.s0, .40);
+    const bJ2s = lerp(focus.s1, railPhase.s0, .76);
+    const bJ1 = { x: -iw * .02, y: vh * .12 };
+    const bJ2 = { x: railX, y: vh * .36 };
+    const bJ12 = Math.max(1, bJ2s - bJ1s);
+    const bJ23 = Math.max(1, railPhase.s0 - bJ2s);
     phases.push(keyedPhase("focus-to-journey", [
       /* Continue from the lap's exact point and tangent. The old viewport
          clamp silently teleported the courier almost 100px upward at this
          seam, which was visible as a one-frame snap on quick/reverse scroll. */
       { s: focus.s1, x: focusExit.p.x, y: focusExit.p.y, d: focusExit.d },
-      { s: lerp(focus.s1, railPhase.s0, .45), x: iw * .22, y: vh * .26 },
-      { s: lerp(focus.s1, railPhase.s0, .78), x: railX, y: vh * .36 },
+      { s: bJ1s, x: bJ1.x, y: bJ1.y,
+        d: { x: (bJ2.x - bJ1.x) / bJ12 * 1.45,
+             y: (bJ2.y - bJ1.y) / bJ12 * .88 } },
+      { s: bJ2s, x: bJ2.x, y: bJ2.y,
+        d: { x: 0, y: (railEntry.p.y - bJ2.y) / bJ23 * 1.05 } },
       { s: railPhase.s0, x: railEntry.p.x, y: railEntry.p.y, d: railEntry.d }
     ]));
     phases.push(railPhase);

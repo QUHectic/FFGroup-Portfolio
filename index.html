@@ -4345,7 +4345,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="stm-stage" id="stmStage" data-sel="global">
         <svg class="stm-art" viewBox="0 -120 390 740" aria-hidden="true">
           <defs>
-            <marker id="stmArr" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <!-- one marker per lane colour: iOS Safari does not support
+                 fill="context-stroke" (it painted every arrowhead BLACK on
+                 the black sky = "the arrowheads aren't appearing" on phones).
+                 Explicit fills render identically in every browser. -->
+            <marker id="stmArrG" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#2fe0a0" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="stmArrB" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#38a9ff" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="stmArrO" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#ff6a3d" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="stmArrD1" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#d7b35f" d="M0 0 L8 4 L0 8 Z"/></marker>
+            <marker id="stmArrD2" viewBox="0 0 8 8" refX="6.2" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path fill="#a487df" d="M0 0 L8 4 L0 8 Z"/></marker>
             <linearGradient id="stmLgG" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="74" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#2fe0a0"/></linearGradient>
             <linearGradient id="stmLgB" gradientUnits="userSpaceOnUse" x1="195" y1="132" x2="195" y2="234"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#38a9ff"/></linearGradient>
             <linearGradient id="stmLgO" gradientUnits="userSpaceOnUse" x1="240" y1="100" x2="316" y2="222"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
@@ -4366,17 +4374,17 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <ellipse cx="195" cy="266" rx="176" ry="62" fill="none" stroke="rgba(226,240,255,.25)" stroke-width="1.1" stroke-dasharray="5 9"/>
           <circle cx="195" cy="276" r="52" fill="none" stroke="rgba(56,169,255,.45)" stroke-width="1.2"/>
           <!-- licence lanes: Holdings out to each operating world -->
-          <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M151 101 C 112 128, 84 170, 74 220" fill="none" stroke="url(#stmLgG)" stroke-width="1.8" marker-end="url(#stmArrG)"/>
+          <path d="M195 132 C 195 165, 195 202, 195 232" fill="none" stroke="url(#stmLgB)" stroke-width="1.8" marker-end="url(#stmArrB)"/>
+          <path d="M239 101 C 278 128, 306 170, 316 220" fill="none" stroke="url(#stmLgO)" stroke-width="1.8" marker-end="url(#stmArrO)"/>
           <!-- future ventures hang from HOLDINGS exactly like the operating
                trio: the same solid gradient licence lanes, leaving the sun's
                lower flanks and sweeping down the clear x=128/262 corridors
                (between the operating worlds) to land arrow-first on each
                future planet. Same stroke, same marker, same visual grammar —
                pink at the sun, fading to each venture's own colour. -->
-          <path d="M163 112 C 118 190, 128 300, 128 440" fill="none" stroke="url(#stmLgD1)" stroke-width="1.8" marker-end="url(#stmArr)"/>
-          <path d="M227 112 C 272 190, 262 300, 262 441" fill="none" stroke="url(#stmLgD2)" stroke-width="1.8" marker-end="url(#stmArr)"/>
+          <path d="M163 112 C 118 190, 128 300, 128 440" fill="none" stroke="url(#stmLgD1)" stroke-width="1.8" marker-end="url(#stmArrD1)"/>
+          <path d="M227 112 C 272 190, 262 300, 262 441" fill="none" stroke="url(#stmLgD2)" stroke-width="1.8" marker-end="url(#stmArrD2)"/>
           <!-- selection halos -->
           <circle class="stm-ring" data-ring="global" cx="195" cy="276" r="42" fill="none" stroke="#38a9ff" stroke-width="1.6"/>
           <circle class="stm-ring" data-ring="form" cx="70" cy="258" r="36" fill="none" stroke="#2fe0a0" stroke-width="1.6"/>
@@ -10529,13 +10537,13 @@ function renderSystem() {
     <path class="sm-flowglow g-form" d="${formLane}"/>
     <path class="sm-flowglow g-storm" d="${stormLane}"/>
     <path class="sm-flowglow g-fly" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
-    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArr)" d="${formLane}"/>
-    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArr)" d="${stormLane}"/>
-    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArr)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
+    <path class="sm-flow fl-form" stroke="url(#lgL)" marker-end="url(#smArrForm)" d="${formLane}"/>
+    <path class="sm-flow fl-storm" stroke="url(#lgR)" marker-end="url(#smArrStorm)" d="${stormLane}"/>
+    <path class="sm-flow fl-fly" stroke="url(#lgV)" marker-end="url(#smArrFly)" d="M ${f(flyOut[0])} ${f(flyOut[1])} L ${f(flyTop[0])} ${f(flyTop[1])}"/>
     <path class="sm-flowglow g-ds1" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
     <path class="sm-flowglow g-ds2" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
-    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArr)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
-    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArr)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
+    <path class="sm-flow fl-ds1" stroke="url(#lgD1)" marker-end="url(#smArrDs1)" d="M ${f(ds1Out[0])} ${f(ds1Out[1])} C 800 470, 620 560, ${f(ds1Top[0])} ${f(ds1Top[1])}"/>
+    <path class="sm-flow fl-ds2" stroke="url(#lgD2)" marker-end="url(#smArrDs2)" d="M ${f(ds2Out[0])} ${f(ds2Out[1])} C 1120 470, 1300 590, ${f(ds2Top[0])} ${f(ds2Top[1])}"/>
     ${cardLinks}`;
 
   map.innerHTML = `
@@ -10572,8 +10580,18 @@ function renderSystem() {
         <linearGradient id="lgD2" gradientUnits="userSpaceOnUse" x1="${f(ds2Out[0])}" y1="${f(ds2Out[1])}" x2="${f(ds2Top[0])}" y2="${f(ds2Top[1])}">
           <stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#a487df"/>
         </linearGradient>
-        <marker id="smArr" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
-        <marker id="smArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path fill="context-stroke" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <!-- explicit fill per lane: iOS/macOS Safari does not support
+             fill="context-stroke" in markers (it rendered every arrowhead
+             BLACK — invisible on the dark map). Each marker carries its
+             lane's terminal colour, which is what context-stroke resolved to
+             at the arrow end anyway. Geometry unchanged: refX 6.5 of an
+             8-wide viewBox at markerWidth 18 keeps the landLane tip maths. -->
+        <marker id="smArrForm" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="#2fe0a0" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrStorm" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="#ff6a3d" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrFly" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="#38a9ff" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrDs1" viewBox="0 0 8 8" refX="6.5" refY="4" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path fill="#d7b35f" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrDs2" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path fill="#a487df" d="M0 0 L8 4 L0 8 Z"/></marker>
+        <marker id="smArrP" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path fill="#dfe9fb" d="M0 0 L8 4 L0 8 Z"/></marker>
         <clipPath id="smSunClip"><circle cx="${cx}" cy="${cy}" r="${sunR}"/></clipPath>
       </defs>
       ${stars}

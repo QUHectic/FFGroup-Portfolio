@@ -9123,6 +9123,25 @@ function initCourier() {
     let h = Math.hypot(vx, vy) > 1e-4
       ? Math.atan2(vy, vx)
       : Math.atan2(C.d.y, C.d.x);
+    /* PARKED-SHIP POSE — the journey rail is screen-static: the timeline
+       scrolls past a ship holding (railX, .55-.59vh), so its total on-screen
+       displacement across the whole phase is ~35px and every chord in the
+       ladder above degenerates into rounding noise (measured: the nose
+       wandering 92°/-5°/60°/14°/62° without the ship moving at all). Hold
+       straight down instead, then hand off over the last tenth to a
+       forward-only chord taken across the seam, so the exit into
+       journey-to-growth (measured 93°, i.e. still straight down) is seamless. */
+    if (C.phase.rail) {
+      const down = Math.PI / 2;
+      const hand = smt(cl01((C.q - .88) / .12));
+      let hOut = down;
+      const F = sampleRoute(C.phase.s1 + 420);
+      if (F) {
+        const fx = F.p.x - C.p.x, fy = F.p.y - C.p.y;
+        if (Math.hypot(fx, fy) > 8) hOut = unwrap(down, Math.atan2(fy, fx));
+      }
+      h = down + (hOut - down) * hand;
+    }
     if (C.phase.pad) {
       const flare = smt(cl01((C.q - .50) / .46));
       /* Flip to the pad's nose-up pose by a fixed counterclockwise delta.
@@ -9200,6 +9219,7 @@ function initCourier() {
   const liftoff = document.getElementById("liftoff");
   const padRocket = document.getElementById("padRocket");
   let raf = 0, lastTime = 0, lastScroll = scrollY;
+  let revMix = 0, revWant = 0;
   let angle = 0, bank = 0, flame = .62;
   let auditY = null;
   let lapSig = "";
@@ -9290,7 +9310,16 @@ function initCourier() {
        stopped and a reverse scroll could inherit stale angular momentum.
        Follow the C1 route tangent exactly instead. Reverse scrolling retraces
        the same authored pose, giving a genuinely deterministic film strip. */
-    angle = targetAngle;
+    /* TRAVEL-FACING FLIP — the authored heading is the tangent for increasing
+       scroll, so scrolling back up used to fly the ship tail-first. Read the
+       wheel's sign with a 1.5px deadzone (sub-pixel jitter, rubber-banding and
+       momentum settle must not fire a flip) and ease a half-turn in and out of
+       the pose: the ship rolls around to point up the page on the way back and
+       rolls around again to point down when you resume descending. Route,
+       timing and every keyed position are untouched — this is pose only. */
+    if (Math.abs(delta) > 1.5) revWant = delta < 0 ? 1 : 0;
+    revMix = resync ? revWant : revMix + (revWant - revMix) * Math.min(1, dt * 5.5);
+    angle = targetAngle + Math.PI * revMix;
     const h0 = displayHeadingAt(scroll - 6), h1 = displayHeadingAt(scroll + 6);
     bank = Math.max(-.18, Math.min(.18, (unwrap(h0, h1) - h0) * .72));
     /* Engine intensity is also a pure route property. There is no decay RAF

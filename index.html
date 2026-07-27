@@ -9144,14 +9144,42 @@ const toGlobe = keyedPhase("growth-to-globe", [
        of the whole interactive team section let filters and view changes
        silently reroute this leg while the user was scrolling. */
     const team = layoutRect(document.querySelector("#team .team-intro"));
-    const postKeys = [
-      { s: traj.s1, x: trajExit.p.x, y: trajExit.p.y, d: trajExit.d },
-      { s: traj.s1 + vh * .28, x: Math.min(rightLane, trajExit.p.x + 92), y: Math.max(trajExit.p.y + 44, vh * .34) }
-    ];
+/* PULL-OUT — traj hands over at the 2036 dot still climbing up-right
+       (measured -47deg). The old single key sat 92px right and 44px DOWN, so
+       the Hermite folded back: the ship peaked 100px above the exit, fell
+       113px while sliding LEFT, and the nose snapped -10deg to 71deg in 20
+       scroll px. A circular arc fixes the fold but not the feel: constant
+       curvature means the turn RATE is a rectangle, stepping from zero to
+       full at the seam and back to zero at the exit, which still reads as a
+       hard turn however slowly it is paced. So author the heading instead
+       and integrate it into a path. smt5 gives zero first and second
+       derivative at both ends, so the rate eases 0 -> 13deg/24px -> 0 with
+       no step anywhere, and the curve is G2 against both neighbours. The
+       scroll ease (.33u + .67u^2) leaves the climb quickly and settles into
+       the gutter descent's pace. Pure geometry, so reverse scrolling
+       retraces identical poses and nothing moves without scroll input. */
+    const exitH = Math.atan2(trajExit.d.y, trajExit.d.x);
+    const turnH = u => exitH + (Math.PI / 2 - exitH) * smt5(cl01(u));
+    const STEPS = 24;
+    const turnUx = [0], turnUy = [0];
+    for (let i = 1; i <= STEPS; i++) {
+      const hA = turnH((i - 1) / STEPS), hB = turnH(i / STEPS);
+      turnUx.push(turnUx[i - 1] + (Math.cos(hA) + Math.cos(hB)) / (2 * STEPS));
+      turnUy.push(turnUy[i - 1] + (Math.sin(hA) + Math.sin(hB)) / (2 * STEPS));
+    }
+    const turnLen = Math.max(150, Math.min(360, (rightLane - trajExit.p.x) / Math.max(.25, turnUx[STEPS])));
+    const turnSpan = vh * .58;
+    const turnEase = u => .33 * u + .67 * u * u;
+    const pullOut = { s0: traj.s1, span: turnSpan, h0: exitH, h1: Math.PI / 2, ea: .33, eb: .67, fade: vh * 1.5 };
+    const postKeys = [{ s: traj.s1, x: trajExit.p.x, y: trajExit.p.y, d: trajExit.d }];
+    for (let i = 3; i <= STEPS; i += 3) postKeys.push({ s: traj.s1 + turnSpan * turnEase(i / STEPS),
+      x: trajExit.p.x + turnLen * turnUx[i], y: trajExit.p.y + turnLen * turnUy[i] });
     if (team) postKeys.push({ s: Math.max(traj.s1 + vh * .7, Math.min(raise.s0 - vh * .38, team.cy - vh * .52)),
       x: rightLane, y: vh * .88 });
     postKeys.push({ s: raise.s0, x: raiseEntry.p.x, y: raiseEntry.p.y, d: raiseEntry.d });
-    phases.push(keyedPhase("trajectory-to-raise", postKeys));
+const postPhase = keyedPhase("trajectory-to-raise", postKeys);
+    if (postPhase) postPhase.pullOut = pullOut;
+    phases.push(postPhase);
     phases.push(raise);
 
     const raiseExit = raise.sample(1, raise.s1);
@@ -9317,7 +9345,27 @@ if (C.phase.preOrbit) {
           const band = Math.min(.34, 190 / Math.max(1, C.phase.s1 - C.phase.s0));
           const hand2 = smt(cl01((C.q - (1 - band)) / band));
           h += (unwrap(h, Math.atan2(E.dLocal.y, E.dLocal.x)) - h) * hand2;
-        }
+}
+      }
+    }
+    /* PULL-OUT POSE — read the authored heading back, same argument as the
+       globe lap taking the ellipse tangent instead of a viewport chord. The
+       chord ladder cannot do this leg: at its ~0.5px/px the widen factor sits
+       near 4.5, so the four chords span roughly 118/284/639/1302 scroll px and
+       keep sampling the trajectory climb behind the ship. Measured: geometry
+       already at +21deg while the ladder still said -12deg, a plateau near
+       horizontal for 390px, then a late catch-up settling to a wandering
+       59-85deg down a gutter the ship descends vertically. Invert the scroll
+       ease to recover u, clamp it so the target holds straight down past the
+       exit, then fade the measured heading back in over ~1.5vh for the drift
+       to the team section. A pure function of THIS scroll, fully reversible. */
+    if (C.phase.pullOut) {
+      const P = C.phase.pullOut;
+      const own = 1 - smt(cl01((scroll - (P.s0 + P.span)) / P.fade));
+      if (own > 0) {
+        const d = cl01((scroll - P.s0) / P.span);
+        const u = (Math.sqrt(P.ea * P.ea + 4 * P.eb * d) - P.ea) / (2 * P.eb);
+        h += (unwrap(h, P.h0 + (P.h1 - P.h0) * smt5(cl01(u))) - h) * own;
       }
     }
     if (C.phase.pad) {

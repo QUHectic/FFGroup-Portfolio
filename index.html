@@ -8824,9 +8824,17 @@ function initCourier() {
         const w = T2 * 1.25;
         const stageY = Math.max(0, pTop - scroll) - Math.max(0, scroll - orbitUnpin);
         const dStage = (scroll < pTop || scroll > orbitUnpin) ? -1 : 0;
+/* dStage is the sticky stage's CAMERA drift, not ship motion. It has to
+           stay in `d` so the viewport path stays continuous, but it must never
+           reach the nose: before the pin it is -1px/px against ~+.34px/px of
+           orbital travel, so the net screen velocity points UP and the ship
+           climbed out of the dive exactly as it reached the limb. Publish the
+           lap's own tangent separately and let orientation use that. */
+        const oSpan = Math.max(1, orbitS1 - orbitS0);
+        const dLocal = { x: (dr * Math.cos(th) - rx * Math.sin(th) * w) / oSpan,
+                         y: (dry * Math.sin(th) + ry * Math.cos(th) * w) / oSpan };
         return { p: { x: iw / 2 + Math.cos(th) * rx, y: vh * .52 + stageY + Math.sin(th) * ry },
-          d: { x: (dr * Math.cos(th) - rx * Math.sin(th) * w) / Math.max(1, orbitS1 - orbitS0),
-            y: (dry * Math.sin(th) + ry * Math.cos(th) * w) / Math.max(1, orbitS1 - orbitS0) + dStage },
+          d: { x: dLocal.x, y: dLocal.y + dStage }, dLocal,
           q, th, geom: { cx: iw / 2, cy: vh * .52 + stageY, rx, ry, R } };
       }
     };
@@ -9028,11 +9036,15 @@ function initCourier() {
       between.push({ s, x: rightLane, y: vh * .56 });
     }
     between.push({ s: orbit.s0 - vh * .25, x: Math.min(rightLane, orbitEntry.p.x + 118), y: orbitEntry.p.y - 92 });
-    phases.push(keyedPhase("growth-to-globe", [
+const toGlobe = keyedPhase("growth-to-globe", [
       { s: growth.s1, x: growthExit.p.x, y: growthExit.p.y, d: growthExit.d },
       ...between,
-      { s: orbit.s0, x: orbitEntry.p.x, y: orbitEntry.p.y, d: orbitEntry.d }
-    ]));
+      /* dLocal, not d: the old drift-laden tangent made this cubic arrive
+         pointing straight UP at the limb (measured y overshoot 733 vs 708). */
+      { s: orbit.s0, x: orbitEntry.p.x, y: orbitEntry.p.y, d: orbitEntry.dLocal }
+    ]);
+    toGlobe.preOrbit = true;
+    phases.push(toGlobe);
     phases.push(orbit);
 
     const orbitExit = orbit.sample(1, orbit.s1);
@@ -9247,7 +9259,23 @@ function initCourier() {
         const fx = F.p.x - C.p.x, fy = F.p.y - C.p.y;
         if (Math.hypot(fx, fy) > 8) hOut = unwrap(down, Math.atan2(fy, fx));
       }
-      h = down + (hOut - down) * hand;
+h = down + (hOut - down) * hand;
+    }
+    /* GLOBE LAP — orientation belongs in the planet's frame, so take the
+       ellipse tangent directly instead of a viewport chord. */
+    if (C.phase.orbit && C.dLocal && Math.hypot(C.dLocal.x, C.dLocal.y) > 1e-4)
+      h = unwrap(h, Math.atan2(C.dLocal.y, C.dLocal.x));
+    /* ...and hand the approach off to that same tangent over the last ~190px,
+       so the chords that straddle the seam cannot pick the drift up one frame
+       early. Same shape as the journey-rail handoff above: a pure function of
+       q, so reverse scrolling retraces identical poses. */
+    if (C.phase.preOrbit && route && route.orbit) {
+      const E = route.orbit.sample(0, route.orbit.s0);
+      if (E && E.dLocal) {
+        const band = Math.min(.34, 190 / Math.max(1, C.phase.s1 - C.phase.s0));
+        const hand2 = smt(cl01((C.q - (1 - band)) / band));
+        h += (unwrap(h, Math.atan2(E.dLocal.y, E.dLocal.x)) - h) * hand2;
+      }
     }
     if (C.phase.pad) {
       const flare = smt(cl01((C.q - .50) / .46));

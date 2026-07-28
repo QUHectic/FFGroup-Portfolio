@@ -9480,16 +9480,26 @@ if (C.phase.preOrbit) {
         h += (unwrap(h, P.h0 + (P.h1 - P.h0) * smt5(cl01(u))) - h) * own;
       }
     }
-    if (C.phase.pad) {
-      const flare = smt(cl01((C.q - .50) / .46));
-      /* Flip to the pad's nose-up pose by a fixed counterclockwise delta.
-         The old nearest-branch unwrap flipped its target by 2π whenever the
-         travel heading crossed straight-down — which IS the gutter-descent
-         heading — an instant half-turn waiting to fire on the wrong viewport.
-         The approach only ever travels down/down-left, so a delta wrapped
-         into [0,2π) has its cut at straight-up, which the descent never hits. */
-      const flip = (((-Math.PI / 2 - h) % T2) + T2) % T2;
-      h += flip * flare;
+if (C.phase.pad) {
+      /* AUTHORED LANDING TURN. Two faults were visible on the gutter run. The
+         flip opened at q .50, a full viewport before the pad chapter reaches
+         the screen, and the chord ladder pre-bent the nose from about q .2:
+         the descent is screen-static there (35px of travel across ~1,100
+         scroll px) so every chord degenerates into rounding noise and the pose
+         stepped 87/97/111/121/157deg while the ship simply rode straight down.
+         Same remedy as the journey rail and the right-lane hold — where the
+         local speed collapses, stop reading the route and author the pose. The
+         nose holds the descent heading until the lateral bank actually starts
+         at q .55, then ONE roll carries it through the turn, skewed so it
+         passes nose-left as the leftward speed peaks (q ~.72) instead of
+         lagging it, and stands upright by q ~.92 with the last stretch a pure
+         settle onto the slot. Still a pure function of q, so reverse scrolling
+         retraces it exactly and the docked pose is bit-identical at -90deg,
+         which leaves the pad-rocket crossfade untouched. */
+      const turn = Math.pow(smt5(cl01((C.q - .55) / .40)), .68);
+      const pose = Math.PI / 2 + Math.PI * turn;
+      const own  = smt(cl01(C.q / .06));
+      h += (unwrap(h, pose) - h) * own;
     }
     return h;
   };

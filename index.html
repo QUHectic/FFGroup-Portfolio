@@ -9118,27 +9118,29 @@ const landIn = raiseExitP.y;
     const phases = [focus];
     const focusExit = focus.sample(1, focus.s1);
     const railEntry = railPhase.sample(0, railPhase.s0);
-/* SMOOTH RE-ENTRY (was a pirouette). The old apex key sat above AND right
-       of the next key, so the ship climbed to it and then had to reverse ~220°
-       to fall back onto the rail — on screen that read as a twirl at the exact
-       moment it re-entered the frame. Author the key just off the left edge
-       with an explicit, already-descending tangent instead: the bridge becomes
-       one monotonic bank (in from the top-left at ~26°, rolling to a clean 90°)
-       and the ship simply keeps going down into the rail. */
+/* NOSE-FIRST RE-ENTRY, THEN ONE DIP. Entry key sits just INSIDE the 40px
+       X fence with a deliberately FLAT tangent (y: 0), and bJ0s is the scroll
+       the fade is keyed to — so the first visible frame is level flight to the
+       right. The reversal out of the lap is spent entirely before it, at
+       alpha 0, and the heading ladder is fenced there (see displayHeadingAt).
+       From there: one monotonic bank, 0° → ~33° → 90°, into the rail. */
     const bJ1s = lerp(focus.s1, railPhase.s0, .40);
     const bJ2s = lerp(focus.s1, railPhase.s0, .76);
-    const bJ1 = { x: -iw * .02, y: vh * .12 };
-    const bJ2 = { x: railX, y: vh * .36 };
+    const bJ0s = Math.min(Math.max(diveB + vh * .26, lerp(focus.s1, bJ1s, .12)),
+                          lerp(focus.s1, bJ1s, .72));
+    const bJ0 = { x: Math.max(46, iw * .03), y: vh * .30 };
+    const bJ1 = { x: iw * .10, y: vh * .355 };
+    const bJ2 = { x: railX, y: vh * .46 };
+    const bJ01 = Math.max(1, bJ1s - bJ0s);
     const bJ12 = Math.max(1, bJ2s - bJ1s);
     const bJ23 = Math.max(1, railPhase.s0 - bJ2s);
     phases.push(keyedPhase("focus-to-journey", [
-      /* Continue from the lap's exact point and tangent. The old viewport
-         clamp silently teleported the courier almost 100px upward at this
-         seam, which was visible as a one-frame snap on quick/reverse scroll. */
       { s: focus.s1, x: focusExit.p.x, y: focusExit.p.y, d: focusExit.d },
+      { s: bJ0s, x: bJ0.x, y: bJ0.y,
+        d: { x: (bJ1.x - bJ0.x) / bJ01 * 1.25, y: 0 } },
       { s: bJ1s, x: bJ1.x, y: bJ1.y,
-        d: { x: (bJ2.x - bJ1.x) / bJ12 * 1.45,
-             y: (bJ2.y - bJ1.y) / bJ12 * .88 } },
+        d: { x: (bJ2.x - bJ1.x) / bJ12 * 1.30,
+             y: (bJ2.y - bJ1.y) / bJ12 * .70 } },
       { s: bJ2s, x: bJ2.x, y: bJ2.y,
         d: { x: 0, y: (railEntry.p.y - bJ2.y) / bJ23 * 1.05 } },
       { s: railPhase.s0, x: railEntry.p.x, y: railEntry.p.y, d: railEntry.d }
@@ -9383,8 +9385,8 @@ const postPhase = keyedPhase("trajectory-to-raise", postKeys);
       }
     }
     compileRetries = 0;
-    route = { phases: clean, s0: clean[0].s0, s1: clean[clean.length - 1].s1,
-      cloudS0, diveA, diveB, pageEnd, growth, traj, orbit, focus, pad };
+route = { phases: clean, s0: clean[0].s0, s1: clean[clean.length - 1].s1,
+      cloudS0, diveA, diveB, bridgeIn: bJ0s, pageEnd, growth, traj, orbit, focus, pad };
     graphClips = new Map();
     growthDots = [...document.querySelectorAll("#growthChart .pt-dot")];
     growthVals = [...document.querySelectorAll("#growthChart .gc-val")];
@@ -9445,12 +9447,25 @@ const postPhase = keyedPhase("trajectory-to-raise", postKeys);
       const v = Math.hypot(B0.p.x - A0.p.x, B0.p.y - A0.p.y) / 24;
       widen = 1 + 6 * smt(cl01((1.05 - v) / 1.05));
     }
+/* THE ENTRY MUST NOT AVERAGE IN THE LAP. The chord ladder is centred, so
+       at the bridge's entry the wider widths (spread reaches ~2000px) sample
+       back over the off-screen reversal, where the ship sat ~1000px to the
+       RIGHT: the m=2.4 term alone contributes vx ≈ -0.42 against a local
+       +0.16, and the hull rendered nose UP-LEFT however the entry key was
+       authored. Fence the BACK leg at the bridge's entry scroll and divide by
+       the ACTUAL span, so the first visible frames read a forward-only chord —
+       pure rightward motion — and the ladder relaxes back to fully centred
+       within one spread. Still stateless: every pose is a function of scroll. */
+    const backStop = route && route.bridgeIn != null ? route.bridgeIn : -Infinity;
     let vx = 0, vy = 0, w = 1;
     for (const m of [1, 2.4, 5.4, 11]) {
       const spread = base * m * widen;
-      const A = sampleRoute(scroll - spread), B = sampleRoute(scroll + spread);
-      if (A && B) {
-        const inv = w / (2 * spread);
+      const back = Math.max(scroll - spread, Math.min(scroll, backStop));
+      const fwd = scroll + spread;
+      const span = fwd - back;
+      const A = sampleRoute(back), B = sampleRoute(fwd);
+      if (A && B && span > 1) {
+        const inv = w / span;
         vx += (B.p.x - A.p.x) * inv;
         vy += (B.p.y - A.p.y) * inv;
       }
@@ -9759,9 +9774,15 @@ if (phase.focus) {
          opacity ends early. */
       const hideQ = .40;
       alpha = smt(cl01(q / .07)) * (1 - smt(cl01((q - hideQ) / .085)));
-    } else if (scroll < route.cloudS0) {
-      const fadeStart = route.diveB + innerHeight * .34;
-      alpha = smt(cl01((scroll - fadeStart) / (innerHeight * .46)));
+} else if (scroll < route.cloudS0) {
+      /* Fade in AT the entry key, not at a hand-set offset from the dive. The
+         old diveB + .34vh landed mid-reversal, so the first visible frames
+         were the U-turn (and, being off-screen, the X fence pinned them to the
+         40px margin: a hull parked on the edge, rotating). Keyed to bridgeIn,
+         the ship cannot become visible before it is level and heading right. */
+      const fadeStart = route.bridgeIn != null
+        ? route.bridgeIn : route.diveB + innerHeight * .34;
+      alpha = smt(cl01((scroll - fadeStart) / (innerHeight * .30)));
     }
 
     let scale = 1;

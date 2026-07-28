@@ -539,15 +539,18 @@ h1:focus,h2:focus{outline:none;}
 @media (max-width:900px){
   .nav-burger{display:block;}
   .nav-links{
-    position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:4px;
-    padding:10px 14px 14px;background:rgba(7,7,13,.97);backdrop-filter:blur(18px);
+    position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:2px;
+    padding:6px 14px 8px;background:rgba(7,7,13,.97);backdrop-filter:blur(18px);
     border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 24px 40px rgba(0,0,0,.5);
     opacity:0;visibility:hidden;transform:translateY(-8px);
     transition:opacity .22s var(--ease-out),transform .22s var(--ease-out),visibility .22s;
   }
   .nav.nav-open .nav-links{opacity:1;visibility:visible;transform:none;}
-  .nav-btn{padding:13px 16px;font-size:1rem;text-align:left;border-radius:12px;}
-  .nav-btn.nav-cta{margin-left:0;text-align:center;}
+  /* half-height sheet: tight rows instead of full-size tap slabs */
+  .nav-btn{padding:3px 16px;font-size:.9rem;line-height:1.2;text-align:left;border-radius:9px;}
+  /* Liftoff sits in the list like everyone else — pink text, no pill */
+  .nav-btn.nav-cta{margin-left:0;text-align:left;background:none;box-shadow:none;color:var(--pink);}
+  .nav-btn.nav-cta:hover{background:rgba(255,61,154,.1);color:var(--pink);}
 }
 
 /* ==========================================================================
@@ -1705,10 +1708,13 @@ section.tint{background:var(--bg-soft);}
 @media (max-width:760px){
   /* nothing below ~11px: the deck is read at arm's length on a phone */
   .st-tag,.st-lvl,.st-status,.st-role,.st-focus,.bp-lvtag,.scen-tag,
-  .kicker,.psub,.assume b,.st-meta b,.pillar .p-row span,.bp-vals span,
-  .st-future i,.st-note,.fly-loop,.assume-note,.scen-warn,.grp-val i{
+  .kicker,.psub,.st-meta b,.pillar .p-row span,.bp-vals span,
+  .st-future i,.st-note,.assume-note,.scen-warn,.grp-val i{
     font-size:.72rem !important;letter-spacing:.06em;line-height:1.45;
   }
+  /* the six make-or-break lever titles read a step larger than the caption
+     cluster above */
+  .assume b{font-size:.88rem !important;letter-spacing:-.01em;line-height:1.3;}
   .pillar .p-scope,.st-future span,.by-tags span,.becomes span{font-size:.75rem !important;}
   /* the remaining sub-10px labels, found by measuring rather than guessing */
   .ch-badge i,.ch-badge b,.fsr-no,.fsr .fsr-pc,.st-chips span,
@@ -2026,7 +2032,7 @@ section.tint{background:var(--bg-soft);}
 .tm-person .av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
   background:color-mix(in srgb,var(--c) 18%,rgba(255,255,255,.05));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
   color:var(--c);font-size:.6rem;font-weight:800;}
-.tm-person b{flex:none;max-width:38%;font-size:.8rem;letter-spacing:-.01em;line-height:1.25;}
+.tm-person b{flex:0 0 33%;max-width:none;font-size:.8rem;letter-spacing:-.01em;line-height:1.25;}   /* fixed name column: every row's role starts on the same line */
 .tm-person .r{flex:1;min-width:0;color:var(--ink-dim);font-size:.72rem;line-height:1.3;}
 .tm-person .t{flex:none;max-width:30%;color:var(--ink-faint);font-size:.64rem;font-weight:700;text-align:right;line-height:1.3;}
 .tm-person .t.win{color:var(--mint-ink,#2fe0a0);}
@@ -2316,8 +2322,6 @@ br.mbr{display:none;}
   width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:.72rem;font-weight:800;
   background:linear-gradient(135deg,var(--pink),var(--blue));}
 .flywheel li:not(:last-child)::after{content:"";position:absolute;left:27px;bottom:-8px;width:1px;height:8px;background:var(--line-strong);}
-.fly-loop{display:flex;align-items:center;gap:9px;margin:12px 0 0;color:var(--ink-dim);font-size:.75rem;font-style:italic;}
-.fly-loop span{width:20px;height:20px;flex:none;border:2px solid var(--pink);border-right-color:transparent;border-radius:50%;}
 .grp-val{margin-top:16px;padding:16px 17px;border:1px solid rgba(255,61,154,.3);border-radius:15px;
   background:linear-gradient(180deg,rgba(255,61,154,.08),rgba(56,169,255,.05));}
 .grp-val b{display:block;font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.035em;
@@ -2374,7 +2378,7 @@ br.mbr{display:none;}
 .assume > div:nth-child(3n+1) .assume-no{background:linear-gradient(135deg,var(--pink),#ff86be);}
 .assume > div:nth-child(3n+2) .assume-no{background:linear-gradient(135deg,var(--blue),#82c7ff);}
 .assume > div:nth-child(3n) .assume-no{background:linear-gradient(135deg,var(--mint-ink),#74e9bb);}
-.assume b{display:block;font-size:.98rem;letter-spacing:-.01em;}
+.assume b{display:block;font-size:1.1rem;letter-spacing:-.01em;}
 .assume span{display:block;margin-top:7px;color:var(--ink-dim);font-size:.8rem;line-height:1.5;max-width:260px;}
 .assume-note{
   margin:28px auto 0;max-width:720px;padding:14px 22px;border:1px dashed var(--line-strong);border-radius:14px;
@@ -3875,8 +3879,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
     padding-bottom:max(14px,env(safe-area-inset-bottom));
   }
-  .nav-btn{min-height:44px;display:flex;align-items:center;}
-  .nav-btn.nav-cta{justify-content:center;}
+  .nav-btn{min-height:24px;display:flex;align-items:center;}
+  .nav-btn.nav-cta{justify-content:flex-start;}
 
   /* Type and cards remain readable down to 320px without clipped words. */
   h1,h2,h3,h4,p,.section-sub,.psub{overflow-wrap:anywhere;}
@@ -5078,7 +5082,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           <li><b>Strengthens Freedom Group Holdings</b></li>
           <li><b>Provides more capital for Freedom Global and future companies</b></li>
         </ol>
-        <p class="fly-loop"><span></span>and the loop repeats, larger each turn</p>
         <div class="grp-val">
           <b>£500 million</b>
           <span>Long term projected group value, Freedom Group Holdings with all of its operating companies at maturity, of which the £100 million Freedom Global ambition is the first and nearest component.</span>
@@ -5459,8 +5462,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 
 <footer>
   <div class="wrap">
-    <div>© 2026 Freedom Group Holdings · Freedom Fire &amp; Safety · Freedom Fly · Freedom Facilities</div>
-    <div>Firestorm™ is a trademark of The Freedom Group</div>
+    <div>© 2026 Freedom Group Holdings</div>
   </div>
 </footer>
 
@@ -5935,7 +5937,7 @@ const FG_DATA = {
         people: [
           // `root: true` puts Tom at the centre of the spider's hub
           { name: "Tom Letcher", role: "Managing Director", type: "Full time", tag: "MD", root: true,
-            bio: "Leads group strategy across every subsidiary, from the first £400 pallet in Bolton to the JinDun partnership and the trademarked Firestorm™ brand." }
+            bio: "Founder of the Freedom Group — built from a single second-hand extinguisher with zero outside investment, now leading the group toward its £500m target over the next ten years. A big believer in growing young people and giving them real purpose." }
         ]
       },
       {

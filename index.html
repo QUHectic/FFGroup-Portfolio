@@ -2589,6 +2589,9 @@ br.mbr{display:none;}
    up near full screen; tap anywhere or Esc to dismiss */
 .ch-lightbox{position:fixed;inset:0;z-index:520;display:flex;align-items:center;justify-content:center;
   background:rgba(4,5,10,.92);opacity:0;transition:opacity .22s var(--ease-out);}
+/* display:flex above would defeat the hidden attribute, leaving an invisible
+   full-page overlay that swallows every tap — hidden must ALWAYS win */
+.ch-lightbox[hidden]{display:none;}
 .ch-lightbox.open{opacity:1;}
 .ch-lightbox img{max-width:93vw;max-height:84vh;border-radius:14px;border:1px solid rgba(255,255,255,.18);
   box-shadow:0 30px 80px rgba(0,0,0,.6);transform:scale(.94);transition:transform .22s var(--ease-out);}

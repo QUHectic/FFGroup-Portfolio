@@ -9694,9 +9694,27 @@ if (C.phase.pad) {
        the pose: the ship rolls around to point up the page on the way back and
        rolls around again to point down when you resume descending. Route,
        timing and every keyed position are untouched — this is pose only. */
-    if (Math.abs(delta) > 1.5) revWant = delta < 0 ? 1 : 0;
+if (Math.abs(delta) > 1.5) revWant = delta < 0 ? 1 : 0;
     revMix = resync ? revWant : revMix + (revWant - revMix) * Math.min(1, dt * 5.5);
-    angle = targetAngle + Math.PI * revMix;
+    /* AUTHORED POSES CANNOT TAKE A BLIND HALF-TURN. The landing phase does not
+       read its nose from the route tangent — displayHeadingAt AUTHORS it:
+       straight down through the descent, then ONE roll that stands the ship
+       upright (-90deg) on the slot so the pad-rocket crossfade matches. Adding
+       the travel-facing PI on top of an already-authored pose is what pointed
+       the ship anywhere but up on the way back out of Liftoff (measured: 221deg
+       authored + 180 = 41deg, nose down-right while climbing UP the page).
+       The reverse of an authored pose is authored too: backing off the pad IS a
+       climb, so the nose holds straight up the page. That value is also what the
+       flipped bridge tangent gives at the phase seam (entry tangent is straight
+       down, +PI = up) and it is bit-identical to the docked pose at q=1, so both
+       ends stay continuous — no snap in, no snap out. Ownership fades in on the
+       same q/.06 ramp displayHeadingAt uses, and it stays a pure function of
+       scroll plus wheel sign, so reverse scrolling still retraces one
+       deterministic film strip. Route, timing and positions untouched. */
+    const padPoseOwn = phase.pad ? smt(cl01(q / .06)) : 0;
+    const revTurn = Math.PI * (1 - padPoseOwn)
+      + (unwrap(targetAngle, -Math.PI / 2) - targetAngle) * padPoseOwn;
+    angle = targetAngle + revTurn * revMix;
     const h0 = displayHeadingAt(scroll - 6), h1 = displayHeadingAt(scroll + 6);
     bank = Math.max(-.18, Math.min(.18, (unwrap(h0, h1) - h0) * .72));
     /* Engine intensity is also a pure route property. There is no decay RAF

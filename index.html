@@ -781,9 +781,12 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
   line-height:1.02;letter-spacing:-.045em;text-wrap:balance;
   text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 34px rgba(238,244,255,.95),0 0 70px rgba(238,244,255,.7);}
 .focus-handoff .focus-subtitle{position:relative;max-width:780px;margin:18px auto 0;color:#4b5769;
-  font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;text-wrap:balance;
+  font-size:clamp(.96rem,1.25vw,1.12rem);line-height:1.62;
   text-shadow:0 0 22px rgba(238,244,255,.95),0 0 44px rgba(238,244,255,.8);}
 .focus-handoff .focus-subtitle b{font-weight:750;color:#1e2a3c;}
+/* the rename aside never splits, and the paragraph is hand-shaped into three
+   shrinking lines (an upside-down pyramid) on both tiers */
+.focus-handoff .focus-subtitle .nwr{white-space:nowrap;}
 /* the second line carries the same three-stop brand ramp as the dossier's
    category line. Gradient text is painted through the glyphs, so the h2's
    white bloom would ghost straight through it — a drop-shadow filter acts on
@@ -1003,7 +1006,9 @@ html.spx .tr2-planet{height:600vh;} /* doubled: the DAY half carries the market 
      8.6vw keeps the whole phrase comfortably on one line down to 320px
      screens, and balance is off so only the gradient line wraps naturally. */
   .focus-handoff h2{font-size:clamp(1.7rem,8.6vw,3rem);text-wrap:wrap;}
-  .focus-handoff .focus-subtitle{font-size:.93rem;line-height:1.55;}
+  /* the forced first line ("… (soon Freedom Global Ltd) is") is the longest —
+     scale with the viewport so it clears the column down to 320px */
+  .focus-handoff .focus-subtitle{font-size:clamp(.76rem,3.45vw,.93rem);line-height:1.55;}
   .focus-summary{padding:17px 14px;margin-top:22px;border-radius:17px;}
   /* three columns leaves 91px per chip on a phone, and four of the six
      overflow that (Amazon/Shopify/OnBuy/TikTok all need 100-115px). Two
@@ -1882,8 +1887,8 @@ section.tint{background:var(--bg-soft);}
 .stm-pl-form{--c:#2fe0a0;left:2px;transform:none;align-items:flex-start;text-align:left;top:56.3%;}
 .stm-pl-global{--c:#38a9ff;left:50%;top:40.8%;}   /* ABOVE its planet, per the mock */
 .stm-pl-storm{--c:#ff6a3d;left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;top:56.3%;}
-.stm-pl-ds1{--c:#d7b35f;left:31.5%;top:84.4%;}
-.stm-pl-ds2{--c:#a487df;left:68.5%;top:84.4%;}
+.stm-pl-ds1{--c:#d7b35f;left:31.5%;top:89.6%;}   /* below the planet art, never on it */
+.stm-pl-ds2{--c:#a487df;left:68.5%;top:89.6%;}
 /* compact phones: smaller pills, wrapping captions, and the Global row
    drops further so the taller wrapped side stacks still clear it */
 @media (max-width:374px){
@@ -1896,7 +1901,7 @@ section.tint{background:var(--bg-soft);}
   .stm-pl-ds2{left:auto;right:2px;transform:none;align-items:flex-end;text-align:right;}
 }
 .stm-pl:focus-visible b{outline:2px solid var(--c);outline-offset:2px;}
-.stm-hint{margin:9px auto 0;text-align:center;color:var(--ink-faint);font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;}
+.stm-hint{margin:18px auto 0;text-align:center;color:var(--ink-faint);font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;}
 .stm-details{display:flex;flex-direction:column;align-items:center;gap:2px;margin:10px auto 0;padding:8px 18px;
   background:none;border:0;color:var(--ink-faint);font-size:.6rem;font-weight:900;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;}
 .stm-chev{width:11px;height:11px;position:relative;}
@@ -1984,9 +1989,8 @@ section.tint{background:var(--bg-soft);}
   box-shadow:0 0 34px rgba(255,61,154,.4),inset 0 0 26px rgba(255,61,154,.14);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px;
   -webkit-tap-highlight-color:transparent;}
-.tm-hubc b{color:#fff;font-size:.92rem;letter-spacing:-.02em;line-height:1.15;}
-.tm-hubc span{color:var(--ink-dim);font-size:.62rem;}
-.tm-hubc i{margin-top:2px;color:var(--ink-faint);font-size:.5rem;font-weight:900;font-style:normal;letter-spacing:.34em;text-transform:uppercase;}
+.tm-hubc b{color:#fff;font-size:1.06rem;letter-spacing:-.02em;line-height:1.15;}
+.tm-hubc span{color:var(--ink-dim);font-size:.74rem;}
 .tm-sat{position:absolute;transform:translate(-50%,-50%);width:23.6%;aspect-ratio:1;border-radius:50%;
   border:1.6px solid var(--c);cursor:pointer;font:inherit;
   background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--c) 22%,transparent),rgba(12,14,22,.92) 72%);
@@ -1995,7 +1999,8 @@ section.tint{background:var(--bg-soft);}
   color:#fff;transition:opacity .25s var(--ease-out),box-shadow .25s var(--ease-out);
   -webkit-tap-highlight-color:transparent;}
 .tm-sat svg{width:15px;height:15px;color:var(--c);}
-.tm-sat span{font-size:.5rem;font-weight:700;line-height:1.2;text-align:center;}
+.tm-sat span{font-size:.6rem;font-weight:700;line-height:1.2;text-align:center;}
+@media (max-width:374px){.tm-sat span{font-size:.55rem;}}
 .tm-hub.filtered .tm-sat:not(.hot){opacity:.32;}
 .tm-sat.hot{box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent);}
 .tm-hub.filtered.dirsel .tm-sat{opacity:.32;}
@@ -2279,6 +2284,10 @@ html.spx .rail-fill{transition:none;}
 .ch-q{display:block;white-space:nowrap;overflow:hidden;font-size:var(--chq,.76rem);font-weight:800;
   letter-spacing:var(--chqls,.16em);text-transform:uppercase;color:var(--mint-ink);margin:8px 0 2px;}
 .jcard.chapter h3{font-size:clamp(1.5rem,2.4vw,2.1rem);line-height:1.14;letter-spacing:-.018em;margin:8px 0 12px;max-width:22ch;}
+/* phone-only title breaks: each chapter title is hand-shaped into a pyramid /
+   inverted pyramid of line lengths in the condensed mobile cards. Hidden
+   everywhere else, so desktop wraps naturally. */
+br.tbr{display:none;}
 /* The standfirst and the body ran too close to read as different voices —
    12px between them and 7px between body paragraphs is barely a difference.
    The standfirst now gets real air beneath it, and the paragraphs breathe
@@ -4098,6 +4107,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      .jcard.chapter in the selector is required: the condensed h3 sizing rule
      above carries three classes and out-specifies anything weaker. */
   .jl-condensed .jcard.chapter .ch-titlerow h3{flex:1;min-width:0;margin:0;}
+  .jl-condensed .jcard.chapter h3 br.tbr{display:inline;}
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-titlerow .ch-side{flex:none;width:92px;margin:0;}
   .jl-condensed .jcard.chapter:not(.ch-open):has(.ch-expand) .ch-lede{display:none;}
   /* the fold above hides every .ch-side child — surface just the figure */
@@ -4135,8 +4145,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 /* narrow phones: slightly smaller chapter titles so even the longest one
    stays within the uniform title row, and a smaller kicker so "BREAKTHROUGH"
    never splits mid-word into a third line — box heights never diverge */
-@media (max-width:380px){
+@media (max-width:430px){
+  /* one title size across every phone so the hand-shaped title pyramids
+     (br.tbr) hold their line pattern from 360px up — at 1.32rem the longest
+     shaped lines re-wrap on 375/390 columns */
   .jl-condensed .jcard.chapter h3{font-size:1.16rem;}
+}
+@media (max-width:380px){
   .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
 }
 
@@ -4414,26 +4429,23 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
         <button class="stm-pl stm-pl-form" data-co="form" type="button">
           <b><i></i>Freedom Facilities Ltd</b>
           <em class="stm-pill">Planned</em>
-          <span>Facilities</span>
         </button>
         <button class="stm-pl stm-pl-global" data-co="global" type="button">
           <b><i></i>Freedom Global Ltd <em class="stm-live">Active</em></b>
-          <span>D2C</span>
         </button>
         <button class="stm-pl stm-pl-storm" data-co="storm" type="button">
           <b><i></i>Freedom Distribution Ltd</b>
           <em class="stm-pill">Planned</em>
-          <span>B2B</span>
         </button>
         <button class="stm-pl stm-pl-ds1" data-co="ds1" type="button">
           <b><i></i>Freedom Form Ltd</b>
+          <b><i></i>Freedom Freight Ltd</b>
           <em class="stm-pill">Future · 2029</em>
-          <span>Property · Freight</span>
         </button>
         <button class="stm-pl stm-pl-ds2" data-co="ds2" type="button">
           <b><i></i>Freedom Fly Ltd</b>
+          <b><i></i>Freedom Fuel Ltd</b>
           <em class="stm-pill">Future · 2030+</em>
-          <span>Tech · Fuel</span>
         </button>
       </div>
 
@@ -4498,7 +4510,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
           </div>
           <div class="stm-rows">
             <div><b>Freedom Fly Ltd</b><i>Drone tech · Aerial services</i><span>A future specialist business focused on surveying, inspection and aerial visual services.</span></div>
-            <div><b>Freedom Fuel Ltd</b><i>Forecourts · Energy · Retail</i><span>A long term ambition to develop or acquire forecourt and convenience-retail locations.</span></div>
+            <div><b>Freedom Fuel Ltd</b><i>Forecourts · Energy · Retail</i><span>A long term ambition to develop or acquire petrol stations, forecourts and convenience-retail locations.</span></div>
           </div>
           <a class="stm-cta" href="#beyond">See the wider group plan<span aria-hidden="true">&rsaquo;</span></a>
         </article>
@@ -4517,7 +4529,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
     <div class="focus-handoff-inner">
       <p class="focus-label">Current Investment Focus</p>
       <h2 id="investment-focus-title">Explore the Company<br><span class="h2-grad">Already Building the Future</span></h2>
-      <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd (soon to become <b>Freedom Global Ltd</b>) is the group&rsquo;s established direct to consumer ecommerce business and the focus of this investment case.</p>
+      <p class="focus-subtitle">Freedom Fire &amp; Safety Ltd <span class="nwr">(soon to become <b>Freedom Global Ltd</b>)</span> is <br class="fsbr">the group&rsquo;s established direct to consumer ecommerce business <br class="fsbr">and the focus of this investment case.</p>
       <div class="focus-summary" aria-label="Freedom Global company summary">
         <div class="fs-head">
           <span class="fs-mark" aria-hidden="true">FG</span>
@@ -5457,7 +5469,7 @@ const FG_DATA = {
   milestones: [
     { year: "March 2019", kick: "Where It All Began",
       q: "Could one overlooked product become something more?",
-      title: "One Rusty Extinguisher Started Everything",
+      title: "One Rusty <br class='tbr'>Extinguisher <br class='tbr'>Started <br class='tbr'>Everything",
       subtitle: "No master plan. No investors. No ecommerce business. No group of companies. Just one overlooked product and the willingness to start.",
       body: [
         "There was no Freedom Group. No portfolio of brands, no international supply chain, no team, no projections and no &pound;100 million ambition. There was simply one rusty, second hand fire extinguisher, a Facebook Marketplace listing and the belief that something overlooked might still have value.",
@@ -5474,7 +5486,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch1-a.webp"],
       nextQuestion: "But could one sale become a genuine opportunity?" },
     { year: "September 2019", kick: "The First Signal", q: "Was there really a market?",
-      title: "The £400 Order That Proved the Demand",
+      title: "The <br class='tbr'>£400 Order <br class='tbr'>That Proved <br class='tbr'>the Demand",
       subtitle: "A bulk enquiry from Bolton revealed that the opportunity might be bigger than expected.",
       body: [
         "A buyer in Bolton contacted us looking for hundreds of refurbished fire extinguishers for fire safety training. We supplied approximately 400 mixed units for &pound;400, around &pound;1 each. In truth, it was probably not a profitable order. Once the time, handling, preparation and delivery were considered, we most likely made a loss. But the value of that order was never really in the margin. Until then, the first sale could still have been dismissed as a one off. This order proved there was genuine demand for affordable, second life extinguishers when the intended application was appropriate. It also revealed that the opportunity extended beyond individual customers: training providers and commercial buyers needed volume, reliability and someone willing to supply it. For the first time, this no longer felt like a single transaction. It felt like the first clear signal that a real market existed, even if the first lesson came without a profit."
@@ -5490,7 +5502,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch2-a.webp", "journey-photos/ch2-b.webp"],
       nextQuestion: "But would customers buy without collecting in person?" },
     { year: "January 2020", kick: "The First Leap", q: "Would people trust buying remotely?",
-      title: "Then Someone Asked: “Can You Send It?”",
+      title: "Then <br class='tbr'>Someone <br class='tbr'>Asked: “Can <br class='tbr'>You Send It?”",
       subtitle: "One remote order proved the opportunity was no longer limited by geography.",
       body: [
         "The next breakthrough came when a kebab shop in Nottingham contacted us through Facebook Marketplace looking for the cheapest suitable refurbished extinguisher we could provide. They had never met us and had no reason to trust a small operation just starting out in Bury, but they trusted the listing, paid remotely and asked us to send it. Even the delivery became part of the lesson. Fire extinguishers could not be handed to any courier, so we had to package the unit properly and find a carrier willing to take it. It was the first real test of whether this could become more than a collection only business. The customer even promised a free kebab if we made it to Nottingham, and began recommending us to other takeaways nearby. It was still only a few extinguishers going to one kebab shop, but it felt like the world had opened up. These products could be boxed and sent anywhere. For the first time, the opportunity could travel."
@@ -5506,7 +5518,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch3-a.webp"],
       nextQuestion: "If customers would order remotely, how far could the model really grow?" },
     { year: "June 2020", kick: "The Growth", q: "Could a small operation keep up with the demand?",
-      title: "From One Extinguisher to Hundreds Every Day",
+      title: "From One <br class='tbr'>Extinguisher <br class='tbr'>to Hundreds <br class='tbr'>Every Day",
       subtitle: "Orders grew quickly, and a small, rented space became a refurbishment operation running at full speed.",
       body: [
         "As demand accelerated, we began trading as Freedom Fire and rented a small space at the back of the family warehouse. The setup was basic, but the pace quickly became relentless. University and college students joined the team, helping us clean, refill, prepare and process hundreds of refurbished extinguishers every day. Training companies began purchasing hundreds of units at a time, while vans travelled the length of the country delivering pallets to Scotland, Wales, London, Milton Keynes and beyond. We also supplied North West exporters who consolidated extinguishers into containers bound for Ghana, Nigeria, Sierra Leone and the Democratic Republic of the Congo.",
@@ -5524,7 +5536,7 @@ const FG_DATA = {
                "journey-photos/ch4-d.webp", "journey-photos/ch4-e.webp"],
       nextQuestion: "Could a local Facebook operation become a genuine ecommerce business?" },
     { year: "December 2020", kick: "The Leap of Faith", q: "Could one eBay listing open an entire new channel?",
-      title: "One Listing. One Unexpected Breakthrough.",
+      title: "One <br class='tbr'>Listing. One <br class='tbr'>Unexpected <br class='tbr'>Breakthrough.",
       subtitle: "A single second hand CO2 listing became the first real proof that ecommerce could scale nationally.",
       body: [
         "We decided to test eBay using a personal account and listed one second hand 2kg CO2 extinguisher. There was no store, no branding and no advertising behind it. The product had a broader market than we initially realised. Customers purchased CO2 extinguishers for fire safety training, welding, aquarium systems and other non operational applications where a lower cost cylinder was suitable. For several months, the listing quietly gained momentum. Then it became one of the fastest moving CO2 extinguisher listings on eBay UK.",
@@ -5541,7 +5553,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch5-a.webp"],
       nextQuestion: "Could the operation become a real limited company with a larger ambition?" },
     { year: "August 2021", kick: "The Company", q: "Could the operation become a structured business?",
-      title: "Freedom Fire & Safety Ltd Was Born",
+      title: "Freedom Fire <br class='tbr'>& Safety Ltd <br class='tbr'>Was Born",
       subtitle: "The sole trader operation had outgrown its original structure and the next stage required a real company.",
       body: [
         "By 2021, sales had exceeded the limits of the original sole trader model. In August, Freedom Fire & Safety Ltd was incorporated. The company now had two clear areas of opportunity: ecommerce, using the early success of the CO2 listing to build a broader online range, and servicing and contracted work, maintaining extinguishers for colleges, warehouses, factories, exhibition centres, shops and commercial premises.",
@@ -5560,7 +5572,7 @@ const FG_DATA = {
                "journey-photos/ch6-g.webp"],
       nextQuestion: "Where could the company build a permanent home of its own?" },
     { year: "April 2022", kick: "The First Home", q: "Could 500 square feet become the base for something bigger?",
-      title: "Unit 10 Became Our First Real Warehouse",
+      title: "Unit 10 <br class='tbr'>Became <br class='tbr'>Our First Real <br class='tbr'>Warehouse",
       subtitle: "A modest 500 square foot unit gave the company its first independent home.",
       body: [
         "In 2022, we moved into Unit 10, our first dedicated warehouse. It was only around 500 square feet, but it represented independence. We had finally moved away from the cramped space at the back of the family warehouse and created a home for the ecommerce operation, service stock and growing product range. For the first time the operation had a front door of its own.",
@@ -5578,7 +5590,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch7-a.webp", "journey-photos/ch7-b.webp"],
       nextQuestion: "Could we build an entire ecommerce store before knowing whether the market would respond?" },
     { year: "May 2023", kick: "The Build", q: "Would we invest everything before the sales arrived?",
-      title: "Twelve Months of Building Before One New Sale",
+      title: "Twelve <br class='tbr'>Months <br class='tbr'>of Building <br class='tbr'>Before One <br class='tbr'>New Sale",
       subtitle: "Thousands of products, images, descriptions and calculations were prepared manually before the store launched.",
       body: [
         "Throughout 2023, we built the foundations of a major ecommerce store, with no mature AI workflow doing the work for us. Products were researched manually, images sourced and edited, descriptions written and margins calculated. Product codes, supplier costs, packaging, delivery and marketplace charges were recorded line by line, and thousands of SKUs prepared before most had sold. Supply was the bigger challenge. Many manufacturers did not believe fire extinguishers belonged online, and others would not extend credit to a young business with limited financial history. But consumer behaviour was already changing.",
@@ -5595,7 +5607,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch8-a.webp?v=20260724"],
       nextQuestion: "What would happen when the store finally went live?" },
     { year: "May 2024", kick: "The Breakthrough", q: "Would the market respond?",
-      title: "Then the Orders Started Coming",
+      title: "Then the <br class='tbr'>Orders Started <br class='tbr'>Coming",
       subtitle: "The official eBay store launched, and the months of preparation finally began turning into sales.",
       body: [
         "In early 2024, the existing eBay account was transformed into the Freedom Fire business store. New products launched at competitive prices, a DHL account enabled next day delivery, and the range expanded rapidly.",
@@ -5613,7 +5625,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch9-a.webp", "journey-photos/ch9-b.webp", "journey-photos/ch9-c.webp"],
       nextQuestion: "Could our small warehouse survive the speed of growth?" },
     { year: "June 2024", kick: "The Expansion", q: "How quickly could the business outgrow its first home?",
-      title: "Unit 10 Was No Longer Big Enough",
+      title: "Unit 10 <br class='tbr'>Was No Longer <br class='tbr'>Big Enough",
       subtitle: "A warehouse three times the size became available directly opposite, and we moved immediately.",
       body: [
         "By the summer of 2024, Unit 10, once the symbol of our independence, was already becoming too small. Stock filled every corner and packing space was under pressure. Then, almost perfectly timed, a larger unit became available directly opposite. We secured it and spent six months transforming an empty industrial shell into the new Freedom headquarters, with offices, a kitchen, fulfilment rooms and packing stations, still unmistakably ours and full of the energy of a young team building something together.",
@@ -5630,7 +5642,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch10-a.webp", "journey-photos/ch10-b.webp", "journey-photos/ch10-c.webp"],
       nextQuestion: "But could the margins and supply chains support the next level of growth?" },
     { year: "July 2024", kick: "The Supply Chain", q: "Could we stop buying from the big players and become one?",
-      title: "We Had to Buy Like the Biggest",
+      title: "We Had <br class='tbr'>to Buy Like <br class='tbr'>the Biggest",
       subtitle: "Marketplace growth exposed the limits of buying through traditional UK supply chains.",
       body: [
         "As sales accelerated, a commercial reality became impossible to ignore. After marketplace fees, packaging, fulfilment and delivery, margins on stock bought through UK distributors were too tight to compete online.",
@@ -5647,7 +5659,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch11-a.webp", "journey-photos/ch11-b.webp"],
       nextQuestion: "If we were going to manufacture our own products, what would the brand become?" },
     { year: "August 2024", kick: "The Brand Is Born", q: "Could we create something the business could truly own?",
-      title: "Firestorm&trade; Was Born From Rejection",
+      title: "Firestorm&trade; <br class='tbr'>Was Born From <br class='tbr'>Rejection",
       subtitle: "A name became protected intellectual property, marking the transition from reseller to brand owner.",
       body: [
         "Direct manufacturing created an opportunity to do more than buy closer to the source. It gave us the chance to build something of our own.",
@@ -5664,7 +5676,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch12-a.webp"],
       nextQuestion: "But could a protected name become thousands of products people could hold?" },
     { year: "December 2024", kick: "The Christmas Delivery", q: "Would Firestorm finally become real?",
-      title: "The Best Christmas Present Was a Container",
+      title: "The Best <br class='tbr'>Christmas <br class='tbr'>Present Was <br class='tbr'>a Container",
       subtitle: "The first container transformed a protected name into thousands of physical products.",
       body: [
         "Until then, Firestorm existed in plans, design files, supplier conversations, legal documents and belief.",
@@ -5681,7 +5693,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch13-a.webp?v=20260724", "journey-photos/ch13-b.webp?v=20260724"],
       nextQuestion: "Could one owned brand become the foundation of a much larger ecommerce platform?" },
     { year: "January 2025", kick: "The Vision Expands", q: "Could one category become a multi brand powerhouse?",
-      title: "One Store Became the Freedom Global Blueprint",
+      title: "One Store <br class='tbr'>Became the <br class='tbr'>Freedom Global <br class='tbr'>Blueprint",
       subtitle: "Twelve months on, online sales had passed &pound;500,000 and the business was starting to outgrow a fire only identity.",
       body: [
         "From January 2024 to January 2025, the Freedom Fire eBay store was built while it was already trading, with products added gradually as the team learned which listings converted.",
@@ -5699,7 +5711,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch14-a.webp"],
       nextQuestion: "Could the company grow by creating opportunity for the next generation too?" },
     { year: "September 2025", kick: "The People", q: "Could business growth create opportunity for others?",
-      title: "The Business Was Growing and So Were Its People",
+      title: "The Business <br class='tbr'>Was Growing <br class='tbr'>and So Were <br class='tbr'>Its People",
       subtitle: "The next stage would be built by giving young people a real route into long term careers.",
       body: [
         "Creating opportunity had been part of Freedom’s story since 2021, when the company began providing placements for learners from Newbridge College, including young people with additional needs. Several young people joined the business, gained practical experience and developed their confidence, while one of the earliest placements, Jojo, progressed into long term full time employment.",
@@ -5716,7 +5728,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch15-a.webp"],
       nextQuestion: "Could the ecommerce system this growing team was helping to build succeed beyond eBay?" },
     { year: "October 2025", kick: "The Second Proof", q: "Was eBay the exception, or was the model repeatable?",
-      title: "Temu Proved the Model Could Travel",
+      title: "Temu <br class='tbr'>Proved <br class='tbr'>the Model <br class='tbr'>Could Travel",
       subtitle: "A second marketplace generated more than £160,000 in its first three months with fewer than ten live products.",
       body: [
         "In August 2025, Freedom Fire was approached by Temu UK to become its first dedicated fire extinguisher seller. Working closely with the platform’s compliance teams in the UK and China, the company helped establish the category around compliant products, reputable UK held stock and rapid domestic delivery.",
@@ -5734,7 +5746,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch16-a.webp", "journey-photos/ch16-b.webp"],
       nextQuestion: "What would two marketplaces and a growing service operation add up to by the end of the company’s second online year?" },
     { year: "January 2026", kick: "The Million Pound Year", q: "Could the business pass £1 million in its second year?",
-      title: "The Second Year Broke the Million Pound Barrier",
+      title: "The <br class='tbr'>Second <br class='tbr'>Year Broke <br class='tbr'>the Million <br class='tbr'>Pound Barrier",
       subtitle: "£890,000 on eBay and more than £160,000 on Temu took combined sales beyond £1 million.",
       body: [
         "Between January 2025 and January 2026, Freedom entered its second full year of scaled online trading. eBay generated approximately &pound;890,000 in sales, almost doubling the first 12 months. Temu contributed more than &pound;160,000 during only its first three months, while national servicing and contracted site work continued to grow alongside ecommerce. Combined sales moved beyond &pound;1 million, with fire extinguishers still at the centre of the business and growth no longer resting on a single listing or a single platform.",
@@ -5751,7 +5763,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch17-a.webp"],
       nextQuestion: "If one core category could create a seven figure business, how many brands could the same system support?" },
     { year: "February 2026", kick: "The Brand Portfolio", q: "Could one owned brand become many?",
-      title: "Firestorm™ Was Only the Beginning",
+      title: "Firestorm™ <br class='tbr'>Was Only the <br class='tbr'>Beginning",
       subtitle: "The same brand building model began expanding across new product categories, markets and customer groups.",
       body: [
         "Firestorm had proved that Freedom could identify a product opportunity, create a name, protect the intellectual property, source directly from manufacturers and scale through ecommerce. The next step was to prove the process could be repeated. In February and March 2026, FXL&trade; and Skyline&trade; became the second and third protected brands, taking the model beyond fire extinguishers into aerosols and line marking. Around them, a wider portfolio took shape across batteries, PPE, cleaning and automotive.",
@@ -5768,7 +5780,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch18-a.webp", "journey-photos/ch18-b.webp", "journey-photos/ch18-c.webp"],
       nextQuestion: "Could this growing portfolio now compete on the largest marketplace of all?" },
     { year: "May 2026", kick: "The Biggest Launch", q: "Could the system compete at a much greater scale?",
-      title: "Amazon Became the Next Frontier",
+      title: "Amazon <br class='tbr'>Became the <br class='tbr'>Next Frontier",
       subtitle: "Years of marketplace learning were brought together for the company’s largest channel expansion to date.",
       body: [
         "By summer 2026, Freedom had spent years learning how to research products, build catalogues, manage compliance, fulfil orders and earn customer trust across eBay, Temu and emerging marketplaces.",
@@ -5786,7 +5798,7 @@ const FG_DATA = {
       photos: ["journey-photos/ch19-a.webp"],
       nextQuestion: "What happens when the platforms, brands and people all begin to launch together?" },
     { year: "June 2026", kick: "The Launchpad", q: "What happens when people, platforms and purpose align?",
-      title: "The Foundations Were Ready. Liftoff Was Next.",
+      title: "The <br class='tbr'>Foundations <br class='tbr'>Were Ready. <br class='tbr'>Liftoff Was <br class='tbr'>Next.",
       subtitle: "New channels, long term jobs and a national award application converged at the beginning of the next growth phase.",
       body: [
         "In June 2026, Freedom began preparing an application after being nominated for The King’s Awards for Enterprise in the Promoting Opportunity through social mobility category, drawing on a placement and mentoring programme running since 2021. By this point, Bill, Harrison and Gabriel had each been offered long term roles, turning the T Level chapter from a temporary placement initiative into a genuine pathway towards lasting employment.",
@@ -6337,7 +6349,7 @@ const FUTURE = [
   { n: "Freedom Form Ltd", d: "Property · Development · Design, acquiring and developing the warehouses, commercial premises and strategic property behind the group's expansion. Its managing director brings 10 years in architecture.", c: "var(--ember)" },
   { n: "Freedom Freight Ltd", d: "Global logistics, ocean and air freight, container imports and customs, taking control of the supply chain from factory to customer.", c: "var(--mint)" },
   { n: "Freedom Fly Ltd", d: "Aerial technology, drone surveys, thermal imaging, fire-risk inspections and commercial visuals, already in use on site.", c: "var(--blue)" },
-  { n: "Freedom Fuel Ltd", d: "Forecourt &amp; energy, a national network of modern forecourts, convenience retail and future mobility infrastructure.", c: "var(--pink)" }
+  { n: "Freedom Fuel Ltd", d: "Forecourt &amp; energy, a national network of modern petrol stations, convenience retail and future mobility infrastructure.", c: "var(--pink)" }
 ];
 
 const ICONS = {
@@ -6552,7 +6564,7 @@ function mountLegacyStation(stage, g) {
     { n: "Freedom Form Ltd", d: "2029 · Property · Development · Design", c: "var(--ember)" },
     { n: "Freedom Freight Ltd", d: "2029 · Global logistics", c: "var(--mint)" },
     { n: "Freedom Fly Ltd", d: "2030 · Aerial technology", c: "var(--blue)" },
-    { n: "Freedom Fuel Ltd", d: "2036+ · Forecourts &amp; fuel retail", c: "var(--pink)" },
+    { n: "Freedom Fuel Ltd", d: "2036+ · Petrol stations &amp; fuel retail", c: "var(--pink)" },
   ];
   panel.innerHTML = "<h4>Future Ltd aspirations</h4>" + ST_FUTURE.map(x =>
     `<div class="rk-row" style="--c:${x.c}"><i></i><div><b>${x.n}</b><span>${x.d}</span></div></div>`).join("");
@@ -11196,7 +11208,7 @@ function renderSystem() {
       { n: "Freedom Fly Ltd", pill: "FUTURE · 2030+", cat: "Drone Tech · Aerial Services", catC: "#b18cff",
         d: "A future specialist business focused on surveying, inspection and aerial visual services." },
       { n: "Freedom Fuel Ltd", pill: "FUTURE · 2036+", cat: "Forecourts · Energy · Retail", catC: "#b18cff",
-        d: "A long term ambition to develop or acquire forecourt and convenience-retail locations." },
+        d: "A long term ambition to develop or acquire petrol stations, forecourts and convenience-retail locations." },
     ],
   });
 
@@ -13432,7 +13444,6 @@ function renderSpider() {
                 aria-label="${geo.root.name}, ${geo.root.role}">
           <div class="hub-name">${geo.root.name}</div>
           <div class="hub-role">${geo.root.role}</div>
-          <span class="hub-tag">The hub</span>
         </button>
         ${leaves}
       </div>
@@ -13741,8 +13752,8 @@ function renderTeamMobile() {
         <circle cx="195" cy="170" r="140" fill="none" stroke="rgba(226,240,255,.22)" stroke-width="1.1" stroke-dasharray="4 8"/>
         ${spokes}
       </svg>
-      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}, the hub">
-        <b>${root.name}</b><span>${root.role}</span><i>The hub</i>
+      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}">
+        <b>${root.name}</b><span>${root.role}</span>
       </button>
       ${sats}
     </div>
@@ -13750,7 +13761,7 @@ function renderTeamMobile() {
     <div class="tm-dir" style="--c:var(--pink)">
       <div class="hd">
         <span class="av">${initials(root.name)}</span>
-        <span><b>${root.name}</b><span class="rl">${root.role} · The hub</span></span>
+        <span><b>${root.name}</b><span class="rl">${root.role}</span></span>
       </div>
       <p>${root.bio || ""}</p>
     </div>`;
@@ -15797,7 +15808,7 @@ const MOBILE_COPY = [
   { find: "Freedom Global is being built into a £100 million ecommerce business, and the first major value creation engine within a much wider group.",
     html: "Freedom Global is being built into a £100 million ecommerce business, and the first value engine of a much wider group." },
   { find: "Freedom Fire & Safety Ltd (soon to become Freedom Global Ltd) is the group's established direct to consumer ecommerce business and the focus of this investment case.",
-    html: "Freedom Fire &amp; Safety Ltd (soon Freedom Global Ltd) is the group's established D2C ecommerce business, and the focus of this investment case." },
+    html: "Freedom Fire &amp; Safety Ltd <span class='nwr'>(soon Freedom Global Ltd)</span> is<br>the group's established D2C ecommerce business,<br>and the focus of this investment case." },
   // ---- the system --------------------------------------------------------
   { find: "Freedom Group Holdings owns the group's brands, trademarks and intellectual property, licensing them to specialist operating companies. Freedom Global is the established operating company today, the immediate investment focus, with further businesses planned as the group develops. Hover a planet to explore.",
     html: "Holdings owns the group's brands, trademarks and IP, and licenses them to each operating company. Freedom Global is the one trading today and the immediate investment focus. Further businesses are planned. Tap a planet to explore." },

@@ -9536,31 +9536,23 @@ if (C.phase.preOrbit) {
       }
     }
 if (C.phase.pad || C.phase.name === "raise-to-landing") {
-      /* AUTHORED LANDING TURN. Two faults were visible on the gutter run. The
-         flip opened at q .50, a full viewport before the pad chapter reaches
-         the screen, and the chord ladder pre-bent the nose from about q .2:
-         the descent is screen-static there (35px of travel across ~1,100
-         scroll px) so every chord degenerates into rounding noise and the pose
-         stepped 87/97/111/121/157deg while the ship simply rode straight down.
-         Same remedy as the journey rail and the right-lane hold — where the
-         local speed collapses, stop reading the route and author the pose. The
-         nose holds the descent heading until the lateral bank actually starts
-         at q .55, then ONE roll carries it through the turn, skewed so it
-         passes nose-left as the leftward speed peaks (q ~.72) instead of
-         lagging it, and stands upright by q ~.92 with the last stretch a pure
-         settle onto the slot. Still a pure function of q, so reverse scrolling
-         retraces it exactly and the docked pose is bit-identical at -90deg,
-         which leaves the pad-rocket crossfade untouched. */
-/* NOSE-UP HOLD. The bridge path is a closed loop (up 143px, right, back
-         down to the same altitude) so its chord heading swept ~200deg, and the
-         old pad roll added another 180deg on top: a full 360 that ended on the
-         orientation it started from. The ship arrives climbing and docks
-         upright, so author one value for both legs and let it keep flying up.
-         Still a pure function of q, so reverse scrolling retraces it, and the
-         docked pose is bit-identical at -90deg: crossfade untouched. */
-      const own  = C.phase.pad ? 1 : smt(cl01(C.q / .18));
-      h += (unwrap(h, -Math.PI / 2) - h) * own;
-    }
+  /* AUTHORED DESCENT + LANDING FLIP. The bridge out of the funding chapter
+     climbs, so bend the nose smoothly over from that climb to straight DOWN
+     across the bridge, then hold nose-down all the way down the gutter.
+     The stand-up is one deliberate retro-propulsive flip in the last quarter
+     of the pad phase: the nose swings forward through the direction of travel
+     (left) and settles upright on the slot. Pure function of q, so reverse
+     scrolling retraces it and the docked pose is still -90deg — pad-rocket
+     crossfade untouched. */
+  const down = Math.PI / 2;
+  if (C.phase.pad) {
+    const f = smt5(cl01((C.q - .68) / .26));   // flip window
+    h = unwrap(h, down) + Math.PI * f;         // down -> up, through left
+  } else {
+    const own = smt5(cl01((C.q - .10) / .55)); // bend to nose-down on the bridge
+    h += (unwrap(h, down) - h) * own;
+  }
+}
     return h;
   };
 

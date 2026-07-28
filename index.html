@@ -167,6 +167,30 @@ section#team{overflow-x:clip;}
 .sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:smSurfaceSpin 16s linear infinite;will-change:transform;transform-box:view-box;transform-origin:0 0;}
 .sm-cloud-spin{animation-duration:21s;animation-direction:reverse;opacity:.62;}
 .sm-world-belt{animation-duration:24s;}
+.sm-surface-spin,.sm-cloud-spin,.sm-world-belt{animation:smSurfaceSpin 16s linear infinite;will-change:transform;transform-box:view-box;transform-origin:0 0;}
+.sm-cloud-spin{animation-duration:21s;animation-direction:reverse;opacity:.62;}
+.sm-world-belt{animation-duration:24s;}          /* <-- LINE BEFORE */
+
+/* ===== PATCH 2: park the giant zoomed system-map layers when the map is off-screen ===== */
+html:not(.sys-live) .sm-surface-spin,
+html:not(.sys-live) .sm-cloud-spin,
+html:not(.sys-live) .sm-world-belt,
+.sysmap.diving .sm-surface-spin,
+.sysmap.diving .sm-cloud-spin,
+.sysmap.diving .sm-world-belt{
+  animation-name:none !important;
+  will-change:auto !important;
+}
+html:not(.sys-live) #sysMap{
+  transform:none !important;
+  will-change:auto !important;
+}
+html:not(.sys-live) #sysMap *{
+  will-change:auto !important;
+}
+/* ===== end PATCH 2 ===== */
+
+.sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);...}   /* <-- LINE AFTER */
 .sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.1;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,255,255,.22));}
 .sm-surface-line{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1;stroke-linecap:round;}
 .sm-crater{fill:rgba(71,25,19,.16);stroke:rgba(90,35,24,.38);stroke-width:1;}
@@ -715,8 +739,8 @@ html.spx #hero [data-suck].reveal:not(.in){opacity:0!important;} /* cinematic on
   }
 }
 @keyframes secRise{
-  from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) scale(.965);}
-  to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) scale(1);}
+  from{opacity:.22;transform:translate3d(0,84px,0);}
+  to{opacity:1;transform:none;}
 }
 /* ============ CANVAS SET-PIECES — HYPERDRIVE · SUPERNOVA · PLANET ============
    Full-viewport pinned canvases; each frame is drawn from scroll progress
@@ -1604,8 +1628,8 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
 }
 
 @keyframes secRiseAlt{
-  from{opacity:.22;transform:perspective(1300px) translateY(84px) rotateX(7deg) translateX(-26px) scale(.965);}
-  to{opacity:1;transform:perspective(1300px) translateY(0) rotateX(0deg) translateX(0) scale(1);}
+  from{opacity:.22;transform:translate3d(-26px,84px,0);}
+  to{opacity:1;transform:none;}
 }
 @keyframes headIn{
   /* Never animate an inherited metric such as letter-spacing here. It made
@@ -16372,7 +16396,25 @@ safeBoot("mobileCopy", initMobileCopy); // last: it edits copy every builder abo
 /* Debug hook for automated verification: force-complete reveals/entrances */
 window.__ffRevealAll = () => {
   $$(".reveal").forEach(el => { el.classList.add("in"); (el.__onin || []).forEach(fn => fn()); el.__onin = []; });
-};
-</script>
+};                                                  // <-- LINE BEFORE
+
+/* ===== PATCH 3: only keep #sysMap's promoted layers alive while #system is near the viewport ===== */
+(function parkSystemMap(){
+  var root = document.documentElement;
+  var sec  = document.getElementById('system');
+  if (!sec) { root.classList.add('sys-live'); return; }
+  var live = null;
+  function upd(){
+    var vh   = window.innerHeight || 1;
+    var r    = sec.getBoundingClientRect();
+    var near = r.bottom > -vh * 0.5 && r.top < vh * 1.5;
+    if (near !== live) { live = near; root.classList.toggle('sys-live', near); }
+  }
+  upd();
+  addEventListener('scroll', upd, { passive: true });
+  addEventListener('resize', upd);
+})();
+/* ===== end PATCH 3 ===== */
+</script>                                           // <-- LINE AFTER
 </body>
 </html>

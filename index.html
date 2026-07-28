@@ -9559,10 +9559,15 @@ if (C.phase.pad || C.phase.name === "raise-to-landing") {
      (left) and settles upright on the slot. Pure function of q, so reverse
      scrolling retraces it and the docked pose is still -90deg — pad-rocket
      crossfade untouched. */
-  const down = Math.PI / 2;
+const down = Math.PI / 2;
   if (C.phase.pad) {
-    const f = smt5(cl01((C.q - .68) / .26));   // flip window
-    h = unwrap(h, down) + Math.PI * f;         // down -> up, through left
+    /* The stand-up now snaps earlier and OVERSHOOTS, then rings down onto
+       upright — a ship fighting its own inertia rather than a lerp. The ring
+       term is 0 at q >= 1, so the docked pose is still exactly -90deg. */
+    const f = smt5(cl01((C.q - .62) / .24));   // flip window, brought forward
+    const st = cl01((C.q - .80) / .20);
+    const ring = Math.sin(st * Math.PI * 2.4) * Math.pow(1 - st, 2.2);
+    h = unwrap(h, down) + Math.PI * f + .26 * ring;   // down -> up, through left
   } else {
     const own = smt5(cl01((C.q - .10) / .55)); // bend to nose-down on the bridge
     h += (unwrap(h, down) - h) * own;
@@ -9807,7 +9812,12 @@ if (phase.focus) {
       const tuckIn = smt(cl01(q / .10));
       const tuckOut = smt(cl01((q - .62) / .08));
       const approachScale = 1 - .28 * tuckIn * (1 - tuckOut);
-      scale *= approachScale + (ps - approachScale) * landingScaleQ;
+scale *= approachScale + (ps - approachScale) * landingScaleQ;
+      /* IMPACT SETTLE — one decaying squash-and-stretch as the weight comes onto
+         the pad. Exactly 1 at q >= 1, so the handoff scale still matches the
+         standing pad rocket to the pixel. */
+      const imp = cl01((q - .86) / .14);
+      scale *= 1 + .07 * Math.sin(imp * Math.PI * 2) * Math.pow(1 - imp, 1.8);
       /* Crossfade only once both rockets occupy the pad. The earlier .84
          handoff exposed two birds at visibly different positions. */
       const padAlpha = smt(cl01((q - .965) / .035));
@@ -9871,7 +9881,18 @@ if (phase.focus) {
     const scrollLife = scroll * .031;
     const flicker1 = 1 - .13 * (.5 + .5 * Math.sin(scrollLife * .77));
     const flicker2 = 1 - .17 * (.5 + .5 * Math.sin(scrollLife * 1.19 + 2));
-    const burn = phase.pad ? Math.max(0, 1 - smt(cl01((q - .52) / .46))) : 1;
+/* RETRO-PROPULSIVE LANDING. The old curve only faded the engines out across
+       the whole descent. Keep that fade as the floor, then drive a hard retro
+       surge through the flare/flip and cut it dead just before the slot — so the
+       ship visibly brakes on its own exhaust instead of drifting down. Zero at
+       q = 1, so engine cut-off at the dock is exactly as before. */
+    const retro = Math.sin(cl01((q - .54) / .34) * Math.PI)
+                * (1 - smt(cl01((q - .90) / .08)));
+    const burn = phase.pad
+      ? Math.max(Math.max(0, 1 - smt(cl01((q - .52) / .46))), 1.22 * retro)
+      : 1;
+    // the plume LENGTHENS on the retro burn, not just brightens
+    if (phase.pad) flame = Math.min(1.7, flame * (1 + .6 * retro));
     if (flamePlume) {
       flamePlume.style.transform = `scaleX(${(flame * flicker1).toFixed(3)})`;
       flamePlume.style.opacity = (burn * .92 * Math.min(1, .45 + .55 * flame)).toFixed(3);
@@ -9921,6 +9942,21 @@ if (phase.focus) {
       }
     }
 let apX = sample.p.x + ox, apY = sample.p.y + oy;
+    /* TOUCHDOWN THEATRE — pose only, pad phase only, a pure function of q and
+       identically ZERO from q = 1, so the slot dock stays pixel-true and the
+       pad-rocket crossfade is unaffected. The ship hauls up against its own
+       descent on the retro burn (flare), then two decaying hover bobs and a
+       slower lateral sway walk it onto the pad. Scroll-owned and reversible:
+       nothing integrates, so scrolling back retraces the identical film strip. */
+    if (phase.pad) {
+      const K = Math.min(innerHeight, 900);
+      const flare = Math.sin(cl01((q - .56) / .22) * Math.PI);
+      const st = cl01((q - .74) / .26);
+      const bob = Math.sin(st * Math.PI * 2.6) * Math.pow(1 - st, 2.4);
+      const sway = Math.sin(st * Math.PI * 1.6) * Math.pow(1 - st, 3);
+      apY -= K * .050 * flare + K * .030 * bob;
+      apX += K * .014 * sway;
+    }
     const apAngle = angle + oa, apScale = Math.max(.05, scale + os);
     /* THE ROCKET IS ALWAYS VISIBLE. Authored geometry can legitimately follow
        something off-screen - the trajectory ride tracks the plotted line past
@@ -16459,6 +16495,6 @@ window.__ffRevealAll = () => {
   addEventListener('resize', upd);
 })();
 /* ===== end PATCH 3 ===== */
-</script>                                           // <-- LINE AFTER
+</script>                                           
 </body>
 </html>

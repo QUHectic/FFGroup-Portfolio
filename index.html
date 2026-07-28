@@ -9511,7 +9511,7 @@ if (C.phase.preOrbit) {
         h += (unwrap(h, P.h0 + (P.h1 - P.h0) * smt5(cl01(u))) - h) * own;
       }
     }
-if (C.phase.pad) {
+if (C.phase.pad || C.phase.name === "raise-to-landing") {
       /* AUTHORED LANDING TURN. Two faults were visible on the gutter run. The
          flip opened at q .50, a full viewport before the pad chapter reaches
          the screen, and the chord ladder pre-bent the nose from about q .2:
@@ -9527,10 +9527,15 @@ if (C.phase.pad) {
          settle onto the slot. Still a pure function of q, so reverse scrolling
          retraces it exactly and the docked pose is bit-identical at -90deg,
          which leaves the pad-rocket crossfade untouched. */
-      const turn = Math.pow(smt5(cl01((C.q - .55) / .40)), .68);
-      const pose = Math.PI / 2 + Math.PI * turn;
-      const own  = smt(cl01(C.q / .06));
-      h += (unwrap(h, pose) - h) * own;
+/* NOSE-UP HOLD. The bridge path is a closed loop (up 143px, right, back
+         down to the same altitude) so its chord heading swept ~200deg, and the
+         old pad roll added another 180deg on top: a full 360 that ended on the
+         orientation it started from. The ship arrives climbing and docks
+         upright, so author one value for both legs and let it keep flying up.
+         Still a pure function of q, so reverse scrolling retraces it, and the
+         docked pose is bit-identical at -90deg: crossfade untouched. */
+      const own  = C.phase.pad ? 1 : smt(cl01(C.q / .18));
+      h += (unwrap(h, -Math.PI / 2) - h) * own;
     }
     return h;
   };
@@ -9713,7 +9718,8 @@ if (Math.abs(delta) > 1.5) revWant = delta < 0 ? 1 : 0;
        same q/.06 ramp displayHeadingAt uses, and it stays a pure function of
        scroll plus wheel sign, so reverse scrolling still retraces one
        deterministic film strip. Route, timing and positions untouched. */
-    const padPoseOwn = phase.pad ? smt(cl01(q / .06)) : 0;
+const padPoseOwn = phase.pad ? 1
+      : phase.name === "raise-to-landing" ? smt(cl01(q / .18)) : 0;
     const revTurn = Math.PI * (1 - padPoseOwn)
       + (unwrap(targetAngle, -Math.PI / 2) - targetAngle) * padPoseOwn;
     angle = targetAngle + revTurn * revMix;

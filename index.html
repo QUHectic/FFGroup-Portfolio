@@ -11586,7 +11586,27 @@ function renderSystem() {
       buildEl.style.marginBottom = (document.documentElement.classList.contains("spx")
         ? 0 : Math.max(0, map.offsetTop + map.offsetHeight - stageEl.clientHeight)) + "px";
     }
-    map.style.transform = keepT;
+/* MEASURE THE SETTLED POSE, NOT THE INTRO POSE. The pass below is
+       deliberately rect-based (its page-edge insets are viewport px), so it
+       must run with a transform applied — but the intro transform is
+       translateY + tilt at fit scale 1, where the columns overhang the
+       viewport and the insets drag both side cards inward, shortening their
+       connectors until a later pass re-ran in the settled pose. Substitute the
+       settled framing: same fit scale the map ends at, tilt dropped (uniform
+       scale cancels out of nudge()'s sx3/sy3, a perspective tilt does not).
+       Once settled this IS keepT, so nothing changes there. */
+    const fitS = map.__ffFitScale;
+    if (fitS > 0 && fitS < .9995) {
+      map.style.transform = keepT
+        .replace(/\s*perspective\([^)]*\)/g, "")
+        .replace(/\s*rotateX\([^)]*\)/g, "")
+        .replace(/\s*scale\([^)]*\)/g, "") + " scale(" + fitS.toFixed(4) + ")";
+    } else {
+      map.style.transform = keepT;
+      // no published fit yet (first pass beats driveBuild's first frame) —
+      // let the existing watchdog take another run once it lands
+      if (fitS == null) map.__ffUnlaid = true;
+    }
     // Perspective changes the apparent x/y scale slightly as content moves
     // down the map. Snap the rendered overlays back to the planet centres and
     // preserve the flagship's two visible gaps as the exact family standard.
@@ -11686,8 +11706,11 @@ function renderSystem() {
         }
       }
       // Recalculate every endpoint after the projection-correction nudges.
-      updateFamilyPaths();
+updateFamilyPaths();
     }
+    // hand the live (mid-intro) transform back — the placers below and every
+    // subsequent frame own it exactly as before
+    map.style.transform = keepT;
     // the future panels dock below whatever the columns MEASURE — re-place
     // them now that every card and shelf has its final position (min-height
     // is re-derived from scratch so width changes never leave stale room)
@@ -11908,7 +11931,15 @@ function renderSystem() {
          .62 is the value at which the deepest box clears the fold on every
          one. The floor only binds on short viewports; taller ones never
          reach it, so nothing else in the composition changes. */
-      fitScale = Math.max(.62, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
+fitScale = Math.max(.62, Math.min(1, (sh - safeTop - safeBottom) / naturalH));
+      /* PUBLISH THE SETTLED FIT. fitNow eases 1 → fitScale across the ring
+         beats, so on a cold load the map is still wearing scale 1 while
+         layoutSubs runs its rect pass — and that pass clamps the side cards
+         against the VIEWPORT. At natural size the columns overhang the edge,
+         the inset fires, and both side cards get pulled in toward their
+         planets (the short green/orange connectors). It needs the scale the
+         map will END at, not the one it is wearing mid-intro. */
+      map.__ffFitScale = fitScale;
       const originY = naturalH * .22;
       const stageTop = Math.max(0, stage?.getBoundingClientRect().top || 0);
       fitRest = safeTop - stageTop - originY * (1 - fitScale);

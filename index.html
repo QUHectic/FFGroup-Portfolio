@@ -9019,7 +9019,10 @@ let raiseExitP = { x: rightLane - iw * .025, y: vh * .50 };
          then glides out into the right gutter for the landing. y is monotonic
          for the whole chapter by construction, and both hand-offs still read
          their tangent off this table, so every seam stays C1. */
-const T0 = .26;      // join on the right flank, where the lane hands over
+const T0 = .78;      // join near the bottom-right corner: the tangent there
+                     // (~45-55° off vertical) matches the approach diagonal,
+                     // so the ship arrives ALONG the ring's own line and the
+                     // heading keeps rotating one way into the circling
       const SWEEP = T2;    // ONE FULL CLOCKWISE REVOLUTION around the copy
       const QARC = .82;    // the rest of the chapter is the dive out to the lane
       const supPt = t => {
@@ -9081,7 +9084,7 @@ const T0 = .26;      // join on the right flank, where the lane hands over
          dug ~80px below the close and swung back up — the same hop in a
          different suit. Every leg from here reads down (or level), never up. */
       raiseExitP = { x: rightLane - iw * .06,
-        y: Math.min(vh - 70, arcEnd.y + vh * .05) };
+        y: Math.min(vh - 70, arcEnd.y + 12) };
       const uSpan = 1 - QARC, hK = 1 / 600, M0 = .35;
       const P0 = arcEnd, PB = lapAt(1 - hK);
       const m0 = { x: (P0.x - PB.x) / hK * uSpan * M0, y: (P0.y - PB.y) / hK * uSpan * M0 };
@@ -9387,16 +9390,51 @@ const toGlobe = keyedPhase("growth-to-globe", [
        of turn-in happens inside the last .55vh before the chapter. Their height
        is derived from the pass's own entry, so the lane always descends INTO the
        arc instead of hooking up to meet it. */
-    const turnInS = raise.s0 - vh * .55;
-    const gutterA = { s: Math.max(traj.s1 + vh * .7,
-        Math.min(turnInS - vh * .5, team ? team.cy - vh * .52 : turnInS - vh * .5)),
-      x: rightLane, y: Math.max(vh * .34, raiseEntry.p.y - vh * .20) };
-    const gutterB = { s: turnInS, x: rightLane,
-      y: Math.max(vh * .40, raiseEntry.p.y - vh * .09) };
-    const gutterRate = (gutterB.y - gutterA.y) / Math.max(1, gutterB.s - gutterA.s);
-    gutterA.d = { x: 0, y: gutterRate };
-    gutterB.d = { x: 0, y: gutterRate };
-    postKeys.push(gutterA, gutterB);
+    /* RAIL PAST THE TITLE, THEN A PROGRESSIVE BANK. The old .55vh turn-in
+       began exactly as "THE RAISE · WHERE IT GOES" arrived, so the ship bent
+       left the moment the heading appeared. The rail now holds until .38vh
+       out — past the title's entrance — and the bank eases in over three
+       gates exactly like the 360-planet entry: lateral rate builds gently
+       off the rail, deepens mid-turn, and hands over to the ring's own
+       capture tangent at the start of the circling. */
+    /* ALL the descent happens ON the rail; the bank itself is LEVEL. The old
+       gates spread ~100px of drop across the turn, so the bend read as one
+       long dip that ran straight into the ring's flank dive. Now the vertical
+       rail carries the ship down to the ring's own entry height first, the
+       three-gate bank sweeps across at constant height (a flat, aircraft-style
+       turn), and only the ring's captured tangent takes it down — so the dive
+       reads unmistakably as the START OF THE CIRCLING, not part of the bend. */
+    /* NO MANEUVER AT THE TITLE — ARRIVE ALREADY ABOVE THE RING. Every version
+       that turned NEAR the chapter (early bank, late bank, flat bank) read as
+       "a bend" because a 350px lateral move happened where the eye was
+       parked on the heading. The lane change now happens as ONE lazy-S far
+       upstream: vertical in the right gutter mid-team, easing across and
+       settling VERTICAL again on the ring's own flank line (entry x) well
+       before the title, still descending the whole way. From there the ship
+       simply drops straight down onto the ring's capture tangent — joining
+       the circling with no visible turn at all. Heights hang off the capture
+       gate so the chain is strictly non-rising into the entry. */
+    const raiseCapture = 10;
+    const raiseCapY = raiseEntry.p.y - raiseEntry.d.y * raiseCapture;
+    /* THE APPROACH RIDES THE RING'S OWN TANGENT LINE. Returning to vertical
+       above the join (the old S) forced a counter-rotation — the nose tilted
+       left, then wagged back right — and every variant of that read as "the
+       bend". Now the ship rolls in ONCE, high upstream, onto the straight
+       line the ring itself arrives on (two collinear gates back-projected
+       along the entry tangent), rides it dead-straight through the title
+       band, and the ring simply continues the same rotation — heading turns
+       one way, continuously, from the lane into the circling. */
+    const eu = (() => { const m = Math.hypot(raiseEntry.d.x, raiseEntry.d.y) || 1;
+      return { x: raiseEntry.d.x / m, y: raiseEntry.d.y / m }; })();
+    const laneA = { s: Math.max(traj.s1 + vh * .7,
+        Math.min(raise.s0 - vh * 1.05, team ? team.cy - vh * .52 : raise.s0 - vh * 1.05)),
+      x: rightLane, y: Math.max(vh * .30, raiseEntry.p.y - eu.y * vh * .30 - vh * .22) };
+    const tanFar = { s: raise.s0 - vh * .36,
+      x: raiseEntry.p.x - eu.x * vh * .30, y: raiseEntry.p.y - eu.y * vh * .30 };
+    const tanNear = { s: raise.s0 - vh * .13,
+      x: raiseEntry.p.x - eu.x * vh * .105, y: raiseEntry.p.y - eu.y * vh * .105 };
+    laneA.d = { x: 0, y: (tanFar.y - laneA.y) / Math.max(1, tanFar.s - laneA.s) };
+    postKeys.push(laneA, tanFar, tanNear);
 /* PUT THE RING'S TANGENT ON A SHORT SEGMENT, NOT A 2,850px ONE. keyedPhase
        scales each authored derivative by its own segment's scroll span, so
        handing the lap entry tangent (~1.04 px per scroll px) to the long team
@@ -9406,7 +9444,6 @@ const toGlobe = keyedPhase("growth-to-globe", [
        trajectory `capture` gate above: a short collinear gate carries the
        tangent and the long approach runs on bounded chord tangents.
        Deliberately no `d` here, so this gate takes the chord. */
-    const raiseCapture = 10;
     postKeys.push({ s: raise.s0 - raiseCapture,
       x: raiseEntry.p.x - raiseEntry.d.x * raiseCapture,
       y: raiseEntry.p.y - raiseEntry.d.y * raiseCapture });

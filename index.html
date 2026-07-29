@@ -9031,6 +9031,17 @@ const T0 = .26;      // join on the right flank, where the lane hands over
         for (let i = 0; i <= STEPS; i++) pts.push(supPt(T0 + SWEEP * (i / STEPS)));
         for (let i = 1; i < pts.length; i++)
           cum.push(cum[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+        /* TRIM THE CLOSING CURL. The superellipse's close climbs ~80px back UP
+           the right flank to rejoin its entry latitude — on screen the ship
+           visibly "went back up, then back down" just before the landing. The
+           revolution now ends at the DEEPEST point of its final descent, so
+           the pass finishes still heading down and the glide-out simply
+           continues the journey. (If a layout produces no curl, the deepest
+           point IS the last one and this is a no-op.) */
+        let cutI = pts.length - 1, deepest = -Infinity;
+        for (let i = Math.floor(pts.length * .7); i < pts.length; i++)
+          if (pts[i].y >= deepest) { deepest = pts[i].y; cutI = i; }
+        pts.length = cutI + 1; cum.length = cutI + 1;
         return { pts, cum, total: cum[cum.length - 1] || 1 };
       })();
       const lapAt = k => {
@@ -9049,10 +9060,18 @@ const T0 = .26;      // join on the right flank, where the lane hands over
          down, so m0 carries the dive vertically off the ring and only then banks
          into the lane. Below the ring, so the hand-off to the pad is a descent. */
       const arcEnd = lapAt(1);
-      raiseExitP = { x: rightLane - iw * .06, y: Math.min(vh * .80, arcEnd.y + vh * .14) };
-      const uSpan = 1 - QARC, hK = 1 / 600;
+      /* NEVER ABOVE THE ARC'S OWN CLOSE. The old vh*.80 cap clipped this exit
+         ABOVE the ring's closing point on shorter viewports, so the glide-out
+         ROSE to meet it — a visible hop back up right before the landing. The
+         exit now continues the close DOWNWARD (a .05vh descent into the lane),
+         and the departure tangent is damped hard: at full strength the Hermite
+         dug ~80px below the close and swung back up — the same hop in a
+         different suit. Every leg from here reads down (or level), never up. */
+      raiseExitP = { x: rightLane - iw * .06,
+        y: Math.min(vh - 70, arcEnd.y + vh * .05) };
+      const uSpan = 1 - QARC, hK = 1 / 600, M0 = .35;
       const P0 = arcEnd, PB = lapAt(1 - hK);
-      const m0 = { x: (P0.x - PB.x) / hK * uSpan, y: (P0.y - PB.y) / hK * uSpan };
+      const m0 = { x: (P0.x - PB.x) / hK * uSpan * M0, y: (P0.y - PB.y) / hK * uSpan * M0 };
       const m1 = { x: raiseExitP.x - P0.x, y: raiseExitP.y - P0.y };
       raisePos = q => {
         if (q <= QARC) return lapAt(q / QARC);
@@ -9107,7 +9126,10 @@ const landIn = raiseExitP.y;
        was the lateral drift, which walked it off the right edge. Spread the
        remaining drop (landIn -> the pad) across the same gates instead —
        monotonic, and still never a climb. */
-    const landDrop = Math.max(0, slotEnd.y - landIn);
+    /* SIGNED, deliberately: if the pad slot sits a few px ABOVE the exit
+       height, spreading that tiny lift across the whole approach makes it
+       invisible — concentrating it at the dock read as a hop back up. */
+    const landDrop = slotEnd.y - landIn;
     const glideY   = f => Math.max(vh * (.46 + .28 * f), landIn + landDrop * f);
     /* dx = 0: a dead-straight vertical rail, so no pair of equal-x gates can
        bulge the spline outward again. */
@@ -9365,21 +9387,18 @@ const postPhase = keyedPhase("trajectory-to-raise", postKeys);
 
     const raiseExit = raise.sample(1, raise.s1);
     const padEntry = pad.sample(0, pad.s0);
-    const bridgeFirst = {
-      x: Math.max(72, raiseExit.p.x - 28),
-      y: Math.max(96, Math.min(raiseExit.p.y, padEntry.p.y) - vh * .10)
-    };
-    const bridgeApex = {
-      x: Math.min(iw - 92, padEntry.p.x + 36),
-      y: Math.max(82, Math.min(raiseExit.p.y, padEntry.p.y) - vh * .16)
-    };
+    /* NO HOP INTO THE LANDING. The old bridge lifted through two keys placed
+       .10vh/.16vh ABOVE both endpoints — on an 884px viewport the ship rose
+       ~126px between the raise ring and the pad lane, read as "goes back up,
+       then back down". The bridge now interpolates STRICTLY between the two
+       endpoint heights (monotone in y and x, clamped inside the fence), so
+       from its very first frame the ship simply carries its descent onward. */
+    const bx = f => Math.min(iw - 92, Math.max(72, lerp(raiseExit.p.x, padEntry.p.x, f)));
+    const by = f => lerp(raiseExit.p.y, padEntry.p.y, f);
     phases.push(keyedPhase("raise-to-landing", [
       { s: raise.s1, x: raiseExit.p.x, y: raiseExit.p.y, d: raiseExit.d },
-      /* A compact right-gutter bank carries real velocity through the turn.
-         The old near-static bridge changed heading while moving only hundredths
-         of a pixel, which read as a spin/glitch. */
-      { s: lerp(raise.s1, pad.s0, .32), x: bridgeFirst.x, y: bridgeFirst.y },
-      { s: lerp(raise.s1, pad.s0, .62), x: bridgeApex.x, y: bridgeApex.y },
+      { s: lerp(raise.s1, pad.s0, .32), x: bx(.35), y: by(.35) },
+      { s: lerp(raise.s1, pad.s0, .62), x: bx(.72), y: by(.72) },
       { s: pad.s0, x: padEntry.p.x, y: padEntry.p.y, d: padEntry.d }
     ]));
     phases.push(pad);

@@ -14264,7 +14264,9 @@ function initExpansionMobile() {
     CX = W / 2; CY = H * .5; R = Math.min(W * .37, H * .46);
   };
   const strips = rot => {
-    const K = 200, su = TW * .5 / K;
+    // phones drive a ~350px disc: 120 strips are visually identical there and
+    // nearly halve the per-frame drawImage count for the trackball
+    const K = W < 520 ? 120 : 200, su = TW * .5 / K;
     /* free-axis roll: the texture also wraps VERTICALLY by `pitch`, so the
        ball turns under the finger in any direction. Same strips, same
        shading, same rims — the design does not change, only the sampling. */
@@ -14350,10 +14352,14 @@ function initExpansionMobile() {
   /* the globe idles on its slow ambient revolution ONLY until the user takes
      the wheel — a drag, a pin tap or steering the card rail parks it, and it
      then only moves when driven (spun to a country, dragged, or gliding) */
-  let lockAuto = false, vel = 0, velY = 0, lastMoveT = 0, glideRaf = 0, spinRaf = 0;
+  let lockAuto = false, vel = 0, velY = 0, lastMoveT = 0, glideRaf = 0, spinRaf = 0, moveRaf = 0;
   let suppressUntil = performance.now() + 1500, lastSpun = -1;
   const norm1 = v => ((v % 1) + 1) % 1;
-  const paint = () => { size(); draw(phase); place(phase); };
+  /* no size() on the hot path: it forces a layout read (getBoundingClientRect)
+     and this runs per frame during drags/glides — that layout thrash was the
+     phone-drag jank. The ResizeObserver below owns sizing; the cheap guard
+     only pays until the first successful measure. */
+  const paint = () => { if (!W || R < 8) size(); draw(phase); place(phase); };
   const stopSpin = () => { if (spinRaf) { cancelAnimationFrame(spinRaf); spinRaf = 0; } };
   const stopGlide = () => { if (glideRaf) { cancelAnimationFrame(glideRaf); glideRaf = 0; } vel = 0; velY = 0; };
   /* ease the globe round (shortest way) until pin i's country faces the
@@ -14380,7 +14386,7 @@ function initExpansionMobile() {
     if (!playing) { lastT = null; return; }
     if (lastT !== null && !OSX_REDUCED && dragX === null && !lockAuto) phase = (phase + (t - lastT) / 28000) % 1;
     lastT = t;
-    size(); draw(phase); place(phase);
+    paint();
     if (!OSX_REDUCED) raf = requestAnimationFrame(frame);
   };
   /* INTERACTIVE SPIN — a full trackball: drag the globe in ANY direction
@@ -14412,7 +14418,9 @@ function initExpansionMobile() {
       velY = .72 * velY + .28 * dPv * k;
     }
     lastMoveT = now;
-    paint();
+    // touch fires several moves per display frame — integrate them all, but
+    // paint ONCE per frame. Painting per event was the phone-drag stutter.
+    if (!moveRaf) moveRaf = requestAnimationFrame(() => { moveRaf = 0; paint(); });
   });
   const endDrag = () => {
     if (dragX === null) return;

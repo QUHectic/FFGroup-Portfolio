@@ -2630,6 +2630,14 @@ br.mbr{display:none;}
 .ch-lightbox .lb-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;width:40px;height:40px;
   border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(12,14,22,.7);color:#fff;
   font:inherit;font-size:1.15rem;line-height:1;cursor:pointer;}
+/* photo-set paging: arrows appear only when the chapter carries several
+   shots (.multi), floating mid-height over the viewer's flanks */
+.ch-lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(12,14,22,.72);color:#fff;
+  font:inherit;font-size:1.6rem;line-height:1;cursor:pointer;display:none;padding:0 0 4px;}
+.ch-lightbox.multi .lb-nav{display:block;}
+.ch-lightbox .lb-prev{left:12px;}
+.ch-lightbox .lb-next{right:12px;}
 .jl-condensed .jcard.chapter .ch-fig img{cursor:zoom-in;}
 @media (prefers-reduced-motion: reduce){.ch-lightbox,.ch-lightbox img{transition:none;}}
 
@@ -4053,13 +4061,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      .jl-condensed, set on #jlist by initChapterCondense() only when
      (max-width:900px) matches. No rule here can touch desktop. */
   #jlist.jl-condensed{gap:16px;}
-  .jl-condensed .jcard.chapter{padding:20px 10px 18px;}   /* tight sides: every freed pixel goes to the shaped title columns */
+  .jl-condensed .jcard.chapter{padding:16px 10px 14px;}   /* tight all round: freed width feeds the titles, freed height kills the dead air */
   /* EVERY variable row is pinned to its own worst case, so real-device font
      wrapping (which differs from desktop metrics) can never change a card's
      height: badge row fits a TWO-line kicker, the green question fits TWO
      lines, the title row (below) fits FIVE lines. Cards are equal-height by
      construction at any phone width, not by coincidence. */
-  .jl-condensed .ch-toprow{margin-bottom:12px;min-height:82px;}
+  .jl-condensed .ch-toprow{margin-bottom:10px;min-height:68px;}   /* measured max 64 — 82 held 18px of dead air on every card */
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-q{min-height:56px;}   /* longest question runs THREE lines on phones */
   /* the pink chapter kicker at desktop size + .16em tracking cannot fit the
      column beside the badge ("BREAKTHROUGH" alone is ~236px) — smaller type,
@@ -4155,7 +4163,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      lines — desktop-browser metrics measure narrower, so never trust a
      four-line assumption). Every chapter box is exactly the same height;
      shorter titles centre in the space. */
-  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:8px;min-width:0;min-height:128px;}
+  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:8px;min-width:0;min-height:112px;}   /* tallest shaped title measures 106 — 128 held 22px of dead air */
   /* margin:0 — the h3's own 6/8px vertical margins pushed a five-line title
      past the 128px envelope (134px) and broke equality; the flex row's
      min-height + centring provide all the spacing the title needs. The
@@ -4212,15 +4220,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 }
 @media (max-width:388px){
   .jl-condensed .jcard.chapter h3{font-size:1.12rem;}
+  .jl-condensed .ch-titlerow{min-height:109px;}
 }
 @media (max-width:380px){
   .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
 }
 @media (max-width:383px){
   .jl-condensed .jcard.chapter h3{font-size:1.06rem;}
+  .jl-condensed .ch-titlerow{min-height:104px;}
 }
 @media (max-width:374px){
   .jl-condensed .jcard.chapter h3{font-size:1.02rem;}
+  .jl-condensed .ch-titlerow{min-height:100px;}
 }
 
 @media (max-width:360px){
@@ -4288,8 +4299,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
   #projChips .chip{padding:7px 11px;font-size:.73rem;gap:6px;}
   /* line graphs must never clip their summit dot / top value label */
   #growthChart svg,#trajChart svg,#projChart svg{overflow:visible !important;}
-  /* every collapsed chapter box the same size (tallest measured at 390px) */
-  .jl-condensed .jcard.chapter:not(.ch-open){min-height:374px;}
+  /* every collapsed chapter box the same size — equality is carried by the
+     per-row envelopes (toprow/q/titlerow min-heights), which sum identically
+     on every card; this floor sits just under that sum so it can never ADD
+     dead air, only catch a degenerate card */
+  .jl-condensed .jcard.chapter:not(.ch-open){min-height:336px;}
   /* the launch-night moon rides ~1642 of the 1900 viewBox — the phone crop
      ends at ~1606, so the whole moon sat off-frame right */
   .lo-scene .lo-moon{transform:translateX(-190px);}
@@ -12506,23 +12520,43 @@ function initChapterLightbox() {
   const box = document.createElement("div");
   box.className = "ch-lightbox";
   box.hidden = true;
-  box.innerHTML = '<img alt="Chapter photograph, enlarged"><button class="lb-x" type="button" aria-label="Close">&#215;</button>';
+  box.innerHTML = '<img alt="Chapter photograph, enlarged">'
+    + '<button class="lb-nav lb-prev" type="button" aria-label="Previous photo">&#8249;</button>'
+    + '<button class="lb-nav lb-next" type="button" aria-label="Next photo">&#8250;</button>'
+    + '<button class="lb-x" type="button" aria-label="Close">&#215;</button>';
   document.body.appendChild(box);
   const img = box.querySelector("img");
-  let prevOverflow = "";
-  const onKey = e => { if (e.key === "Escape") close(); };
+  /* chapters with a photo SET page through it instantly with the arrows
+     (or ←/→ keys) instead of waiting for the ambient cross-fade */
+  let srcs = [], at = 0, prevOverflow = "";
+  const show = k => {
+    at = ((k % srcs.length) + srcs.length) % srcs.length;
+    img.src = srcs[at];
+  };
+  const onKey = e => {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft" && srcs.length > 1) show(at - 1);
+    else if (e.key === "ArrowRight" && srcs.length > 1) show(at + 1);
+  };
   const close = () => {
     box.classList.remove("open");
     document.removeEventListener("keydown", onKey);
     document.documentElement.style.overflow = prevOverflow;
     setTimeout(() => { box.hidden = true; img.removeAttribute("src"); }, 240);
   };
+  box.querySelector(".lb-prev").addEventListener("click", e => { e.stopPropagation(); show(at - 1); });
+  box.querySelector(".lb-next").addEventListener("click", e => { e.stopPropagation(); show(at + 1); });
   box.addEventListener("click", close);
   list.addEventListener("click", e => {
     if (innerWidth > 900) return;                       // phones only
     const src = e.target.closest(".jcard.chapter .ch-fig img:not(.ch-blurbg)");
     if (!src) return;
-    img.src = src.currentSrc || src.src;
+    const fig = src.closest(".ch-fig");
+    const set = [...fig.querySelectorAll("img:not(.ch-blurbg)")];
+    srcs = set.map(im => im.currentSrc || im.src);
+    at = Math.max(0, set.indexOf(src));
+    img.src = srcs[at];
+    box.classList.toggle("multi", srcs.length > 1);
     box.hidden = false;
     prevOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";

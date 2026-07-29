@@ -9164,6 +9164,9 @@ const landIn = raiseExitP.y;
        whole courier — keep the last valid route, like the seam guard below. */
     if (!pad) { console.warn("Courier route: landing runway too short"); retryCompile(); return; }
     pad.pad = true;
+    /* the renderer's pad-anchor blend needs the slot in PAGE terms: the
+       slot's viewport y at any scroll is slotY + (sEnd - scroll). */
+    pad.slotX = slotEnd.x; pad.slotY = slotEnd.y; pad.sEnd = padEnd;
 
     const phases = [focus];
     const focusExit = focus.sample(1, focus.s1);
@@ -10075,6 +10078,24 @@ let apX = sample.p.x + ox, apY = sample.p.y + oy;
       const sway = Math.sin(st * Math.PI * 1.6) * Math.pow(1 - st, 3);
       apY -= K * .050 * flare + K * .030 * bob;
       apX += K * .014 * sway;
+      /* THE PAD HOLDS THE SHIP THROUGH THE FINAL BAND. Near the dock the
+         route's own spatial travel is tiny, so on an upward scroll the ship
+         used to HOVER mid-sky, enlarged and static, while the pad scene
+         streamed past — dead, not flown. Blending the pose toward the SLOT'S
+         OWN MOVING FRAME over the last stretch pins touchdown to the pad
+         both ways: scrolling on, the ship locks onto the descending pad;
+         scrolling back, the pad visibly drops away beneath the ship — a
+         launch — before the route carries it off. Pure function of scroll
+         (the slot's viewport y is slotY + (sEnd − scroll)), so the film
+         strip stays deterministic and the q = 1 dock is still pixel-true. */
+      if (phase.sEnd != null) {
+        const aw = smt(cl01((q - .78) / .22));
+        if (aw > 0) {
+          const svY = phase.slotY + (phase.sEnd - scroll);
+          apX += (phase.slotX - apX) * aw;
+          apY += (svY - apY) * aw;
+        }
+      }
     }
     const apAngle = angle + oa, apScale = Math.max(.05, scale + os);
     /* THE ROCKET IS ALWAYS VISIBLE. Authored geometry can legitimately follow
@@ -14335,10 +14356,16 @@ function initExpansionMobile() {
       const sc = (.8 + .26 * Math.sin(f * Math.PI)) * (i === hotI ? 1.22 : 1);
       el.style.opacity = vis ? (dimmed(i) ? ".22" : "1") : "0";
       el.style.pointerEvents = vis ? "" : "none";
-      el.style.zIndex = i === hotI ? 3 : 2;
-      // the selected country's pin reads BLUE (its own colour otherwise)
-      el.style.setProperty("--pc", i === hotI ? "#38a9ff" : (p.distinct ? GREEN : PINK));
-      el.classList.toggle("sel", i === hotI);
+      /* selection styling only when it CHANGES — writing --pc/class/zIndex on
+         every frame forced a style recalc per pin per frame during drags */
+      const sel = i === hotI;
+      if (el.__sel !== sel) {
+        el.__sel = sel;
+        el.style.zIndex = sel ? 3 : 2;
+        // the selected country's pin reads BLUE (its own colour otherwise)
+        el.style.setProperty("--pc", sel ? "#38a9ff" : (p.distinct ? GREEN : PINK));
+        el.classList.toggle("sel", sel);
+      }
       el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-96%) scale(${sc.toFixed(3)})`;
     });
   };
@@ -14426,12 +14453,19 @@ function initExpansionMobile() {
     if (dragX === null) return;
     dragX = null; dragY = null; lastMoveT = 0;
     if (OSX_REDUCED || (Math.abs(vel) < .00035 && Math.abs(velY) < .00035)) { vel = 0; velY = 0; return; }
-    const step = () => {
+    /* TIME-NORMALISED inertia: velocity and decay are integrated by real
+       elapsed time, so a 120Hz phone glides exactly like a 60Hz one instead
+       of running twice as fast and dying twice as soon — and the runout
+       threshold is lower, so the ball settles with a long silky tail. */
+    let glidePrevT = performance.now();
+    const step = t => {
       glideRaf = 0;
-      vel *= .93; velY *= .93;
-      if ((Math.abs(vel) < .00018 && Math.abs(velY) < .00018) || dragX !== null) { vel = 0; velY = 0; return; }
-      phase = norm1(phase + vel);
-      pitch = norm1(pitch + velY);
+      const k = Math.min(3, Math.max(.25, (t - glidePrevT) / 16.7));
+      glidePrevT = t;
+      vel *= Math.pow(.93, k); velY *= Math.pow(.93, k);
+      if ((Math.abs(vel) < .0001 && Math.abs(velY) < .0001) || dragX !== null) { vel = 0; velY = 0; return; }
+      phase = norm1(phase + vel * k);
+      pitch = norm1(pitch + velY * k);
       paint();
       glideRaf = requestAnimationFrame(step);
     };

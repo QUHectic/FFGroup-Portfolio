@@ -9213,10 +9213,28 @@ const landIn = raiseExitP.y;
       between.push({ s, x: rightLane, y: vh * .52 });
     }
     if (market) {
-      const s = Math.max(growth.s1 + vh * .55, Math.min(orbit.s0 - vh * .48, market.cy - vh * .50));
+      const s = Math.max(growth.s1 + vh * .55, Math.min(orbit.s0 - vh * .88, market.cy - vh * .50));
       between.push({ s, x: rightLane, y: vh * .56 });
     }
-    between.push({ s: orbit.s0 - vh * .25, x: Math.min(rightLane, orbitEntry.p.x + 118), y: orbitEntry.p.y - 92 });
+    /* HOLD THE LANE, THEN A PROGRESSIVE BANK. Chord tangents started the left
+       drift two viewports early; a single late gate snapped it round like a
+       hinge. The buttery middle: vertical-tangent gates rail the ship straight
+       down the right lane until ~.72vh out, then THREE gates ease the turn in
+       like an aircraft bank — lateral rate builds ~.3 → ~.9 → ~1.4 px/px, so
+       the curve is gentle off the rail, deepest mid-turn, and lands on the
+       limb's own tangent. No kink anywhere: curvature grows continuously. */
+    const bankW = rightLane - orbitEntry.p.x;
+    const laneHoldS = Math.max(growth.s1 + vh * .25, orbit.s0 - vh * .72);
+    const prevGate = between[between.length - 1];
+    const laneHoldY = Math.max(prevGate ? prevGate.y + 10 : vh * .5, orbitEntry.p.y - vh * .12);
+    const laneRate = prevGate
+      ? (laneHoldY - prevGate.y) / Math.max(1, laneHoldS - prevGate.s) : vh * .0002;
+    if (prevGate && !prevGate.d) prevGate.d = { x: 0, y: laneRate };
+    between.push({ s: laneHoldS, x: rightLane, y: laneHoldY, d: { x: 0, y: laneRate } });
+    between.push({ s: orbit.s0 - vh * .44,
+      x: rightLane - Math.max(56, bankW * .16), y: orbitEntry.p.y - vh * .075 });
+    between.push({ s: orbit.s0 - vh * .17,
+      x: orbitEntry.p.x + bankW * .42, y: orbitEntry.p.y - 36 });
 const toGlobe = keyedPhase("growth-to-globe", [
       { s: growth.s1, x: growthExit.p.x, y: growthExit.p.y, d: growthExit.d },
       ...between,

@@ -1477,7 +1477,7 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
 /* closing statement — the narrative sign-off, pinned to the LEFT of the pad,
    clearly BELOW the left-pinned mission-control header (title + hero message
    end ~300px down at worst): the two left blocks stack, they never overlap */
-#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(224px,30vh,356px);z-index:6;
+#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(196px,26vh,300px);z-index:6;
   max-width:min(42vw,470px);margin:0;text-align:left;pointer-events:none;
   font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:400;letter-spacing:-.01em;color:var(--ink);}
 #liftoff .lo-closing b{color:var(--ink);font-weight:600;}
@@ -2031,6 +2031,9 @@ section.tint{background:var(--bg-soft);}
 .tm-sat svg{width:15px;height:15px;color:var(--c);}
 .tm-sat span{font-size:.6rem;font-weight:700;line-height:1.2;text-align:center;}
 @media (max-width:374px){.tm-sat span{font-size:.55rem;}}
+/* Core Operations' satellite reads WHITE so it never merges with the pink
+   hub beside it (!important beats the inline division colour) */
+.tm-sat[data-f="core"]{--c:#fff !important;}
 .tm-hub.filtered .tm-sat:not(.hot){opacity:.32;}
 .tm-sat.hot{box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent);}
 .tm-hub.filtered.dirsel .tm-sat{opacity:.32;}
@@ -4202,7 +4205,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      (br.tbr) hold their strict big-to-small / small-to-big line pattern from
      360px up — the widest joined lines ("Started Everything") only clear a
      360px column at this size. From 471px the 1.32rem base has room again. */
-  .jl-condensed .jcard.chapter h3{font-size:1.04rem;}
+  .jl-condensed .jcard.chapter h3{font-size:1.1rem;}
   /* chapter 4's word set ("Hundreds Every Day") cannot form a strict pyramid
      at the shared size — a whisker smaller and its three lines stack clean */
   .jl-condensed .jcard.chapter h3 .tfit{font-size:.9em;}
@@ -4210,9 +4213,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 @media (max-width:380px){
   .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
 }
+@media (max-width:383px){
+  /* the 375-383 columns can't hold the widest shaped lines at 1.1rem */
+  .jl-condensed .jcard.chapter h3{font-size:1.02rem;}
+}
 @media (max-width:374px){
   /* the narrowest columns (360-374) keep the size the line shapes were
-     solved at — 1.04rem re-wraps the widest shaped lines there */
+     solved at — anything larger re-wraps the widest shaped lines there */
   .jl-condensed .jcard.chapter h3{font-size:.98rem;}
 }
 

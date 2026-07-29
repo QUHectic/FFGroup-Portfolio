@@ -4053,7 +4053,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      .jl-condensed, set on #jlist by initChapterCondense() only when
      (max-width:900px) matches. No rule here can touch desktop. */
   #jlist.jl-condensed{gap:16px;}
-  .jl-condensed .jcard.chapter{padding:20px 12px 18px;}   /* 16→12: the freed width lets every shaped title line fit down to 360px */
+  .jl-condensed .jcard.chapter{padding:20px 10px 18px;}   /* tight sides: every freed pixel goes to the shaped title columns */
   /* EVERY variable row is pinned to its own worst case, so real-device font
      wrapping (which differs from desktop metrics) can never change a card's
      height: badge row fits a TWO-line kicker, the green question fits TWO
@@ -4155,7 +4155,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      lines — desktop-browser metrics measure narrower, so never trust a
      four-line assumption). Every chapter box is exactly the same height;
      shorter titles centre in the space. */
-  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:10px;min-width:0;min-height:128px;}
+  .jl-condensed .ch-titlerow{display:flex;align-items:center;gap:8px;min-width:0;min-height:128px;}
   /* margin:0 — the h3's own 6/8px vertical margins pushed a five-line title
      past the 128px envelope (134px) and broke equality; the flex row's
      min-height + centring provide all the spacing the title needs. The
@@ -4201,26 +4201,26 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
    stays within the uniform title row, and a smaller kicker so "BREAKTHROUGH"
    never splits mid-word into a third line — box heights never diverge */
 @media (max-width:470px){
-  /* one title size across every phone so the hand-shaped title pyramids
-     (br.tbr) hold their strict big-to-small / small-to-big line pattern from
-     360px up — the widest joined lines ("Started Everything") only clear a
-     360px column at this size. From 471px the 1.32rem base has room again. */
-  .jl-condensed .jcard.chapter h3{font-size:1.1rem;}
+  /* the largest size at which every hand-shaped title line (br.tbr) still
+     clears its column with the tightened padding/gap — the tiers below step
+     down exactly where the shrinking column would re-wrap the widest lines
+     ("Started Everything", "Only the Beginning") and break their pyramids. */
+  .jl-condensed .jcard.chapter h3{font-size:1.16rem;}
   /* chapter 4's word set ("Hundreds Every Day") cannot form a strict pyramid
      at the shared size — a whisker smaller and its three lines stack clean */
   .jl-condensed .jcard.chapter h3 .tfit{font-size:.9em;}
+}
+@media (max-width:388px){
+  .jl-condensed .jcard.chapter h3{font-size:1.12rem;}
 }
 @media (max-width:380px){
   .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
 }
 @media (max-width:383px){
-  /* the 375-383 columns can't hold the widest shaped lines at 1.1rem */
-  .jl-condensed .jcard.chapter h3{font-size:1.02rem;}
+  .jl-condensed .jcard.chapter h3{font-size:1.06rem;}
 }
 @media (max-width:374px){
-  /* the narrowest columns (360-374) keep the size the line shapes were
-     solved at — anything larger re-wraps the widest shaped lines there */
-  .jl-condensed .jcard.chapter h3{font-size:.98rem;}
+  .jl-condensed .jcard.chapter h3{font-size:1.02rem;}
 }
 
 @media (max-width:360px){

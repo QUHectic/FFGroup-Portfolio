@@ -8907,7 +8907,12 @@ const vh = innerHeight, iw = innerWidth;
     if (!growth || !traj) { route = null; return; }
 
     const pTop = docTop(planet);
-    const orbitS0 = pTop - vh * .3;
+    /* Begin the orbit AT the pin, not .3vh before it. The ring is glued to
+       the drawn planet, and joining while the stage was still rising rode the
+       ship ~.3vh back UP the page right after its descent — the visible
+       "bounce" before the circling started. From the pin the planet is
+       static, so the ship simply descends onto the ring and sweeps away. */
+    const orbitS0 = pTop;
     const orbitS1 = pTop + Math.max(vh * .9, planet.offsetHeight - vh);
     /* The canvas globe holds (w/2, .52h) of its STICKY STAGE — but the orbit
        begins .3vh before the stage pins (and can outlive the unpin on short
@@ -8920,11 +8925,19 @@ const vh = innerHeight, iw = innerWidth;
       name: "globe-orbit", orbit: true, s0: orbitS0, s1: orbitS1,
       sample: (q, scroll) => {
         q = cl01(q);
-        const R = Math.min(iw, vh) * .33, th = q * T2 * 1.25;
+        /* Join LOW on the right limb (θ0 ≈ 49°), where the descending approach
+           naturally arrives, instead of θ = 0 at three o'clock — the old insert
+           sat ~165px ABOVE the hand-off, so the ship dipped under the ring and
+           climbed back onto it. The sweep still ENDS at exactly 1.25 turns
+           (θ = π/2 — the bottom of the disc, moving left), so the departure
+           corridor below is untouched. */
+        const R = Math.min(iw, vh) * .33;
+        const TH0 = T2 * .135, SWEEP2 = T2 * 1.25 - TH0;
+        const th = TH0 + q * SWEEP2;
         const e = smt(q), de = derivativeSmooth(q);
         const rx = R * (1.52 - .4 * e), dr = R * -.4 * de;
         const ry = rx * .46, dry = dr * .46;
-        const w = T2 * 1.25;
+        const w = SWEEP2;
         const stageY = Math.max(0, pTop - scroll) - Math.max(0, scroll - orbitUnpin);
         const dStage = (scroll < pTop || scroll > orbitUnpin) ? -1 : 0;
 /* dStage is the sticky stage's CAMERA drift, not ship motion. It has to
@@ -9673,6 +9686,7 @@ const down = Math.PI / 2;
   let revMix = 0, revWant = 0;
   let angle = 0, bank = 0, flame = .62;
   let auditY = null;
+  let easedScroll = null;   // the pose's own scroll: chases the wheel through a short lowpass
   let lapSig = "";
   /* Continuity across recompiles. A layout shift (a lazy image landing, the
      trajectory chart re-morphing, a panel growing) moves every docTop below
@@ -9742,9 +9756,28 @@ const down = Math.PI / 2;
     }
     if (!route) { lastTime = now; return; }
 
-    const scroll = auditY == null ? scrollY : auditY;
+    const targetScroll = auditY == null ? scrollY : auditY;
     const rawDt = lastTime ? (now - lastTime) / 1000 : 1 / 60;
     const dt = Math.min(.05, Math.max(.001, rawDt));
+    /* BUTTER. Wheel scrolling arrives in discrete steps, and a pose snapped
+       straight to scrollY freezes dead between ticks — glaring wherever the
+       page around the ship is pinned (the 360-planet orbit: everything else
+       is static, so the ship visibly stopped, then jumped on). The pose now
+       CHASES the wheel through an ~85ms exponential lowpass: the path is the
+       identical compiled route, only traversed with continuous velocity, so
+       each wheel step glides in and eases out instead of stepping. It still
+       converges exactly (snap under .4px), keeps reverse scrolling on the
+       same film strip, and snaps outright for audits (auditY), resyncs and
+       teleport-sized jumps. */
+    if (easedScroll == null || snap || auditY != null
+        || Math.abs(targetScroll - easedScroll) > innerHeight * 2.5) {
+      easedScroll = targetScroll;
+    } else if (easedScroll !== targetScroll) {
+      easedScroll += (targetScroll - easedScroll) * (1 - Math.exp(-dt / .085));
+      if (Math.abs(targetScroll - easedScroll) < .4) easedScroll = targetScroll;
+      else schedule();   // keep gliding to the wheel's last position
+    }
+    const scroll = easedScroll;
     /* A dropped/hidden frame is not permission to snap. Keep orientation and
        flame integration continuous; visibility/pageshow handlers explicitly
        reset state when a true resynchronisation is required. */

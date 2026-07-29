@@ -1310,7 +1310,7 @@ html.spx #opportunity-static{display:none;}
    starfield and mission control floats on the pad apron */
 /* the mission-control header sits LEFT, its hero message tucked just below
    the title in a smaller voice — the pad scene keeps the rest of the frame */
-#liftoff .lo-head{position:absolute;left:clamp(18px,4.5vw,72px);transform:none;top:clamp(48px,8vh,96px);width:min(92%,760px);z-index:6;text-align:left;pointer-events:none;}
+#liftoff .lo-head{position:absolute;left:clamp(18px,4.5vw,72px);transform:none;top:clamp(60px,9.5vh,112px);width:min(92%,760px);z-index:6;text-align:left;pointer-events:none;}
 #liftoff .lo-head .sec-head{margin-bottom:0;}
 #liftoff .lo-head h2{margin-bottom:8px;}
 #liftoff .lo-head p{max-width:52ch;margin-inline:0;margin-top:2px;font-size:.9rem;line-height:1.55;color:var(--ink-dim);}
@@ -1477,7 +1477,7 @@ html.launching .ff-orbitline{opacity:0 !important;} /* and no stray lap track fl
 /* closing statement — the narrative sign-off, pinned to the LEFT of the pad,
    clearly BELOW the left-pinned mission-control header (title + hero message
    end ~300px down at worst): the two left blocks stack, they never overlap */
-#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(244px,32.5vh,380px);z-index:6;
+#liftoff .lo-closing{position:absolute;left:clamp(18px,4.5vw,72px);top:clamp(224px,30vh,356px);z-index:6;
   max-width:min(42vw,470px);margin:0;text-align:left;pointer-events:none;
   font-size:clamp(1.02rem,1.55vw,1.4rem);line-height:1.5;font-weight:400;letter-spacing:-.01em;color:var(--ink);}
 #liftoff .lo-closing b{color:var(--ink);font-weight:600;}
@@ -4202,13 +4202,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      (br.tbr) hold their strict big-to-small / small-to-big line pattern from
      360px up — the widest joined lines ("Started Everything") only clear a
      360px column at this size. From 471px the 1.32rem base has room again. */
-  .jl-condensed .jcard.chapter h3{font-size:.98rem;}
+  .jl-condensed .jcard.chapter h3{font-size:1.04rem;}
   /* chapter 4's word set ("Hundreds Every Day") cannot form a strict pyramid
      at the shared size — a whisker smaller and its three lines stack clean */
   .jl-condensed .jcard.chapter h3 .tfit{font-size:.9em;}
 }
 @media (max-width:380px){
   .jl-condensed .ch-kick{font-size:.7rem;letter-spacing:.07em;}
+}
+@media (max-width:374px){
+  /* the narrowest columns (360-374) keep the size the line shapes were
+     solved at — 1.04rem re-wraps the widest shaped lines there */
+  .jl-condensed .jcard.chapter h3{font-size:.98rem;}
 }
 
 @media (max-width:360px){
@@ -5140,7 +5145,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
        the visitor back to the very top under full burn.
        ==================================================================== -->
   <section data-sec="liftoff" id="liftoff" aria-label="Mission control, press for liftoff">
-    <p class="lo-closing reveal">It started with one second-hand extinguisher and a refusal to stand still. <b>Freedom Global turned that into a proven ecommerce engine.</b> Investment is the fuel for the next stage <span class="grad-text">and the foundation beneath everything still to come.</span></p>
+    <p class="lo-closing reveal">It began with one second-hand fire extinguisher and a refusal to stand still. From that idea came a business, a group and a future without limits. Every risk, every setback and every breakthrough has brought Freedom to this launchpad. The journey so far was only the countdown. <span class="grad-text">What comes next is liftoff.</span></p>
     <div class="wrap lo-head">
       <div class="sec-head reveal">
         <span class="kicker">Mission control</span>
@@ -5965,7 +5970,7 @@ const FG_DATA = {
         ]
       },
       {
-        key: "core", label: "Core Operations & Leadership", color: "var(--pink)",
+        key: "core", label: "Core Operations", color: "var(--pink)",
         people: [
           { name: "Jojo Williams", nickname: "“Badger”", role: "Warehouse Operative", type: "Full time",
             pillar: true, badge: "5 years · not a single day missed",
@@ -12701,8 +12706,12 @@ function renderGrowthChart() {
   const chHex = { "eBay": "#38a9ff", "On Site Servicing": "#ff4fa3", "Temu": "#ff6a3d" };
   const tip = makeTip(fig);
   data.forEach((d, i) => {
+    // the last label hugs the right edge of the viewBox — anchored "end" so
+    // its tail ("£1.21m") can never be clipped on a phone-width chart
+    const lastPt = i === data.length - 1;
     svgEl("text", {
-      x: xs[i], y: ys[i] - 18, "text-anchor": "middle", class: "gc-val",
+      x: lastPt ? xs[i] + 8 : xs[i], y: ys[i] - 18,
+      "text-anchor": lastPt ? "end" : "middle", class: "gc-val",
       fill: "var(--ink)", "font-size": "15", "font-weight": "800"
     }, svg).textContent = fmtCompact(d.value);
     const dot = svgEl("circle", {
@@ -13890,7 +13899,7 @@ function renderTeamMobile() {
   const root = flat.find(p => p.root) || flat[0];
   const divs = FG_DATA.team.divisions.filter(d => d.key !== "director");
   const PPL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="6.2" cy="6.8" r="2.5"/><circle cx="13.8" cy="6.8" r="2.5"/><path d="M1.8 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3zM9.4 15.2c0-2.4 2-4.3 4.4-4.3s4.4 1.9 4.4 4.3z"/></svg>';
-  const SHORT = { core: "Core Ops &amp; Leadership", finance: "Finance &amp; Accounts" };
+  const SHORT = { core: "Core Operations", finance: "Finance &amp; Accounts" };
   /* hexagon of satellites around the hub — centre (195,170), orbit 140 */
   const SAT = [
     { key: "finance", a: -120 }, { key: "core", a: -60 },
@@ -13958,8 +13967,8 @@ function renderTeamMobile() {
         <circle cx="195" cy="170" r="140" fill="none" stroke="rgba(226,240,255,.22)" stroke-width="1.1" stroke-dasharray="4 8"/>
         ${spokes}
       </svg>
-      <button class="tm-hubc" type="button" data-f="director" aria-label="${root.name}, ${root.role}">
-        <b>${root.name}</b><span>${root.role}</span>
+      <button class="tm-hubc" type="button" data-f="director" aria-label="Group Leadership, Founder and Managing Director">
+        <b>Group Leadership</b><span>Founder &amp; Managing Director</span>
       </button>
       ${sats}
     </div>
@@ -14142,12 +14151,19 @@ function initExpansionMobile() {
   };
   const strips = rot => {
     const K = 200, su = TW * .5 / K;
+    /* free-axis roll: the texture also wraps VERTICALLY by `pitch`, so the
+       ball turns under the finger in any direction. Same strips, same
+       shading, same rims — the design does not change, only the sampling. */
+    const v = ((pitch % 1) + 1) % 1, syA = v * TH, hA = TH - syA;
+    const dhA = hA / TH * 2 * R;
     for (let i = 0; i < K; i++) {
       const f0 = i / K, f1 = (i + 1) / K;
       const x0 = CX + Math.sin((f0 - .5) * Math.PI) * R;
       const x1 = CX + Math.sin((f1 - .5) * Math.PI) * R;
       const u = ((rot + f0 * .5) % 1 + 1) % 1;
-      ctx.drawImage(tex, u * TW, 0, su, TH, x0, CY - R, Math.max(1.2, x1 - x0 + 1.1), R * 2);
+      const wD = Math.max(1.2, x1 - x0 + 1.1);
+      if (hA > .5) ctx.drawImage(tex, u * TW, syA, su, hA, x0, CY - R, wD, dhA);
+      if (syA > .5) ctx.drawImage(tex, u * TW, 0, su, syA, x0, CY - R + dhA, wD, 2 * R - dhA);
     }
   };
   const draw = rot => {
@@ -14194,14 +14210,19 @@ function initExpansionMobile() {
       const fm = ((p.u - rot) % 1 + 1) % 1;
       if (fm >= .5) { el.style.opacity = "0"; el.style.pointerEvents = "none"; return; }
       const du = OSX_EXT[p.n] || .012;
-      const vis = fm >= du && fm <= .5 - du;   // the whole country is on the face
+      // pins ride the vertical roll too, and duck out near the wrap seam
+      const vv = ((p.v - pitch) % 1 + 1) % 1;
+      const vis = fm >= du && fm <= .5 - du && vv > .05 && vv < .95;
       const f = fm / .5;
       const x = CX + Math.sin((f - .5) * Math.PI) * R;
-      const y = CY + (p.v - .5) * 2 * R;
+      const y = CY + (vv - .5) * 2 * R;
       const sc = (.8 + .26 * Math.sin(f * Math.PI)) * (i === hotI ? 1.22 : 1);
       el.style.opacity = vis ? (dimmed(i) ? ".22" : "1") : "0";
       el.style.pointerEvents = vis ? "" : "none";
       el.style.zIndex = i === hotI ? 3 : 2;
+      // the selected country's pin reads BLUE (its own colour otherwise)
+      el.style.setProperty("--pc", i === hotI ? "#38a9ff" : (p.distinct ? GREEN : PINK));
+      el.classList.toggle("sel", i === hotI);
       el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-96%) scale(${sc.toFixed(3)})`;
     });
   };
@@ -14210,16 +14231,17 @@ function initExpansionMobile() {
      honours reduced motion by holding the Europe-facing frame */
   const OSX_REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let phase = .277, lastT = null, playing = false, inView = false, raf = 0;
-  let dragX = null;   // finger-spin: while set, the auto-spin yields
+  let dragX = null, dragY = null;   // finger-spin: while set, the auto-spin yields
+  let pitch = 0;      // vertical roll (wraps 0..1) — the free-axis half of the trackball
   /* the globe idles on its slow ambient revolution ONLY until the user takes
      the wheel — a drag, a pin tap or steering the card rail parks it, and it
      then only moves when driven (spun to a country, dragged, or gliding) */
-  let lockAuto = false, vel = 0, lastMoveT = 0, glideRaf = 0, spinRaf = 0;
+  let lockAuto = false, vel = 0, velY = 0, lastMoveT = 0, glideRaf = 0, spinRaf = 0;
   let suppressUntil = performance.now() + 1500, lastSpun = -1;
   const norm1 = v => ((v % 1) + 1) % 1;
   const paint = () => { size(); draw(phase); place(phase); };
   const stopSpin = () => { if (spinRaf) { cancelAnimationFrame(spinRaf); spinRaf = 0; } };
-  const stopGlide = () => { if (glideRaf) { cancelAnimationFrame(glideRaf); glideRaf = 0; } vel = 0; };
+  const stopGlide = () => { if (glideRaf) { cancelAnimationFrame(glideRaf); glideRaf = 0; } vel = 0; velY = 0; };
   /* ease the globe round (shortest way) until pin i's country faces the
      centre of the visible face (fm = .25 in place()'s mapping) */
   const spinTo = i => {
@@ -14227,11 +14249,13 @@ function initExpansionMobile() {
     lockAuto = true; stopSpin(); if (glideRaf) { cancelAnimationFrame(glideRaf); glideRaf = 0; }
     const target = norm1(p.u - .25);
     let d = norm1(target - phase); if (d > .5) d -= 1;
-    if (OSX_REDUCED || Math.abs(d) < .003) { phase = target; paint(); return; }
-    const from = phase, t0 = performance.now(), dur = 420 + Math.abs(d) * 1600;
+    let dP = norm1(0 - pitch); if (dP > .5) dP -= 1;   // roll any tilt home so the pin row lines up
+    if (OSX_REDUCED || (Math.abs(d) < .003 && Math.abs(dP) < .003)) { phase = target; pitch = 0; paint(); return; }
+    const from = phase, fromP = pitch, t0 = performance.now(), dur = 420 + Math.max(Math.abs(d), Math.abs(dP)) * 1600;
     const step = t => {
       const q = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - q, 3);
       phase = norm1(from + d * e);
+      pitch = norm1(fromP + dP * e);
       paint();
       spinRaf = q < 1 ? requestAnimationFrame(step) : 0;
     };
@@ -14245,40 +14269,47 @@ function initExpansionMobile() {
     size(); draw(phase); place(phase);
     if (!OSX_REDUCED) raf = requestAnimationFrame(frame);
   };
-  /* INTERACTIVE SPIN — drag the globe to turn it yourself. A full swipe
-     across the disc turns roughly half a revolution (1:1, no lag), and
-     letting go carries real momentum that glides to a stop. Vertical
-     scrolling stays untouched (touch-action pan-y). Once dragged, the
-     globe stays where it is put — the ambient auto-spin never grabs it
-     back. */
-  stage.style.touchAction = "pan-y";
+  /* INTERACTIVE SPIN — a full trackball: drag the globe in ANY direction
+     (left/right spins it, up/down rolls it, diagonals do both) with 1:1
+     tracking, and letting go carries real momentum on both axes that glides
+     to a stop. touch-action none so vertical swipes over the disc turn the
+     ball instead of scrolling the page. Once dragged, the globe stays where
+     it is put — the ambient auto-spin never grabs it back. */
+  stage.style.touchAction = "none";
   stage.addEventListener("pointerdown", e => {
     if (e.target.closest(".osx-pin")) return;
-    dragX = e.clientX; lastMoveT = 0;
+    dragX = e.clientX; dragY = e.clientY; lastMoveT = 0;
     lockAuto = true; stopSpin(); stopGlide();
     try { stage.setPointerCapture(e.pointerId); } catch (err) {}
   });
   stage.addEventListener("pointermove", e => {
     if (dragX === null) return;
-    const dx = e.clientX - dragX;
-    if (!dx) return;
-    dragX = e.clientX;
-    const dPh = -dx / Math.max(60, R * 4.2);
+    const dx = e.clientX - dragX, dy = e.clientY - dragY;
+    if (!dx && !dy) return;
+    dragX = e.clientX; dragY = e.clientY;
+    const S = Math.max(60, R * 4.2);
+    const dPh = -dx / S, dPv = -dy / S;
     phase = norm1(phase + dPh);
+    pitch = norm1(pitch + dPv);
     const now = performance.now();
-    if (lastMoveT) vel = .72 * vel + .28 * (dPh * 16.7 / Math.max(8, now - lastMoveT));
+    if (lastMoveT) {
+      const k = 16.7 / Math.max(8, now - lastMoveT);
+      vel = .72 * vel + .28 * dPh * k;
+      velY = .72 * velY + .28 * dPv * k;
+    }
     lastMoveT = now;
     paint();
   });
   const endDrag = () => {
     if (dragX === null) return;
-    dragX = null; lastMoveT = 0;
-    if (OSX_REDUCED || Math.abs(vel) < .00035) { vel = 0; return; }
+    dragX = null; dragY = null; lastMoveT = 0;
+    if (OSX_REDUCED || (Math.abs(vel) < .00035 && Math.abs(velY) < .00035)) { vel = 0; velY = 0; return; }
     const step = () => {
       glideRaf = 0;
-      vel *= .93;
-      if (Math.abs(vel) < .00018 || dragX !== null) { vel = 0; return; }
+      vel *= .93; velY *= .93;
+      if ((Math.abs(vel) < .00018 && Math.abs(velY) < .00018) || dragX !== null) { vel = 0; velY = 0; return; }
       phase = norm1(phase + vel);
+      pitch = norm1(pitch + velY);
       paint();
       glideRaf = requestAnimationFrame(step);
     };
@@ -14370,10 +14401,11 @@ function initExpansionMobile() {
   // deterministic single-step for verification harnesses
   window.__ffOsx = {
     setPhase: v => { phase = v; size(); draw(phase); place(phase); },
+    setPitch: v => { pitch = norm1(v); paint(); },
     applyFilter,
     spinTo,
     targetOf: i => PINS[i] ? norm1(PINS[i].u - .25) : null,
-    state: () => ({ phase, filter, hotI, playing, R, W, H, lockAuto, lastSpun }),
+    state: () => ({ phase, pitch, filter, hotI, playing, R, W, H, lockAuto, lastSpun }),
   };
 }
 
@@ -16133,9 +16165,7 @@ const MOBILE_COPY = [
     html: "Larger warehouse · Racking and handling · Technology · Fulfilment · Automation" },
   { find: "The mechanism: capital deployed → deeper stockholding → fewer stockouts → improved marketplace rankings → increased revenue & margin.",
     html: "The mechanism: capital → deeper stock → fewer stockouts → better rankings → more revenue &amp; margin." },
-  // ---- liftoff (keeps its emphasis + gradient tail) -----------------------
-  { find: "It started with one second-hand extinguisher and a refusal to stand still. Freedom Global turned that into a proven ecommerce engine. Investment is the fuel for the next stage and the foundation beneath everything still to come.",
-    html: "It started with one second-hand extinguisher. <b>Freedom Global turned that into a proven ecommerce engine.</b> Investment is the fuel for <span class=\"grad-text\">everything still to come.</span>" },
+  // (the liftoff closing statement now reads in full on every tier)
 ];
 
 function initMobileCopy() {

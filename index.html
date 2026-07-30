@@ -190,7 +190,6 @@ html:not(.sys-live) #sysMap *{
 }
 /* ===== end PATCH 2 ===== */
 
-.sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);...}   /* <-- LINE AFTER */
 .sm-cloud-streak{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.1;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,255,255,.22));}
 .sm-surface-line{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1;stroke-linecap:round;}
 .sm-crater{fill:rgba(71,25,19,.16);stroke:rgba(90,35,24,.38);stroke-width:1;}
@@ -4328,6 +4327,24 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      Globally" runs on a single line, sized to fit the phone column */
   #opportunity-static .sec-head h2{white-space:nowrap;max-width:none;font-size:clamp(.8rem,3.9vw,1.38rem);letter-spacing:-.02em;}
 }
+
+/* ===== FF-PERF 1: ambient animations pause while their chapter is far off-screen.
+   JS (FF-PERF 4, end of the script) adds .ff-park via an IntersectionObserver
+   whose margin is >1.7 viewports, so nothing on or anywhere near the screen is
+   ever paused. play-state (not animation:none) preserves each loop's phase, so
+   on approach every animation resumes exactly where it stopped — there is no
+   visual difference, only dozens of off-screen SVG/DOM animations no longer
+   ticking style recalcs every frame. The will-change hints are parked with
+   them, so wide screens stop retaining GPU layers for chapters nowhere near
+   the viewport (same trick PATCH 2 already applies to #sysMap). ===== */
+.ff-park,.ff-park *{animation-play-state:paused!important;}
+.ff-park::before,.ff-park::after,
+.ff-park *::before,.ff-park *::after{animation-play-state:paused!important;}
+/* (deliberately NOT touching will-change here: un-promoting and re-promoting
+   layers at the park boundary forces texture teardown + re-raster spikes on
+   the very machines this patch is rescuing — pausing the animations is the
+   win, the layers can stay) */
+/* ===== end FF-PERF 1 ===== */
 </style>
 </head>
 <body>
@@ -9797,6 +9814,9 @@ const down = Math.PI / 2;
     raf = 0;
     if (innerWidth <= 900 || !document.documentElement.classList.contains("spx")) {
       wrap.style.opacity = "0";
+      /* FF-PERF: an invisible ship must not keep its plume/strobe loops
+         ticking style recalcs — park them (phase preserved, see FF-PERF 1). */
+      if (!wrap.__ffPk) { wrap.__ffPk = 1; wrap.classList.add("ff-park"); }
       lapTrack.style.opacity = "0";
       contOff = null; lastPose = null;
       /* Leaving cinematic mode mid-story must hand the charts back whole: the
@@ -10138,6 +10158,14 @@ let apX = sample.p.x + ox, apY = sample.p.y + oy;
     shipSvg.style.transform = `scaleY(${(1 - Math.abs(bank) * .22).toFixed(4)}) skewY(${(bank * .24).toFixed(4)}rad)`;
     wrap.style.transform = `translate3d(${apX.toFixed(2)}px,${apY.toFixed(2)}px,0) rotate(${apAngle.toFixed(5)}rad) scale(${(apScale / 3).toFixed(5)})`;
     wrap.style.opacity = alpha > .003 ? alpha.toFixed(3) : "0";
+    /* FF-PERF: park the ship's ambient SVG loops (flame flicker, strobes,
+       glow) whenever it is fully transparent; un-park the moment it has any
+       alpha again. Invisible either way — this only stops per-frame style
+       work for a ship nobody can see. */
+    {
+      const pk = !(alpha > .003) ? 1 : 0;
+      if (pk !== (wrap.__ffPk | 0)) { wrap.__ffPk = pk; wrap.classList.toggle("ff-park", !!pk); }
+    }
     wrap.dataset.phase = phase.name;
     wrap.dataset.scroll = scroll.toFixed(1);
     lastPose = { x: apX, y: apY, angle: apAngle, scale: apScale, alpha, scroll };
@@ -11626,29 +11654,39 @@ function renderSystem() {
        getBoundingClientRect: #sysMap carries perspective(1600px) rotateX(7deg),
        which makes client rects disagree with real geometry by an amount that
        varies with width. */
+    /* FF-PERF: the lane/body elements never change identity once built — cache
+       them per key instead of re-running querySelector + a circle sort on every
+       tracked frame. Geometry is still measured live on each call, so the
+       landed result is bit-identical to the uncached version. */
+    const laneEls = {};
     const laneTarget = key => {
-      const lane = map.querySelector(".fl-" + key);
-      if (!lane) return null;
-      const stCls = key === "ds1" ? "fc-destroyer" : key === "ds2" ? "fc-moon" : null;
-      let body;
-      if (stCls) {
-        const st = map.querySelector(".mg-station." + stCls);
-        if (!st) return null;
-        // the SMALLEST fc-filled circle is the station's core dot — the thing
-        // the visitor's eye (and cursor) reads as "the station" — not the big
-        // outer shell. The arrow must land on that inner dot precisely.
-        body = [...st.querySelectorAll("circle")]
-          .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)
-          .sort((a, b) => (+a.getAttribute("r") || 1e9) - (+b.getAttribute("r") || 1e9))[0];
-      } else {
-        /* The operating planets' PLANETS.r is the HALO radius, and the halo is
-           opacity:0 until hover - so ending on it left the arrow 10-13 units
-           clear of the sphere anyone can actually see (fly 13.1, form 11.4,
-           storm 9.7). Target the painted body instead, exactly as the two
-           stations do, so all five behave identically. */
-        body = map.querySelector('.sm-planet circle[fill="url(#smp-' + key + ')"]');
+      let ce = laneEls[key];
+      if (!ce || !ce.lane.isConnected || !ce.body.isConnected) {
+        const lane = map.querySelector(".fl-" + key);
+        if (!lane) return null;
+        const stCls = key === "ds1" ? "fc-destroyer" : key === "ds2" ? "fc-moon" : null;
+        let body;
+        if (stCls) {
+          const st = map.querySelector(".mg-station." + stCls);
+          if (!st) return null;
+          // the SMALLEST fc-filled circle is the station's core dot — the thing
+          // the visitor's eye (and cursor) reads as "the station" — not the big
+          // outer shell. The arrow must land on that inner dot precisely.
+          body = [...st.querySelectorAll("circle")]
+            .filter(c => (c.getAttribute("fill") || "").indexOf("url(#fc") === 0)
+            .sort((a, b) => (+a.getAttribute("r") || 1e9) - (+b.getAttribute("r") || 1e9))[0];
+        } else {
+          /* The operating planets' PLANETS.r is the HALO radius, and the halo is
+             opacity:0 until hover - so ending on it left the arrow 10-13 units
+             clear of the sphere anyone can actually see (fly 13.1, form 11.4,
+             storm 9.7). Target the painted body instead, exactly as the two
+             stations do, so all five behave identically. */
+          body = map.querySelector('.sm-planet circle[fill="url(#smp-' + key + ')"]');
+        }
+        if (!body) return null;
+        ce = laneEls[key] = { lane, body };
       }
-      if (!body) return null;
+      const lane = ce.lane, body = ce.body;
       let bb, mb, ml;
       try { bb = body.getBBox(); mb = body.getCTM(); ml = lane.getCTM(); } catch (e) { return null; }
       if (!bb || !bb.width || !mb || !ml) return null;
@@ -11678,13 +11716,16 @@ function renderSystem() {
         if (tr && tr.indexOf("scale") !== -1) { bloomed.push([el, tr]); el.style.transform = ""; }
       });
       try {
-      ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+      ["form", "storm", "fly", "ds1", "ds2"].forEach(k => landLane(k));
       } finally {
         bloomed.forEach(([el, tr]) => { el.style.transform = tr; });
       }
     };
-    function landLane(key) {
-        const t = laneTarget(key);
+    function landLane(key, t) {
+        /* FF-PERF: the tracker precomputes targets (all reads first, all
+           writes after — one layout flush per frame); every other caller
+           still lands with a live measurement. */
+        if (t === undefined) t = laneTarget(key);
         if (!t || !(t.r > 0)) return;
         // #smArr is userSpaceOnUse with an 8-wide viewBox, refX 6.5 and
         // markerWidth 18, so the tip extends (8-6.5)x(18/8) = 3.375 units past
@@ -11733,21 +11774,24 @@ function renderSystem() {
           if (!(ul > .5)) return;
           ux /= ul; uy /= ul;
           const nx = (t.cx + ux * bite).toFixed(1), ny = (t.cy + uy * bite).toFixed(1);
-          if (/C/i.test(dAttr) && nums.length >= 8) {
-            pth.setAttribute("d", "M " + nums[0] + " " + nums[1]
+          const d2 = /C/i.test(dAttr) && nums.length >= 8
+            ? "M " + nums[0] + " " + nums[1]
               + " C " + nums[2] + " " + nums[3]
               + ", " + nums[4] + " " + nums[5]
-              + ", " + nx + " " + ny);
-          } else {
-            pth.setAttribute("d", "M " + nums[0] + " " + nums[1] + " L " + nx + " " + ny);
-          }
+              + ", " + nx + " " + ny
+            : "M " + nums[0] + " " + nums[1] + " L " + nx + " " + ny;
+          /* FF-PERF: identical geometry → no attribute write → no paint
+             invalidation. The three static planet lanes stop costing anything
+             once settled; the two orbiting stations' lanes (whose endpoints
+             genuinely move) still update every frame exactly as before. */
+          if (pth.__ffLastD !== d2) { pth.__ffLastD = d2; pth.setAttribute("d", d2); }
         });
     }
     fitLaneHeads();
     // headless test hook: the preview pane gets no rAF, so expose one
     // synchronous pass of EXACTLY what the live tracker below runs each frame
     // (direct landLane against rendered geometry — same convention as __ffSpx).
-    window.__ffLandLanes = () => ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+    window.__ffLandLanes = () => ["form", "storm", "fly", "ds1", "ds2"].forEach(k => landLane(k));
     /* Land ALL FIVE lanes live, every frame the map is on screen. The two
        future stations ORBIT on a motion path, so a one-time fit leaves their
        arrows pointing at an empty stretch of ring; and the three operating
@@ -11757,16 +11801,25 @@ function renderSystem() {
        converges every tip onto the settled body within a frame and keeps the
        station arrows pinned to their moving cores precisely. */
     {
-      let mapVisible = false;
-      new IntersectionObserver(es => { es.forEach(e => { mapVisible = e.isIntersecting; }); })
-        .observe(map);
+      let mapVisible = false, laneRaf = 0;
+      const LANE_KEYS = ["form", "storm", "fly", "ds1", "ds2"];
       const track = () => {
-        if (mapVisible && !map.classList.contains("diving")) {
-          ["form", "storm", "fly", "ds1", "ds2"].forEach(landLane);
+        laneRaf = 0;
+        /* FF-PERF: while the map is off-screen the loop parks itself entirely
+           (no 60Hz no-op callbacks); the observer below re-arms it the moment
+           the map returns, before it can be seen. */
+        if (!mapVisible) return;
+        if (!map.classList.contains("diving")) {
+          const targets = LANE_KEYS.map(k => laneTarget(k));   // all reads…
+          LANE_KEYS.forEach((k, i) => landLane(k, targets[i])); // …then all writes
         }
-        requestAnimationFrame(track);
+        laneRaf = requestAnimationFrame(track);
       };
-      requestAnimationFrame(track);
+      new IntersectionObserver(es => {
+        es.forEach(e => { mapVisible = e.isIntersecting; });
+        if (mapVisible && !laneRaf) laneRaf = requestAnimationFrame(track);
+      }).observe(map);
+      laneRaf = requestAnimationFrame(track);
     }
     updateFamilyPaths();
     // the tall map overflows the 100vh pinned stage — grow the section by the
@@ -12070,7 +12123,19 @@ updateFamilyPaths();
   const stage = build && build.querySelector(".sys-build-stage");
   const nvCv = stage && stage.querySelector(".sys-nova");
   const nvCtx = nvCv ? nvCv.getContext("2d") : null;
-  let bw = 0, bh = 0;
+  let bw = 0, bh = 0, bRes = 0, bNp = -9, bVy = scrollY, bScrub = false, bSettle = 0, bMoveAt = 0;
+  /* FF-PERF: native-res settle for the nova — re-arms instead of painting if
+     a scroll frame landed recently, so a slow machine's long frame gaps can
+     never interleave native repaints into the middle of a fling. */
+  const novaSettle = () => {
+    if (performance.now() - bMoveAt < 240) { bSettle = setTimeout(novaSettle, 260); return; }
+    const f2 = Math.min(2, window.devicePixelRatio || 1);
+    if (!nvCtx || bRes >= f2 || bw < 2) return;
+    bRes = f2;
+    nvCv.width = Math.round(bw * f2); nvCv.height = Math.round(bh * f2);
+    nvCtx.setTransform(f2, 0, 0, f2, 0, 0);
+    if (window.__ffNovaDraw && bNp >= 0) window.__ffNovaDraw(nvCtx, bNp, bw, bh);
+  };
   const driveBuild = sp2 => {
     sp2 = _cl(sp2, 0, 1);
     const np = _cl(sp2 / .06, 0, 1);
@@ -12086,15 +12151,35 @@ updateFamilyPaths();
     if (nvCtx && window.__ffNovaDraw) {
       if (fade <= 0) { if (nvCv.style.opacity !== "0") nvCv.style.opacity = "0"; }
       else {
-        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        /* FF-PERF: same dynamic-resolution scrub as the set-piece canvases —
+           a capped backing store while the wheel is flying, a native-res
+           re-draw of the SAME frame the moment it settles, and no redraw at
+           all when the nova's own progress hasn't changed (its art is a pure
+           function of np, so repainting an identical np was pure waste).
+           Speed is px per painted frame (machine-independent), with the same
+           30-in / 12-out hysteresis as the set-piece controller. */
+        const full = Math.min(2, window.devicePixelRatio || 1);
+        const stepNv = Math.abs(scrollY - bVy);
+        bVy = scrollY;
+        bMoveAt = performance.now();
+        if (stepNv > 30) bScrub = true;
+        else if (stepNv < 12) bScrub = false;
         const W2 = Math.max(2, stage.clientWidth), H2 = Math.max(2, stage.clientHeight);
-        if (bw !== W2 || bh !== H2) {
-          bw = W2; bh = H2;
-          nvCv.width = Math.round(W2 * dpr); nvCv.height = Math.round(H2 * dpr);
-          nvCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const npMoved = Math.abs(np - bNp) > .0004;
+        let res = bScrub ? Math.min(full, Math.max(.55, Math.sqrt(2.6e6 / (W2 * H2)))) : full;
+        /* dropping TO scrub res only pays when the nova is being re-drawn
+           anyway (a resize clears the canvas); restoring native is always
+           allowed */
+        if (res < bRes && !npMoved && bw === W2 && bh === H2) res = bRes;
+        if (bw !== W2 || bh !== H2 || bRes !== res) {
+          bw = W2; bh = H2; bRes = res; bNp = -9;
+          nvCv.width = Math.round(W2 * res); nvCv.height = Math.round(H2 * res);
+          nvCtx.setTransform(res, 0, 0, res, 0, 0);
         }
         nvCv.style.opacity = fade.toFixed(3);
-        window.__ffNovaDraw(nvCtx, np, bw, bh);
+        if (Math.abs(np - bNp) > .0004) { bNp = np; window.__ffNovaDraw(nvCtx, np, bw, bh); }
+        clearTimeout(bSettle);
+        if (bRes < full) bSettle = setTimeout(novaSettle, 260);
       }
     }
     // dock-drop: the map waits LOW, its sun slot exactly under the settled
@@ -12506,6 +12591,10 @@ function initChapterPhotos() {
   setInterval(() => {
     figs.forEach(o => {
       if (!o.f.isConnected) return;              // the figure self-removes if a file is missing
+      /* FF-PERF: while the journey chapter is far off-screen (.ff-park) leave
+         the crossfade where it is — no class churn, no blur-backdrop swap and
+         re-decode for photographs nobody can see. It resumes on approach. */
+      if (o.f.closest(".ff-park")) return;
       o.imgs[o.i].classList.remove("on");
       o.i = (o.i + 1) % o.imgs.length;
       const next = o.imgs[o.i];
@@ -14724,7 +14813,9 @@ function initStars() {
   const inner = hero.querySelector(".hero-inner");
   hero.insertBefore(field, inner);
   const fire = () => {
-    if (REDUCED || document.hidden) return;
+    /* FF-PERF: .ff-park = the hero is far off-screen (see FF-PERF 4) — skip
+       the restart (and its forced reflow) for a star nobody can see. */
+    if (REDUCED || document.hidden || field.closest(".ff-park")) return;
     shoot.style.left = rnd(45, 90).toFixed(1) + "%";
     shoot.style.top = rnd(6, 38).toFixed(1) + "%";
     shoot.classList.remove("zip");
@@ -14748,7 +14839,7 @@ function initStars() {
     + '<i class="mt-bow"></i><i class="mt-ember e1"></i><i class="mt-ember e2"></i><i class="mt-ember e3"></i>';
   field.appendChild(meteor);
   const blaze = () => {
-    if (REDUCED || document.hidden) return;
+    if (REDUCED || document.hidden || field.closest(".ff-park")) return;
     // random trajectory: sometimes down-left, sometimes down-right,
     // varying steepness, size and entry point
     const leftFall = Math.random() < 0.55;
@@ -16139,14 +16230,46 @@ function initSetpieces() {
   if (!items.length) return;
   const eligible = () => innerWidth >= 901 && !REDUCED;
   const gate = () => document.documentElement.classList.toggle("spx", eligible());
-  const size = it => {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+  /* FF-PERF: dynamic-resolution scrub. Redrawing a full-viewport canvas at
+     native resolution on EVERY scrolled frame is pixel-bound: on wide screens
+     (3440×1440, or 4K at 125–150% Windows scaling — the typical Edge setup)
+     each redraw pushes 5–8M pixels through the rasteriser and the scrub turns
+     into a slideshow, worst of all when the browser is compositing in
+     software (Edge with "use hardware acceleration" off, remote desktop,
+     driver blocklists). So: while the page is being FLUNG the backing store
+     is capped to a pixel budget and the browser stretches it — imperceptible
+     in motion — and the instant scrolling slows below a reading pace or
+     stops, the very same frame is re-drawn at full native resolution. Every
+     frame a visitor can actually inspect is therefore pixel-identical to the
+     original renderer; only frames that exist for one screen refresh in the
+     middle of a fast scroll are ever approximated. On screens inside the
+     budget (1080p/1440p laptops) nothing changes at all. */
+  const fullRes = () => Math.min(2, window.devicePixelRatio || 1);
+  /* One in-motion pixel budget for every piece. A larger "keep text denser"
+     budget was measured on a software-rastered 3440×1440: the ~12% linear
+     saving was cancelled by the extra full-canvas upscale blit, so the
+     text-bearing pieces ran NET SLOWER than uncapped. At 2.6MP every piece
+     wins. Text is only ever below native during an active fling and
+     sharpens within ~260ms of the wheel pausing. */
+  const SCRUB_PX = 2.6e6;
+  /* Speed is measured in px per PAINTED FRAME, not px/second: on a struggling
+     machine the frame rate collapses, so a px/s threshold would read "slow"
+     and disable the cap exactly where it is needed most. Per-frame deltas are
+     machine-independent: a big jump between two painted frames means the
+     viewer cannot inspect either of them, whatever the wall-clock frame rate. */
+  const FAST_STEP = 30;          // px moved since the last painted frame → scrub
+  const SLOW_STEP = 12;          // …and back to native only below this (hysteresis)
+  const size = (it, wantFull) => {
     const r = it.el.querySelector(".tr2-stage").getBoundingClientRect();
     const W = Math.max(2, Math.round(r.width)), H = Math.max(2, Math.round(r.height));
-    if (it.w === W && it.h === H) return;
-    it.w = W; it.h = H;
-    it.cv.width = Math.round(W * dpr); it.cv.height = Math.round(H * dpr);
-    it.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const full = fullRes();
+    const res = wantFull === false
+      ? Math.min(full, Math.max(.55, Math.sqrt(SCRUB_PX / (W * H))))
+      : full;
+    if (it.w === W && it.h === H && it.res === res) return;
+    it.w = W; it.h = H; it.res = res;
+    it.cv.width = Math.round(W * res); it.cv.height = Math.round(H * res);
+    it.ctx.setTransform(res, 0, 0, res, 0, 0);
     it.last = -9;
   };
   const progress = it => {
@@ -16154,7 +16277,7 @@ function initSetpieces() {
     const span = r.height - innerHeight;
     return cl(span > 0 ? -r.top / span : 0, 0, 1);
   };
-  const paint = force => {
+  const paint = (force, wantFull) => {
     // self-heal the gate: some environments miss resize events
     if (eligible() !== document.documentElement.classList.contains("spx")) gate();
     if (!eligible()) {
@@ -16169,8 +16292,15 @@ function initSetpieces() {
       // they pin — exactly when the dive's planet fills the screen
       if (it.draw === drawClouds) it.el.style.visibility = r.top > 1 ? "hidden" : "";
       if (!force && (r.bottom < -80 || r.top > innerHeight + 80)) return;
-      size(it);
-      const p = progress(it);
+      /* FF-PERF: dropping TO scrub resolution is only allowed when this
+         piece's own progress moved (a resize clears the canvas, forcing a
+         redraw — pointless for a piece whose scrub is pinned at 0 or 1 and
+         is merely sliding past). Restoring native res is allowed any time. */
+      const pNow = progress(it);
+      const moved = force || Math.abs(pNow - it.last) >= .0004;
+      if (wantFull !== false) size(it, true);
+      else if (moved) size(it, false);
+      const p = pNow;
       if (!force && Math.abs(p - it.last) < .0004) return;
       it.last = p;
       it.draw(it.ctx, p, it.w, it.h);
@@ -16178,12 +16308,37 @@ function initSetpieces() {
       else if (it.draw === drawFunding) updateFunding(p);
     });
   };
-  const onScroll = rafScroll(() => paint(false));
+  /* FF-PERF: the scroll path measures its own per-frame step; a fast fling
+     paints at the capped scrub resolution and arms a settle pass that
+     re-draws the same frame at native resolution once the movement stops.
+     Hysteresis (30 in / 12 out) because a resolution flip forces a full
+     redraw — flapping around one threshold would cost double. The settle
+     callback re-arms instead of painting if a scroll frame landed recently:
+     on a struggling machine the gap BETWEEN painted frames can exceed any
+     fixed timeout, and a mis-fired settle would interleave native-res
+     repaints into the middle of a fling — the exact double-work this
+     controller exists to prevent. */
+  let vPrevY = scrollY, settleT = 0, scrubbing = false, lastMoveAt = 0;
+  const settle = () => {
+    if (performance.now() - lastMoveAt < 240) { settleT = setTimeout(settle, 260); return; }
+    scrubbing = false;
+    paint(false, true);
+  };
+  const onScroll = rafScroll(() => {
+    const step = Math.abs(scrollY - vPrevY);
+    vPrevY = scrollY;
+    lastMoveAt = performance.now();
+    if (step > FAST_STEP) scrubbing = true;
+    else if (step < SLOW_STEP) scrubbing = false;
+    paint(false, !scrubbing);
+    clearTimeout(settleT);
+    if (scrubbing) settleT = setTimeout(settle, 260);
+  });
   addEventListener("scroll", onScroll, { passive: true });
   addEventListener("resize", () => { gate(); items.forEach(it => { it.w = 0; }); paint(true); });
   gate();
   paint(true);
-  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); else if (it.draw === drawFunding) updateFunding(p); it.last = p; return { w: it.w, h: it.h }; };
+  window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it, true); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); else if (it.draw === drawFunding) updateFunding(p); it.last = p; return { w: it.w, h: it.h }; };
 }
 
 /* The investment-focus screen eases into the white cloud field continuously.
@@ -16703,6 +16858,26 @@ safeBoot("mobileCopy", initMobileCopy); // last: it edits copy every builder abo
 window.__ffRevealAll = () => {
   $$(".reveal").forEach(el => { el.classList.add("in"); (el.__onin || []).forEach(fn => fn()); el.__onin = []; });
 };                                                  // <-- LINE BEFORE
+
+/* ===== FF-PERF 4: park ambient animations for chapters far outside the viewport.
+   Every top-level chapter (sections, the hero pin, the set-piece bands, the
+   footer) gets .ff-park while it sits more than ~1.75 viewports away from the
+   screen — see the FF-PERF 1 stylesheet block. The margin is generous enough
+   that a chapter is always un-parked well before any pixel of it can appear,
+   so the page LOOKS identical; it simply stops spending main-thread time on
+   birds flapping, plumes flickering and clouds drifting in chapters the
+   visitor cannot see. Progressive: without IntersectionObserver nothing is
+   ever parked and behaviour is exactly as before. ===== */
+(function parkAmbient(){
+  if (!("IntersectionObserver" in window)) return;
+  var els = document.querySelectorAll("main > *, body > footer");
+  if (!els.length) return;
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ e.target.classList.toggle("ff-park", !e.isIntersecting); });
+  }, { rootMargin: "175% 0px 175% 0px" });
+  els.forEach(function(el){ io.observe(el); });
+})();
+/* ===== end FF-PERF 4 ===== */
 
 /* ===== PATCH 3: only keep #sysMap's promoted layers alive while #system is near the viewport ===== */
 (function parkSystemMap(){

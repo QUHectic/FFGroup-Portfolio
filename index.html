@@ -12123,7 +12123,7 @@ updateFamilyPaths();
   const stage = build && build.querySelector(".sys-build-stage");
   const nvCv = stage && stage.querySelector(".sys-nova");
   const nvCtx = nvCv ? nvCv.getContext("2d") : null;
-  let bw = 0, bh = 0, bRes = 0, bNp = -9, bVy = scrollY, bScrub = false, bSettle = 0, bMoveAt = 0;
+  let bw = 0, bh = 0, bRes = 0, bNp = -9, bVy = scrollY, bScrub = false, bSettle = 0, bMoveAt = 0, bDrawT = 0;
   /* FF-PERF: native-res settle for the nova — re-arms instead of painting if
      a scroll frame landed recently, so a slow machine's long frame gaps can
      never interleave native repaints into the middle of a fling. */
@@ -12161,9 +12161,14 @@ updateFamilyPaths();
         const full = Math.min(2, window.devicePixelRatio || 1);
         const stepNv = Math.abs(scrollY - bVy);
         bVy = scrollY;
-        bMoveAt = performance.now();
-        if (stepNv > 30) bScrub = true;
-        else if (stepNv < 12) bScrub = false;
+        const nowMv = performance.now();
+        /* dual speed signal, same rationale as the set-piece controller:
+           per-frame step catches struggling machines, px/s catches
+           high-refresh displays whose per-frame steps are tiny. */
+        const velNv = bMoveAt ? stepNv / Math.max(1, nowMv - bMoveAt) * 1000 : 0;
+        bMoveAt = nowMv;
+        if (stepNv > 30 || velNv > 900) bScrub = true;
+        else if (stepNv < 12 && velNv < 400) bScrub = false;
         const W2 = Math.max(2, stage.clientWidth), H2 = Math.max(2, stage.clientHeight);
         const npMoved = Math.abs(np - bNp) > .0004;
         let res = bScrub ? Math.min(full, Math.max(.55, Math.sqrt(2.6e6 / (W2 * H2)))) : full;
@@ -12177,7 +12182,14 @@ updateFamilyPaths();
           nvCtx.setTransform(res, 0, 0, res, 0, 0);
         }
         nvCv.style.opacity = fade.toFixed(3);
-        if (Math.abs(np - bNp) > .0004) { bNp = np; window.__ffNovaDraw(nvCtx, np, bw, bh); }
+        /* governor cadence: while flinging on a high-refresh display, cap the
+           nova to ~66fps redraws (tiny np steps inside a 15ms window wait for
+           the next frame); big jumps always draw, settle restores native. */
+        const nowNv2 = performance.now();
+        if (Math.abs(np - bNp) > .0004
+            && !(bScrub && bNp >= 0 && Math.abs(np - bNp) < .02 && nowNv2 - bDrawT < 15)) {
+          bNp = np; window.__ffNovaDraw(nvCtx, np, bw, bh); bDrawT = nowNv2;
+        }
         clearTimeout(bSettle);
         if (bRes < full) bSettle = setTimeout(novaSettle, 260);
       }
@@ -16252,19 +16264,40 @@ function initSetpieces() {
      wins. Text is only ever below native during an active fling and
      sharpens within ~260ms of the wheel pausing. */
   const SCRUB_PX = 2.6e6;
+  /* FF-PERF governor: some machines cannot sustain even the capped cadence —
+     Edge with "graphics acceleration" off (software raster), efficiency
+     mode, or a 170Hz ultrawide asking for ~3x the frames of a 60Hz screen.
+     Instead of guessing, measure: every in-motion draw reports its real
+     cost, and while draws are slow the budget shrinks (to 1.2MP floor) and
+     the redraw interval stretches (to ~30fps). When draws are fast it heals
+     back to full. A healthy GPU machine draws these in 1-3ms and never
+     trips it; a struggling Edge converges in a few frames to a load it can
+     actually carry, and page scrolling itself stays composited and fluid.
+     Resting frames are always native-resolution regardless. */
+  let scrubBudget = SCRUB_PX;
+  let scrubGap = 15;             // ms between in-motion redraws (~66fps; no-op at 60Hz)
+  let lastDrawT = 0;
   /* Speed is measured in px per PAINTED FRAME, not px/second: on a struggling
      machine the frame rate collapses, so a px/s threshold would read "slow"
      and disable the cap exactly where it is needed most. Per-frame deltas are
      machine-independent: a big jump between two painted frames means the
      viewer cannot inspect either of them, whatever the wall-clock frame rate. */
-  const FAST_STEP = 30;          // px moved since the last painted frame → scrub
-  const SLOW_STEP = 12;          // …and back to native only below this (hysteresis)
+  /* TWO speed signals, either one engages the scrub:
+     - px per painted FRAME (30 in / 12 out): catches struggling machines,
+       whose few painted frames take big steps, whatever the wall clock says.
+     - px per SECOND (900 in / 400 out): catches high-refresh displays. At
+       170Hz a wheel glide spreads over ~3x more frames than at 60Hz, so the
+       per-frame step shrinks to ~10px and the step signal alone would never
+       fire — while the page is genuinely flying at 2000px/s and repainting
+       native-res canvases up to 170 times a second. */
+  const FAST_STEP = 30, SLOW_STEP = 12;
+  const FAST_VEL = 900, SLOW_VEL = 400;
   const size = (it, wantFull) => {
     const r = it.el.querySelector(".tr2-stage").getBoundingClientRect();
     const W = Math.max(2, Math.round(r.width)), H = Math.max(2, Math.round(r.height));
     const full = fullRes();
     const res = wantFull === false
-      ? Math.min(full, Math.max(.55, Math.sqrt(SCRUB_PX / (W * H))))
+      ? Math.min(full, Math.max(.4, Math.sqrt(scrubBudget / (W * H))))
       : full;
     if (it.w === W && it.h === H && it.res === res) return;
     it.w = W; it.h = H; it.res = res;
@@ -16302,8 +16335,27 @@ function initSetpieces() {
       else if (moved) size(it, false);
       const p = pNow;
       if (!force && Math.abs(p - it.last) < .0004) return;
+      /* governor: while flinging, skip a redraw that lands inside the
+         current gap AND would only advance the art a whisker (<.02 of a
+         multi-hundred-vh scrub) — a 170Hz display then repaints these at a
+         normal-monitor cadence while the page itself still scrolls at
+         full refresh. Big jumps (nav clicks, fresh pieces) always draw. */
+      const nowD = performance.now();
+      if (wantFull === false && !force && it.last > -1
+          && Math.abs(p - it.last) < .02 && nowD - lastDrawT < scrubGap) return;
       it.last = p;
       it.draw(it.ctx, p, it.w, it.h);
+      lastDrawT = nowD;
+      if (wantFull === false) {
+        const drawMs = performance.now() - nowD;
+        if (drawMs > 12) {
+          scrubBudget = Math.max(1.2e6, scrubBudget * .8);
+          scrubGap = Math.min(34, scrubGap + 3);
+        } else if (drawMs < 5) {
+          scrubBudget = Math.min(SCRUB_PX, scrubBudget * 1.15);
+          scrubGap = Math.max(15, scrubGap - 1);
+        }
+      }
       if (it.draw === drawPlanet) updateRunway(p);
       else if (it.draw === drawFunding) updateFunding(p);
     });
@@ -16327,9 +16379,11 @@ function initSetpieces() {
   const onScroll = rafScroll(() => {
     const step = Math.abs(scrollY - vPrevY);
     vPrevY = scrollY;
-    lastMoveAt = performance.now();
-    if (step > FAST_STEP) scrubbing = true;
-    else if (step < SLOW_STEP) scrubbing = false;
+    const nowS = performance.now();
+    const vel = lastMoveAt ? step / Math.max(1, nowS - lastMoveAt) * 1000 : 0;
+    lastMoveAt = nowS;
+    if (step > FAST_STEP || vel > FAST_VEL) scrubbing = true;
+    else if (step < SLOW_STEP && vel < SLOW_VEL) scrubbing = false;
     paint(false, !scrubbing);
     clearTimeout(settleT);
     if (scrubbing) settleT = setTimeout(settle, 260);

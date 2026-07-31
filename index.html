@@ -2569,6 +2569,11 @@ br.mbr{display:none;}
 .ch-ph{position:relative;flex:1;min-height:230px;border-radius:18px;border:1px solid var(--line);overflow:hidden;
   background:radial-gradient(120% 85% at 18% 0%, color-mix(in srgb,var(--acc,var(--pink)) 20%,transparent), transparent 62%),
              linear-gradient(155deg,#10111c,#0a0b13);}
+/* photo chapters carry this ghost block as a HIDDEN fallback (it swaps in only
+   if every photograph fails to load). The condensed-view thumb rule below sets
+   display:grid, which would out-rank the [hidden] attribute's UA display:none
+   — this guard keeps a hidden ghost hidden everywhere. */
+.ch-ph[hidden]{display:none!important;}
 .ch-ph .ph-kick{position:absolute;left:20px;top:18px;font-size:.66rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(243,244,251,.55);}
 .ch-ph b{position:absolute;right:14px;bottom:-12px;font-family:"Orbitron",system-ui,sans-serif;font-size:6.2rem;font-weight:700;
   color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--acc,var(--pink)) 55%,#3a3d52);opacity:.85;}
@@ -5918,7 +5923,25 @@ const FG_DATA = {
       summary: "The launchpad",
       alt: "The King’s Awards for Enterprise emblem",
       photos: ["journey-photos/ch20-a.webp"],
-      nextQuestion: "The journey proved the model. What could Freedom Global become from here?" },
+      nextQuestion: "And when eBay ranked every seller in the category, where would Freedom stand?" },
+    { year: "August 2026", kick: "The Scoreboard", q: "Where did Freedom really stand among every seller on eBay?",
+      title: "Ranked First <br class='tbr'>Among 1,193 <br class='tbr'>Sellers",
+      subtitle: "eBay’s own listing quality report placed Freedom at number one in its core category, and inside the top five in two more.",
+      body: [
+        "At the end of July 2026, eBay’s listing quality report delivered an independent verdict on seven years of work. Ranked by sales against every other seller in the category, Freedom’s storefront placed first out of 1,193 sellers in Fire Extinguishers. The company that began with one rusty, second hand extinguisher on Facebook Marketplace was now, by eBay’s own measure, the number one extinguisher seller on eBay UK.",
+        "The report showed the same story beyond the core category. Freedom ranked third out of 1,594 sellers in Disposable Gloves and fifth out of 2,751 sellers in Single Use Batteries — three top five positions across more than 5,500 competing sellers.",
+        "No projection, pitch or ambition produced these numbers; the marketplace did. The listings, stock depth, service standards and repeat customers built year after year had compounded into measurable market leadership on the very platform where the journey began."
+      ],
+      highlight: "From one rusty extinguisher to eBay UK’s number one extinguisher seller — ranked by the marketplace itself.",
+      statItems: [
+        { value: "1st of 1,193", label: "Fire Extinguishers sellers", icon: "ext" },
+        { value: "3rd of 1,594", label: "Disposable Gloves sellers", icon: "box" },
+        { value: "5th of 2,751", label: "Single Use Batteries sellers", icon: "tag" }
+      ],
+      summary: "Number one on eBay",
+      alt: "eBay sales rank graphics: number one of 1,193 in Fire Extinguishers, three of 1,594 in Disposable Gloves, five of 2,751 in Single Use Batteries",
+      photos: ["journey-photos/ch21-a.webp", "journey-photos/ch21-b.webp", "journey-photos/ch21-c.webp"],
+      nextQuestion: "" },
   ],
 
   clients: [
@@ -12825,13 +12848,16 @@ function renderJourney() {
         di > 0 ? `${m.cap.slice(0, di)} —<span class="qa"> ${m.cap.slice(di + 3)}</span>` : m.cap}</p></div>`;
     }
     // a chapter may carry ONE shot or a set that cross-fades. A missing file
-    // simply drops the figure, so the layout never shows a broken image.
+    // simply drops the figure; if EVERY file is missing the whole frame swaps
+    // for the ghost-number art a photo-less chapter would have carried, so
+    // the card can never show an empty picture box.
     const shots = (m.photos && m.photos.length) ? m.photos : (m.photo ? [m.photo] : null);
+    const ghost = hid => `<div class="ch-ph" aria-hidden="true"${hid ? " hidden" : ""}><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b>${m.summary ? `<span class="ch-summary"><i>Timeline summary</i><strong>${m.summary}</strong></span>` : ""}</div>`;
     const side = shots
       ? `<figure class="ch-fig${shots.length > 1 ? " cycle" : ""}">${shots.map((src, k) =>
-          `<img loading="lazy" decoding="async" src="${src}" alt="${m.alt || m.kick || ""}"${k === 0 ? ' class="on"' : ""} onerror="const f=this.closest('.ch-fig');this.remove();const n=f&&f.querySelector('img:not(.ch-blurbg)');if(n)n.classList.add('on')">`
-        ).join("")}</figure>${quote}`
-      : `<div class="ch-ph" aria-hidden="true"><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b>${m.summary ? `<span class="ch-summary"><i>Timeline summary</i><strong>${m.summary}</strong></span>` : ""}</div>${quote}`;
+          `<img loading="lazy" decoding="async" src="${src}" alt="${m.alt || m.kick || ""}"${k === 0 ? ' class="on"' : ""} onerror="const f=this.closest('.ch-fig');this.remove();const n=f&&f.querySelector('img:not(.ch-blurbg)');if(n)n.classList.add('on');else if(f){const bx=f.closest('.ch-figbox')||f;const g=bx.parentElement&&bx.parentElement.querySelector('.ch-ph[hidden]');if(g)g.hidden=false;bx.remove()}">`
+        ).join("")}</figure>${ghost(true)}${quote}`
+      : `${ghost(false)}${quote}`;
     return `
     <article class="jcard chapter reveal" data-ji="${i}" style="--acc:${acc}">
       <div class="ch-main">

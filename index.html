@@ -2549,6 +2549,10 @@ br.mbr{display:none;}
 .ch-fig .ch-blurbg{object-fit:cover;transform:scale(1.18);opacity:.38;
   filter:blur(22px) saturate(1.15);}
 .ch-fig img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;}
+/* art that is NOT the usual 0.86 photograph (data-figar, e.g. ch21's 2:3 rank
+   posters) fills the shared frame instead of sitting in it with side bars —
+   every chapter box stays exactly the same size as every other */
+.ch-fig[data-figar] img:not(.ch-blurbg){object-fit:cover;}
 /* chapters with several shots cross fade between them; the frame is sized to
    the tallest of the set so no shot in the cycle is ever clipped */
 .ch-fig.cycle img:not(.ch-blurbg){opacity:0;transition:opacity .9s var(--ease);}
@@ -4196,20 +4200,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
      chapter shot (the 0.86 photographs). 92x107 matches that shape exactly,
      so each photo shows COMPLETE with no letterbox bars — and 107 still sits
      inside the title-row envelope, so card heights are untouched.
-     THE HEIGHT IS THE CONSTANT, THE WIDTH FOLLOWS THE ART: a chapter whose
-     art declares its own --figar (ch21's 0.64 rank posters) was letterboxed
-     to 74% inside the 0.86 box. Deriving the width from --figar fills every
-     thumb completely — 107 x .86 = 92 for the photographs (byte-identical to
-     before), 107 x .64 = 68.5 for the posters — while the fixed height and
-     the fixed 92px side column keep every card's geometry exactly as it is. */
+     ONE THUMB SIZE FOR EVERY CHAPTER — 92x107, no exceptions. Art that is
+     not a 0.86 photograph (data-figar, ch21's posters) fills that same box
+     by cover rather than shrinking the box to its own ratio, so no chapter
+     is ever a different size from its neighbours. */
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig{
-    display:block;position:relative;height:107px;width:calc(107px * var(--figar,.86));
-    margin-inline:auto;padding:0;overflow:hidden;
+    display:block;position:relative;width:92px;height:107px;padding:0;overflow:hidden;
     border-radius:14px;border:1px solid var(--line);
   }
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig img{
     position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:0;margin:0;
   }
+  .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig[data-figar] img{object-fit:cover;}
   /* thumb shows the lead shot only; the cross-fade timer still ticks safely */
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig.cycle img:not(.on):not(.ch-blurbg){opacity:0;}
   .jl-condensed .jcard.chapter:not(.ch-open) .ch-fig.cycle::before{display:none;}
@@ -12477,11 +12479,13 @@ function fitChapterFigures() {
       fig.parentNode.insertBefore(box, fig);
       box.appendChild(fig);
     }
-    /* a chapter can declare its art's own aspect (data-figar, e.g. the 2:3
-       rank posters) — the frame takes that shape on desktop, so the art
-       fills it exactly; the condensed/mobile rules out-cascade the variable
-       and keep their own strip and thumb geometry untouched */
-    if (fig.dataset.figar) box.style.setProperty("--figar", fig.dataset.figar);
+    /* EVERY CHAPTER FRAME IS THE SAME SIZE. data-figar declares that a
+       chapter's art is not the usual 0.86 photograph (ch21's 2:3 rank
+       posters). Reshaping the BOX to that ratio made chapter 21's frame
+       461x721 against everyone else's 461x536 — and its whole card 1066px
+       against 881px. The box now keeps the shared 0.86 reservation for every
+       chapter and the art fills it by cover instead (see the [data-figar]
+       rule), so the timeline holds one shape from chapter to chapter. */
     let blur = fig.querySelector(".ch-blurbg");
     if (!blur) {
       blur = document.createElement("img");

@@ -2549,9 +2549,9 @@ br.mbr{display:none;}
 .ch-fig .ch-blurbg{object-fit:cover;transform:scale(1.18);opacity:.38;
   filter:blur(22px) saturate(1.15);}
 .ch-fig img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;}
-/* art that is NOT the usual 0.86 photograph (data-figar, e.g. ch21's 2:3 rank
-   posters) fills the shared frame instead of sitting in it with side bars —
-   every chapter box stays exactly the same size as every other */
+/* non-photographic art (data-figar) is authored padded to the same 0.86 frame,
+   so it needs no cover-crop — kept as a hook if a future chapter ships art in
+   its own raw ratio */
 .ch-fig[data-figar] img:not(.ch-blurbg){object-fit:cover;}
 /* chapters with several shots cross fade between them; the frame is sized to
    the tallest of the set so no shot in the cycle is ever clipped */
@@ -5958,11 +5958,10 @@ const FG_DATA = {
       ],
       summary: "Number one on eBay",
       alt: "eBay sales rank graphics: number one of 1,193 in Fire Extinguishers, three of 1,594 in Disposable Gloves, five of 2,751 in Single Use Batteries",
-      /* the rank posters are 2:3 artwork, not 0.86 photographs — figAspect
-         reshapes this chapter's frame to the posters' own proportions so
-         they fill it completely, with nothing cropped and nothing padded */
-      figAspect: ".64",
-      photos: ["journey-photos/ch21a.webp", "journey-photos/ch21b.webp", "journey-photos/ch21c.webp"],
+      /* the rank posters ship padded to the deck's standard 0.86 frame (their
+         own black extends to the edges), so this chapter needs no special
+         framing: same box, same card height, nothing cropped, nothing zoomed */
+      photos: ["journey-photos/ch21a.webp?v=20260730", "journey-photos/ch21b.webp?v=20260730", "journey-photos/ch21c.webp?v=20260730"],
       nextQuestion: "" },
   ],
 

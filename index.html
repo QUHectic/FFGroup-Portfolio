@@ -2544,7 +2544,7 @@ br.mbr{display:none;}
    steady. Nothing is cropped or stretched: the picture is CONTAINED and
    centred, and the space around it carries a blurred, scaled copy of the same
    image, so a wide shot reads as a deliberate frame rather than a gap. */
-.ch-figbox{display:block;aspect-ratio:.86;}
+.ch-figbox{display:block;aspect-ratio:var(--figar,.86);} /* --figar: a chapter whose art isn't a 0.86 photograph reshapes its own frame (see data-figar) */
 .ch-figbox > .ch-fig{width:100%;height:100%;aspect-ratio:auto;}
 .ch-fig .ch-blurbg{object-fit:cover;transform:scale(1.18);opacity:.38;
   filter:blur(22px) saturate(1.15);}
@@ -5940,7 +5940,11 @@ const FG_DATA = {
       ],
       summary: "Number one on eBay",
       alt: "eBay sales rank graphics: number one of 1,193 in Fire Extinguishers, three of 1,594 in Disposable Gloves, five of 2,751 in Single Use Batteries",
-      photos: ["journey-photos/ch21-a.webp", "journey-photos/ch21-b.webp", "journey-photos/ch21-c.webp"],
+      /* the rank posters are 2:3 artwork, not 0.86 photographs — figAspect
+         reshapes this chapter's frame to the posters' own proportions so
+         they fill it completely, with nothing cropped and nothing padded */
+      figAspect: ".64",
+      photos: ["journey-photos/ch21a.webp", "journey-photos/ch21b.webp", "journey-photos/ch21c.webp"],
       nextQuestion: "" },
   ],
 
@@ -12457,6 +12461,11 @@ function fitChapterFigures() {
       fig.parentNode.insertBefore(box, fig);
       box.appendChild(fig);
     }
+    /* a chapter can declare its art's own aspect (data-figar, e.g. the 2:3
+       rank posters) — the frame takes that shape on desktop, so the art
+       fills it exactly; the condensed/mobile rules out-cascade the variable
+       and keep their own strip and thumb geometry untouched */
+    if (fig.dataset.figar) box.style.setProperty("--figar", fig.dataset.figar);
     let blur = fig.querySelector(".ch-blurbg");
     if (!blur) {
       blur = document.createElement("img");
@@ -12854,7 +12863,7 @@ function renderJourney() {
     const shots = (m.photos && m.photos.length) ? m.photos : (m.photo ? [m.photo] : null);
     const ghost = hid => `<div class="ch-ph" aria-hidden="true"${hid ? " hidden" : ""}><span class="ph-kick">${m.kick || ""}</span><b>${String(i + 1).padStart(2, "0")}</b>${m.summary ? `<span class="ch-summary"><i>Timeline summary</i><strong>${m.summary}</strong></span>` : ""}</div>`;
     const side = shots
-      ? `<figure class="ch-fig${shots.length > 1 ? " cycle" : ""}">${shots.map((src, k) =>
+      ? `<figure class="ch-fig${shots.length > 1 ? " cycle" : ""}"${m.figAspect ? ` data-figar="${m.figAspect}"` : ""}>${shots.map((src, k) =>
           `<img loading="lazy" decoding="async" src="${src}" alt="${m.alt || m.kick || ""}"${k === 0 ? ' class="on"' : ""} onerror="const f=this.closest('.ch-fig');this.remove();const n=f&&f.querySelector('img:not(.ch-blurbg)');if(n)n.classList.add('on');else if(f){const bx=f.closest('.ch-figbox')||f;const g=bx.parentElement&&bx.parentElement.querySelector('.ch-ph[hidden]');if(g)g.hidden=false;bx.remove()}">`
         ).join("")}</figure>${ghost(true)}${quote}`
       : `${ghost(false)}${quote}`;

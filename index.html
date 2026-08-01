@@ -109,7 +109,11 @@ section#team{overflow-x:clip;}
 .sm-brands .brand-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;}
 .sysmap{
   position:relative;margin:30px auto 0;max-width:1780px;
-  padding-inline:max(10px, calc(50vw - 890px));
+  /* constant padding only — the old max(10px, 50vw-890px) centring padding
+     double-counted with max-width under border-box, shrinking the map above
+     ~1800px viewports and collapsing it to ZERO width at ≥3560px (32:9
+     ultrawides showed an empty system chapter). margin:auto centres. */
+  padding-inline:10px;
   transform:perspective(1600px) rotateX(7deg);
   transform-origin:50% 22%;
 }
@@ -454,9 +458,13 @@ h1:focus,h2:focus{outline:none;}
    SCROLL PROGRESS + NAV
    ========================================================================== */
 #scrollProgress{
-  position:fixed;top:0;left:0;height:3px;width:0;z-index:90;
+  position:fixed;top:0;left:0;height:3px;width:100%;z-index:90;
   background:linear-gradient(90deg,var(--pink),var(--blue),var(--mint));
-  transition:width .12s linear;
+  /* FF-PERF 5: scaleX instead of animating width — a width transition on a
+     full-viewport fixed strip forced layout+paint every scroll frame (5120px
+     wide on ultrawides); a transform stays on the compositor. */
+  transform:scaleX(0);transform-origin:0 50%;
+  transition:transform .12s linear;
 }
 .nav{
   position:sticky;top:0;z-index:80;
@@ -3411,7 +3419,11 @@ input[type="range"]::-moz-range-thumb{
    difference-blend keeps it visible on black and white sections alike.
    ========================================================================== */
 @media (pointer:fine){
-  html.has-cursor, html.has-cursor *{cursor:none!important;}
+  /* :not(.perf-lite): under the degraded tier the custom cursor is hidden, so
+     the native cursor must come back — and via :not() every element's OWN
+     cursor (pointer on buttons, grab on the slider knobs, zoom-in on photos)
+     resurfaces instead of a blanket auto. */
+  html.has-cursor:not(.perf-lite), html.has-cursor:not(.perf-lite) *{cursor:none!important;}
   .cur-dot,.cur-ring{
     position:fixed;left:0;top:0;z-index:10000;pointer-events:none;
     border-radius:50%;mix-blend-mode:difference;opacity:0;
@@ -4368,6 +4380,41 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
    the very machines this patch is rescuing — pausing the animations is the
    win, the layers can stay) */
 /* ===== end FF-PERF 1 ===== */
+
+/* ===== FF-PERF 5: html.perf-lite — the degraded paint tier for machines that
+   measurably cannot keep up (the canvas governor latches it after ten slow
+   draws; #fflite / ?fflite=1 forces it, fflite=0 clears it). Every set-piece,
+   scrub and interaction keeps working — only ambient shimmer and the most
+   expensive per-pixel effects go. Ordered by measured cost on a 5120x1440
+   software-rastered viewport. Uses animation-play-state (the .ff-park trick)
+   so nothing snaps to a base pose. ===== */
+/* Tier 1 — giant blurred / filtered surfaces */
+html.perf-lite .lo-fog{display:none;}                    /* two ~5500px blurred strips, infinite bg-position anim */
+html.perf-lite .blob{display:none;}                      /* three 480-620px blur(70px) washes (phones already drop them) */
+html.perf-lite #hero [data-suck]{filter:none!important;} /* per-frame blur/saturate recompute during the suck */
+html.perf-lite #hero #mgRing{filter:none;}
+html.perf-lite .focus-orb{filter:none;}                  /* stacked drop-shadows on a ~2600px orb */
+html.perf-lite .ff-orbitline ellipse{filter:none;}       /* drop-shadow inside a full-viewport fixed svg */
+html.perf-lite .drawer-backdrop{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(13,18,32,.78);}
+/* Tier 2 — ambient shimmer frozen in place (phase-preserving, no snap) */
+html.perf-lite #liftoff :is(.lo-flock,.lo-tw,.lo-shooter,.lo-cloud,.lo-dish,.lo-sock,.lo-fly,.lo-grass,.lo-vent,.lo-beacon,.lo-search),
+html.perf-lite #sysMap :is(.sm-mini rect,.sm-surface-spin,.sm-cloud-spin,.sm-world-belt,.fc-float,.fc-future-clouds,.fc-station-float,.fc-bs-thermal,.fc-bs-nav,.fc-beam,.fc-beam-charge,.fc-window,.fc-engine,.fc-sweep,.fc-reactor,.fc-debris,.fc2-flow,.fc2-emit,.fc2-weld,.fc2-drone,.st-spin,.st-strobe),
+html.perf-lite .mg-feed,html.perf-lite .mg-ess,
+html.perf-lite .focus-summary::before,html.perf-lite .fs-status i{animation-play-state:paused!important;}
+/* Tier 3 — compositing hygiene */
+html.perf-lite :is(.rw-over,.lo-panel,.globe-legend>div,.focus-handoff .focus-label,.focus-begin){-webkit-backdrop-filter:none;backdrop-filter:none;}
+html.perf-lite :is(.kpi,.brand-card,.stat,figure.photo.zoom img){will-change:auto;}
+/* difference-blend cursor: backdrop read-back per mousemove. The cursor:none
+   base rule is guarded with :not(.perf-lite) at its definition, so hiding the
+   dot/ring here restores every element's own cursor (pointer/grab/zoom-in). */
+html.perf-lite .cur-dot,html.perf-lite .cur-ring{display:none;}
+/* the hero star layers grew to viewport width (initStars) — freeze their
+   drift/twinkle and hide the streakers under lite so the resting hero does
+   not composite four full-viewport animated layers on struggling machines */
+html.perf-lite .star-layer{animation-play-state:paused!important;}
+html.perf-lite .shoot,html.perf-lite .meteor{display:none;}
+html.perf-lite.intro-lock main{transform:none;}          /* boot un-zoom of a 5120px-wide subtree */
+/* ===== end FF-PERF 5 ===== */
 </style>
 </head>
 <body>
@@ -6152,6 +6199,55 @@ const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const SVGNS = "http://www.w3.org/2000/svg";
 const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* FF-PERF 5: degraded paint mode for machines that cannot keep up (Edge with
+   graphics acceleration off => software raster, efficiency mode, weak iGPUs
+   driving huge panels). html.perf-lite hides/freezes the paint-heavy ambient
+   layer (see the perf-lite CSS block) while every set-piece keeps working.
+   Entered three ways: #fflite / ?fflite=1 in the URL (fflite=0 forces OFF and
+   clears the latch), a sessionStorage latch from a previous struggling load,
+   or live via enterLite() when the canvas governor keeps measuring slow draws.
+   Session-sticky by design — flapping in and out mid-scroll looks worse than
+   either state. */
+/* match only in search/hash (a file:// FOLDER named "&fflite" must not trigger
+   it), and read the whole value so "fflite=00"/"fflite=false" mean OFF, not a
+   backtracked ON */
+const LITE_M = (location.search + " " + location.hash).match(/[?#&]fflite(?:=([^&#\s]*))?/);
+const LITE_OFF = !!LITE_M && /^(0|false|off)/i.test(LITE_M[1] || "");
+let PERF_LITE = !!LITE_M && !LITE_OFF;
+try {
+  if (LITE_OFF) sessionStorage.removeItem("ff-lite");
+  else if (!LITE_M) PERF_LITE = sessionStorage.getItem("ff-lite") === "1";
+} catch (e) {}
+if (PERF_LITE) document.documentElement.classList.add("perf-lite");
+function enterLite() {
+  if (PERF_LITE) return;
+  PERF_LITE = true;
+  document.documentElement.classList.add("perf-lite");
+  try { sessionStorage.setItem("ff-lite", "1"); } catch (e) {}
+}
+window.__ffLite = enterLite;   // test hook + manual escape hatch from the console
+
+/* FF-PERF 5b: one SHARED paint-frame gate for every scroll-driven pipeline.
+   On ≥120Hz displays the whole choreography (courier, set-piece painters,
+   black hole, handoff, chrome) otherwise runs 170x/s for zero visible gain.
+   The gate passes at most one frame per ~11ms (~90fps; a no-op at <=90Hz
+   because frames already arrive slower than that). CRUCIAL: one decision per
+   rAF timestamp shared by ALL consumers — the courier deliberately samples
+   the set-piece painters' just-written transforms in the same frame, so they
+   must all run, or all skip, together. */
+let ffGateStamp = -1, ffGateLast = 0, ffGateOpen = true;
+function ffFrameOK(now) {
+  if (now === ffGateStamp) return ffGateOpen;
+  ffGateStamp = now;
+  ffGateOpen = now - ffGateLast >= 11;
+  /* carry the remainder instead of re-phasing to `now` — a plain reset
+     quantizes to whole display frames and halves 91-120Hz panels to
+     45-60fps; with the carry they average the intended ~90fps (the modulo
+     also keeps ffGateLast sane after long idle gaps). */
+  if (ffGateOpen) ffGateLast = now - ((now - ffGateLast) % 11);
+  return ffGateOpen;
+}
+
 function svgEl(tag, attrs, parent) {
   const el = document.createElementNS(SVGNS, tag);
   for (const k in attrs) el.setAttribute(k, attrs[k]);
@@ -6255,13 +6351,20 @@ function makeTip(fig) {
    tab is hidden (frozen rAF would otherwise starve the handler). */
 function rafScroll(fn) {
   let queued = false;
+  // FF-PERF 5b: on gated frames (>90fps displays) re-arm and wait for the next
+  // shared open frame instead of running — queued stays true so scroll events
+  // keep coalescing into the one pending run.
+  const step = now => {
+    if (!ffFrameOK(now)) { requestAnimationFrame(step); return; }
+    // try/finally: a throw inside fn() must NEVER strand queued=true, or every
+    // later scroll event is ignored and all scroll-driven repaint freezes.
+    try { fn(); } finally { queued = false; }
+  };
   return () => {
     if (document.hidden) { fn(); return; }
     if (!queued) {
       queued = true;
-      // try/finally: a throw inside fn() must NEVER strand queued=true, or every
-      // later scroll event is ignored and all scroll-driven repaint freezes.
-      requestAnimationFrame(() => { try { fn(); } finally { queued = false; } });
+      requestAnimationFrame(step);
     }
   };
 }
@@ -6324,7 +6427,8 @@ function initChrome() {
   const onScroll = rafScroll(() => {
     const h = document.documentElement;
     const max = h.scrollHeight - h.clientHeight;
-    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+    // scaleX, not width — see #scrollProgress CSS (compositor-only update)
+    bar.style.transform = "scaleX(" + (max > 0 ? h.scrollTop / max : 0).toFixed(5) + ")";
     if (navEl) navEl.classList.toggle("scrolled", h.scrollTop > 8);
   });
   document.addEventListener("scroll", onScroll, { passive: true });
@@ -9859,6 +9963,11 @@ const down = Math.PI / 2;
 
   function frame(now, snap = false) {
     raf = 0;
+    /* FF-PERF 5b: honour the shared paint-frame gate (>90fps displays). The
+       courier must run in the SAME frames as the set-piece painters whose
+       just-written transforms it samples — the gate is shared, so all scroll
+       pipelines run or skip together. Snap frames (resync) never skip. */
+    if (!snap && !ffFrameOK(now)) { schedule(); return; }
     if (innerWidth <= 900 || !document.documentElement.classList.contains("spx")) {
       wrap.style.opacity = "0";
       /* FF-PERF: an invisible ship must not keep its plume/strobe loops
@@ -10043,6 +10152,7 @@ scale *= approachScale + (ps - approachScale) * landingScaleQ;
            CSS clock over an empty pad instead of scroll-owned and instant. */
         padRocket.style.transition = "none";
         padRocket.style.opacity = padAlpha.toFixed(3);
+        padRocket.__ffPadInline = 1;
       }
       /* Hysteresis: dock at .997 but only UNDOCK below .958, where the pad
          bird has fully faded. Without it, tiny scrubs around the touchdown
@@ -10051,9 +10161,12 @@ scale *= approachScale + (ps - approachScale) * landingScaleQ;
       if (liftoff && !launching) liftoff.classList.toggle("docked",
         q >= .997 || (liftoff.classList.contains("docked") && q > .958));
     } else {
-      if (padRocket) {
+      /* FF-PERF 5: clear once, not on every non-pad frame — the empty-string
+         writes were same-value style churn on ~99% of all frames. */
+      if (padRocket && padRocket.__ffPadInline) {
         padRocket.style.opacity = "";
         padRocket.style.transition = "";
+        padRocket.__ffPadInline = 0;
       }
       if (liftoff && liftoff.classList.contains("docked")) liftoff.classList.remove("docked");
     }
@@ -10213,8 +10326,10 @@ let apX = sample.p.x + ox, apY = sample.p.y + oy;
       const pk = !(alpha > .003) ? 1 : 0;
       if (pk !== (wrap.__ffPk | 0)) { wrap.__ffPk = pk; wrap.classList.toggle("ff-park", !!pk); }
     }
-    wrap.dataset.phase = phase.name;
-    wrap.dataset.scroll = scroll.toFixed(1);
+    /* FF-PERF 5: dataset.phase only on change, and the per-frame
+       dataset.scroll diagnostic write is gone — it had zero readers and cost
+       an attribute invalidation on a fixed subtree every frame at 170Hz. */
+    if (wrap.dataset.phase !== phase.name) wrap.dataset.phase = phase.name;
     lastPose = { x: apX, y: apY, angle: apAngle, scale: apScale, alpha, scroll };
     /* THE SHIP PAINTS THE RAIL. The journey fill used to follow raw scroll
        while the ship follows the compiled route — so on a brisk entry the
@@ -11617,8 +11732,8 @@ function renderSystem() {
     const sclX = svg2.clientWidth / W, sclY = svg2.clientHeight / H;
     // CRITICAL: SVG elements have no offsetLeft/offsetTop — reading them
     // yields 0 and silently shifts every HTML overlay left by the map's
-    // side padding (57px at full width). The svg sits exactly after the
-    // map's padding, so the padding IS the offset.
+    // side padding (a constant 10px since the ultrawide collapse fix). The
+    // svg sits exactly after the map's padding, so the padding IS the offset.
     const mcs = getComputedStyle(map);
     const ox = parseFloat(mcs.paddingLeft) || 0, oy = parseFloat(mcs.paddingTop) || 0;
     const FAMILY_GAP = 16;                    // short, solid edge-to-edge tethers
@@ -11848,17 +11963,24 @@ function renderSystem() {
        converges every tip onto the settled body within a frame and keeps the
        station arrows pinned to their moving cores precisely. */
     {
-      let mapVisible = false, laneRaf = 0;
+      let mapVisible = false, laneRaf = 0, laneLastT = 0;
       const LANE_KEYS = ["form", "storm", "fly", "ds1", "ds2"];
-      const track = () => {
+      const track = now => {
         laneRaf = 0;
         /* FF-PERF: while the map is off-screen the loop parks itself entirely
            (no 60Hz no-op callbacks); the observer below re-arms it the moment
            the map returns, before it can be seen. */
         if (!mapVisible) return;
-        if (!map.classList.contains("diving")) {
-          const targets = LANE_KEYS.map(k => laneTarget(k));   // all reads…
-          LANE_KEYS.forEach((k, i) => landLane(k, targets[i])); // …then all writes
+        /* FF-PERF 5: the stations orbit over tens of seconds, so re-landing
+           the arrows ~33x/s reads identically to every-frame — and at 170Hz
+           the per-frame getBBox/getCTM passes were the page's largest IDLE
+           consumer. The loop keeps re-arming; only the work is cadenced. */
+        if (now - laneLastT >= 30) {
+          laneLastT = now;
+          if (!map.classList.contains("diving")) {
+            const targets = LANE_KEYS.map(k => laneTarget(k));   // all reads…
+            LANE_KEYS.forEach((k, i) => landLane(k, targets[i])); // …then all writes
+          }
         }
         laneRaf = requestAnimationFrame(track);
       };
@@ -12171,17 +12293,34 @@ updateFamilyPaths();
   const nvCv = stage && stage.querySelector(".sys-nova");
   const nvCtx = nvCv ? nvCv.getContext("2d") : null;
   let bw = 0, bh = 0, bRes = 0, bNp = -9, bVy = scrollY, bScrub = false, bSettle = 0, bMoveAt = 0, bDrawT = 0;
+  /* FF-PERF 5: the nova used to be the set-piece governor's frozen twin —
+     hard-coded 2.6e6 budget and a fixed 15ms cadence that only applied while
+     flinging. It now carries the same adaptive machinery locally: measured
+     draw cost shrinks the budget / stretches the cadence, slow-scroll draws
+     are covered, persistent slowness latches perf-lite, and "full" res is
+     area-capped like the set-pieces' fullRes(). */
+  let bBudget = PERF_LITE ? 1.6e6 : 2.6e6, bGap = 15, bStrikes = 0, bStrikeT = 0, bWarm = 0, bWantNp = -9;
+  const bBudgetMax = PERF_LITE ? 1.6e6 : 2.6e6;   // lite must not heal past its own cap
+  const novaFull = (W, H) => Math.min(2, window.devicePixelRatio || 1,
+    Math.sqrt((PERF_LITE ? 3.6e6 : 5.5e6) / Math.max(1, (W || 2) * (H || 2))) || 2);
   /* FF-PERF: native-res settle for the nova — re-arms instead of painting if
      a scroll frame landed recently, so a slow machine's long frame gaps can
      never interleave native repaints into the middle of a fling. */
   const novaSettle = () => {
     if (performance.now() - bMoveAt < 240) { bSettle = setTimeout(novaSettle, 260); return; }
-    const f2 = Math.min(2, window.devicePixelRatio || 1);
-    if (!nvCtx || bRes >= f2 || bw < 2) return;
-    bRes = f2;
-    nvCv.width = Math.round(bw * f2); nvCv.height = Math.round(bh * f2);
-    nvCtx.setTransform(f2, 0, 0, f2, 0, 0);
-    if (window.__ffNovaDraw && bNp >= 0) window.__ffNovaDraw(nvCtx, bNp, bw, bh);
+    const f2 = novaFull(bw, bh);   // FF-PERF 5: settle is area-capped too
+    if (!nvCtx || bw < 2) return;
+    /* a cadence-skipped final gesture frame can leave bNp slightly stale even
+       at full res — the settle now also finishes that pending pose, so the
+       resting frame is always the CURRENT one. */
+    const pend = bWantNp >= 0 && Math.abs(bWantNp - bNp) > .0004;
+    if (bRes < f2) {
+      bRes = f2;
+      nvCv.width = Math.round(bw * f2); nvCv.height = Math.round(bh * f2);
+      nvCtx.setTransform(f2, 0, 0, f2, 0, 0);
+    } else if (!pend) return;
+    const npF = pend ? bWantNp : bNp;
+    if (window.__ffNovaDraw && npF >= 0) { window.__ffNovaDraw(nvCtx, npF, bw, bh); bNp = npF; }
   };
   const driveBuild = sp2 => {
     sp2 = _cl(sp2, 0, 1);
@@ -12193,7 +12332,7 @@ updateFamilyPaths();
     // measure the REAL on-screen map width so the canvas planet and the SVG
     // sun dock on the exact same pixel (padding/scrollbar-proof)
     const sw = Math.max(2, stage.clientWidth), sh = Math.max(2, stage.clientHeight);
-    const svgW = svgEl.clientWidth || Math.min(sw - 20, 1780);
+    const svgW = svgEl.clientWidth || Math.min(sw - 20, 1760); /* 1780 max-width minus the 2x10px padding */
     window.__ffMapW = svgW;
     if (nvCtx && window.__ffNovaDraw) {
       if (fade <= 0) { if (nvCv.style.opacity !== "0") nvCv.style.opacity = "0"; }
@@ -12205,7 +12344,8 @@ updateFamilyPaths();
            function of np, so repainting an identical np was pure waste).
            Speed is px per painted frame (machine-independent), with the same
            30-in / 12-out hysteresis as the set-piece controller. */
-        const full = Math.min(2, window.devicePixelRatio || 1);
+        const W2 = Math.max(2, stage.clientWidth), H2 = Math.max(2, stage.clientHeight);
+        const full = novaFull(W2, H2);   // FF-PERF 5: area-capped "native"
         const stepNv = Math.abs(scrollY - bVy);
         bVy = scrollY;
         const nowMv = performance.now();
@@ -12216,9 +12356,11 @@ updateFamilyPaths();
         bMoveAt = nowMv;
         if (stepNv > 30 || velNv > 900) bScrub = true;
         else if (stepNv < 12 && velNv < 400) bScrub = false;
-        const W2 = Math.max(2, stage.clientWidth), H2 = Math.max(2, stage.clientHeight);
         const npMoved = Math.abs(np - bNp) > .0004;
-        let res = bScrub ? Math.min(full, Math.max(.55, Math.sqrt(2.6e6 / (W2 * H2)))) : full;
+        /* FF-PERF 5: while the local governor is stretched (bGap>15), even
+           slow-scroll frames draw at scrub res — native waits for the settle */
+        let res = (bScrub || bGap > 15)
+          ? Math.min(full, Math.max(.55, Math.sqrt(bBudget / (W2 * H2)))) : full;
         /* dropping TO scrub res only pays when the nova is being re-drawn
            anyway (a resize clears the canvas); restoring native is always
            allowed */
@@ -12229,16 +12371,37 @@ updateFamilyPaths();
           nvCtx.setTransform(res, 0, 0, res, 0, 0);
         }
         nvCv.style.opacity = fade.toFixed(3);
-        /* governor cadence: while flinging on a high-refresh display, cap the
-           nova to ~66fps redraws (tiny np steps inside a 15ms window wait for
-           the next frame); big jumps always draw, settle restores native. */
+        /* governor cadence: cap redraw frequency on high-refresh displays —
+           tiny np steps inside the adaptive gap wait for the next frame; big
+           jumps always draw, settle restores (area-capped) native. FF-PERF 5:
+           the cap now covers SLOW scrolling too (the bScrub precondition let
+           reading-pace scrolls repaint native 7MP frames at 170Hz), and every
+           draw is measured so the nova adapts like the set-pieces do. */
         const nowNv2 = performance.now();
+        bWantNp = np;   // the pose the resting frame must ultimately show
         if (Math.abs(np - bNp) > .0004
-            && !(bScrub && bNp >= 0 && Math.abs(np - bNp) < .02 && nowNv2 - bDrawT < 15)) {
+            && !(bNp >= 0 && Math.abs(np - bNp) < .02 && nowNv2 - bDrawT < bGap)) {
           bNp = np; window.__ffNovaDraw(nvCtx, np, bw, bh); bDrawT = nowNv2;
+          const bDrawMs = performance.now() - nowNv2;
+          /* same guards as the set-piece governor: hidden-tab draws are
+             meaningless, the first (cold, sprite-compiling) draw is exempt,
+             and strikes must cluster inside 4s to reach the lite latch */
+          if (!document.hidden && bWarm) {
+            if (bDrawMs > 12) {
+              bBudget = Math.max(1.2e6, bBudget * .8);
+              bGap = Math.min(34, bGap + 3);
+              if (nowNv2 - bStrikeT > 4000) bStrikes = 0;
+              bStrikeT = nowNv2;
+              if (++bStrikes >= 10) enterLite();
+            } else if (bDrawMs < 5) {
+              bBudget = Math.min(bBudgetMax, bBudget * 1.15);
+              bGap = Math.max(15, bGap - 1);
+              bStrikes = Math.max(0, bStrikes - 1);
+            }
+          } else bWarm = 1;
         }
         clearTimeout(bSettle);
-        if (bRes < full) bSettle = setTimeout(novaSettle, 260);
+        if (bRes < full || Math.abs(bWantNp - bNp) > .0004) bSettle = setTimeout(novaSettle, 260);
       }
     }
     // dock-drop: the map waits LOW, its sun slot exactly under the settled
@@ -14870,17 +15033,36 @@ function initStars() {
   field.className = "star-field";
   field.setAttribute("aria-hidden", "true");
   const rnd = (a, b) => a + Math.random() * (b - a);
-  const W = 1920, H = 1100;
-  [["sl1", 70, 1, 0.7], ["sl2", 44, 1.6, 0.85], ["sl3", 18, 2.2, 1], ["sl4", 12, 2.6, 1]].forEach(([cls, n, spread, maxA]) => {
+  /* the spread follows the real viewport (hard-coded 1920x1100 left the right
+     two-thirds of a 32:9 hero starless); star count scales with width so the
+     density stays as authored. perf-lite keeps the original 1920 spread —
+     wider animated composite layers are exactly what a struggling machine
+     must not pay. Re-scattered (debounced) when the window grows notably, so
+     a restored-small window maximised onto an ultrawide fills in too. */
+  const layerDefs = [["sl1", 70, 1, 0.7], ["sl2", 44, 1.6, 0.85], ["sl3", 18, 2.2, 1], ["sl4", 12, 2.6, 1]];
+  const layers = layerDefs.map(([cls]) => {
     const layer = document.createElement("i");
     layer.className = "star-layer " + cls;
-    const shadows = [];
-    for (let i = 0; i < n; i++) {
-      shadows.push(`${rnd(0, W).toFixed(0)}px ${rnd(0, H).toFixed(0)}px 0 ${(spread / 2).toFixed(1)}px rgba(255,255,255,${rnd(0.25, maxA).toFixed(2)})`);
-    }
-    layer.style.boxShadow = shadows.join(",");
     field.appendChild(layer);
+    return layer;
   });
+  let seededW = 0, seedT = 0;
+  const scatter = () => {
+    const W = PERF_LITE ? 1920 : Math.min(5200, Math.max(1920, innerWidth || 1920));
+    if (seededW && Math.abs(W - seededW) < 400) return;
+    seededW = W;
+    const H = Math.max(1100, innerHeight || 1100);
+    const NSCALE = W / 1920;
+    layerDefs.forEach(([cls, n, spread, maxA], li) => {
+      const shadows = [];
+      for (let i = 0, nn = Math.round(n * NSCALE); i < nn; i++) {
+        shadows.push(`${rnd(0, W).toFixed(0)}px ${rnd(0, H).toFixed(0)}px 0 ${(spread / 2).toFixed(1)}px rgba(255,255,255,${rnd(0.25, maxA).toFixed(2)})`);
+      }
+      layers[li].style.boxShadow = shadows.join(",");
+    });
+  };
+  scatter();
+  addEventListener("resize", () => { clearTimeout(seedT); seedT = setTimeout(scatter, 300); });
   const shoot = document.createElement("i");
   shoot.className = "shoot";
   field.appendChild(shoot);
@@ -16318,14 +16500,23 @@ function initSetpieces() {
      original renderer; only frames that exist for one screen refresh in the
      middle of a fast scroll are ever approximated. On screens inside the
      budget (1080p/1440p laptops) nothing changes at all. */
-  const fullRes = () => Math.min(2, window.devicePixelRatio || 1);
+  /* FF-PERF 5: "full" resolution now also respects an AREA ceiling. A 5120x1440
+     ultrawide at dpr 1 is 7.37MP per canvas — resting redraws at that size are
+     a guaranteed jank spike under software raster, and nothing on a 44" panel
+     needs them: 5.5MP (a 0.86 upscale at 32:9) is visually indistinguishable
+     at viewing distance while cutting every settle/boot/resize repaint by a
+     third. Viewports under 5.5MP are entirely unaffected. perf-lite tightens
+     the ceiling further. */
+  const SETTLE_PX = () => PERF_LITE ? 3.6e6 : 5.5e6;
+  const fullRes = (W, H) => Math.min(2, window.devicePixelRatio || 1,
+    Math.sqrt(SETTLE_PX() / Math.max(1, (W || 2) * (H || 2))) || 2);
   /* One in-motion pixel budget for every piece. A larger "keep text denser"
      budget was measured on a software-rastered 3440×1440: the ~12% linear
      saving was cancelled by the extra full-canvas upscale blit, so the
      text-bearing pieces ran NET SLOWER than uncapped. At 2.6MP every piece
      wins. Text is only ever below native during an active fling and
-     sharpens within ~260ms of the wheel pausing. */
-  const SCRUB_PX = 2.6e6;
+     sharpens within ~260ms of the wheel pausing. perf-lite starts leaner. */
+  const SCRUB_PX = PERF_LITE ? 1.6e6 : 2.6e6;
   /* FF-PERF governor: some machines cannot sustain even the capped cadence —
      Edge with "graphics acceleration" off (software raster), efficiency
      mode, or a 170Hz ultrawide asking for ~3x the frames of a 60Hz screen.
@@ -16339,6 +16530,12 @@ function initSetpieces() {
   let scrubBudget = SCRUB_PX;
   let scrubGap = 15;             // ms between in-motion redraws (~66fps; no-op at 60Hz)
   let lastDrawT = 0;
+  /* FF-PERF 5: persistent slow-machine latch. Ten CLUSTERED slow draws
+     (>12ms, within a rolling 4s window, fast draws paying one back) is a
+     machine that genuinely cannot carry the full ambient load — enter
+     perf-lite for the session (CSS degrade) and remember it in
+     sessionStorage so the NEXT load starts lean from boot. */
+  let slowStrikes = 0, lastStrikeT = 0;
   /* Speed is measured in px per PAINTED FRAME, not px/second: on a struggling
      machine the frame rate collapses, so a px/s threshold would read "slow"
      and disable the cap exactly where it is needed most. Per-frame deltas are
@@ -16357,7 +16554,7 @@ function initSetpieces() {
   const size = (it, wantFull) => {
     const r = it.el.querySelector(".tr2-stage").getBoundingClientRect();
     const W = Math.max(2, Math.round(r.width)), H = Math.max(2, Math.round(r.height));
-    const full = fullRes();
+    const full = fullRes(W, H);
     const res = wantFull === false
       ? Math.min(full, Math.max(.4, Math.sqrt(scrubBudget / (W * H))))
       : full;
@@ -16386,7 +16583,13 @@ function initSetpieces() {
       // (they overlap it via the -100vh pull) and materialise the instant
       // they pin — exactly when the dive's planet fills the screen
       if (it.draw === drawClouds) it.el.style.visibility = r.top > 1 ? "hidden" : "";
-      if (!force && (r.bottom < -80 || r.top > innerHeight + 80)) return;
+      /* FF-PERF 5: the cull now applies to FORCE passes too (boot, resize).
+         Force-drawing all four pieces at native res was ~29MP of canvas fill
+         per resize on a 5120x1440 panel, mostly for pieces thousands of px
+         below the fold. An offscreen piece keeps w=0 and is sized+drawn by
+         the scroll pass the moment it enters the ±80px approach band —
+         always before a single pixel of it is visible. */
+      if (r.bottom < -80 || r.top > innerHeight + 80) return;
       /* FF-PERF: dropping TO scrub resolution is only allowed when this
          piece's own progress moved (a resize clears the canvas, forcing a
          redraw — pointless for a piece whose scrub is pinned at 0 or 1 and
@@ -16403,21 +16606,40 @@ function initSetpieces() {
          normal-monitor cadence while the page itself still scrolls at
          full refresh. Big jumps (nav clicks, fresh pieces) always draw. */
       const nowD = performance.now();
-      if (wantFull === false && !force && it.last > -1
+      /* FF-PERF 5: the cadence gate now covers SLOW-scroll native draws too
+         (wantFull no longer exempts them) — they were the unprotected band
+         that repainted 7MP canvases at display refresh on 170Hz ultrawides.
+         Settle passes are immune by construction: their res flip sets
+         it.last=-9, so |p-last| is never < .02. */
+      if (!force && it.last > -1
           && Math.abs(p - it.last) < .02 && nowD - lastDrawT < scrubGap) return;
       it.last = p;
       it.draw(it.ctx, p, it.w, it.h);
       lastDrawT = nowD;
-      if (wantFull === false) {
+      if (!force && !document.hidden && it.warm) {
+        /* FF-PERF 5: measure EVERY scroll-driven draw (native ones included —
+           they are exactly the draws that were invisible to the governor and
+           killed software-raster Edge), and latch perf-lite when the machine
+           is persistently slow. Guards: hidden-tab draws are deprioritised
+           and would poison the stats (programmatic scrolls in background
+           tabs); each piece's FIRST draw is exempt — its one-off cold cost
+           (cache warm-up) is not steady-state evidence. */
         const drawMs = performance.now() - nowD;
         if (drawMs > 12) {
           scrubBudget = Math.max(1.2e6, scrubBudget * .8);
           scrubGap = Math.min(34, scrubGap + 3);
+          /* strikes must CLUSTER to mean anything: a genuinely struggling
+             machine strikes several times a second; sparse GC/thermal spikes
+             minutes apart on a healthy one must never accumulate to a latch */
+          if (nowD - lastStrikeT > 4000) slowStrikes = 0;
+          lastStrikeT = nowD;
+          if (++slowStrikes >= 10) enterLite();
         } else if (drawMs < 5) {
           scrubBudget = Math.min(SCRUB_PX, scrubBudget * 1.15);
           scrubGap = Math.max(15, scrubGap - 1);
+          slowStrikes = Math.max(0, slowStrikes - 1);
         }
-      }
+      } else it.warm = 1;
       if (it.draw === drawPlanet) updateRunway(p);
       else if (it.draw === drawFunding) updateFunding(p);
     });
@@ -16446,14 +16668,35 @@ function initSetpieces() {
     lastMoveAt = nowS;
     if (step > FAST_STEP || vel > FAST_VEL) scrubbing = true;
     else if (step < SLOW_STEP && vel < SLOW_VEL) scrubbing = false;
-    paint(false, !scrubbing);
+    /* FF-PERF 5: while the governor is stretched (recent draws ran slow),
+       even reading-pace scrolls draw at scrub resolution — a struggling
+       machine gets no native-res repaints until it actually STOPS (the
+       settle below). A healthy machine never stretches the gap and keeps
+       today's native-res slow-scroll behavior. */
+    paint(false, !scrubbing && scrubGap <= 15);
     clearTimeout(settleT);
-    if (scrubbing) settleT = setTimeout(settle, 260);
+    /* settle is armed on EVERY scroll frame now, not just while flinging —
+       a slow-scroll frame may have painted at scrub res (stretched governor)
+       and must still sharpen once movement stops. When everything is already
+       native and unchanged the settle pass is a no-op. */
+    settleT = setTimeout(settle, 260);
   });
   addEventListener("scroll", onScroll, { passive: true });
   addEventListener("resize", () => { gate(); items.forEach(it => { it.w = 0; }); paint(true); });
   gate();
   paint(true);
+  /* FF-PERF 5: the force cull above means offscreen pieces no longer draw at
+     boot — so their painters' lazy caches (the 2048x1024 globe texture, 16
+     cloud sprites, the nova's sun/nebula sprites) would compile inside the
+     FIRST scroll-driven draw: a 30-80ms hitch exactly as a piece appears,
+     charged to the governor as steady-state cost. Prime them off the scroll
+     path with a 2x2 draw — full compile, microseconds of raster. */
+  setTimeout(() => { try {
+    const t = document.createElement("canvas"); t.width = t.height = 2;
+    const tc = t.getContext("2d");
+    items.forEach(it => { try { it.draw(tc, 0, 2, 2); } catch (e) {} });
+    if (window.__ffNovaDraw) { try { window.__ffNovaDraw(tc, .5, 2, 2); } catch (e) {} }
+  } catch (e) {} }, 900);
   window.__ffSpx = (i, p) => { const it = items[i]; if (!it) return null; size(it, true); it.draw(it.ctx, p, it.w, it.h); if (it.draw === drawPlanet) updateRunway(p); else if (it.draw === drawFunding) updateFunding(p); it.last = p; return { w: it.w, h: it.h }; };
 }
 
@@ -16466,8 +16709,11 @@ function initFocusHandoff() {
   if (!section || !inner || REDUCED) return;
   let raf = 0;
   const orb = section.querySelector(".focus-orb");
-  const paint = () => {
+  const paint = now => {
     raf = 0;
+    // FF-PERF 5b: shared paint-frame gate — re-arm and wait on gated frames.
+    // Direct calls (boot, __ffFocusOrb) pass no timestamp and always run.
+    if (now !== undefined && !ffFrameOK(now)) { queue(); return; }
     const r = section.getBoundingClientRect();
     const vh = Math.max(1, innerHeight);
     const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .72)));
@@ -17008,8 +17254,12 @@ window.__ffRevealAll = () => {
     if (near !== live) { live = near; root.classList.toggle('sys-live', near); }
   }
   upd();
-  addEventListener('scroll', upd, { passive: true });
-  addEventListener('resize', upd);
+  /* FF-PERF 5: was a RAW scroll listener — high-resolution wheels on 170Hz
+     panels deliver several events per frame, each forcing a getBoundingClientRect.
+     rafScroll coalesces to at most one gated frame's worth of work. */
+  var updRaf = rafScroll(upd);
+  addEventListener('scroll', updRaf, { passive: true });
+  addEventListener('resize', updRaf);
 })();
 /* ===== end PATCH 3 ===== */
 </script>                                           

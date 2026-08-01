@@ -234,26 +234,8 @@ html:not(.sys-live) #sysMap *{
 .sm-brands .bx{border-color:rgba(56,169,255,.45);}
 .hero-sub{margin:14px 0 0;max-width:560px;font-size:1.02rem;line-height:1.6;color:rgba(243,244,251,.72);}
 .hero-cta-row{margin:18px 0 4px;}
-.hero-cta{cursor:pointer;font:inherit;font-weight:800;letter-spacing:.06em;padding:12px 26px;border-radius:999px;border:1px solid rgba(255,61,154,.65);color:#fff;background:linear-gradient(90deg,rgba(255,61,154,.28),rgba(56,169,255,.24));transition:box-shadow .25s,transform .25s;}
-.hero-cta:hover{box-shadow:0 0 24px -6px var(--pink);transform:translateY(-2px);}
-/* transient "Scroll to continue" cue — shown once the Explore CTA's tween
-   lands at the build's poised first frame. Body-level fixed (no pinned
-   ancestor can capture it), pointer-events:none so it can never eat input
-   (lesson learned from the lightbox overlay). */
-.scroll-cue{
-  position:fixed;left:50%;bottom:30px;z-index:60;transform:translate(-50%,14px);
-  display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;
-  background:rgba(10,12,20,.74);border:1px solid rgba(255,61,154,.55);
-  box-shadow:0 6px 30px rgba(0,0,0,.45),0 0 22px rgba(255,61,154,.22);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  color:var(--ink);font-weight:700;font-size:.95rem;letter-spacing:.02em;white-space:nowrap;
-  opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .45s var(--ease),transform .45s var(--ease),visibility 0s linear .45s;
-}
-.scroll-cue.on{opacity:1;visibility:visible;transform:translate(-50%,0);
-  transition:opacity .45s var(--ease),transform .45s var(--ease);}
-.scroll-cue .sc-chev{width:15px;height:15px;color:var(--pink);animation:scueBob 1.5s ease-in-out infinite;}
-@keyframes scueBob{0%,100%{transform:translateY(-2px);}50%{transform:translateY(3px);}}
+/* static badge (was a button): same pill look, no pointer/hover affordance */
+.hero-cta{display:inline-block;font:inherit;font-weight:800;letter-spacing:.06em;padding:12px 26px;border-radius:999px;border:1px solid rgba(255,61,154,.65);color:#fff;background:linear-gradient(90deg,rgba(255,61,154,.28),rgba(56,169,255,.24));}
 /* the two future planets are formation-locked to their boxes — no bob */
 .fc-futureRing .fc-station-float,.fc-futureAurora .fc-station-float{animation:none;}
 /* DETAIL SHELF boxes — channels / services / partners under the trio */
@@ -4480,13 +4462,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
       <div class="hero-right">
         <h1 class="reveal d1" data-suck>From one rusty old fire extinguisher<br><span class="grad-text">to a group built beyond £100 million.</span></h1>
         <p class="hero-sub reveal d1" data-suck>Freedom Global is being built into a £100 million ecommerce business, and the first major value creation engine within a much wider group.</p>
-        <!-- lands on the frame where the nova has JUST completed (0.06 of the
-             build scrub = nova np 1: the newborn pink globe hangs alone at its
-             dock, faint starfield, nothing built yet) — a transient "Scroll to
-             continue" cue then hands the build to the visitor's own scroll
-             instead of skipping to the finished map. data-goto-cue is read by
-             the goto handler; nav's "The System" still jumps to 0.86. -->
-        <div class="hero-cta-row reveal d1" data-suck><button class="hero-cta" data-goto="system" data-goto-at="0.06" data-goto-cue type="button">Explore the System</button></div>
+        <!-- not a button any more: the story is scroll-driven from the very
+             top, so the pill is a static badge telling the visitor what to do.
+             Same look as the old CTA; nav's "The System" still jumps to 0.86. -->
+        <div class="hero-cta-row reveal d1" data-suck><span class="hero-cta">Scroll to Explore</span></div>
         <div class="kpis" id="heroKpis" data-suck></div>
       </div>
     </div>
@@ -5987,7 +5966,7 @@ const FG_DATA = {
       /* the rank posters ship padded to the deck's standard 0.86 frame (their
          own black extends to the edges), so this chapter needs no special
          framing: same box, same card height, nothing cropped, nothing zoomed */
-      photos: ["journey-photos/ch21a.webp?v=20260730", "journey-photos/ch21b.webp?v=20260730", "journey-photos/ch21c.webp?v=20260730"],
+      photos: ["journey-photos/ch21a.webp?v=20260801", "journey-photos/ch21b.webp?v=20260801", "journey-photos/ch21c.webp?v=20260801"],
       nextQuestion: "" },
   ],
 
@@ -6353,34 +6332,6 @@ function initChrome() {
   document.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  /* "Explore the System" cue — the CTA now lands on the build's poised first
-     frame (starfield + ember, nothing assembled), so a short-lived pill tells
-     the visitor the system is driven by THEIR scroll. Created lazily as a
-     direct body child (a transformed/pinned ancestor would break
-     position:fixed), and hidden the moment they scroll >60px from the
-     landing — or after 4.6s, whichever comes first. */
-  let cueEl = null, cueTm = 0, cueOff = null;
-  const cueHide = () => {
-    clearTimeout(cueTm);
-    if (cueOff) { removeEventListener("scroll", cueOff); cueOff = null; }
-    if (cueEl) cueEl.classList.remove("on");
-  };
-  const cueShow = () => {
-    if (!cueEl) {
-      cueEl = document.createElement("div");
-      cueEl.className = "scroll-cue";
-      cueEl.setAttribute("aria-hidden", "true");
-      cueEl.innerHTML = '<svg class="sc-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5 8 10l6-5.5"/><path d="M2 8.5 8 14l6-5.5" opacity=".45"/></svg><span>Scroll to continue</span>';
-      document.body.appendChild(cueEl);
-    }
-    cueHide();
-    requestAnimationFrame(() => cueEl.classList.add("on"));
-    const yRef = scrollY;
-    cueOff = () => { if (Math.abs(scrollY - yRef) > 60) cueHide(); };
-    addEventListener("scroll", cueOff, { passive: true });
-    cueTm = setTimeout(cueHide, 4600);
-  };
-
   $$("[data-goto]").forEach(btn =>
     btn.addEventListener("click", e => {
       // a no-op for the <button> nav items; on the "Begin the Journey" <a> it
@@ -6420,11 +6371,6 @@ function initChrome() {
       const y1 = id === "top" ? 0
         : !isNaN(at) ? Math.max(0, top + Math.max(0, scrub.offsetHeight - innerHeight) * at)
         : Math.max(0, top);
-      /* the Explore CTA asks for the follow-up cue — only meaningful when the
-         LIVE build scrub was actually targeted (spx on, no mobile fallback);
-         on phones/reduced-motion the tap just lands on the section as before */
-      const wantCue = "gotoCue" in btn.dataset && !isNaN(at) && scrub !== el
-        && document.documentElement.classList.contains("spx");
       if (REDUCED) window.scrollTo({ top: y1, behavior: "instant" });
       else {
         const dur = Math.min(1400, 420 + Math.abs(y1 - y0) * 0.06);
@@ -6434,7 +6380,6 @@ function initChrome() {
           const q = Math.min(1, (now - t0) / dur);
           window.scrollTo({ top: y0 + (y1 - y0) * ease(q), behavior: "instant" });
           if (q < 1) requestAnimationFrame(stepScroll);
-          else if (wantCue) cueShow();
         };
         requestAnimationFrame(stepScroll);
       }
